@@ -23,6 +23,7 @@
 #include "skybox.h"
 
 #include "player.h"
+#include "coin.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -85,6 +86,13 @@ HRESULT CGame::Init(void)
 
 	// プレイヤーの生成処理
 	m_pPlayer = CPlayer::Create(NONE_D3DXVECTOR3);
+
+	CCoin::Create(D3DXVECTOR3(100.0f, 0.0f, 400.0f));
+	CCoin::Create(D3DXVECTOR3(400.0f, 0.0f, 400.0f));
+	CCoin::Create(D3DXVECTOR3(200.0f, 0.0f, -200.0f));
+	CCoin::Create(D3DXVECTOR3(500.0f, 0.0f, 0.0f));
+	CCoin::Create(D3DXVECTOR3(-100.0f, 0.0f, -400.0f));
+	CCoin::Create(D3DXVECTOR3(-300.0f, 0.0f, 100.0f));
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

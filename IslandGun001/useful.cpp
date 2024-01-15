@@ -445,6 +445,35 @@ bool useful::RectangleCollisionXZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& po
 }
 
 /*
+* @brief 矩形の当たり判定(YZ平面)
+* @param pos1 [in] 対象1の位置
+* @param pos2 [in] 対象2の位置
+* @param VtxMax1 [in] 対象1の最大値
+* @param VtxMax2 [in] 対象2の最大値
+* @param VtxMin1 [in] 対象1の最小値
+* @param VtxMin2 [in] 対象2の最小値
+* @return bool 当たり判定に当たったかどうか
+*/
+bool useful::RectangleCollisionYZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& VtxMax1, const D3DXVECTOR3& VtxMax2, const D3DXVECTOR3& VtxMin1, const D3DXVECTOR3& VtxMin2)
+{
+	if (pos1.y + VtxMax1.y >= pos2.y + VtxMin2.y &&
+		pos1.y + VtxMin1.y <= pos2.y + VtxMax2.y &&
+		pos1.z + VtxMax1.z >= pos2.z + VtxMin2.z &&
+		pos1.z + VtxMin1.z <= pos2.z + VtxMax2.z)
+	{ // 当たり判定に当たっていた場合
+
+		// true を返す
+		return true;
+	}
+	else
+	{ // 当たり判定に当たっていない場合
+
+		// false を返す
+		return false;
+	}
+}
+
+/*
 * @brief 円柱の当たり判定
 * @param TargetPos [in/out] 対象の位置
 * @param ObjectPos [in] オブジェクトの位置

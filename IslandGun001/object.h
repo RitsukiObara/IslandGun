@@ -51,6 +51,7 @@ public:			// 誰でもアクセスできる
 		TYPE_PLAYER,			// プレイヤー
 		TYPE_BULLET,			// 弾
 		TYPE_ENEMY,				// 敵
+		TYPE_COIN,				// 小判
 		TYPE_MAX				// この列挙型の総数
 	};
 

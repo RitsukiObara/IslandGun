@@ -36,7 +36,7 @@ namespace
 	const float SPEED = 10.0f;						// 速度
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
-	const float CAMERA_ROT_CORRECT = 0.000004f;		// カメラの向きの補正倍率
+	const float CAMERA_ROT_CORRECT = 0.000003f;		// カメラの向きの補正倍率
 	const float CAMERA_HEIGHT = 0.0005f;			// カメラの高さの倍率
 	const float CAMERA_MAX_HEIGHT = 500.0f;			// カメラの高さの最大値
 	const float CAMERA_MIN_HEIGHT = 0.0f;			// カメラの高さの最小値
@@ -190,6 +190,9 @@ void CPlayer::Update(void)
 
 	// モーションの更新処理
 	m_pMotion->Update();
+
+	// 小判との当たり判定
+	collision::CoinCollision(GetPos(), D3DXVECTOR3(40.0f, 130.0f, 0.0f));
 
 	// 起伏地面との当たり判定処理
 	ElevationCollision();

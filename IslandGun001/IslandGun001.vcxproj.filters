@@ -55,6 +55,9 @@
     <Filter Include="enemy">
       <UniqueIdentifier>{21b4acf6-c753-49ed-8266-47dbb61a61b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gimmick">
+      <UniqueIdentifier>{f19a198c-57e1-4dfe-975e-a3c089d2ce17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -306,10 +309,16 @@
     <ClCompile Include="locus3D.cpp">
       <Filter>staging</Filter>
     </ClCompile>
-    <ClCompile Include="enemy.cpp">
+    <ClCompile Include="enemy_manager.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
-    <ClCompile Include="enemy_manager.cpp">
+    <ClCompile Include="coin.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="coin_manager.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
   </ItemGroup>
@@ -568,6 +577,12 @@
     </ClInclude>
     <ClInclude Include="enemy_manager.h">
       <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="coin.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="coin_manager.h">
+      <Filter>gimmick</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

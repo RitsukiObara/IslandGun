@@ -22,6 +22,8 @@
 #include "elevation_manager.h"
 #include "mesh_manager.h"
 #include "bullet_manager.h"
+#include "enemy_manager.h"
+#include "coin_manager.h"
 
 //--------------------------------------------
 // 静的メンバ変数宣言
@@ -53,6 +55,8 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	CElevationManager::Create();		// 起伏マネージャー
 	CMeshManager::Create();				// メッシュマネージャー
 	CBulletManager::Create();			// 弾マネージャー
+	CEnemyManager::Create();			// 敵マネージャー
+	CCoinManager::Create();				// 小判マネージャー
 
 	if (m_pRenderer == nullptr)
 	{ // レンダラーへのポインタが NULL の場合
@@ -335,6 +339,8 @@ void CManager::Uninit(void)
 	CElevationManager::Get()->Uninit();		// 起伏マネージャー
 	CMeshManager::Get()->Uninit();			// メッシュマネージャー
 	CBulletManager::Get()->Uninit();		// 弾マネージャー
+	CEnemyManager::Get()->Uninit();			// 敵マネージャー
+	CCoinManager::Get()->Uninit();			// 小判マネージャー
 
 	// マネージャーのメモリを解放する
 	delete m_pManager;

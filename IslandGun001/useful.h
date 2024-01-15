@@ -32,6 +32,7 @@ namespace useful
 	bool CollisionOuterProductXY(D3DXVECTOR3* pTargetpos, const D3DXVECTOR3& TargetposOld, const D3DXVECTOR3 posRight, const D3DXVECTOR3 posLeft);		// 外積の当たり判定処理(XY軸版)
 	bool RectangleCollisionXY(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& VtxMax1, const D3DXVECTOR3& VtxMax2, const D3DXVECTOR3& VtxMin1, const D3DXVECTOR3& VtxMin2);		// XY座標の矩形の当たり判定
 	bool RectangleCollisionXZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& VtxMax1, const D3DXVECTOR3& VtxMax2, const D3DXVECTOR3& VtxMin1, const D3DXVECTOR3& VtxMin2);		// XZ座標の矩形の当たり判定
+	bool RectangleCollisionYZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& VtxMax1, const D3DXVECTOR3& VtxMax2, const D3DXVECTOR3& VtxMin1, const D3DXVECTOR3& VtxMin2);		// YZ座標の矩形の当たり判定
 	void CylinderCollision(D3DXVECTOR3* pTargetPos, const D3DXVECTOR3& ObjectPos, const float fObjectRadius);					// 円柱の当たり判定
 	void DecimalCalculation(const int nDigit, const int nValue, int* aAnswer);		// 10進数への変換処理
 	bool FrameCorrect(const float fDest, float *fTarget, const float fCorrect);		// 均等な数値の補正

@@ -158,6 +158,8 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="chara_blur.cpp" />
+    <ClCompile Include="coin.cpp" />
+    <ClCompile Include="coin_manager.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="collpolygon.cpp" />
     <ClCompile Include="confetti.cpp" />
@@ -247,6 +249,8 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="chara_blur.h" />
+    <ClInclude Include="coin.h" />
+    <ClInclude Include="coin_manager.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="collpolygon.h" />
     <ClInclude Include="confetti.h" />

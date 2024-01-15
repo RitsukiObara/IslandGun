@@ -12,6 +12,8 @@
 #include "shadowCircle.h"
 #include "objectElevation.h"
 #include "elevation_manager.h"
+#include "coin.h"
+#include "coin_manager.h"
 #include "useful.h"
 
 //===============================
@@ -64,6 +66,37 @@ bool collision::ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posO
 
 	// 当たり判定状況を返す
 	return bCollision;
+}
+
+//===============================
+// 小判との当たり判定
+//===============================
+void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 vtxMax = size;		// 最大値
+	D3DXVECTOR3 vtxMin = -size;		// 最小値
+	CCoin* pCoin = CCoinManager::Get()->GetTop();		// 先頭の小判を取得する
+	CCoin* pCoinNext = nullptr;		// 次のの小判
+
+	while (pCoin != nullptr)
+	{ // ブロックの情報が NULL じゃない場合
+
+		// 次の小判を取得する
+		pCoinNext = pCoin->GetNext();
+
+		if (useful::RectangleCollisionXY(pos, pCoin->GetPos(), vtxMax, pCoin->GetFileData().vtxMax, vtxMin, pCoin->GetFileData().vtxMin) == true &&
+			useful::RectangleCollisionXZ(pos, pCoin->GetPos(), vtxMax, pCoin->GetFileData().vtxMax, vtxMin, pCoin->GetFileData().vtxMin) == true &&
+			useful::RectangleCollisionYZ(pos, pCoin->GetPos(), vtxMax, pCoin->GetFileData().vtxMax, vtxMin, pCoin->GetFileData().vtxMin) == true)
+		{ // 小判と重なった場合
+
+			// 終了処理
+			pCoin->Uninit();
+		}
+
+		// 次のオブジェクトを代入する
+		pCoin = pCoinNext;
+	}
 }
 
 /*
