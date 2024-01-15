@@ -168,6 +168,8 @@
     <ClCompile Include="effect2D.cpp" />
     <ClCompile Include="effect_model.cpp" />
     <ClCompile Include="elevation_manager.cpp" />
+    <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="enemy_manager.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="fraction.cpp" />
@@ -255,6 +257,8 @@
     <ClInclude Include="effect2D.h" />
     <ClInclude Include="effect_model.h" />
     <ClInclude Include="elevation_manager.h" />
+    <ClInclude Include="enemy.h" />
+    <ClInclude Include="enemy_manager.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="fraction.h" />

@@ -50,6 +50,7 @@ public:			// 誰でもアクセスできる
 		TYPE_ANIMREACTION,		// アニメリアクション
 		TYPE_PLAYER,			// プレイヤー
 		TYPE_BULLET,			// 弾
+		TYPE_ENEMY,				// 敵
 		TYPE_MAX				// この列挙型の総数
 	};
 

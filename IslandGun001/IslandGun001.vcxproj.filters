@@ -52,6 +52,9 @@
     <Filter Include="Player">
       <UniqueIdentifier>{bf17a0aa-8b9d-467c-8bc5-2e9ec4edeb77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="enemy">
+      <UniqueIdentifier>{21b4acf6-c753-49ed-8266-47dbb61a61b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -303,6 +306,12 @@
     <ClCompile Include="locus3D.cpp">
       <Filter>staging</Filter>
     </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy_manager.cpp">
+      <Filter>enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -553,6 +562,12 @@
     </ClInclude>
     <ClInclude Include="locus3D.h">
       <Filter>staging</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
+      <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy_manager.h">
+      <Filter>enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
