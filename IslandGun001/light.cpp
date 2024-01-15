@@ -28,9 +28,9 @@ namespace
 	};
 	const D3DXCOLOR LIGHT_DIFFUSE[3] =		// ÉâÉCÉgÇÃêF
 	{
-		D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f),
-		D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f),
-		D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f)
+		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+		D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f),
+		D3DXCOLOR(0.65f, 0.65f, 0.65f, 1.0f)
 	};
 }
 

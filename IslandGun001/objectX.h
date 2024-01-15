@@ -13,6 +13,7 @@
 #define INIT_VTX_MIN	(D3DXVECTOR3( 9999.0f,  9999.0f,  9999.0f))		// モデルの最小の頂点座標の初期値
 #define INIT_VTX_MAX	(D3DXVECTOR3(-9999.0f, -9999.0f, -9999.0f))		// モデルの最大の頂点座標の初期値
 #define INIT_SIZE		(D3DXVECTOR3(0.0f, 0.0f, 0.0f))					// モデルサイズの初期値
+#define INIT_PLAYER		(CXFile::TYPE_PLAYERWAIST)						// プレイヤーの最初のモデル
 
 //------------------------------------------------------------
 // クラス定義(Xファイル)
@@ -32,6 +33,24 @@ public:			// 誰でもアクセスできる
 		TYPE_FRAC_RING,			// 輪(破片)
 		TYPE_FRAC_WOOD,			// 木片(破片)
 		TYPE_RIPPLE,			// 波紋
+
+		// プレイヤーモデル
+		TYPE_PLAYERWAIST,		// 腰
+		TYPE_PLAYERBODY,		// 体
+		TYPE_PLAYERNECK,		// 首
+		TYPE_PLAYERHEAD,		// 頭
+		TYPE_PLAYERRIGHTARM,	// 右腕
+		TYPE_PLAYERLEFTARM,		// 左腕
+		TYPE_PLAYERRIGHTUPPER,	// 右上腕
+		TYPE_PLAYERLEFTUPPER,	// 左上腕
+		TYPE_PLAYERRIGHTHAND,	// 右手
+		TYPE_PLAYERLEFTHAND,	// 左手
+		TYPE_PLAYERRIGHTLEG,	// 右脚
+		TYPE_PLAYERLEFTLEG,		// 左脚
+		TYPE_PLAYERRIGHTSHIN,	// 右脛
+		TYPE_PLAYERLEFTSHIN,	// 左脛
+		TYPE_PLAYERRIGHTFOOT,	// 右足
+		TYPE_PLAYERLEFTFOOT,	// 左足
 
 		TYPE_MAX,				// 全モデルの総数
 	};

@@ -22,6 +22,8 @@
 #include "objectElevation.h"
 #include "skybox.h"
 
+#include "player.h"
+
 //--------------------------------------------
 // マクロ定義
 //--------------------------------------------
@@ -31,6 +33,7 @@
 // 静的メンバ変数宣言
 //--------------------------------------------
 CPause* CGame::m_pPause = nullptr;							// ポーズの情報
+CPlayer* CGame::m_pPlayer = nullptr;						// プレイヤーの情報
 CGame::STATE CGame::m_GameState = CGame::STATE_START;		// ゲームの進行状態
 int CGame::m_nFinishCount = 0;								// 終了カウント
 bool CGame::m_bPause = false;								// ポーズ状況
@@ -42,6 +45,7 @@ CGame::CGame()
 {
 	// 全ての値をクリアする
 	m_pPause = nullptr;			// ポーズ
+	m_pPlayer = nullptr;		// プレイヤー
 	m_nFinishCount = 0;			// 終了カウント
 	m_GameState = STATE_START;	// 状態
 	m_bPause = false;			// ポーズ状況
@@ -60,8 +64,8 @@ CGame::~CGame()
 //=========================================
 HRESULT CGame::Init(void)
 {
-	//// テキスト読み込み処理
-	//CElevation::TxtSet();
+	// テキスト読み込み処理
+	CElevation::TxtSet();
 
 	// メッシュのテキスト読み込み
 	//CMesh::TxtSet();
@@ -79,9 +83,12 @@ HRESULT CGame::Init(void)
 	// シーンの初期化
 	CScene::Init();
 
+	// プレイヤーの生成処理
+	m_pPlayer = CPlayer::Create(NONE_D3DXVECTOR3);
+
 	// 情報の初期化
-	m_nFinishCount = 0;				// 終了カウント
-	m_GameState = STATE_START;		// 状態
+	m_nFinishCount = 0;			// 終了カウント
+	m_GameState = STATE_START;	// 状態
 	m_bPause = false;			// ポーズ状況
 
 	// 成功を返す
@@ -95,6 +102,7 @@ void CGame::Uninit(void)
 {
 	// ポインタを NULL にする
 	m_pPause = nullptr;			// ポーズ
+	m_pPlayer = nullptr;		// プレイヤー
 
 	// 情報を初期化する
 	m_GameState = STATE_START;	// ゲームの進行状態
@@ -310,10 +318,28 @@ CGame::STATE CGame::GetState(void)
 }
 
 //======================================
+// プレイヤーの取得処理
+//======================================
+CPlayer* CGame::GetPlayer(void)
+{
+	// プレイヤーのポインタを返す
+	return m_pPlayer;
+}
+
+//======================================
 // ポーズのNULL化処理
 //======================================
 void CGame::DeletePause(void)
 {
 	// ポーズのポインタを NULL にする
 	m_pPause = nullptr;
+}
+
+//======================================
+// プレイヤーのNULL化処理
+//======================================
+void CGame::DeletePlayer(void)
+{
+	// プレイヤーのポインタを NULL にする
+	m_pPlayer = nullptr;
 }

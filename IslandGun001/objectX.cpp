@@ -24,6 +24,24 @@ const char* CXFile::c_apModelData[CXFile::TYPE_MAX] =		// モデルの名前
 	"data\\MODEL\\Platform\\FracRing.x",		// 輪(破片)
 	"data\\MODEL\\Platform\\FracWood.x",		// 木片(破片)
 	"data\\MODEL\\Platform\\Ripple.x",			// 波紋
+
+	// プレイヤーモデル
+	"data/MODEL/ReonWaist.x",			// プレイヤーの腰
+	"data/MODEL/ReonBody.x",			// プレイヤーの体
+	"data/MODEL/ReonNeck.x",			// プレイヤーの首
+	"data/MODEL/ReonHead.x",			// プレイヤーの頭
+	"data/MODEL/ReonRArm.x",			// プレイヤーの右腕
+	"data/MODEL/ReonLArm.x",			// プレイヤーの左腕
+	"data/MODEL/ReonRUpper.x",			// プレイヤーの右上腕
+	"data/MODEL/ReonLUpper.x",			// プレイヤーの左上腕
+	"data/MODEL/ReonRHand.x",			// プレイヤーの右手
+	"data/MODEL/ReonLHand.x",			// プレイヤーの左手
+	"data/MODEL/ReonRLeg.x",			// プレイヤーの右脚
+	"data/MODEL/ReonLLeg.x",			// プレイヤーの左脚
+	"data/MODEL/ReonRShin.x",			// プレイヤーの右脛
+	"data/MODEL/ReonLShin.x",			// プレイヤーの左脛
+	"data/MODEL/ReonRFoot.x",			// プレイヤーの右足
+	"data/MODEL/ReonLFoot.x",			// プレイヤーの左足
 };
 
 //------------------------------------------------------------

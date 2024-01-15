@@ -14,6 +14,7 @@
 #include "elevation_manager.h"
 #include "Effect.h"
 #include "input.h"
+#include "debugproc.h"
 #include "useful.h"
 #include "texture.h"
 

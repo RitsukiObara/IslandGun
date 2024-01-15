@@ -93,9 +93,7 @@ private:		// 自分だけアクセス出来る
 	D3DXVECTOR3 m_rot;				// 向き
 	D3DVIEWPORT9 m_viewport;		// ビューポート
 	TYPE m_type;					// 種類
-	float m_rotDest;				// 目的の向き
 	float m_Dis;					// 距離
-	float m_DisDest;				// 目的の距離
 	int m_nSwingCount;				// 揺れのカウント
 	bool m_bControl;				// 操作状況
 };

@@ -48,6 +48,7 @@ public:			// 誰でもアクセスできる
 		TYPE_EFFECTMODEL,		// モデルエフェクト
 		TYPE_LOCUSMODEL,		// モデル残像
 		TYPE_ANIMREACTION,		// アニメリアクション
+		TYPE_PLAYER,			// プレイヤー
 		TYPE_MAX				// この列挙型の総数
 	};
 

@@ -49,6 +49,9 @@
     <Filter Include="staging">
       <UniqueIdentifier>{007e4626-5345-422c-b495-292e0fdf3bef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{bf17a0aa-8b9d-467c-8bc5-2e9ec4edeb77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -285,6 +288,12 @@
     <ClCompile Include="stun.cpp">
       <Filter>staging</Filter>
     </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="player_action.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -520,6 +529,12 @@
     </ClInclude>
     <ClInclude Include="stun.h">
       <Filter>staging</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="player_action.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
