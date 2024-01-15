@@ -87,7 +87,7 @@ void CPushTiming::Update(void)
 void CPushTiming::Draw(void)
 {
 	// •`‰æˆ—
-	CBillboardAnim::DrawLightOff();
+	CBillboardAnim::DrawLightOff(false);
 }
 
 //===========================================

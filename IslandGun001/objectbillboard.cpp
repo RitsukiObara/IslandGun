@@ -224,7 +224,7 @@ void CBillboard::Draw(void)
 //===========================================
 // 描画処理(ライティング無し)
 //===========================================
-void CBillboard::DrawLightOff(void)
+void CBillboard::DrawLightOff(const bool bZTest)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::Get()->GetRenderer()->GetDevice();
@@ -238,9 +238,13 @@ void CBillboard::DrawLightOff(void)
 	// ライティングをOFFにする
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	// Zテストを無効にする
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);					//Zテストの設定
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);						//Zテストの有効/無効設定
+	if (bZTest == false)
+	{ // Zテストをしない場合
+
+		// Zテストを無効にする
+		pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);					//Zテストの設定
+		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);						//Zテストの有効/無効設定
+	}
 
 	// アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);					//アルファテストの有効/無効設定
@@ -801,10 +805,10 @@ void CBillboardAnim::Draw(void)
 //===========================================
 // 描画処理
 //===========================================
-void CBillboardAnim::DrawLightOff(void)
+void CBillboardAnim::DrawLightOff(const bool bZTest)
 {
 	// 描画処理
-	CBillboard::DrawLightOff();
+	CBillboard::DrawLightOff(bZTest);
 }
 
 //===========================================

@@ -23,6 +23,7 @@
 #include "elevation_manager.h"
 #include "objectElevation.h"
 #include "motion.h"
+#include "bullet.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -35,10 +36,11 @@ namespace
 	const float SPEED = 10.0f;						// 速度
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
-	const float CAMERA_ROT_CORRECT = 0.000002f;		// カメラの向きの補正倍率
-	const float CAMERA_HEIGHT = 0.0005f;				// カメラの高さの倍率
+	const float CAMERA_ROT_CORRECT = 0.000004f;		// カメラの向きの補正倍率
+	const float CAMERA_HEIGHT = 0.0005f;			// カメラの高さの倍率
 	const float CAMERA_MAX_HEIGHT = 500.0f;			// カメラの高さの最大値
 	const float CAMERA_MIN_HEIGHT = 0.0f;			// カメラの高さの最小値
+	const float CAMERA_ELEVATION_HEIGHT = 30.0f;	// カメラの起伏地面の高さ
 }
 
 //=========================================
@@ -188,6 +190,15 @@ void CPlayer::Update(void)
 
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
+
+	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_X, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetRepeat(CInputGamePad::JOYKEY_X, 0, 10) == true)
+	{ // Xキーを押した場合
+
+		// 弾バンバン
+		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y + 0.01f, CBullet::TYPE::TYPE_HANDGUN);
+		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y - 0.01f, CBullet::TYPE::TYPE_HANDGUN);
+	}
 }
 
 //===========================================
@@ -494,7 +505,7 @@ void CPlayer::CameraControl(void)
 	useful::RotNormalize(&CameraRot.y);
 
 	// カメラの高さを加算する
-	m_fCameraHeight += (fStickRotY * CAMERA_HEIGHT);
+	m_fCameraHeight -= (fStickRotY * CAMERA_HEIGHT);
 
 	if (m_fCameraHeight >= CAMERA_MAX_HEIGHT)
 	{ // カメラの高さが一定数を超えた場合
@@ -510,5 +521,40 @@ void CPlayer::CameraControl(void)
 		m_fCameraHeight = CAMERA_MIN_HEIGHT;
 	}
 
+	// 起伏地面とカメラの当たり判定
+	ElevationCamera();
+
+	// 向きを適用する
 	CManager::Get()->GetCamera()->SetRot(CameraRot);
+}
+
+//=======================================
+// 起伏地面とカメラの当たり判定
+//=======================================
+void CPlayer::ElevationCamera(void)
+{
+	// ローカル変数宣言
+	CElevation* pMesh = CElevationManager::Get()->GetTop();		// 起伏の先頭のオブジェクトを取得する
+	D3DXVECTOR3 posV = CManager::Get()->GetCamera()->GetPosV();	// 位置を取得する
+	float fHeight = 0.0f;			// 高さ
+
+	while (pMesh != nullptr)
+	{ // 地面の情報がある限り回す
+
+		// 当たり判定を取る
+		fHeight = pMesh->ElevationCollision(posV) + CAMERA_ELEVATION_HEIGHT;
+
+		if (posV.y < fHeight)
+		{ // 当たり判定の位置が高かった場合
+
+			// 高さを設定する
+			posV.y = fHeight;
+		}
+
+		// 次のポインタを取得する
+		pMesh = pMesh->GetNext();
+	}
+
+	// 位置を更新する
+	CManager::Get()->GetCamera()->SetPosV(posV);
 }

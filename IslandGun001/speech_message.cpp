@@ -169,7 +169,7 @@ void CSpeechMessage::Update(void)
 void CSpeechMessage::Draw(void)
 {
 	// •`‰æˆ—
-	CBillboard::DrawLightOff();
+	CBillboard::DrawLightOff(false);
 }
 
 //=========================

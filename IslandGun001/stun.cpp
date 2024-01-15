@@ -176,7 +176,7 @@ void CStun::Draw(void)
 		{ // î•ñ‚ª NULL ‚¶‚á‚È‚¢ê‡
 
 			// •`‰æˆ—
-			m_apStun[nCnt]->DrawLightOff();
+			m_apStun[nCnt]->DrawLightOff(true);
 		}
 	}
 }

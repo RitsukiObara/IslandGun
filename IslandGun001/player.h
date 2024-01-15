@@ -83,6 +83,7 @@ private:		// 自分だけアクセスできる
 	void RotMove(void);				// 向きの設定処理
 	void Jump(void);				// ジャンプ処理
 	void CameraControl(void);		// カメラの操作処理
+	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
 
 	// メンバ変数
 	CMotion* m_pMotion;				// モーションの情報

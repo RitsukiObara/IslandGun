@@ -153,6 +153,8 @@
     <ClCompile Include="blur.cpp" />
     <ClCompile Include="blur_col.cpp" />
     <ClCompile Include="blur_org.cpp" />
+    <ClCompile Include="bullet.cpp" />
+    <ClCompile Include="bullet_manager.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="chara_blur.cpp" />
@@ -173,6 +175,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="locus2D.cpp" />
+    <ClCompile Include="locus3D.cpp" />
     <ClCompile Include="logo.cpp" />
     <ClCompile Include="logo_mark.cpp" />
     <ClCompile Include="main.cpp" />
@@ -237,6 +240,8 @@
     <ClInclude Include="blur.h" />
     <ClInclude Include="blur_col.h" />
     <ClInclude Include="blur_org.h" />
+    <ClInclude Include="bullet.h" />
+    <ClInclude Include="bullet_manager.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="chara_blur.h" />
@@ -257,6 +262,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="locus2D.h" />
+    <ClInclude Include="locus3D.h" />
     <ClInclude Include="logo.h" />
     <ClInclude Include="logo_mark.h" />
     <ClInclude Include="main.h" />

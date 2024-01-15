@@ -140,7 +140,7 @@ void CDestruction::Draw(void)
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
 	// 描画処理
-	CBillboard::DrawLightOff();
+	CBillboard::DrawLightOff(false);
 
 	//αブレンディングを元に戻す
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);

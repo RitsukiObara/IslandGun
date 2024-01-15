@@ -294,6 +294,15 @@
     <ClCompile Include="player_action.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="bullet.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="bullet_manager.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="locus3D.cpp">
+      <Filter>staging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -535,6 +544,15 @@
     </ClInclude>
     <ClInclude Include="player_action.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet_manager.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="locus3D.h">
+      <Filter>staging</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

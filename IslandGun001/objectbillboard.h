@@ -25,8 +25,8 @@ public:			// 誰でもアクセスできる
 	virtual void Update(void);			// 更新処理
 	virtual void Draw(void);			// 描画処理
 
-	void DrawLightOff(void);			// 描画処理(ライティング無し)
-	void DrawShift(const D3DXVECTOR3 shift);				// 描画処理(位置ずらし)
+	void DrawLightOff(const bool bZTest);			// 描画処理(ライティング無し)
+	void DrawShift(const D3DXVECTOR3 shift);		// 描画処理(位置ずらし)
 
 	void BindTexture(int nIdx);			// テクスチャの割り当て処理
 
@@ -96,7 +96,7 @@ public:			// 誰でもアクセスできる
 	virtual void Update(void);			// 更新処理
 	virtual void Draw(void);			// 描画処理
 
-	void DrawLightOff(void);	// 描画処理(ライティング無し)
+	void DrawLightOff(const bool bZTest);	// 描画処理(ライティング無し)
 
 	// セット・ゲット関係
 	int GetPattern(void) const;								// パターンの取得処理

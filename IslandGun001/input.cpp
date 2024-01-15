@@ -329,6 +329,7 @@ CInputGamePad::CInputGamePad()
 	ZeroMemory(&m_aPadState[0], sizeof(m_aPadState));					// プレス情報
 	ZeroMemory(&m_aPadStateTrigger[0], sizeof(m_aPadStateTrigger));		// トリガー情報
 	ZeroMemory(&m_aPadStateRelease[0], sizeof(m_aPadStateRelease));		// リリース情報
+	ZeroMemory(&m_nRepeatCount[0][0], sizeof(m_nRepeatCount));			// リピートカウント
 	ZeroMemory(&m_aVibration[0], sizeof(m_aVibration));					// バイブレーション情報
 	m_bConnect = false;													// 接続判定
 }
@@ -360,6 +361,9 @@ HRESULT CInputGamePad::Init(HINSTANCE hInstance)
 
 	// ゲームパッドのリリース情報を用意する
 	memset(&m_aPadStateRelease[0], 0, sizeof(m_aPadStateRelease));
+
+	// リピートカウントを用意する
+	memset(&m_nRepeatCount[0][0], 0, sizeof(m_nRepeatCount));
 
 	// バイブレーション情報を用意する
 	memset(&m_aVibration[0], 0, sizeof(m_aVibration));
@@ -478,6 +482,38 @@ bool CInputGamePad::GetTrigger(JOYKEY nKey, int nPlayer)
 bool CInputGamePad::GetRelease(JOYKEY nKey, int nPlayer)
 {
 	return(m_aPadStateRelease[nPlayer].Gamepad.wButtons & (0x01 << nKey)) ? true : false;
+}
+
+//======================================
+// リピート処理
+//======================================
+bool CInputGamePad::GetRepeat(JOYKEY nKey, int nPlayer, int nCount)
+{
+	if (CInputGamePad::GetPress(nKey, nPlayer) == true)
+	{ // キーを押している場合
+
+		// カウントを加算する
+		m_nRepeatCount[nPlayer][nKey]++;
+	}
+	else
+	{ // キーを押していない場合
+
+		// カウントを加算する
+		m_nRepeatCount[nPlayer][nKey] = 0;
+	}
+
+	if (m_nRepeatCount[nPlayer][nKey] >= nCount)
+	{ // リピートカウントがカウント数を超えた場合
+
+		// カウントを0にする
+		m_nRepeatCount[nPlayer][nKey] = 0;
+
+		// true を返す
+		return true;
+	}
+
+	// false を返す
+	return false;
 }
 
 //======================================

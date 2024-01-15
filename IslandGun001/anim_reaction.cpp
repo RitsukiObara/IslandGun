@@ -93,7 +93,7 @@ void CAnimReaction::Update(void)
 void CAnimReaction::Draw(void)
 {
 	// •`‰æˆ—
-	CBillboardAnim::DrawLightOff();
+	CBillboardAnim::DrawLightOff(false);
 }
 
 //===========================================
