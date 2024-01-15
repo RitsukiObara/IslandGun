@@ -179,6 +179,9 @@ void CPlayer::Update(void)
 	// 操作処理
 	Control();
 
+	// 攻撃処理
+	Attack();
+
 	// 移動処理
 	Move();
 
@@ -190,15 +193,6 @@ void CPlayer::Update(void)
 
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
-
-	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_X, 0) == true ||
-		CManager::Get()->GetInputGamePad()->GetRepeat(CInputGamePad::JOYKEY_X, 0, 10) == true)
-	{ // Xキーを押した場合
-
-		// 弾バンバン
-		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y + 0.01f, CBullet::TYPE::TYPE_HANDGUN);
-		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y - 0.01f, CBullet::TYPE::TYPE_HANDGUN);
-	}
 }
 
 //===========================================
@@ -217,6 +211,15 @@ CMotion* CPlayer::GetMotion(void) const
 {
 	// モーションの情報を返す
 	return m_pMotion;
+}
+
+//===========================================
+// 行動の情報の取得処理
+//===========================================
+CPlayerAction* CPlayer::GetAction(void) const
+{
+	// 行動の情報を返す
+	return m_pAction;
 }
 
 //=======================================
@@ -244,9 +247,16 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
 
 	// 全ての値を設定する
+	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
 	m_move = NONE_D3DXVECTOR3;		// 移動量
+	m_state = STATE_NONE;			// 状態
+	m_nStateCount = 0;				// 状態カウント
+	m_nDodge = 0;					// 回避カウント
+	m_fSpeed = SPEED;				// 速度
+	m_fAlpha = 1.0f;				// 体の透明度
 	m_bMove = false;				// 移動状況
 	m_bJump = false;				// ジャンプ状況
+	m_bDodge = false;				// 回避状況
 }
 
 //===========================================
@@ -296,6 +306,24 @@ CPlayer* CPlayer::Create(const D3DXVECTOR3& pos)
 
 	// プレイヤーのポインタを返す
 	return pPlayer;
+}
+
+//=======================================
+// 目的の向きの設定処理
+//=======================================
+void CPlayer::SetRotDest(const D3DXVECTOR3& rot)
+{
+	// 目的の向きを設定する
+	m_rotDest = rot;
+}
+
+//=======================================
+// 目的の向きの取得処理
+//=======================================
+D3DXVECTOR3 CPlayer::GetRotDest(void) const
+{
+	// 目的の向きを返す
+	return m_rotDest;
 }
 
 //=======================================
@@ -396,25 +424,9 @@ void CPlayer::Move(void)
 	// 位置と向きを取得する
 	D3DXVECTOR3 pos = GetPos();
 	D3DXVECTOR3 rot = GetRot();
-	D3DXVECTOR3 CameraRot = CManager::Get()->GetCamera()->GetRot();
 
-	// 向きの正規化
+	// 向きの補正処理
 	useful::RotCorrect(m_rotDest.y, &rot.y, ROT_CORRECT);
-
-	if (m_bMove == true)
-	{ // 移動状況が true の場合
-
-		// 移動量を設定する
-		m_move.x = sinf(m_rotDest.y) * m_fSpeed;
-		m_move.z = cosf(m_rotDest.y) * m_fSpeed;
-	}
-	else
-	{ // 上記以外
-
-		// 移動量をリセットする
-		m_move.x = 0.0f;
-		m_move.z = 0.0f;
-	}
 
 	// 位置を移動させる
 	pos.x += m_move.x;
@@ -433,17 +445,18 @@ void CPlayer::Move(void)
 //=======================================
 void CPlayer::RotMove(void)
 {
-	D3DXVECTOR3 CameraRot = CManager::Get()->GetCamera()->GetRot();		// カメラの向き
-	float fStickRotX = 0.0f;		// スティックのX座標
-	float fStickRotY = 0.0f;		// スティックのY座標
-	float fStickRot = 0.0f;			// スティックの向き
+	// ローカル変数を宣言する
+	float fStickRotX = 0.0f;	// スティックのX座標
+	float fStickRotY = 0.0f;	// スティックのY座標
+	float fStickRot = 0.0f;		// スティックの向き
+	D3DXVECTOR3 CameraRot = CManager::Get()->GetCamera()->GetRot();	// カメラの向き
 
 	// スティックの向きを取る
-	fStickRotX = (float)(CManager::Get()->GetInputGamePad()->GetGameStickLXPress(0));
 	fStickRotY = (float)(CManager::Get()->GetInputGamePad()->GetGameStickLYPress(0));
+	fStickRotX = (float)(CManager::Get()->GetInputGamePad()->GetGameStickLXPress(0));
 
-	if (CManager::Get()->GetInputGamePad()->GetGameStickLYPress(0) != 0 ||
-		CManager::Get()->GetInputGamePad()->GetGameStickLXPress(0) != 0)
+	if (fStickRotY != 0 ||
+		fStickRotX != 0)
 	{ // 右スティックをどっちかに倒した場合
 
 		// スティックの向きを設定する
@@ -452,20 +465,29 @@ void CPlayer::RotMove(void)
 		// 向きの正規化
 		useful::RotNormalize(&fStickRot);
 
-		// 向きをスティックの方向にする
-		m_rotDest.y = fStickRot + CameraRot.y;
+		// 向きにカメラの向きを加算する
+		fStickRot += CameraRot.y;
 
-		// 向きの正規化
-		useful::RotNormalize(&m_rotDest.y);
+		if (m_pAction->GetAction() != CPlayerAction::ACTION_SHOT)
+		{ // 射撃状態以外の場合
 
-		// 移動状況を true にする
-		m_bMove = true;
+			// 向きの正規化
+			useful::RotNormalize(&fStickRot);
+
+			// 向きを設定する
+			m_rotDest.y = fStickRot;
+		}
+
+		// 移動量を設定する
+		m_move.x = sinf(fStickRot) * m_fSpeed;
+		m_move.z = cosf(fStickRot) * m_fSpeed;
 	}
 	else
 	{ // 上記以外
 
-		// 移動状況を false にする
-		m_bMove = false;
+		// 移動量を設定する
+		m_move.x = 0.0f;
+		m_move.z = 0.0f;
 	}
 }
 
@@ -557,4 +579,35 @@ void CPlayer::ElevationCamera(void)
 
 	// 位置を更新する
 	CManager::Get()->GetCamera()->SetPosV(posV);
+}
+
+//=======================================
+// 攻撃処理
+//=======================================
+void CPlayer::Attack(void)
+{
+	if (CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_RB, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_LB, 0) == true)
+	{ // LB・RBキーを押した場合
+
+		// 射撃状態にする
+		m_pAction->SetAction(CPlayerAction::ACTION_SHOT);
+	}
+	else
+	{ // 上記以外
+
+		// 通常状態にする
+		m_pAction->SetAction(CPlayerAction::ACTION_NONE);
+	}
+
+	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_RB, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetRepeat(CInputGamePad::JOYKEY_RB, 0, 10) == true ||
+		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_LB, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetRepeat(CInputGamePad::JOYKEY_LB, 0, 10) == true)
+	{ // LB・RBキーを押した場合
+
+		// 弾バンバン
+		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y + 0.01f, CBullet::TYPE::TYPE_HANDGUN);
+		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y - 0.01f, CBullet::TYPE::TYPE_HANDGUN);
+	}
 }

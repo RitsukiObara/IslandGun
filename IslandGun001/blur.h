@@ -20,13 +20,13 @@ class CBlur : public CModel
 public:					// 誰でもアクセスできる
 
 	CBlur(PRIORITY priority = PRIORITY_EFFECT);		// オーバーロードコンストラクタ
-	~CBlur();			// デストラクタ
+	virtual ~CBlur();			// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void);		// 初期化処理
-	void Uninit(void);		// 終了処理
-	void Update(void);		// 更新処理
-	void Draw(void);		// 描画処理
+	virtual HRESULT Init(void) override;	// 初期化処理
+	virtual void Uninit(void) override;		// 終了処理
+	virtual void Update(void) override;		// 更新処理
+	virtual void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const CXFile::SXFile& filedata, const int nLife, const float fAlpha);		// 情報の設定処理
 

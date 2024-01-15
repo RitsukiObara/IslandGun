@@ -12,12 +12,15 @@
 #include "player_action.h"
 #include "renderer.h"
 
+#include "player.h"
+
 //=========================
 // コンストラクタ
 //=========================
 CPlayerAction::CPlayerAction()
 {
-
+	// 全ての値をクリアする
+	m_action = ACTION_NONE;		// 行動
 }
 
 //=========================
@@ -33,7 +36,8 @@ CPlayerAction::~CPlayerAction()
 //=========================
 HRESULT CPlayerAction::Init(void)
 {
-
+	// 全ての値を初期化する
+	m_action = ACTION_NONE;		// 行動
 
 	// 成功を返す
 	return S_OK;
@@ -53,7 +57,57 @@ void CPlayerAction::Uninit(void)
 //=========================
 void CPlayerAction::Update(CPlayer* pPlayer)
 {
+	switch (m_action)
+	{
+	case CPlayerAction::ACTION_NONE:	// 通常状態
 
+		// 通常状態処理
+		NoneProcess(pPlayer);
+
+		break;
+
+	case CPlayerAction::ACTION_SHOT:	// 射撃状態
+
+		// 射撃状態
+		ShotProcess(pPlayer);
+
+		break;
+
+	case CPlayerAction::ACTION_DAGGER:	// ダガー状態
+
+		// ダガー状態処理
+		DaggerPrecess(pPlayer);
+
+		break;
+
+	case CPlayerAction::ACTION_DODGE:	// 回避状態
+
+		// 回避状態処理
+		DodgeProcess(pPlayer);
+
+		break;
+
+	case CPlayerAction::ACTION_SHOTGUN:	// 散弾(J+銃)状態
+
+		// 散弾状態処理
+		ShotgunProcess(pPlayer);
+
+		break;
+
+	case CPlayerAction::ACTION_SWOOP:	// 急降下(J+ダガー)状態
+
+		// 急降下状態処理
+		SwoopProcess(pPlayer);
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
+	}
 }
 
 //=========================
@@ -106,4 +160,78 @@ CPlayerAction* CPlayerAction::Create(void)
 
 	// 行動のポインタを返す
 	return pAction;
+}
+
+//=========================
+// 行動の設定処理
+//=========================
+void CPlayerAction::SetAction(const ACTION action)
+{
+	// 行動を設定する
+	m_action = action;
+}
+
+//=========================
+// 行動の取得処理
+//=========================
+CPlayerAction::ACTION CPlayerAction::GetAction(void) const
+{
+	// 行動を返す
+	return m_action;
+}
+
+//=========================
+// 通常状態処理
+//=========================
+void CPlayerAction::NoneProcess(CPlayer* pPlayer)
+{
+
+}
+
+//=========================
+// 射撃状態処理
+//=========================
+void CPlayerAction::ShotProcess(CPlayer* pPlayer)
+{
+	// 向きを取得する
+	D3DXVECTOR3 rotDest = pPlayer->GetRotDest();
+	D3DXVECTOR3 rotCamera = CManager::Get()->GetCamera()->GetRot();
+
+	// カメラの向きを同じ向きを揃える
+	rotDest.y = rotCamera.y;
+
+	// 向きを適用する
+	pPlayer->SetRotDest(rotDest);
+}
+
+//=========================
+// ダガー状態処理
+//=========================
+void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
+{
+
+}
+
+//=========================
+// 回避状態処理
+//=========================
+void CPlayerAction::DodgeProcess(CPlayer* pPlayer)
+{
+
+}
+
+//=========================
+// 散弾(J+銃)状態
+//=========================
+void CPlayerAction::ShotgunProcess(CPlayer* pPlayer)
+{
+
+}
+
+//=========================
+// 急降下状態処理
+//=========================
+void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
+{
+
 }

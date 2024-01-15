@@ -23,10 +23,10 @@ public:		// 誰でもアクセスできる
 	virtual ~CMeshTornado();		// デストラクタ
 
 	// メンバ関数
-	virtual HRESULT Init(void);		// 初期化処理
-	virtual void Uninit(void);		// 終了処理
-	virtual void Update(void);		// 更新処理
-	virtual void Draw(void);		// 描画処理
+	virtual HRESULT Init(void) override;	// 初期化処理
+	virtual void Uninit(void) override;		// 終了処理
+	virtual void Update(void) override;		// 更新処理
+	virtual void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const float fWidth, const float fHeight, const int nVortex, const float fShift, const float fCircum, const SGrid& Divi);			// 情報の設定処理
 	void SetVertex(void);	// 頂点の設定処理

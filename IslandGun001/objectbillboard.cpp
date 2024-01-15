@@ -700,21 +700,16 @@ CBillboard* CBillboard::Create(const TYPE type, const PRIORITY priority)
 //----------------------------------------------------------------ここからCBillboardAnimの処理----------------------------------------------------------------
 
 //===========================================
-// コンストラクタ
-//===========================================
-CBillboardAnim::CBillboardAnim() : CBillboard(CObject::TYPE_NONE, CObject::PRIORITY_BG)
-{
-	// コンストラクタの箱
-	Box();
-}
-
-//===========================================
 // オーバーロードコンストラクタ
 //===========================================
 CBillboardAnim::CBillboardAnim(CObject::TYPE type, PRIORITY priority) : CBillboard(type, priority)
 {
-	// コンストラクタの箱
-	Box();
+	// 全ての値をクリアする
+	m_nCounter = 0;					// アニメーションカウンター
+	m_nReplayCount = 0;				// 再生カウント
+	m_nPattern = 0;					// アニメーションパターン
+	m_nReplayPattern = 0;			// 再生パターン
+	m_fTexPattern = 0.0f;			// テクスチャのパターン
 }
 
 //===========================================
@@ -723,19 +718,6 @@ CBillboardAnim::CBillboardAnim(CObject::TYPE type, PRIORITY priority) : CBillboa
 CBillboardAnim::~CBillboardAnim()
 {
 
-}
-
-//===========================================
-// コンストラクタの箱
-//===========================================
-void CBillboardAnim::Box(void)
-{
-	// 全ての値をクリアする
-	m_nCounter = 0;					// アニメーションカウンター
-	m_nReplayCount = 0;				// 再生カウント
-	m_nPattern = 0;					// アニメーションパターン
-	m_nReplayPattern = 0;			// 再生パターン
-	m_fTexPattern = 0.0f;			// テクスチャのパターン
 }
 
 //===========================================
@@ -843,7 +825,7 @@ void CBillboardAnim::SetAnim(const int nCount, const int nPattern)
 //===========================================
 // 生成処理
 //===========================================
-CBillboardAnim* CBillboardAnim::Create(void)
+CBillboardAnim* CBillboardAnim::Create(const TYPE type, const PRIORITY priority)
 {
 	// ローカルオブジェクトを生成
 	CBillboardAnim* pBillboard = nullptr;	// ビルボードのインスタンスを生成
@@ -852,7 +834,7 @@ CBillboardAnim* CBillboardAnim::Create(void)
 	{ // オブジェクトが NULL の場合
 
 		// オブジェクトを生成
-		pBillboard = new CBillboardAnim;
+		pBillboard = new CBillboardAnim(type, priority);
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合

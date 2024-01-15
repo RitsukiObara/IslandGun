@@ -38,10 +38,10 @@ public:			// 誰でもアクセスできる
 	virtual ~COrbit();				// デストラクタ
 
 	// メンバ関数
-	virtual HRESULT Init(void);		// 初期化処理
-	virtual void Uninit(void);		// 終了処理
-	virtual void Update(void);		// 更新処理
-	virtual void Draw(void);		// 描画処理
+	virtual HRESULT Init(void) override;	// 初期化処理
+	virtual void Uninit(void) override;		// 終了処理
+	virtual void Update(void) override;		// 更新処理
+	virtual void Draw(void) override;		// 描画処理
 
 	void SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const int nTexIdx);				// 情報の設定処理
 	void SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const char* pTextureName);		// 情報の設定処理

@@ -31,10 +31,10 @@ public:			// 誰でもアクセスできる
 	~CPushTiming();			// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void);		// 初期化処理
-	void Uninit(void);		// 終了処理
-	void Update(void);		// 更新処理
-	void Draw(void);		// 描画処理
+	HRESULT Init(void) override;	// 初期化処理
+	void Uninit(void) override;		// 終了処理
+	void Update(void) override;		// 更新処理
+	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const TYPE type);					// 設定処理
 

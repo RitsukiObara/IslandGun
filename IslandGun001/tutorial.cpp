@@ -86,12 +86,3 @@ void CTutorial::Draw(void)
 {
 
 }
-
-//======================================
-// î•ñ‚Ìİ’èˆ—
-//======================================
-void CTutorial::SetData(const MODE mode)
-{
-	// î•ñ‚Ìİ’èˆ—
-	CScene::SetData(mode);
-}

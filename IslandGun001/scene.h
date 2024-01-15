@@ -40,7 +40,7 @@ public:
 	virtual void Update(void);			// 更新処理
 	virtual void Draw(void);			// 描画処理
 
-	virtual void SetData(const MODE mode);		// 情報の設定処理
+	void SetData(const MODE mode);		// 情報の設定処理
 
 	// セット・ゲット関係
 	void SetMode(const MODE mode);		// モードの設定処理

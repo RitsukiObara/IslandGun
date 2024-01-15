@@ -37,10 +37,10 @@ public:
 	CBullet* GetNext(void) const;	// 次のポインタの設定処理
 
 	// メンバ関数
-	HRESULT Init(void);		// 初期化処理
-	void Uninit(void);		// 終了処理
-	void Update(void);		// 更新処理
-	void Draw(void);		// 描画処理
+	HRESULT Init(void) override;	// 初期化処理
+	void Uninit(void) override;		// 終了処理
+	void Update(void) override;		// 更新処理
+	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const float fRot, const TYPE type);				// 情報の設定処理
 

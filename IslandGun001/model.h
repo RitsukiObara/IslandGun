@@ -29,10 +29,10 @@ public:			// 誰でもアクセスできる
 	virtual ~CModel();	// デストラクタ
 
 	// メンバ関数
-	virtual HRESULT Init(void);		// 初期化処理
-	virtual void Uninit(void);		// 終了処理
-	virtual void Update(void);		// 更新処理
-	virtual void Draw(void);		// 描画処理
+	virtual HRESULT Init(void) override;	// 初期化処理
+	virtual void Uninit(void) override;		// 終了処理
+	virtual void Update(void) override;		// 更新処理
+	virtual void Draw(void) override;		// 描画処理
 
 	void Draw(D3DXCOLOR col);		// 描画処理(色処理)
 	void Draw(D3DXCOLOR* col);		// 描画処理(複数色)

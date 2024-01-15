@@ -37,12 +37,10 @@ public:				// 誰でもアクセスできる
 	~CNumber();				// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void);		// 初期化処理
-	void Uninit(void);		// 終了処理
-	void Update(void);		// 更新処理
-	void Draw(void);		// 描画処理
-
-	static CNumber* Create(void);		// 生成処理
+	HRESULT Init(void) override;	// 初期化処理
+	void Uninit(void) override;		// 終了処理
+	void Update(void) override;		// 更新処理
+	void Draw(void) override;		// 描画処理
 
 	// セット・ゲット関係
 	void SetType(const TYPE type);		// 種類の設定処理
@@ -50,6 +48,9 @@ public:				// 誰でもアクセスできる
 
 	void SetNumber(const int nNum);		// 番号の設定処理
 	int GetNumber(void) const;			// 番号の取得処理
+
+	// 静的メンバ関数
+	static CNumber* Create(void);		// 生成処理
 
 private:			// 自分だけアクセスできる
 

@@ -29,7 +29,7 @@ public:			// 誰でもアクセス出来る
 	~CInput();				// デストラクタ
 
 	// メンバ関数
-	virtual HRESULT Init(HINSTANCE hInstance);		// 初期化処理
+	HRESULT Init(HINSTANCE hInstance);				// 初期化処理
 	virtual void Uninit(void);						// 終了処理
 	virtual void Update(void) = 0;					// 更新処理
 
@@ -54,8 +54,8 @@ public:			// 誰でもアクセスできる
 
 	// メンバ関数
 	HRESULT Init(HINSTANCE hInstance, HWND hWnd);		// 初期化処理
-	void Uninit(void);									// 終了処理
-	void Update(void);									// 更新処理
+	void Uninit(void) override;							// 終了処理
+	void Update(void) override;							// 更新処理
 	bool GetPress(int nKey);							// プレス処理
 	bool GetTrigger(int nKey);							// トリガー処理
 	bool GetRelease(int nKey);							// リリース処理
@@ -119,8 +119,8 @@ public:			// 誰でもアクセスできる
 
 	// メンバ関数
 	HRESULT Init(HINSTANCE hInstance);				// 初期化処理
-	void Uninit(void);								// 終了処理
-	void Update(void);								// 更新処理
+	void Uninit(void) override;						// 終了処理
+	void Update(void) override;						// 更新処理
 	bool GetPress(JOYKEY nKey, int nPlayer);		// プレス処理
 	bool GetTrigger(JOYKEY nKey, int nPlayer);		// トリガー情報処理
 	bool GetRelease(JOYKEY nKey, int nPlayer);		// リリース情報処理
@@ -173,8 +173,8 @@ public:			// 誰でもアクセスできる
 
 	// メンバ関数
 	HRESULT Init(HINSTANCE hInstance, HWND hWnd);	// 初期化処理
-	void Uninit(void);								// 終了処理
-	void Update(void);								// 更新処理
+	void Uninit(void) override;						// 終了処理
+	void Update(void) override;						// 更新処理
 
 	// 入力関係
 	bool GetPress(const MOUSE_BUTTON button);		// クリックのプレス処理

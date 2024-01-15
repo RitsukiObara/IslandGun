@@ -24,10 +24,10 @@ public:			// 誰でもアクセスできる
 	~CShadowModel();		// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void);			// 初期化処理
-	void Uninit(void);			// 終了処理
-	void Update(void);			// 更新処理
-	void Draw(void);			// 描画処理
+	HRESULT Init(void) override;		// 初期化処理
+	void Uninit(void) override;			// 終了処理
+	void Update(void) override;			// 更新処理
+	void Draw(void) override;			// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const CXFile::TYPE type, const D3DXMATRIX& mtx);		// 情報の設定処理
 	void SetPosShadow(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale);		// 影の位置設定処理

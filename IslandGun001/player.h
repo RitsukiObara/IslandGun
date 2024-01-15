@@ -55,10 +55,10 @@ public:			// 誰でもアクセスできる
 	~CPlayer();				// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void);		// 初期化処理
-	void Uninit(void);		// 終了処理
-	void Update(void);		// 更新処理
-	void Draw(void);		// 描画処理
+	HRESULT Init(void) override;	// 初期化処理
+	void Uninit(void) override;		// 終了処理
+	void Update(void) override;		// 更新処理
+	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos);		// 情報の設定処理
 
@@ -66,6 +66,8 @@ public:			// 誰でもアクセスできる
 	CMotion* GetMotion(void) const;				// モーションの情報の取得処理
 	CPlayerAction* GetAction(void) const;		// 行動の情報の取得処理
 
+	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理
+	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
 	void SetMove(const D3DXVECTOR3& move);		// 移動量の設定処理
 	D3DXVECTOR3 GetMove(void) const;			// 移動量の取得処理
 	void SetCameraHeight(const float fHeight);	// カメラの高さの設定処理
@@ -84,6 +86,7 @@ private:		// 自分だけアクセスできる
 	void Jump(void);				// ジャンプ処理
 	void CameraControl(void);		// カメラの操作処理
 	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
+	void Attack(void);				// 攻撃処理
 
 	// メンバ変数
 	CMotion* m_pMotion;				// モーションの情報

@@ -20,10 +20,10 @@ public:			// 誰でもアクセスできる
 	virtual ~CBillboard();				// デストラクタ
 
 	// メンバ関数
-	virtual HRESULT Init(void);			// 初期化処理
-	virtual void Uninit(void);			// 終了処理
-	virtual void Update(void);			// 更新処理
-	virtual void Draw(void);			// 描画処理
+	virtual HRESULT Init(void) override;		// 初期化処理
+	virtual void Uninit(void) override;			// 終了処理
+	virtual void Update(void) override;			// 更新処理
+	virtual void Draw(void) override;			// 描画処理
 
 	void DrawLightOff(const bool bZTest);			// 描画処理(ライティング無し)
 	void DrawShift(const D3DXVECTOR3 shift);		// 描画処理(位置ずらし)
@@ -85,16 +85,14 @@ class CBillboardAnim : public CBillboard
 {
 public:			// 誰でもアクセスできる
 
-	CBillboardAnim();						// コンストラクタ
 	CBillboardAnim(CObject::TYPE type, PRIORITY priority = PRIORITY_ENTITY);		// オーバーロードコンストラクタ
 	virtual ~CBillboardAnim();				// デストラクタ
-	void Box(void);							// コンストラクタの箱
 
 	// メンバ関数
-	virtual HRESULT Init(void);			// 初期化処理
-	virtual void Uninit(void);			// 終了処理
-	virtual void Update(void);			// 更新処理
-	virtual void Draw(void);			// 描画処理
+	virtual HRESULT Init(void) override;		// 初期化処理
+	virtual void Uninit(void) override;			// 終了処理
+	virtual void Update(void) override;			// 更新処理
+	virtual void Draw(void) override;			// 描画処理
 
 	void DrawLightOff(const bool bZTest);	// 描画処理(ライティング無し)
 
@@ -104,7 +102,7 @@ public:			// 誰でもアクセスできる
 	void SetAnim(const int nCount, const int nPattern);		// アニメーションの設定処理
 
 	// 静的メンバ関数
-	static CBillboardAnim* Create(void);	// 生成処理
+	static CBillboardAnim* Create(const TYPE type, const PRIORITY priority);	// 生成処理
 
 private:		// 自分だけアクセスできる
 
