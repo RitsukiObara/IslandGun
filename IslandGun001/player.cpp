@@ -17,6 +17,7 @@
 
 #include "player.h"
 #include "player_action.h"
+#include "handgun.h"
 
 #include "collision.h"
 #include "camera.h"
@@ -52,6 +53,11 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	// 全ての値をクリアする
 	m_pMotion = nullptr;					// モーションの情報
 	m_pAction = nullptr;					// プレイヤーの行動の情報
+	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
+	{
+		m_apHandGun[nCntGun] = nullptr;	// 拳銃の情報
+	}
+
 	m_rotDest = NONE_D3DXVECTOR3;			// 目標の向き
 	m_move = NONE_D3DXVECTOR3;				// 移動量
 	m_state = STATE_NONE;					// 状態
@@ -134,6 +140,11 @@ HRESULT CPlayer::Init(void)
 	}
 
 	// 全ての値を初期化する
+	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
+	{
+		m_apHandGun[nCntGun] = nullptr;	// 拳銃の情報
+	}
+
 	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
 	m_move = NONE_D3DXVECTOR3;		// 移動量
 	m_state = STATE_NONE;			// 状態
@@ -161,6 +172,17 @@ void CPlayer::Uninit(void)
 	// 行動のメモリを開放する
 	m_pAction->Uninit();
 	m_pAction = nullptr;
+
+	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
+	{
+		if (m_apHandGun[nCntGun] != nullptr)
+		{ // 拳銃の情報が NULL じゃない場合
+
+			// 拳銃の終了処理
+			m_apHandGun[nCntGun]->Uninit();
+			m_apHandGun[nCntGun] = nullptr;
+		}
+	}
 
 	// 終了処理
 	CCharacter::Uninit();
@@ -206,6 +228,16 @@ void CPlayer::Draw(void)
 {
 	// 描画処理
 	CCharacter::Draw();
+
+	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
+	{
+		if (m_apHandGun[nCntGun] != nullptr)
+		{ // 拳銃の情報が NULL じゃない場合
+
+			// 拳銃の描画処理
+			m_apHandGun[nCntGun]->Draw();
+		}
+	}
 }
 
 //===========================================
@@ -249,6 +281,10 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 
 	// モーションの設定処理
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+
+	// 拳銃の情報を生成する
+	m_apHandGun[0] = CHandgun::Create(D3DXVECTOR3(pos.x - 10.0f, pos.y, pos.z), GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
+	m_apHandGun[1] = CHandgun::Create(D3DXVECTOR3(pos.x + 10.0f, pos.y, pos.z), GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->GetMatrixP());
 
 	// 全ての値を設定する
 	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き

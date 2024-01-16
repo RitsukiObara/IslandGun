@@ -321,6 +321,9 @@
     <ClCompile Include="enemy.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
+    <ClCompile Include="handgun.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -583,6 +586,9 @@
     </ClInclude>
     <ClInclude Include="coin_manager.h">
       <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="handgun.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -51,6 +51,7 @@ public:			// 誰でもアクセスできる
 	void SetFileData(const CXFile::SXFile filaData);				// データの設定処理(ファイルデータの設定版)
 
 	D3DXMATRIX GetMatrix(void) const;			// マトリックスの取得処理
+	D3DXMATRIX* GetMatrixP(void);				// マトリックスの取得処理
 
 	CXFile::SXFile GetFileData(void);			// Xファイルのデータの取得処理
 

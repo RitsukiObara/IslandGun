@@ -13,10 +13,16 @@
 #include "character.h"
 
 //--------------------------------------------
+// マクロ定義
+//--------------------------------------------
+#define NUM_HANDGUN		(2)		// 拳銃の数
+
+//--------------------------------------------
 // 前方宣言
 //--------------------------------------------
 class CMotion;				// モーション
 class CPlayerAction;		// プレイヤーの行動
+class CHandgun;				// 拳銃
 
 //--------------------------------------------
 // クラス(プレイヤークラス)
@@ -89,8 +95,9 @@ private:		// 自分だけアクセスできる
 	void Attack(void);				// 攻撃処理
 
 	// メンバ変数
-	CMotion* m_pMotion;				// モーションの情報
-	CPlayerAction* m_pAction;		// プレイヤーの行動の情報
+	CMotion* m_pMotion;					// モーションの情報
+	CPlayerAction* m_pAction;			// プレイヤーの行動の情報
+	CHandgun* m_apHandGun[NUM_HANDGUN];	// 拳銃の情報
 
 	D3DXVECTOR3 m_rotDest;			// 目標の向き
 	D3DXVECTOR3 m_move;				// 移動量

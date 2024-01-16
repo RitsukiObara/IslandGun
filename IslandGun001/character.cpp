@@ -580,6 +580,15 @@ D3DXMATRIX CHierarchy::GetMatrix(void) const
 }
 
 //========================
+// マトリックスの取得処理
+//========================
+D3DXMATRIX* CHierarchy::GetMatrixP(void)
+{
+	// ワールドマトリックスを返す
+	return &m_mtxWorld;
+}
+
+//========================
 // 親の設定処理
 //========================
 void CHierarchy::SetParent(CHierarchy* pModel)

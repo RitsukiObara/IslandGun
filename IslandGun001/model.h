@@ -38,7 +38,8 @@ public:			// 誰でもアクセスできる
 	void Draw(D3DXCOLOR* col);		// 描画処理(複数色)
 	void Draw(const float fAlpha);	// 描画処理(透明度調整)
 	void DrawShadow(void);			// モデル影の描画処理
-	void DrawBlock(const D3DXMATERIAL* pMat);	// エディットの描画処理
+	void DrawBlock(const D3DXMATERIAL* pMat);	// ブロックの描画処理
+	void DrawMatrix(D3DXMATRIX mtxParent);		// 他のマトリックスとの掛け合わせ描画処理
 
 	bool ModelCollision(D3DXVECTOR3* pos);		// モデルの当たり判定
 
