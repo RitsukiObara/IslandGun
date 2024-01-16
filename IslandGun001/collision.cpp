@@ -74,9 +74,12 @@ bool collision::ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posO
 void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 {
 	// ローカル変数宣言
+	D3DXVECTOR3 posCoin = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 vtxMaxCoin = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 vtxMinCoin = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMax = size;		// 最大値
-	D3DXVECTOR3 vtxMin = -size;		// 最小値
-	CCoin* pCoin = CCoinManager::Get()->GetTop();		// 先頭の小判を取得する
+	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, 0.0f, -size.z);	// 最小値
+	CCoin* pCoin = CCoinManager::Get()->GetTop();			// 先頭の小判を取得する
 	CCoin* pCoinNext = nullptr;		// 次のの小判
 
 	while (pCoin != nullptr)
@@ -85,13 +88,18 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 		// 次の小判を取得する
 		pCoinNext = pCoin->GetNext();
 
-		if (useful::RectangleCollisionXY(pos, pCoin->GetPos(), vtxMax, pCoin->GetFileData().vtxMax, vtxMin, pCoin->GetFileData().vtxMin) == true &&
-			useful::RectangleCollisionXZ(pos, pCoin->GetPos(), vtxMax, pCoin->GetFileData().vtxMax, vtxMin, pCoin->GetFileData().vtxMin) == true &&
-			useful::RectangleCollisionYZ(pos, pCoin->GetPos(), vtxMax, pCoin->GetFileData().vtxMax, vtxMin, pCoin->GetFileData().vtxMin) == true)
+		// コインの変数を取得する
+		posCoin = pCoin->GetPos();
+		vtxMaxCoin = pCoin->GetFileData().vtxMax;
+		vtxMinCoin = pCoin->GetFileData().vtxMin;
+
+		if (useful::RectangleCollisionXY(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+			useful::RectangleCollisionXZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+			useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
 		{ // 小判と重なった場合
 
-			// 終了処理
-			pCoin->Uninit();
+			// 取得処理
+			pCoin->Hit();
 		}
 
 		// 次のオブジェクトを代入する

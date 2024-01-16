@@ -34,6 +34,10 @@ public:			// 誰でもアクセスできる
 		TYPE_FRAC_WOOD,			// 木片(破片)
 		TYPE_RIPPLE,			// 波紋
 
+		// ゲームモデル
+		TYPE_COIN,				// 小判
+		TYPE_HANDGUN,			// 拳銃
+
 		// プレイヤーモデル
 		TYPE_PLAYERWAIST,		// 腰
 		TYPE_PLAYERBODY,		// 体

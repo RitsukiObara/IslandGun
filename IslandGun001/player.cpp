@@ -41,6 +41,7 @@ namespace
 	const float CAMERA_MAX_HEIGHT = 500.0f;			// カメラの高さの最大値
 	const float CAMERA_MIN_HEIGHT = 0.0f;			// カメラの高さの最小値
 	const float CAMERA_ELEVATION_HEIGHT = 30.0f;	// カメラの起伏地面の高さ
+	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 130.0f, 40.0f);		// 当たり判定時のサイズ
 }
 
 //=========================================
@@ -192,7 +193,7 @@ void CPlayer::Update(void)
 	m_pMotion->Update();
 
 	// 小判との当たり判定
-	collision::CoinCollision(GetPos(), D3DXVECTOR3(40.0f, 130.0f, 0.0f));
+	collision::CoinCollision(GetPos(), COLLISION_SIZE);
 
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
