@@ -24,6 +24,7 @@
 
 #include "player.h"
 #include "coin.h"
+#include "enemy.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -88,6 +89,8 @@ HRESULT CGame::Init(void)
 	m_pPlayer = CPlayer::Create(NONE_D3DXVECTOR3);
 
 	CCoin::Create(D3DXVECTOR3(400.0f, 50.0f, 400.0f));
+
+	CEnemy::Create(D3DXVECTOR3(400.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント
@@ -165,6 +168,13 @@ void CGame::Update(void)
 	//	// この先の処理を行わない
 	//	return;
 	//}
+
+	if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_0) == true)
+	{ // 0キーを押した場合
+
+		// 敵の生成処理
+		CEnemy::Create(D3DXVECTOR3(400.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+	}
 
 	if (m_bPause == true)
 	{ // ポーズ状況が true の場合

@@ -40,6 +40,7 @@ CAnimReaction::CAnimReaction() : CBillboardAnim(CObject::TYPE_ANIMREACTION, CObj
 {
 	// 全ての値をクリアする
 	m_type = TYPE_EXPLOSION;	// 種類
+	m_nLife = 0;				// 寿命
 }
 
 //===========================================
@@ -64,6 +65,7 @@ HRESULT CAnimReaction::Init(void)
 
 	// 全ての値を初期化する
 	m_type = TYPE_EXPLOSION;	// 種類
+	m_nLife = 0;				// 寿命
 
 	// 成功を返す
 	return S_OK;
@@ -83,6 +85,19 @@ void CAnimReaction::Uninit(void)
 //===========================================
 void CAnimReaction::Update(void)
 {
+	// 寿命を減算する
+	m_nLife--;
+
+	if (m_nLife <= 0)
+	{ // 寿命が0になった場合
+
+		// 終了処理
+		Uninit();
+
+		// この先の処理を行わない
+		return;
+	}
+
 	// 更新処理
 	CBillboardAnim::Update();
 }
@@ -99,7 +114,7 @@ void CAnimReaction::Draw(void)
 //===========================================
 // 設定処理
 //===========================================
-void CAnimReaction::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& size, const D3DXCOLOR& col, const TYPE type, const int nCount)
+void CAnimReaction::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& size, const D3DXCOLOR& col, const TYPE type, const int nCount, const int nLife)
 {
 	// スクロールの設定処理
 	SetPos(pos);				// 位置設定
@@ -109,6 +124,7 @@ void CAnimReaction::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& size, con
 
 	// 全ての値を設定する
 	m_type = type;				// 種類
+	m_nLife = nCount * ANIM_PATTERN[m_type] * nLife;		// 寿命
 
 	// 頂点情報の初期化
 	SetVertex();
@@ -126,7 +142,7 @@ void CAnimReaction::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& size, con
 //===========================================
 // 生成処理
 //===========================================
-CAnimReaction* CAnimReaction::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& size, const D3DXCOLOR& col, const TYPE type, const int nCount)
+CAnimReaction* CAnimReaction::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& size, const D3DXCOLOR& col, const TYPE type, const int nCount, const int nLife)
 {
 	// ローカルオブジェクトを生成
 	CAnimReaction* pReaction = nullptr;		// リアクションのインスタンスを生成
@@ -159,7 +175,7 @@ CAnimReaction* CAnimReaction::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& 
 		}
 
 		// 情報の設定処理
-		pReaction->SetData(pos, size, col, type, nCount);
+		pReaction->SetData(pos, size, col, type, nCount, nLife);
 	}
 	else
 	{ // オブジェクトが NULL の場合

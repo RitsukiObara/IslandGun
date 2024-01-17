@@ -74,12 +74,12 @@ void CHandgun::Draw(void)
 //=====================================
 // 情報の設定処理
 //=====================================
-void CHandgun::SetData(const D3DXVECTOR3& pos, D3DXMATRIX* mtx)
+void CHandgun::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3 rot, D3DXMATRIX* mtx)
 {
 	// 情報の設定処理
 	SetPos(pos);						// 位置
 	SetPosOld(pos);						// 前回の位置
-	SetRot(NONE_D3DXVECTOR3);			// 向き
+	SetRot(rot);						// 向き
 	SetScale(NONE_SCALE);				// 拡大率
 	SetFileData(CXFile::TYPE_HANDGUN);	// モデル情報
 
@@ -90,7 +90,7 @@ void CHandgun::SetData(const D3DXVECTOR3& pos, D3DXMATRIX* mtx)
 //=======================================
 // 生成処理
 //=======================================
-CHandgun* CHandgun::Create(const D3DXVECTOR3& pos, D3DXMATRIX* mtx)
+CHandgun* CHandgun::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3 rot, D3DXMATRIX* mtx)
 {
 	// ローカルオブジェクトを生成
 	CHandgun* pGun = nullptr;	// インスタンスを生成
@@ -126,7 +126,7 @@ CHandgun* CHandgun::Create(const D3DXVECTOR3& pos, D3DXMATRIX* mtx)
 		}
 
 		// 情報の設定処理
-		pGun->SetData(pos, mtx);
+		pGun->SetData(pos, rot, mtx);
 	}
 	else
 	{ // オブジェクトが NULL の場合

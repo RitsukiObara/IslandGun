@@ -14,6 +14,8 @@
 #include "elevation_manager.h"
 #include "coin.h"
 #include "coin_manager.h"
+#include "enemy.h"
+#include "enemy_manager.h"
 #include "useful.h"
 
 //===============================
@@ -105,6 +107,61 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 		// 次のオブジェクトを代入する
 		pCoin = pCoinNext;
 	}
+}
+
+//===============================
+// 敵と銃の当たり判定
+//===============================
+bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& size)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 bulletMax = D3DXVECTOR3(size.x, size.y, size.x);	// 弾の最大値
+	D3DXVECTOR3 bulletMin = D3DXVECTOR3(-size.x, -size.y, -size.x);	// 弾の最小値
+	D3DXVECTOR3 enemyMax;		// 敵の最大値
+	D3DXVECTOR3 enemyMin;		// 敵の最小値
+	CEnemy* pEnemy = CEnemyManager::Get()->GetTop();	// 先頭の小判を取得する
+	CEnemy* pEnemyNext = nullptr;		// 次の小判
+
+	while (pEnemy != nullptr)
+	{ // ブロックの情報が NULL じゃない場合
+
+		// 次の敵を取得する
+		pEnemyNext = pEnemy->GetNext();
+
+		// 敵関係の変数を設定
+		enemyMax = pEnemy->GetCollSize();
+		enemyMin = D3DXVECTOR3
+		(
+			-pEnemy->GetCollSize().x,
+			0.0f,
+			-pEnemy->GetCollSize().z
+		);
+
+		if (HexahedronHit
+		(
+			pos,
+			pEnemy->GetPos(),
+			posOld,
+			pEnemy->GetPosOld(),
+			bulletMin,
+			enemyMin,
+			bulletMax,
+			enemyMax) == true)
+		{ // 小判と重なった場合
+
+			// ヒット処理
+			pEnemy->Hit(pos);
+
+			// true を返す
+			return true;
+		}
+
+		// 次のオブジェクトを代入する
+		pEnemy = pEnemyNext;
+	}
+
+	// false を返す
+	return false;
 }
 
 /*
@@ -199,6 +256,90 @@ bool collision::HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBloc
 
 			// 位置を設定する
 			pos->y = posBlock.y + minBlock.y - (max.y + COLLISION_ADD_DIFF_LENGTH);
+
+			// true を返す
+			return true;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+/*
+* @brief 六面体のヒット判定
+* @param pos [out] 対象の位置
+* @param posBlock [in] ブロックの位置
+* @param posOld [in] 対象の前回の位置
+* @param posOldBlock [in] ブロックの前回の位置
+* @param min [in] 最小値
+* @param minBlock [in] ブロックの最小値
+* @param max [in] 最大値
+* @param maxBlock [in] ブロックの最大値
+* @return bool ぶつかったかどうか
+*/
+bool collision::HexahedronHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock)
+{
+		if (posBlock.y + maxBlock.y >= pos.y + min.y &&
+		posBlock.y + minBlock.y <= pos.y + max.y &&
+		posBlock.z + maxBlock.z >= pos.z + min.z &&
+		posBlock.z + minBlock.z <= pos.z + max.z)
+	{ // X軸の判定に入れる場合
+
+		if (posOldBlock.x + maxBlock.x <= posOld.x + min.x &&
+			posBlock.x + maxBlock.x >= pos.x + min.x)
+		{ // 右にぶつかった場合
+
+			// true を返す
+			return true;
+		}
+		else if (posOldBlock.x + minBlock.x >= posOld.x + max.x &&
+			posBlock.x + minBlock.x <= pos.x + max.x)
+		{ // 左にぶつかった場合
+
+			// true を返す
+			return true;
+		}
+	}
+
+	if (posBlock.x + maxBlock.x >= pos.x + min.x &&
+		posBlock.x + minBlock.x <= pos.x + max.x &&
+		posBlock.y + maxBlock.y >= pos.y + min.y &&
+		posBlock.y + minBlock.y <= pos.y + max.y)
+	{ // Z軸の判定に入れる場合
+
+		if (posOldBlock.z + maxBlock.z <= posOld.z + min.z &&
+			posBlock.z + maxBlock.z >= pos.z + min.z)
+		{ // 奥にぶつかった場合
+
+			// true を返す
+			return true;
+		}
+		else if (posOldBlock.z + minBlock.z >= posOld.z + max.z &&
+			posBlock.z + minBlock.z <= pos.z + max.z)
+		{ // 手前にぶつかった場合
+
+			// true を返す
+			return true;
+		}
+	}
+
+	if (posBlock.x + maxBlock.x >= pos.x + min.x &&
+		posBlock.x + minBlock.x <= pos.x + max.x &&
+		posBlock.z + maxBlock.z >= pos.z + min.z &&
+		posBlock.z + minBlock.z <= pos.z + max.z)
+	{ // Y軸の判定に入れる場合
+
+		if (posOldBlock.y + maxBlock.y <= posOld.y + min.y &&
+			posBlock.y + maxBlock.y >= pos.y + min.y)
+		{ // 上にぶつかった場合
+
+			// true を返す
+			return true;
+		}
+		else if (posOldBlock.y + minBlock.y >= posOld.y + max.y &&
+			posBlock.y + minBlock.y <= pos.y + max.y)
+		{ // 下にぶつかった場合
 
 			// true を返す
 			return true;

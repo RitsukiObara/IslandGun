@@ -12,6 +12,7 @@
 
 #include "bullet_manager.h"
 #include "locus3D.h"
+#include "collision.h"
 
 //=======================================
 // 無名名前空間
@@ -21,7 +22,7 @@ namespace
 	const char* TEXTURE = "data\\TEXTURE\\Bullet.png";		// 弾のテクスチャ
 	const D3DXVECTOR3 RADIUS[CBullet::TYPE_MAX] =
 	{
-		D3DXVECTOR3(20.0f,20.0f,0.0f),		// 二丁拳銃
+		D3DXVECTOR3(15.0f,15.0f,0.0f),		// 二丁拳銃
 		D3DXVECTOR3(3.0f,3.0f,0.0f),		// 散弾銃
 	};
 	const float SPEED = 45.0f;		// 速度
@@ -37,7 +38,6 @@ CBullet::CBullet() : CBillboard(CObject::TYPE_BULLET, CObject::PRIORITY_SHADOW)
 	m_move = NONE_D3DXVECTOR3;	// 移動量
 	m_type = TYPE_HANDGUN;		// 種類
 	m_nLife = LIFE;				// 寿命
-	m_fRot = 0.0f;				// 飛んでいく向き
 
 	// 全ての値をクリアする
 	m_pPrev = nullptr;		// 前のアウトボールへのポインタ
@@ -111,7 +111,6 @@ HRESULT CBullet::Init(void)
 	m_move = NONE_D3DXVECTOR3;	// 移動量
 	m_type = TYPE_HANDGUN;		// 種類
 	m_nLife = LIFE;				// 寿命
-	m_fRot = 0.0f;				// 飛んでいく向き
 
 	// 成功を返す
 	return S_OK;
@@ -142,6 +141,9 @@ void CBullet::Uninit(void)
 //=========================
 void CBullet::Update(void)
 {
+	// 前回の位置を保存する
+	SetPosOld(GetPos());
+
 	// 位置を取得する
 	D3DXVECTOR3 pos = GetPos();
 
@@ -171,6 +173,17 @@ void CBullet::Update(void)
 		return;
 	}
 
+	// 敵と銃の当たり判定
+	if (collision::EnemyHitToGun(GetPos(), GetPosOld(), GetSize()) == true)
+	{ // 敵に当たった場合
+
+		// 終了処理
+		Uninit();
+
+		// この先の処理を行わない
+		return;
+	}
+
 	// 頂点座標の設定処理
 	SetVertex();
 }
@@ -187,7 +200,7 @@ void CBullet::Draw(void)
 //=========================
 // 情報の設定処理
 //=========================
-void CBullet::SetData(const D3DXVECTOR3& pos, const float fRot, const TYPE type)
+void CBullet::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type)
 {
 	// 情報の設定処理
 	SetPos(pos);			// 位置
@@ -201,12 +214,11 @@ void CBullet::SetData(const D3DXVECTOR3& pos, const float fRot, const TYPE type)
 	// 全ての値を設定する
 	m_type = type;			// 種類
 	m_nLife = LIFE;			// 寿命
-	m_fRot = fRot;			// 飛んでいく向き
 
 	// 移動量を設定する
-	m_move.x = sinf(m_fRot) * SPEED;	// X軸
-	m_move.y = 0.0f;					// Y軸
-	m_move.z = cosf(m_fRot) * SPEED;	// Z軸
+	m_move.x = sinf(rot.y) * SPEED;	// X軸
+	m_move.y = cosf(rot.x) * SPEED;	// Y軸
+	m_move.z = cosf(rot.y) * SPEED;	// Z軸
 
 	// 頂点情報の初期化
 	SetVertex();
@@ -218,7 +230,7 @@ void CBullet::SetData(const D3DXVECTOR3& pos, const float fRot, const TYPE type)
 //=========================
 // 生成処理
 //=========================
-CBullet* CBullet::Create(const D3DXVECTOR3& pos, const float fRot, const TYPE type)
+CBullet* CBullet::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type)
 {
 	// ローカルオブジェクトを生成
 	CBullet* pBullet = nullptr;	// 弾のインスタンスを生成
@@ -254,7 +266,7 @@ CBullet* CBullet::Create(const D3DXVECTOR3& pos, const float fRot, const TYPE ty
 		}
 
 		// 情報の設定処理
-		pBullet->SetData(pos, fRot, type);
+		pBullet->SetData(pos, rot, type);
 	}
 	else
 	{ // オブジェクトが NULL の場合

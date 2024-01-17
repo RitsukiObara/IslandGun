@@ -42,10 +42,10 @@ public:
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, const float fRot, const TYPE type);				// 情報の設定処理
+	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);				// 情報の設定処理
 
 	// 静的メンバ関数
-	static CBullet* Create(const D3DXVECTOR3& pos, const float fRot, const TYPE type);		// 生成処理
+	static CBullet* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
 
 private:
 
@@ -53,7 +53,6 @@ private:
 	D3DXVECTOR3 m_move;		// 移動量
 	TYPE m_type;			// 種類
 	int m_nLife;			// 寿命
-	float m_fRot;			// 飛んでいく向き
 
 	// リスト構造関係
 	CBullet* m_pPrev;		// 前へのポインタ

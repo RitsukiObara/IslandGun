@@ -13,6 +13,17 @@
 #include "model.h"
 
 #include "enemy_manager.h"
+#include "motion.h"
+#include "anim_reaction.h"
+
+// マクロ定義
+namespace
+{
+	const D3DXVECTOR3 COLLSIZE[CEnemy::TYPE_MAX] =		// 当たり判定のサイズ
+	{
+		D3DXVECTOR3(70.0f,140.0f,70.0f)
+	};
+}
 
 //================================
 // コンストラクタ
@@ -20,7 +31,10 @@
 CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
-	m_type = TYPE_TORDLE;		// 種類
+	m_pMotion = nullptr;			// モーション
+
+	m_type = TYPE_TORDLE;			// 種類
+	m_CollSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
 
 	// 全ての値をクリアする
 	m_pPrev = nullptr;		// 前のアウトボールへのポインタ
@@ -94,45 +108,46 @@ HRESULT CEnemy::Init(void)
 	}
 
 	// ベタ打ち
-	SetNumModel(16);
+	SetNumModel(17);
 
 	// データの設定処理
 	CCharacter::SetData();
 
-	//if (m_pMotion == nullptr)
-	//{ // モーションが NULL だった場合
+	if (m_pMotion == nullptr)
+	{ // モーションが NULL だった場合
 
-	//	// モーションの生成処理
-	//	m_pMotion = CMotion::Create();
-	//}
-	//else
-	//{ // ポインタが NULL じゃない場合
+		// モーションの生成処理
+		m_pMotion = CMotion::Create();
+	}
+	else
+	{ // ポインタが NULL じゃない場合
 
-	//	// 停止
-	//	assert(false);
-	//}
+		// 停止
+		assert(false);
+	}
 
-	//if (m_pMotion != nullptr)
-	//{ // ポインタが NULL じゃない場合
+	if (m_pMotion != nullptr)
+	{ // ポインタが NULL じゃない場合
 
-	//	// モーションの情報を取得する
-	//	m_pMotion->SetModel(GetHierarchy(), GetNumModel());
+		// モーションの情報を取得する
+		m_pMotion->SetModel(GetHierarchy(), GetNumModel());
 
-	//	// ロード処理
-	//	m_pMotion->Load("data\\TXT\\PlayerMotion.txt");
-	//}
-	//else
-	//{ // ポインタが NULL じゃない場合
+		// ロード処理
+		m_pMotion->Load("data\\TXT\\PlayerMotion.txt");
+	}
+	else
+	{ // ポインタが NULL じゃない場合
 
-	//	// 停止
-	//	assert(false);
-	//}
+		// 停止
+		assert(false);
+	}
 
-	//// モーションの設定処理
-	//m_pMotion->Set(MOTIONTYPE_APPEAR);
+	// モーションの設定処理
+	m_pMotion->Set(0);
 
 	// 全ての値を初期化する
-	m_type = TYPE_TORDLE;		// 種類
+	m_type = TYPE_TORDLE;			// 種類
+	m_CollSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
 
 	// 値を返す
 	return S_OK;
@@ -143,6 +158,10 @@ HRESULT CEnemy::Init(void)
 //================================
 void CEnemy::Uninit(void)
 {
+	// モーションの終了処理
+	delete m_pMotion;
+	m_pMotion = nullptr;
+
 	// 終了処理
 	CCharacter::Uninit();
 
@@ -163,7 +182,8 @@ void CEnemy::Uninit(void)
 //================================
 void CEnemy::Update(void)
 {
-
+	// モーションの更新処理
+	m_pMotion->Update();
 }
 
 //================================
@@ -196,11 +216,21 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		GetHierarchy(nCntData)->SetFileData(CXFile::TYPE(INIT_PLAYER + nCntData));	// データの設定処理
 	}
 
-	//// モーションの設定処理
-	//m_pMotion->Set(MOTIONTYPE_NEUTRAL);
-
 	// 全ての値を設定する
-	m_type = type;			// 種類
+	m_type = type;					// 種類
+	m_CollSize = COLLSIZE[m_type];	// 当たり判定のサイズ
+}
+
+//===========================================
+// ヒット処理
+//===========================================
+void CEnemy::Hit(const D3DXVECTOR3& pos)
+{
+	// アニメーションリアクションを生成
+	CAnimReaction::Create(pos, D3DXVECTOR3(180.0f, 180.0f, 0.0f), NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
+
+	// 終了処理
+	Uninit();
 }
 
 //===========================================
@@ -250,4 +280,13 @@ CEnemy* CEnemy::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYP
 
 	// 敵のポインタを返す
 	return pEnemy;
+}
+
+//===========================================
+// 当たり判定のサイズの取得処理
+//===========================================
+D3DXVECTOR3 CEnemy::GetCollSize(void) const
+{
+	// 当たり判定のサイズを取得する
+	return m_CollSize;
 }

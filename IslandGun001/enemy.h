@@ -12,6 +12,9 @@
 //***********************************
 #include "character.h"
 
+// 前方宣言
+class CMotion;		// モーション
+
 //-----------------------------------
 // クラス定義(CEnemy)
 //-----------------------------------
@@ -42,6 +45,10 @@ public:					// 誰でもアクセスできる
 	virtual void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 情報の設定処理
+	void Hit(const D3DXVECTOR3& pos);		// ヒット処理
+
+	// セット・ゲット関係
+	D3DXVECTOR3 GetCollSize(void) const;	// 当たり判定のサイズの取得処理
 
 	// 静的メンバ関数
 	static CEnemy* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
@@ -49,11 +56,14 @@ public:					// 誰でもアクセスできる
 private:				// 自分だけアクセスできる
 
 	// メンバ変数
-	TYPE m_type;		// 種類
+	CMotion* m_pMotion;		// モーションの情報
+
+	TYPE m_type;			// 種類
+	D3DXVECTOR3 m_CollSize;	// 当たり判定のサイズ
 
 	// リスト構造関係
-	CEnemy* m_pPrev;	// 前へのポインタ
-	CEnemy* m_pNext;	// 次へのポインタ
+	CEnemy* m_pPrev;		// 前へのポインタ
+	CEnemy* m_pNext;		// 次へのポインタ
 };
 
 #endif

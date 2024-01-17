@@ -36,15 +36,6 @@ public:			// 誰でもアクセスできる
 	{
 		MOTIONTYPE_NEUTRAL = 0,		// 待機
 		MOTIONTYPE_MOVE,			// 移動
-		MOTIONTYPE_JETDASH,			// ジェットダッシュ
-		MOTIONTYPE_JUMP,			// ジャンプ
-		MOTIONTYPE_LANDING,			// 着地
-		MOTIONTYPE_DAMAGE,			// ダメージ
-		MOTIONTYPE_FLY,				// 浮遊
-		MOTIONTYPE_QUAKE,			// 地震
-		MOTIONTYPE_SCRATCH001,		// ひっかき001
-		MOTIONTYPE_SCRATCH002,		// ひっかき002
-		MOTIONTYPE_APPEAR,			// 登場
 		MOTIONTYPE_MAX				// この列挙型の総数
 	};
 
@@ -85,14 +76,17 @@ public:			// 誰でもアクセスできる
 private:		// 自分だけアクセスできる
 
 	// メンバ関数
-	void ElevationCollision(void);	// 起伏地面の当たり判定処理
-	void Control(void);				// 操作処理
 	void Move(void);				// 移動処理
+	void ElevationCollision(void);	// 起伏地面の当たり判定処理
+	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
+
+	// 操作感系
+	void Control(void);				// 操作処理
 	void RotMove(void);				// 向きの設定処理
 	void Jump(void);				// ジャンプ処理
 	void CameraControl(void);		// カメラの操作処理
-	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
 	void Attack(void);				// 攻撃処理
+	void Avoid(void);				// 回避処理
 
 	// メンバ変数
 	CMotion* m_pMotion;					// モーションの情報
@@ -103,13 +97,12 @@ private:		// 自分だけアクセスできる
 	D3DXVECTOR3 m_move;				// 移動量
 	STATE m_state;					// 状態
 	int m_nStateCount;				// 状態カウント
-	int m_nDodge;					// 回避カウント
+	int m_nShotCount;				// 射撃カウント
 	float m_fSpeed;					// 速度
 	float m_fAlpha;					// 体の透明度
 	float m_fCameraHeight;			// カメラの高さ
 	bool m_bMove;					// 移動状況
 	bool m_bJump;					// ジャンプ状況
-	bool m_bDodge;					// 回避状況
 
 };
 

@@ -43,6 +43,13 @@ namespace
 	const float CAMERA_MIN_HEIGHT = 0.0f;			// カメラの高さの最小値
 	const float CAMERA_ELEVATION_HEIGHT = 30.0f;	// カメラの起伏地面の高さ
 	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 130.0f, 40.0f);		// 当たり判定時のサイズ
+	const float SHOT_ADD_ROT[NUM_HANDGUN] =			// 射撃時の向きの加算数
+	{
+		(D3DX_PI * 0.06f),
+		(-D3DX_PI * 0.06f)
+	};
+	const float SHOT_SHIFT_LENGTH = 95.0f;			// 射撃時のずらす幅
+	const float SHOT_ADD_HEIGHT = 160.0f;			// 射撃時の高さの追加量
 }
 
 //=========================================
@@ -62,13 +69,12 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_move = NONE_D3DXVECTOR3;				// 移動量
 	m_state = STATE_NONE;					// 状態
 	m_nStateCount = 0;						// 状態カウント
-	m_nDodge = 0;							// 回避カウント
+	m_nShotCount = 0;						// 射撃カウント
 	m_fSpeed = SPEED;						// 速度
 	m_fAlpha = 1.0f;						// 体の透明度
 	m_fCameraHeight = INIT_POSV_CAMERA_Y;	// カメラの高さ
 	m_bMove = false;						// 移動状況
 	m_bJump = false;						// ジャンプ状況
-	m_bDodge = false;						// 回避状況
 }
 
 //=========================================
@@ -95,7 +101,7 @@ HRESULT CPlayer::Init(void)
 	}
 
 	// ベタ打ち
-	SetNumModel(16);
+	SetNumModel(17);
 
 	// データの設定処理
 	CCharacter::SetData();
@@ -130,7 +136,7 @@ HRESULT CPlayer::Init(void)
 	}
 
 	// モーションの設定処理
-	m_pMotion->Set(MOTIONTYPE_APPEAR);
+	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
 
 	if (m_pAction == nullptr)
 	{ // 行動の情報が NULL の場合
@@ -149,12 +155,11 @@ HRESULT CPlayer::Init(void)
 	m_move = NONE_D3DXVECTOR3;		// 移動量
 	m_state = STATE_NONE;			// 状態
 	m_nStateCount = 0;				// 状態カウント
-	m_nDodge = 0;					// 回避カウント
+	m_nShotCount = 0;				// 射撃カウント
 	m_fSpeed = SPEED;				// 速度
 	m_fAlpha = 1.0f;				// 体の透明度
 	m_bMove = false;				// 移動状況
 	m_bJump = false;				// ジャンプ状況
-	m_bDodge = false;				// 回避状況
 
 	// 値を返す
 	return S_OK;
@@ -196,23 +201,17 @@ void CPlayer::Update(void)
 	// 前回の位置の設定処理
 	SetPosOld(GetPos());
 
-	// カメラの操作処理
-	CameraControl();
-
 	// 操作処理
 	Control();
-
-	// 攻撃処理
-	Attack();
 
 	// 移動処理
 	Move();
 
-	// 行動の更新処理
-	m_pAction->Update(this);
-
 	// モーションの更新処理
 	m_pMotion->Update();
+
+	// 行動の更新処理
+	m_pAction->Update(this);
 
 	// 小判との当たり判定
 	collision::CoinCollision(GetPos(), COLLISION_SIZE);
@@ -283,20 +282,19 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
 
 	// 拳銃の情報を生成する
-	m_apHandGun[0] = CHandgun::Create(D3DXVECTOR3(pos.x - 10.0f, pos.y, pos.z), GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
-	m_apHandGun[1] = CHandgun::Create(D3DXVECTOR3(pos.x + 10.0f, pos.y, pos.z), GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->GetMatrixP());
+	m_apHandGun[0] = CHandgun::Create(D3DXVECTOR3(pos.x - 10.0f, pos.y, pos.z), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
+	m_apHandGun[1] = CHandgun::Create(D3DXVECTOR3(pos.x + 10.0f, pos.y, pos.z), D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f), GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->GetMatrixP());
 
 	// 全ての値を設定する
 	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
 	m_move = NONE_D3DXVECTOR3;		// 移動量
 	m_state = STATE_NONE;			// 状態
 	m_nStateCount = 0;				// 状態カウント
-	m_nDodge = 0;					// 回避カウント
+	m_nShotCount = 0;				// 射撃カウント
 	m_fSpeed = SPEED;				// 速度
 	m_fAlpha = 1.0f;				// 体の透明度
 	m_bMove = false;				// 移動状況
 	m_bJump = false;				// ジャンプ状況
-	m_bDodge = false;				// 回避状況
 }
 
 //===========================================
@@ -449,11 +447,17 @@ void CPlayer::ElevationCollision(void)
 //=======================================
 void CPlayer::Control(void)
 {
+	// カメラの操作処理
+	CameraControl();
+
 	// 向きの移動処理
 	RotMove();
 
 	// ジャンプ処理
 	Jump();
+
+	// 攻撃処理
+	Attack();
 }
 
 //=======================================
@@ -521,6 +525,13 @@ void CPlayer::RotMove(void)
 		// 移動量を設定する
 		m_move.x = sinf(fStickRot) * m_fSpeed;
 		m_move.z = cosf(fStickRot) * m_fSpeed;
+
+		if (m_pMotion->GetType() != MOTIONTYPE_MOVE)
+		{ // 移動モーションじゃなかった場合
+
+			// 移動モーションを設定する
+			m_pMotion->Set(MOTIONTYPE_MOVE);
+		}
 	}
 	else
 	{ // 上記以外
@@ -528,6 +539,13 @@ void CPlayer::RotMove(void)
 		// 移動量を設定する
 		m_move.x = 0.0f;
 		m_move.z = 0.0f;
+
+		if (m_pMotion->GetType() != MOTIONTYPE_NEUTRAL)
+		{ // 移動モーションじゃなかった場合
+
+			// 移動モーションを設定する
+			m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+		}
 	}
 }
 
@@ -626,28 +644,55 @@ void CPlayer::ElevationCamera(void)
 //=======================================
 void CPlayer::Attack(void)
 {
-	if (CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_RB, 0) == true ||
-		CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_LB, 0) == true)
-	{ // LB・RBキーを押した場合
+	if (CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_X, 0) == true)
+	{ // Xキーを押した場合
 
 		// 射撃状態にする
 		m_pAction->SetAction(CPlayerAction::ACTION_SHOT);
+
+		if (m_nShotCount % 10 == 0)
+		{ // 一定カウントごとに
+
+			D3DXVECTOR3 pos;		// 弾の出る位置を宣言
+			D3DXVECTOR3 rot;		// 弾の出る向きを宣言
+			D3DXVECTOR3 posR = CManager::Get()->GetCamera()->GetPosR();
+			D3DXVECTOR3 posV = CManager::Get()->GetCamera()->GetPosV();
+
+			// 向きを設定する
+			rot.x = atan2f((posR.y - posV.y), (posR.x - posV.x) + (posR.z - posV.z));
+			rot.y = GetRot().y;
+			rot.z = atan2f((posR.y - posV.y), (posR.x - posV.x) + (posR.z - posV.z));
+
+			for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
+			{
+				// 位置を設定する
+				pos.x = GetPos().x + sinf(GetRot().y + SHOT_ADD_ROT[nCnt]) * SHOT_SHIFT_LENGTH;
+				pos.y = GetPos().y + SHOT_ADD_HEIGHT;
+				pos.z = GetPos().z + cosf(GetRot().y + SHOT_ADD_ROT[nCnt]) * SHOT_SHIFT_LENGTH;
+
+				// 弾バンバン
+				CBullet::Create(pos, rot, CBullet::TYPE::TYPE_HANDGUN);
+			}
+		}
+
+		// 射撃カウントを加算する
+		m_nShotCount++;
 	}
 	else
 	{ // 上記以外
 
 		// 通常状態にする
 		m_pAction->SetAction(CPlayerAction::ACTION_NONE);
-	}
 
-	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_RB, 0) == true ||
-		CManager::Get()->GetInputGamePad()->GetRepeat(CInputGamePad::JOYKEY_RB, 0, 10) == true ||
-		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_LB, 0) == true ||
-		CManager::Get()->GetInputGamePad()->GetRepeat(CInputGamePad::JOYKEY_LB, 0, 10) == true)
-	{ // LB・RBキーを押した場合
-
-		// 弾バンバン
-		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y + 0.01f, CBullet::TYPE::TYPE_HANDGUN);
-		CBullet::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 80.0f, GetPos().z), GetRot().y - 0.01f, CBullet::TYPE::TYPE_HANDGUN);
+		// 射撃カウントを0にする
+		m_nShotCount = 0;
 	}
+}
+
+//=======================================
+// 回避処理
+//=======================================
+void CPlayer::Avoid(void)
+{
+
 }

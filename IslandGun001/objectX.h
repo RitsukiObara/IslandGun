@@ -42,6 +42,7 @@ public:			// 誰でもアクセスできる
 		TYPE_PLAYERWAIST,		// 腰
 		TYPE_PLAYERBODY,		// 体
 		TYPE_PLAYERNECK,		// 首
+		TYPE_PLAYERCLOAK,		// マント
 		TYPE_PLAYERHEAD,		// 頭
 		TYPE_PLAYERRIGHTARM,	// 右腕
 		TYPE_PLAYERLEFTARM,		// 左腕

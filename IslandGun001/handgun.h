@@ -28,10 +28,10 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, D3DXMATRIX* mtx);				// 情報の設定処理
+	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3 rot, D3DXMATRIX* mtx);				// 情報の設定処理
 
 	// 静的メンバ関数
-	static CHandgun* Create(const D3DXVECTOR3& pos, D3DXMATRIX* mtx);	// 生成処理
+	static CHandgun* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3 rot, D3DXMATRIX* mtx);	// 生成処理
 
 private:		// 自分だけアクセスできる
 

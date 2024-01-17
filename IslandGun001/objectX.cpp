@@ -33,6 +33,7 @@ const char* CXFile::c_apModelData[CXFile::TYPE_MAX] =		// モデルの名前
 	"data/MODEL/PlayerWaist.x",			// プレイヤーの腰
 	"data/MODEL/PlayerBody.x",			// プレイヤーの体
 	"data/MODEL/PlayerNeck.x",			// プレイヤーの首
+	"data/MODEL/PlayerCloak.x",			// プレイヤーのマント
 	"data/MODEL/PlayerHead.x",			// プレイヤーの頭
 	"data/MODEL/PlayerRArm.x",			// プレイヤーの右上腕
 	"data/MODEL/PlayerLArm.x",			// プレイヤーの左上腕
