@@ -14,6 +14,15 @@
 
 #include "player.h"
 
+//-------------------------------------------
+// 無名名前空間
+//-------------------------------------------
+namespace
+{
+	const float DODGE_SPEED = 80.0f;		// 回避状態の速度
+	const int DODGE_COUNT = 3;				// 回避状態のカウント数
+}
+
 //=========================
 // コンストラクタ
 //=========================
@@ -21,6 +30,8 @@ CPlayerAction::CPlayerAction()
 {
 	// 全ての値をクリアする
 	m_action = ACTION_NONE;		// 行動
+	m_nActionCount = 0;			// 行動カウント
+	m_fDodgeRot = 0.0f;			// 回避する向き
 }
 
 //=========================
@@ -38,6 +49,8 @@ HRESULT CPlayerAction::Init(void)
 {
 	// 全ての値を初期化する
 	m_action = ACTION_NONE;		// 行動
+	m_nActionCount = 0;			// 行動カウント
+	m_fDodgeRot = 0.0f;			// 回避する向き
 
 	// 成功を返す
 	return S_OK;
@@ -169,6 +182,9 @@ void CPlayerAction::SetAction(const ACTION action)
 {
 	// 行動を設定する
 	m_action = action;
+
+	// 行動カウントをリセットする
+	m_nActionCount = 0;
 }
 
 //=========================
@@ -178,6 +194,15 @@ CPlayerAction::ACTION CPlayerAction::GetAction(void) const
 {
 	// 行動を返す
 	return m_action;
+}
+
+//=========================
+// 回避する向きの設定処理
+//=========================
+void CPlayerAction::SetDodgeRot(const float fRot)
+{
+	// 回避する向きを設定する
+	m_fDodgeRot = fRot;
 }
 
 //=========================
@@ -223,7 +248,24 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::DodgeProcess(CPlayer* pPlayer)
 {
+	// 位置を取得する
+	D3DXVECTOR3 pos = pPlayer->GetPos();
 
+	pos.x += sinf(m_fDodgeRot) * DODGE_SPEED;
+	pos.z += cosf(m_fDodgeRot) * DODGE_SPEED;
+
+	// 位置を適用する
+	pPlayer->SetPos(pos);
+
+	// 行動カウントを加算する
+	m_nActionCount++;
+
+	if (m_nActionCount >= DODGE_COUNT)
+	{ // 行動カウントが一定数以上になった場合
+
+		// 行動を設定する
+		SetAction(ACTION_NONE);
+	}
 }
 
 //=========================

@@ -49,6 +49,8 @@ public:			// 誰でもアクセスできる
 	void SetAction(const ACTION action);	// 行動の設定処理
 	ACTION GetAction(void) const;			// 行動の取得処理
 
+	void SetDodgeRot(const float fRot);		// 回避する向きの設定処理
+
 	// 静的メンバ関数
 	static CPlayerAction* Create(void);		// 生成処理
 
@@ -64,6 +66,8 @@ private:		// 誰でもアクセスできる
 
 	// メンバ変数
 	ACTION m_action;		// 行動
+	int m_nActionCount;		// 行動カウント
+	float m_fDodgeRot;		// 回避する向き
 };
 
 #endif

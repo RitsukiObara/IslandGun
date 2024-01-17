@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aim.cpp" />
     <ClCompile Include="anim_reaction.cpp" />
     <ClCompile Include="blur.cpp" />
     <ClCompile Include="blur_col.cpp" />
@@ -241,6 +242,7 @@
     <ClCompile Include="useful.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aim.h" />
     <ClInclude Include="anim_reaction.h" />
     <ClInclude Include="blur.h" />
     <ClInclude Include="blur_col.h" />

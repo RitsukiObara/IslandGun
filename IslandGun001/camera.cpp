@@ -843,7 +843,6 @@ void CCamera::Chase(void)
 		// プレイヤーの情報を取得する
 		D3DXVECTOR3 pos = pPlayer->GetPos();			// 位置
 		D3DXVECTOR3 rot = pPlayer->GetRot();			// 向き
-		float fHeight = pPlayer->GetCameraHeight();		// 高さ
 
 		// 目的の注視点を設定する
 		m_posRDest.x = pos.x;
@@ -851,9 +850,9 @@ void CCamera::Chase(void)
 		m_posRDest.z = pos.z;
 
 		// 目的の視点を設定する
-		m_posVDest.x = m_posRDest.x + sinf(m_rot.y) * -m_Dis;
-		m_posVDest.y = pos.y + fHeight;
-		m_posVDest.z = m_posRDest.z + cosf(m_rot.y) * -m_Dis;
+		m_posVDest.x = m_posRDest.x + sinf(m_rot.y) * (-m_Dis * sinf(m_rot.x * 0.5f));
+		m_posVDest.y = m_posRDest.y + cosf(m_rot.x) * (-m_Dis * sinf(m_rot.x * 0.5f));
+		m_posVDest.z = m_posRDest.z + cosf(m_rot.y) * (-m_Dis * sinf(m_rot.x * 0.5f));
 
 		// 注視点を補正
 		m_posR.x += (m_posRDest.x - m_posR.x) * CORRECT_POSR;

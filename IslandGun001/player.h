@@ -23,6 +23,7 @@
 class CMotion;				// モーション
 class CPlayerAction;		// プレイヤーの行動
 class CHandgun;				// 拳銃
+class CAim;					// エイム
 
 //--------------------------------------------
 // クラス(プレイヤークラス)
@@ -67,8 +68,6 @@ public:			// 誰でもアクセスできる
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
 	void SetMove(const D3DXVECTOR3& move);		// 移動量の設定処理
 	D3DXVECTOR3 GetMove(void) const;			// 移動量の取得処理
-	void SetCameraHeight(const float fHeight);	// カメラの高さの設定処理
-	float GetCameraHeight(void) const;			// カメラの高さの取得処理
 
 	// 静的メンバ関数
 	static CPlayer* Create(const D3DXVECTOR3& pos);	// 生成処理
@@ -92,17 +91,18 @@ private:		// 自分だけアクセスできる
 	CMotion* m_pMotion;					// モーションの情報
 	CPlayerAction* m_pAction;			// プレイヤーの行動の情報
 	CHandgun* m_apHandGun[NUM_HANDGUN];	// 拳銃の情報
+	CAim* m_pAim;						// エイムの情報
 
-	D3DXVECTOR3 m_rotDest;			// 目標の向き
-	D3DXVECTOR3 m_move;				// 移動量
-	STATE m_state;					// 状態
-	int m_nStateCount;				// 状態カウント
-	int m_nShotCount;				// 射撃カウント
-	float m_fSpeed;					// 速度
-	float m_fAlpha;					// 体の透明度
-	float m_fCameraHeight;			// カメラの高さ
-	bool m_bMove;					// 移動状況
-	bool m_bJump;					// ジャンプ状況
+	D3DXVECTOR3 m_rotDest;		// 目標の向き
+	D3DXVECTOR3 m_move;			// 移動量
+	STATE m_state;				// 状態
+	int m_nStateCount;			// 状態カウント
+	int m_nShotCount;			// 射撃カウント
+	float m_fSpeed;				// 速度
+	float m_fAlpha;				// 体の透明度
+	float m_fStickRot;			// スティックの向き
+	bool m_bMove;				// 移動状況
+	bool m_bJump;				// ジャンプ状況
 
 };
 
