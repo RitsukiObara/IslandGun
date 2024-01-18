@@ -35,7 +35,9 @@ CPlayerAction::CPlayerAction()
 	// 全ての値をクリアする
 	m_action = ACTION_NONE;		// 行動
 	m_nActionCount = 0;			// 行動カウント
+	m_nDodgeInterval = 0;		// 回避のインターバルカウント
 	m_fDodgeRot = 0.0f;			// 回避する向き
+	m_bDodgeUse = true;			// 回避使用可能状況
 }
 
 //=========================
@@ -54,7 +56,9 @@ HRESULT CPlayerAction::Init(void)
 	// 全ての値を初期化する
 	m_action = ACTION_NONE;		// 行動
 	m_nActionCount = 0;			// 行動カウント
+	m_nDodgeInterval = 0;		// 回避のインターバルカウント
 	m_fDodgeRot = 0.0f;			// 回避する向き
+	m_bDodgeUse = true;			// 回避使用可能状況
 
 	// 成功を返す
 	return S_OK;
@@ -128,6 +132,23 @@ void CPlayerAction::Update(CPlayer* pPlayer)
 		assert(false);
 
 		break;
+	}
+
+	if (m_nDodgeInterval > 0)
+	{ // 回避インターバルカウントが0超過の場合
+
+		// 回避インターバルを減算する
+		m_nDodgeInterval--;
+
+		if (m_nDodgeInterval <= 0)
+		{ // 回避インターバルが0以上になった場合
+
+			// 回避のインターバルカウントを0にする
+			m_nDodgeInterval = 0;
+
+			// 回避を使用できる
+			m_bDodgeUse = true;
+		}
 	}
 }
 
@@ -211,6 +232,33 @@ void CPlayerAction::SetDodgeRot(const float fRot)
 {
 	// 回避する向きを設定する
 	m_fDodgeRot = fRot;
+}
+
+//=========================
+// 回避インターバルの設定処理
+//=========================
+void CPlayerAction::SetDodgeInterval(const int nInterval)
+{
+	// 回避使用可能状況を設定する
+	m_nDodgeInterval = nInterval;
+}
+
+//=========================
+// 回避使用可能状態の設定処理
+//=========================
+void CPlayerAction::SetEnableDodgeUse(const bool bUse)
+{
+	// 回避使用可能状況を返す
+	m_bDodgeUse = bUse;
+}
+
+//=========================
+// 回避使用可能状況の取得処理
+//=========================
+bool CPlayerAction::IsDodgeUse(void) const
+{
+	// 回避使用可能状況を返す
+	return m_bDodgeUse;
 }
 
 //=========================

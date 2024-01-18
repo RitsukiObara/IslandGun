@@ -42,15 +42,20 @@ public:			// 誰でもアクセスできる
 	~CPlayerAction();		// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void);		// 初期化処理
-	void Uninit(void);		// 終了処理
+	HRESULT Init(void);					// 初期化処理
+	void Uninit(void);					// 終了処理
 	void Update(CPlayer* pPlayer);		// 更新処理
 
 	// セット・ゲット関数
-	void SetAction(const ACTION action);	// 行動の設定処理
-	ACTION GetAction(void) const;			// 行動の取得処理
+	void SetAction(const ACTION action);			// 行動の設定処理
+	ACTION GetAction(void) const;					// 行動の取得処理
 
-	void SetDodgeRot(const float fRot);		// 回避する向きの設定処理
+	void SetDodgeRot(const float fRot);				// 回避する向きの設定処理
+
+	void SetDodgeInterval(const int nInterval);		// 回避インターバルの設定処理
+
+	void SetEnableDodgeUse(const bool bUse);		// 回避使用可能状態の設定処理
+	bool IsDodgeUse(void) const;					// 回避使用可能状況の取得処理
 
 	// 静的メンバ関数
 	static CPlayerAction* Create(void);		// 生成処理
@@ -68,7 +73,9 @@ private:		// 誰でもアクセスできる
 	// メンバ変数
 	ACTION m_action;		// 行動
 	int m_nActionCount;		// 行動カウント
+	int m_nDodgeInterval;	// 回避のインターバルカウント
 	float m_fDodgeRot;		// 回避する向き
+	bool m_bDodgeUse;		// 回避使用可能状況
 };
 
 #endif

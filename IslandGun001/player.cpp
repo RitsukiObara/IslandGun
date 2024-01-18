@@ -54,6 +54,7 @@ namespace
 	const float SHOT_SHIFT_LENGTH = 95.0f;			// 射撃時のずらす幅
 	const float SHOT_ADD_HEIGHT = 160.0f;			// 射撃時の高さの追加量
 	const float SHOT_ADD_ROT = 0.9f;				// 射撃時の向きの加算数
+	const int DODGE_INTERVAL = 100;					// 回避インターバル
 }
 
 //=========================================
@@ -778,6 +779,7 @@ void CPlayer::Shot(void)
 void CPlayer::Avoid(void)
 {
 	if (m_bJump == false &&
+		m_pAction->IsDodgeUse() == true &&
 		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_B, 0) == true)
 	{ // 地上でBキーを押した場合
 
@@ -796,6 +798,12 @@ void CPlayer::Avoid(void)
 
 		// 目標の向きを設定する
 		m_rotDest.y = m_fStickRot;
+
+		// 回避インターバルを設定する
+		m_pAction->SetDodgeInterval(DODGE_INTERVAL);
+
+		// 使用可能状況を0にする
+		m_pAction->SetEnableDodgeUse(false);
 	}
 }
 
