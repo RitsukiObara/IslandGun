@@ -37,6 +37,7 @@ public:			// 誰でもアクセスできる
 		// ゲームモデル
 		TYPE_COIN,				// 小判
 		TYPE_HANDGUN,			// 拳銃
+		TYPE_DAGGER,			// ダガー
 
 		// プレイヤーモデル
 		TYPE_PLAYERWAIST,		// 腰

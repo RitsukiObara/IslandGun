@@ -13,7 +13,7 @@
 namespace
 {
 	const float RADIUS = 40.0f;		// îºåa
-	const float SHIFT = 100.0f;		// Ç∏ÇÁÇ∑ïù
+	const float SHIFT = 500.0f;		// Ç∏ÇÁÇ∑ïù
 }
 
 //=========================

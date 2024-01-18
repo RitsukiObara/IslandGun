@@ -675,7 +675,8 @@ void CPlayer::ElevationCamera(void)
 //=======================================
 void CPlayer::Attack(void)
 {
-	if (CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_X, 0) == true)
+	if (CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_RB, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_LB, 0) == true)
 	{ // XƒL[‚ğ‰Ÿ‚µ‚½ê‡
 
 		// ËŒ‚ó‘Ô‚É‚·‚é
