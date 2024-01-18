@@ -327,6 +327,9 @@
     <ClCompile Include="aim.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="dagger.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -594,6 +597,9 @@
       <Filter>Player</Filter>
     </ClInclude>
     <ClInclude Include="aim.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="dagger.h">
       <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>

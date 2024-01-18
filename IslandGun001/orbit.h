@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------
 //	マクロ定義
 //-------------------------------------------------------------------------------------
-#define MAX_ORBIT_VTX		(128)			// 軌跡の最高頂点数
+#define MAX_ORBIT_VTX		(32)			// 軌跡の最高頂点数
 
 //-------------------------------------------------------------------------------------
 // クラス定義(軌跡)
@@ -43,13 +43,15 @@ public:			// 誰でもアクセスできる
 	virtual void Update(void) override;		// 更新処理
 	virtual void Draw(void) override;		// 描画処理
 
-	void SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const int nTexIdx);				// 情報の設定処理
-	void SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const char* pTextureName);		// 情報の設定処理
+	void SetData(D3DXMATRIX* mtx, const D3DXVECTOR3& pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const int nTexIdx, const TYPE type);				// 情報の設定処理
+	void SetData(D3DXMATRIX *mtx, const D3DXVECTOR3& pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const char* pTextureName, const TYPE type);		// 情報の設定処理
 	void BindTexture(int nIdx);		// テクスチャの割り当て処理
 
+	void PosReset(void);			// 位置のリセット処理
+
 	// 静的メンバ関数
-	static COrbit* Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const int nTexIdx);			// 生成処理(テクスチャ番号)
-	static COrbit* Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const char* pTextureName);	// 生成処理(テクスチャの名前)
+	static COrbit* Create(D3DXMATRIX* mtx, const D3DXVECTOR3& pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const int nTexIdx, const TYPE type = TYPE_ORBIT);			// 生成処理(テクスチャ番号)
+	static COrbit* Create(D3DXMATRIX *mtx, const D3DXVECTOR3& pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const char* pTextureName, const TYPE type = TYPE_ORBIT);		// 生成処理(テクスチャの名前)
 
 private:		// 自分だけアクセスできる
 
@@ -61,7 +63,6 @@ private:		// 自分だけアクセスできる
 	D3DXMATRIX m_aMtxWorldPoint[MATRIXPLACE_MAX];	// 両端のワールドマトリックス
 	D3DXVECTOR3 m_aPosPoint[MAX_ORBIT_VTX];			// 計算後の各頂点座標
 	D3DXCOLOR m_aColPoint[MAX_ORBIT_VTX];			// 計算後の各頂点カラー
-	float m_fSize;		// サイズ
 	int m_nTexIdx;		// テクスチャのインデックス
 };
 

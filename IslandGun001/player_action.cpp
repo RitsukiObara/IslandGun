@@ -13,14 +13,18 @@
 #include "renderer.h"
 
 #include "player.h"
+#include "handgun.h"
+#include "dagger.h"
 
 //-------------------------------------------
 // 無名名前空間
 //-------------------------------------------
 namespace
 {
-	const float DODGE_SPEED = 80.0f;		// 回避状態の速度
-	const int DODGE_COUNT = 3;				// 回避状態のカウント数
+	const float DODGE_SPEED = 20.0f;	// 回避状態の速度
+	const int DODGE_COUNT = 27;			// 回避状態のカウント数
+	const int DAGGER_COUNT = 40;		// ダガー状態のカウント数
+	const int SWOOP_COUNT = 65;			// 急降下状態のカウント数
 }
 
 //=========================
@@ -111,6 +115,10 @@ void CPlayerAction::Update(CPlayer* pPlayer)
 
 		// 急降下状態処理
 		SwoopProcess(pPlayer);
+
+		break;
+
+	case CPlayerAction::ACTION_RELOAD:	// リロード状態
 
 		break;
 
@@ -233,6 +241,8 @@ void CPlayerAction::ShotProcess(CPlayer* pPlayer)
 	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTARM - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f));
 	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f,  0.0f, 0.0f));
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
 }
 
 //=========================
@@ -240,7 +250,35 @@ void CPlayerAction::ShotProcess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 {
+	// 移動量を取得する
+	D3DXVECTOR3 move = pPlayer->GetMove();
 
+	// 移動量を0.0fにする
+	move.x = 0.0f;
+	move.z = 0.0f;
+
+	// 移動量を適用する
+	pPlayer->SetMove(move);
+
+	// 行動カウントを加算する
+	m_nActionCount++;
+
+	if (m_nActionCount % DAGGER_COUNT == 0)
+	{ // 行動カウントが一定数に達した場合
+
+		// 行動カウントを0にする
+		m_nActionCount = 0;
+
+		// 行動を設定する
+		SetAction(ACTION_NONE);
+
+		// ダガーを表示しない
+		pPlayer->GetDagger()->SetEnableDisp(false);
+
+		// 拳銃を描画する
+		pPlayer->GetHandGun(0)->SetEnableDisp(true);
+		pPlayer->GetHandGun(1)->SetEnableDisp(true);
+	}
 }
 
 //=========================
@@ -281,5 +319,33 @@ void CPlayerAction::ShotgunProcess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 {
+	// 移動量を取得する
+	D3DXVECTOR3 move = pPlayer->GetMove();
 
+	// 移動量を0.0fにする
+	move.x = 0.0f;
+	move.z = 0.0f;
+
+	// 移動量を適用する
+	pPlayer->SetMove(move);
+
+	// 行動カウントを加算する
+	m_nActionCount++;
+
+	if (m_nActionCount % SWOOP_COUNT == 0)
+	{ // 行動カウントが一定数に達した場合
+
+		// 行動カウントを0にする
+		m_nActionCount = 0;
+
+		// 行動を設定する
+		SetAction(ACTION_NONE);
+
+		// ダガーを表示しない
+		pPlayer->GetDagger()->SetEnableDisp(false);
+
+		// 拳銃を描画する
+		pPlayer->GetHandGun(0)->SetEnableDisp(true);
+		pPlayer->GetHandGun(1)->SetEnableDisp(true);
+	}
 }

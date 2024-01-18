@@ -23,6 +23,7 @@
 class CMotion;				// モーション
 class CPlayerAction;		// プレイヤーの行動
 class CHandgun;				// 拳銃
+class CDagger;				// ダガー
 class CAim;					// エイム
 
 //--------------------------------------------
@@ -37,6 +38,8 @@ public:			// 誰でもアクセスできる
 	{
 		MOTIONTYPE_NEUTRAL = 0,		// 待機
 		MOTIONTYPE_MOVE,			// 移動
+		MOTIONTYPE_DODGE,			// 回避
+		MOTIONTYPE_DAGGER,			// ダガー
 		MOTIONTYPE_MAX				// この列挙型の総数
 	};
 
@@ -61,8 +64,10 @@ public:			// 誰でもアクセスできる
 	void SetData(const D3DXVECTOR3& pos);		// 情報の設定処理
 
 	// セット・ゲット関係
-	CMotion* GetMotion(void) const;				// モーションの情報の取得処理
-	CPlayerAction* GetAction(void) const;		// 行動の情報の取得処理
+	CMotion* GetMotion(void) const;					// モーションの情報の取得処理
+	CPlayerAction* GetAction(void) const;			// 行動の情報の取得処理
+	CHandgun* GetHandGun(const int nCount) const;	// 拳銃の情報の取得処理
+	CDagger* GetDagger(void) const;					// ダガーの情報の取得処理
 
 	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
@@ -84,14 +89,16 @@ private:		// 自分だけアクセスできる
 	void RotMove(void);				// 向きの設定処理
 	void Jump(void);				// ジャンプ処理
 	void CameraControl(void);		// カメラの操作処理
-	void Attack(void);				// 攻撃処理
+	void Shot(void);				// 射撃処理
 	void Avoid(void);				// 回避処理
+	void Dagger(void);				// ダガー処理
 
 	// メンバ変数
 	CMotion* m_pMotion;					// モーションの情報
 	CPlayerAction* m_pAction;			// プレイヤーの行動の情報
 	CHandgun* m_apHandGun[NUM_HANDGUN];	// 拳銃の情報
 	CAim* m_pAim;						// エイムの情報
+	CDagger* m_pDagger;					// ダガーの情報
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 	D3DXVECTOR3 m_move;			// 移動量

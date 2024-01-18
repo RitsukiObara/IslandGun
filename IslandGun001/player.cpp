@@ -19,6 +19,7 @@
 #include "player_action.h"
 #include "handgun.h"
 #include "aim.h"
+#include "dagger.h"
 
 #include "collision.h"
 #include "camera.h"
@@ -26,6 +27,7 @@
 #include "objectElevation.h"
 #include "motion.h"
 #include "bullet.h"
+#include "orbit.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -67,6 +69,7 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 		m_apHandGun[nCntGun] = nullptr;		// 拳銃の情報
 	}
 	m_pAim = nullptr;						// エイムの情報
+	m_pDagger = nullptr;					// ダガーの情報
 
 	m_rotDest = NONE_D3DXVECTOR3;			// 目標の向き
 	m_move = NONE_D3DXVECTOR3;				// 移動量
@@ -154,6 +157,7 @@ HRESULT CPlayer::Init(void)
 		m_apHandGun[nCntGun] = nullptr;	// 拳銃の情報
 	}
 	m_pAim = nullptr;				// エイムの情報
+	m_pDagger = nullptr;			// ダガーの情報
 
 	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
 	m_move = NONE_D3DXVECTOR3;		// 移動量
@@ -210,6 +214,14 @@ void CPlayer::Uninit(void)
 		}
 	}
 
+	if (m_pDagger != nullptr)
+	{ // ダガーの情報が NULL じゃない場合
+
+		// ダガーの終了処理
+		m_pDagger->Uninit();
+		m_pDagger = nullptr;
+	}
+
 	// 終了処理
 	CCharacter::Uninit();
 }
@@ -259,6 +271,13 @@ void CPlayer::Draw(void)
 		}
 	}
 
+	if (m_pDagger != nullptr)
+	{ // 拳銃の情報が NULL じゃない場合
+
+		// 拳銃の描画処理
+		m_pDagger->Draw();
+	}
+
 	if (m_pAim != nullptr)
 	{ // エイムの情報が NULL じゃない場合
 
@@ -283,6 +302,24 @@ CPlayerAction* CPlayer::GetAction(void) const
 {
 	// 行動の情報を返す
 	return m_pAction;
+}
+
+//===========================================
+// 拳銃の情報の取得処理
+//===========================================
+CHandgun* CPlayer::GetHandGun(const int nCount) const
+{
+	// 拳銃の情報を返す
+	return m_apHandGun[nCount];
+}
+
+//===========================================
+// ダガーの情報の取得処理
+//===========================================
+CDagger* CPlayer::GetDagger(void) const
+{
+	// ダガーの情報を返す
+	return m_pDagger;
 }
 
 //=======================================
@@ -310,8 +347,11 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
 
 	// 拳銃の情報を生成する
-	m_apHandGun[0] = CHandgun::Create(D3DXVECTOR3(pos.x - 10.0f, pos.y, pos.z), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
-	m_apHandGun[1] = CHandgun::Create(D3DXVECTOR3(pos.x + 10.0f, pos.y, pos.z), D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f), GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->GetMatrixP());
+	m_apHandGun[0] = CHandgun::Create(D3DXVECTOR3(-10.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, -D3DX_PI * 0.5f), GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
+	m_apHandGun[1] = CHandgun::Create(D3DXVECTOR3(+10.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, D3DX_PI * 0.5f), GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->GetMatrixP());
+
+	// ダガーを生成する
+	m_pDagger = CDagger::Create(GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
 
 	// エイムを生成する
 	m_pAim = CAim::Create(GetPos(), CManager::Get()->GetCamera()->GetRot());
@@ -464,8 +504,10 @@ void CPlayer::Control(void)
 	// カメラの操作処理
 	CameraControl();
 
-	if (m_pAction->GetAction() != CPlayerAction::ACTION_DODGE)
-	{ // 回避状態以外の場合
+	if (m_pAction->GetAction() != CPlayerAction::ACTION_DODGE &&
+		m_pAction->GetAction() != CPlayerAction::ACTION_DAGGER &&
+		m_pAction->GetAction() != CPlayerAction::ACTION_SWOOP)
+	{ // 一定状態以外の場合
 
 		// 向きの移動処理
 		RotMove();
@@ -474,11 +516,14 @@ void CPlayer::Control(void)
 		Jump();
 
 		// 攻撃処理
-		Attack();
-	}
+		Shot();
 
-	// 回避処理
-	Avoid();
+		// ダガー処理
+		Dagger();
+
+		// 回避処理
+		Avoid();
+	}
 }
 
 //=======================================
@@ -673,11 +718,13 @@ void CPlayer::ElevationCamera(void)
 //=======================================
 // 攻撃処理
 //=======================================
-void CPlayer::Attack(void)
+void CPlayer::Shot(void)
 {
-	if (CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_RB, 0) == true ||
-		CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_LB, 0) == true)
-	{ // Xキーを押した場合
+	if ((m_pAction->GetAction() == CPlayerAction::ACTION_NONE ||
+		m_pAction->GetAction() == CPlayerAction::ACTION_SHOT) &&
+		(CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_RB, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_LB, 0) == true))
+	{ // RB・LBキーを押した場合
 
 		// 射撃状態にする
 		m_pAction->SetAction(CPlayerAction::ACTION_SHOT);
@@ -704,7 +751,7 @@ void CPlayer::Attack(void)
 				pos.y = GetPos().y + SHOT_ADD_HEIGHT;
 				pos.z = GetPos().z + cosf(GetRot().y + SHOT_SHIFT_ROT[nCnt]) * SHOT_SHIFT_LENGTH;
 
-				// 弾バンバン
+				// 弾を撃つ
 				CBullet::Create(pos, rot, CBullet::TYPE::TYPE_HANDGUN);
 			}
 		}
@@ -712,14 +759,16 @@ void CPlayer::Attack(void)
 		// 射撃カウントを加算する
 		m_nShotCount++;
 	}
-	else
-	{ // 上記以外
 
-		// 通常状態にする
-		m_pAction->SetAction(CPlayerAction::ACTION_NONE);
+	if (CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_RB, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_LB, 0) == true)
+	{ // RB・LBボタンを離した場合
 
 		// 射撃カウントを0にする
 		m_nShotCount = 0;
+
+		// 通常状態にする
+		m_pAction->SetAction(CPlayerAction::ACTION_NONE);
 	}
 }
 
@@ -737,5 +786,42 @@ void CPlayer::Avoid(void)
 
 		// 回避する向きを設定する
 		m_pAction->SetDodgeRot(m_fStickRot);
+
+		if (m_pMotion->GetType() != MOTIONTYPE_DODGE)
+		{ // 回避モーションじゃない場合
+
+			// 回避モーションにする
+			m_pMotion->Set(MOTIONTYPE_DODGE);
+		}
+
+		// 目標の向きを設定する
+		m_rotDest.y = m_fStickRot;
+	}
+}
+
+//=======================================
+// ダガー処理
+//=======================================
+void CPlayer::Dagger(void)
+{
+	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_X, 0) == true)
+	{ // Xキーを押した場合
+
+		// ダガー状態にする
+		m_pAction->SetAction(CPlayerAction::ACTION_DAGGER);
+
+		if (m_pMotion->GetType() != MOTIONTYPE_DAGGER)
+		{ // ダガーモーション以外の場合
+
+			// ダガーモーションを設定する
+			m_pMotion->Set(MOTIONTYPE_DAGGER);
+		}
+
+		// ダガーを表示する
+		m_pDagger->SetEnableDisp(true);
+
+		// 拳銃を描画しない
+		m_apHandGun[0]->SetEnableDisp(false);
+		m_apHandGun[1]->SetEnableDisp(false);
 	}
 }

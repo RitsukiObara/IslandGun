@@ -34,6 +34,7 @@ public:			// 誰でもアクセスできる
 		ACTION_DODGE,		// 回避状態
 		ACTION_SHOTGUN,		// 散弾(J+銃)状態
 		ACTION_SWOOP,		// 急降下(J+ダガー)状態
+		ACTION_RELOAD,		// リロード状態
 		ACTION_MAX			// この列挙型の総数
 	};
 

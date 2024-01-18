@@ -86,7 +86,7 @@ HRESULT CGame::Init(void)
 	CScene::Init();
 
 	// ƒvƒŒƒCƒ„[‚Ì¶¬ˆ—
-	m_pPlayer = CPlayer::Create(NONE_D3DXVECTOR3);
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(600.0f,0.0f,700.0f));
 
 	CCoin::Create(D3DXVECTOR3(400.0f, 50.0f, 400.0f));
 

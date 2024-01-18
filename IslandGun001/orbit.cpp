@@ -30,7 +30,6 @@ COrbit::COrbit() : CObject(CObject::TYPE_ORBIT, DIM_3D, CObject::PRIORITY_UI)
 	// 全ての値をクリアする
 	m_pVtxBuff = nullptr;				// 頂点バッファへのポインタ
 	m_pMtxParent = nullptr;				// 親のマトリックスへのポインタ
-	m_fSize = 0.0f;						// サイズ
 	m_nTexIdx = NONE_TEXIDX;			// テクスチャのインデックス
 
 	for (int nCnt = 0; nCnt < MATRIXPLACE_MAX; nCnt++)
@@ -66,7 +65,6 @@ HRESULT COrbit::Init(void)
 	// 全ての値を初期化する
 	m_pVtxBuff = nullptr;				// 頂点バッファへのポインタ
 	m_pMtxParent = nullptr;				// 親のマトリックスへのポインタ
-	m_fSize = 0.0f;						// サイズ
 	m_nTexIdx = NONE_TEXIDX;			// テクスチャのインデックス
 
 	for (int nCnt = 0; nCnt < MATRIXPLACE_MAX; nCnt++)
@@ -183,7 +181,7 @@ void COrbit::Draw(void)
 		case MATRIXPLACE_BOTTOM:		// 下のオフセット
 
 			//位置を反映
-			D3DXMatrixTranslation(&mtxTrans, m_aOffset[nCntmtx].x, m_aOffset[nCntmtx].y - m_fSize, m_aOffset[nCntmtx].z);
+			D3DXMatrixTranslation(&mtxTrans, m_aOffset[nCntmtx].x, m_aOffset[nCntmtx].y, m_aOffset[nCntmtx].z);
 			D3DXMatrixMultiply(&m_aMtxWorldPoint[nCntmtx], &m_aMtxWorldPoint[nCntmtx], &mtxTrans);
 
 			break;							// 抜け出す
@@ -191,7 +189,7 @@ void COrbit::Draw(void)
 		case MATRIXPLACE_TOP:			// 上のオフセット
 
 			//位置を反映
-			D3DXMatrixTranslation(&mtxTrans, m_aOffset[nCntmtx].x, m_aOffset[nCntmtx].y + m_fSize, m_aOffset[nCntmtx].z);
+			D3DXMatrixTranslation(&mtxTrans, m_aOffset[nCntmtx].x, m_aOffset[nCntmtx].y, m_aOffset[nCntmtx].z);
 			D3DXMatrixMultiply(&m_aMtxWorldPoint[nCntmtx], &m_aMtxWorldPoint[nCntmtx], &mtxTrans);
 
 			break;							// 抜け出す
@@ -282,17 +280,18 @@ void COrbit::BindTexture(int nIdx)
 //================================
 // 情報の設定処理
 //================================
-void COrbit::SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const int nTexIdx)
+void COrbit::SetData(D3DXMATRIX *mtx, const D3DXVECTOR3 &pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const int nTexIdx, const TYPE type)
 {
 	// 全ての値を設定する
 	m_pMtxParent = mtx;			// 親のマトリックスへのポインタ
-	m_fSize = fSize;			// サイズ
 	m_nTexIdx = nTexIdx;		// テクスチャのインデックス
+
+	m_aOffset[MATRIXPLACE_BOTTOM] = OffSet1;	// 両端のオフセット
+	m_aOffset[MATRIXPLACE_TOP] = OffSet2;		// 両端のオフセット
 
 	for (int nCntSet = 0; nCntSet < MATRIXPLACE_MAX; nCntSet++)
 	{
 		// 情報の初期化
-		m_aOffset[nCntSet] = NONE_D3DXVECTOR3;							// 両端のオフセット
 		m_aCol[nCntSet] = NONE_D3DXCOLOR;								// 両端の標準の色
 		ZeroMemory(&m_aMtxWorldPoint[nCntSet], sizeof(D3DXMATRIX));		// 両端のワールドマトリックス
 	}
@@ -303,22 +302,26 @@ void COrbit::SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const 
 		m_aColPoint[nCntVtx] = NONE_D3DXCOLOR;		// 計算後の各頂点カラー
 		m_aPosPoint[nCntVtx] = pos;					// 計算後の各頂点座標
 	}
+
+	// 種類を設定する
+	SetType(type);
 }
 
 //================================
 // 情報の設定処理
 //================================
-void COrbit::SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const char* pTextureName)
+void COrbit::SetData(D3DXMATRIX *mtx, const D3DXVECTOR3& pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const char* pTextureName, const TYPE type)
 {
 	// 全ての値を設定する
 	m_pMtxParent = mtx;			// 親のマトリックスへのポインタ
-	m_fSize = fSize;			// サイズ
 	m_nTexIdx = CManager::Get()->GetTexture()->Regist(pTextureName);	// テクスチャのインデックス
+
+	m_aOffset[MATRIXPLACE_BOTTOM] = OffSet1;	// 両端のオフセット
+	m_aOffset[MATRIXPLACE_TOP] = OffSet2;		// 両端のオフセット
 
 	for (int nCntSet = 0; nCntSet < MATRIXPLACE_MAX; nCntSet++)
 	{
 		// 情報の初期化
-		m_aOffset[nCntSet] = NONE_D3DXVECTOR3;							// 両端のオフセット
 		m_aCol[nCntSet] = NONE_D3DXCOLOR;								// 両端の標準の色
 		ZeroMemory(&m_aMtxWorldPoint[nCntSet], sizeof(D3DXMATRIX));		// 両端のワールドマトリックス
 	}
@@ -329,12 +332,15 @@ void COrbit::SetData(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const 
 		m_aColPoint[nCntVtx] = NONE_D3DXCOLOR;		// 計算後の各頂点カラー
 		m_aPosPoint[nCntVtx] = pos;					// 計算後の各頂点座標
 	}
+
+	// 種類を設定する
+	SetType(type);
 }
 
 //=================================
 // 生成処理(テクスチャ番号)
 //=================================
-COrbit* COrbit::Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const int nTexIdx)
+COrbit* COrbit::Create(D3DXMATRIX *mtx, const D3DXVECTOR3& pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const int nTexIdx, const TYPE type)
 {
 	// ローカルオブジェクトを生成
 	COrbit* pOrbit = nullptr;	// 軌跡のインスタンスを生成
@@ -367,7 +373,7 @@ COrbit* COrbit::Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, cons
 		}
 
 		// 全頂点の位置の設定処理
-		pOrbit->SetData(mtx, pos, fSize, nTexIdx);
+		pOrbit->SetData(mtx, pos, OffSet1, OffSet2, nTexIdx, type);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -383,7 +389,7 @@ COrbit* COrbit::Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, cons
 //=================================
 // 生成処理(テクスチャの名前)
 //=================================
-COrbit* COrbit::Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, const char* pTextureName)
+COrbit* COrbit::Create(D3DXMATRIX *mtx, const D3DXVECTOR3& pos, const D3DXVECTOR3& OffSet1, const D3DXVECTOR3& OffSet2, const char* pTextureName, const TYPE type)
 {
 	// ローカルオブジェクトを生成
 	COrbit* pOrbit = nullptr;	// 軌跡のインスタンスを生成
@@ -416,7 +422,7 @@ COrbit* COrbit::Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, cons
 		}
 
 		// 全頂点の位置の設定処理
-		pOrbit->SetData(mtx, pos, fSize, pTextureName);
+		pOrbit->SetData(mtx, pos, OffSet1, OffSet2, pTextureName, type);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -427,4 +433,71 @@ COrbit* COrbit::Create(D3DXMATRIX *mtx, D3DXVECTOR3 pos, const float fSize, cons
 
 	// 軌跡のポインタを返す
 	return pOrbit;
+}
+
+//=================================
+// 位置のリセット処理
+//=================================
+void COrbit::PosReset(void)
+{
+	VERTEX_3D* pVtx;				// 頂点情報へのポインタ
+
+	D3DXMATRIX mtxTrans;			// 計算用マトリックス
+	D3DXMATRIX mtxUnit;				// 原点のマトリックス
+
+	// マトリックスを作成し	親のマトリックスと掛け合わせる
+	for (int nCntmtx = 0; nCntmtx < MATRIXPLACE_MAX; nCntmtx++)
+	{
+		//ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&m_aMtxWorldPoint[nCntmtx]);
+
+		switch (nCntmtx)
+		{
+		case MATRIXPLACE_BOTTOM:		// 下のオフセット
+
+			//位置を反映
+			D3DXMatrixTranslation(&mtxTrans, m_aOffset[nCntmtx].x, m_aOffset[nCntmtx].y, m_aOffset[nCntmtx].z);
+			D3DXMatrixMultiply(&m_aMtxWorldPoint[nCntmtx], &m_aMtxWorldPoint[nCntmtx], &mtxTrans);
+
+			break;							// 抜け出す
+
+		case MATRIXPLACE_TOP:			// 上のオフセット
+
+			//位置を反映
+			D3DXMatrixTranslation(&mtxTrans, m_aOffset[nCntmtx].x, m_aOffset[nCntmtx].y, m_aOffset[nCntmtx].z);
+			D3DXMatrixMultiply(&m_aMtxWorldPoint[nCntmtx], &m_aMtxWorldPoint[nCntmtx], &mtxTrans);
+
+			break;							// 抜け出す
+		}
+
+		// 親のマトリックスを掛け合わせる
+		D3DXMatrixMultiply
+		(
+			&m_aMtxWorldPoint[nCntmtx],
+			&m_aMtxWorldPoint[nCntmtx],
+			m_pMtxParent
+		);
+	}
+
+	// 最初の頂点座標と頂点カラーを代入する
+	for (int nCntNew = 0; nCntNew < MAX_ORBIT_VTX; nCntNew++)
+	{ // マトリックスの数繰り返す
+
+		// 頂点座標を代入する
+		m_aPosPoint[nCntNew].x = m_aMtxWorldPoint[nCntNew % 2]._41;
+		m_aPosPoint[nCntNew].y = m_aMtxWorldPoint[nCntNew % 2]._42;
+		m_aPosPoint[nCntNew].z = m_aMtxWorldPoint[nCntNew % 2]._43;
+	}
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCntVtx = 0; nCntVtx < MAX_ORBIT_VTX; nCntVtx++)
+	{
+		// 頂点座標の設定
+		pVtx[nCntVtx].pos = m_aPosPoint[nCntVtx];
+	}
+
+	// 頂点バッファをアンロックする
+	m_pVtxBuff->Unlock();
 }
