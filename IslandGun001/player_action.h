@@ -69,6 +69,7 @@ private:		// 誰でもアクセスできる
 	void DodgeProcess(CPlayer* pPlayer);	// 回避状態処理
 	void ShotgunProcess(CPlayer* pPlayer);	// 散弾(J+銃)状態
 	void SwoopProcess(CPlayer* pPlayer);	// 急降下状態処理
+	void ReloadProcess(CPlayer* pPlayer);	// リロード処理
 
 	// メンバ変数
 	ACTION m_action;		// 行動

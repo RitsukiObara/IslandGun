@@ -209,7 +209,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 #else
 
 		// ƒV[ƒ“‚Ìƒƒ‚ƒŠ‚ðŠm•Û‚·‚é
-		m_pFade = m_pFade->Create(CScene::MODE_LOGO);
+		m_pFade = m_pFade->Create(CScene::MODE_GAME);
 #endif 
 
 	}

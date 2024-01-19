@@ -52,6 +52,7 @@ public:			// 誰でもアクセスできる
 		TYPE_BULLET,			// 弾
 		TYPE_ENEMY,				// 敵
 		TYPE_COIN,				// 小判
+		TYPE_BULLETUI,			// 弾丸UI
 		TYPE_MAX				// この列挙型の総数
 	};
 

@@ -18,8 +18,9 @@
 #include "player.h"
 #include "player_action.h"
 #include "handgun.h"
-#include "aim.h"
 #include "dagger.h"
+#include "aim.h"
+#include "bulletUI.h"
 
 #include "collision.h"
 #include "camera.h"
@@ -48,13 +49,15 @@ namespace
 	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 130.0f, 40.0f);		// 当たり判定時のサイズ
 	const float SHOT_SHIFT_ROT[NUM_HANDGUN] =		// 射撃時のずらす向き
 	{
+		(-D3DX_PI * 0.06f),
 		(D3DX_PI * 0.06f),
-		(-D3DX_PI * 0.06f)
 	};
 	const float SHOT_SHIFT_LENGTH = 95.0f;			// 射撃時のずらす幅
 	const float SHOT_ADD_HEIGHT = 160.0f;			// 射撃時の高さの追加量
 	const float SHOT_ADD_ROT = 0.9f;				// 射撃時の向きの加算数
 	const int DODGE_INTERVAL = 100;					// 回避インターバル
+	const int SHOT_INTERVAL = 5;					// 撃つインターバル
+	const float CAMERA_MOUSE_MAGNI = 5000.0f;		// マウスでのカメラ操作の倍率
 }
 
 //=========================================
@@ -71,6 +74,7 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	}
 	m_pAim = nullptr;						// エイムの情報
 	m_pDagger = nullptr;					// ダガーの情報
+	m_pBulletUI = nullptr;					// 弾丸の情報
 
 	m_rotDest = NONE_D3DXVECTOR3;			// 目標の向き
 	m_move = NONE_D3DXVECTOR3;				// 移動量
@@ -152,6 +156,9 @@ HRESULT CPlayer::Init(void)
 		m_pAction = CPlayerAction::Create();
 	}
 
+	// 弾丸UIの生成
+	m_pBulletUI = CBulletUI::Create();
+
 	// 全ての値を初期化する
 	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
 	{
@@ -170,6 +177,7 @@ HRESULT CPlayer::Init(void)
 	m_fStickRot = 0.0f;				// スティックの向き
 	m_bMove = false;				// 移動状況
 	m_bJump = false;				// ジャンプ状況
+	m_bRightShot = true;			// 右で撃つかどうか
 
 	// 値を返す
 	return S_OK;
@@ -505,13 +513,26 @@ void CPlayer::Control(void)
 	// カメラの操作処理
 	CameraControl();
 
+	// マウスでのカメラの操作処理
+	CameraMouse();
+
 	if (m_pAction->GetAction() != CPlayerAction::ACTION_DODGE &&
 		m_pAction->GetAction() != CPlayerAction::ACTION_DAGGER &&
 		m_pAction->GetAction() != CPlayerAction::ACTION_SWOOP)
 	{ // 一定状態以外の場合
 
-		// 向きの移動処理
-		RotMove();
+		if (CManager::Get()->GetInputGamePad()->GetConnect() == true)
+		{ // ゲームパッドが刺さっていた場合
+
+			// 向きの移動処理
+			RotMove();
+		}
+		else
+		{ // 上記以外
+
+			// キーボードでの処理
+			KeyboardMove();
+		}
 
 		// ジャンプ処理
 		Jump();
@@ -616,11 +637,100 @@ void CPlayer::RotMove(void)
 }
 
 //=======================================
+// キーボードでの設定処理
+//=======================================
+void CPlayer::KeyboardMove(void)
+{
+	// ローカル変数を宣言する
+	float fMoveX = 0.0f;	// X軸の移動量
+	float fMoveZ = 0.0f;	// Z軸の移動量
+	D3DXVECTOR3 CameraRot = CManager::Get()->GetCamera()->GetRot();	// カメラの向き
+
+	if (CManager::Get()->GetInputKeyboard()->GetPress(DIK_W) == true)
+	{ // Wキーを押した場合
+
+		// Z軸の移動量を設定する
+		fMoveZ = 1.0f;
+	}
+
+	if (CManager::Get()->GetInputKeyboard()->GetPress(DIK_S) == true)
+	{ // Sキーを押した場合
+
+		// Z軸の移動量を設定する
+		fMoveZ = -1.0f;
+	}
+
+	if (CManager::Get()->GetInputKeyboard()->GetPress(DIK_A) == true)
+	{ // Aキーを押した場合
+
+		// X軸の移動量を設定する
+		fMoveX = -1.0f;
+	}
+
+	if (CManager::Get()->GetInputKeyboard()->GetPress(DIK_D) == true)
+	{ // Dキーを押した場合
+
+		// X軸の移動量を設定する
+		fMoveX = 1.0f;
+	}
+
+	if (fMoveX != 0 ||
+		fMoveZ != 0)
+	{ // 右スティックをどっちかに倒した場合
+
+		// スティックの向きを設定する
+		m_fStickRot = atan2f(fMoveX, fMoveZ);
+
+		// 向きの正規化
+		useful::RotNormalize(&m_fStickRot);
+
+		// 向きにカメラの向きを加算する
+		m_fStickRot += CameraRot.y;
+
+		if (m_pAction->GetAction() != CPlayerAction::ACTION_SHOT)
+		{ // 射撃状態以外の場合
+
+			// 向きの正規化
+			useful::RotNormalize(&m_fStickRot);
+
+			// 向きを設定する
+			m_rotDest.y = m_fStickRot;
+		}
+
+		// 移動量を設定する
+		m_move.x = sinf(m_fStickRot) * m_fSpeed;
+		m_move.z = cosf(m_fStickRot) * m_fSpeed;
+
+		if (m_pMotion->GetType() != MOTIONTYPE_MOVE)
+		{ // 移動モーションじゃなかった場合
+
+			// 移動モーションを設定する
+			m_pMotion->Set(MOTIONTYPE_MOVE);
+		}
+	}
+	else
+	{ // 上記以外
+
+		// 移動量を設定する
+		m_move.x = 0.0f;
+		m_move.z = 0.0f;
+
+		if (m_pMotion->GetType() != MOTIONTYPE_NEUTRAL)
+		{ // 移動モーションじゃなかった場合
+
+			// 移動モーションを設定する
+			m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+		}
+	}
+}
+
+//=======================================
 // ジャンプ処理
 //=======================================
 void CPlayer::Jump(void)
 {
-	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true &&
+	if ((CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true ||
+		CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_SPACE) == true) &&
 		m_bJump == false)
 	{ // Aボタンを押した場合
 
@@ -652,6 +762,59 @@ void CPlayer::CameraControl(void)
 
 	// カメラの向きを加算する
 	CameraRot.x -= (fStickRotY * CAMERA_ROT_CORRECT);
+
+	if (CameraRot.x >= D3DX_PI - 0.01f)
+	{ // 向きが一定を超えた場合
+
+		CameraRot.x = D3DX_PI - 0.01f;
+	}
+	else if (CameraRot.x <= 0.0f + 0.01f)
+	{ // 向きが一定を超えた場合
+
+		CameraRot.x = 0.0f + 0.01f;
+	}
+
+	if (m_pAim != nullptr)
+	{ // エイムが NULL じゃない場合
+
+		D3DXVECTOR3 pos;
+
+		// 位置を設定する
+		pos.x = GetPos().x + sinf(CameraRot.y) * SHOT_SHIFT_LENGTH;
+		pos.y = GetPos().y + SHOT_ADD_HEIGHT;
+		pos.z = GetPos().z + cosf(CameraRot.y) * SHOT_SHIFT_LENGTH;
+
+		// エイムの設置処理
+		m_pAim->SetAim(pos, D3DXVECTOR3(CameraRot.x - SHOT_ADD_ROT, CameraRot.y, CameraRot.z));
+	}
+
+	//// 起伏地面とカメラの当たり判定
+	//ElevationCamera();
+
+	// 向きを適用する
+	CManager::Get()->GetCamera()->SetRot(CameraRot);
+}
+
+//=======================================
+// マウスでのカメラの操作処理
+//=======================================
+void CPlayer::CameraMouse(void)
+{
+	D3DXVECTOR3 CameraRot = CManager::Get()->GetCamera()->GetRot();		// カメラの向きを取得する
+	float fMoveX = 0.0f;
+	float fMoveZ = 0.0f;		// スティックの向き
+
+	fMoveX = CManager::Get()->GetInputMouse()->GetMove().x * CAMERA_MOUSE_MAGNI;
+	fMoveZ = -CManager::Get()->GetInputMouse()->GetMove().y * CAMERA_MOUSE_MAGNI;
+
+	// カメラの向きを加算する
+	CameraRot.y += (fMoveX * CAMERA_ROT_CORRECT);
+
+	// 向きの正規化
+	useful::RotNormalize(&CameraRot.y);
+
+	// カメラの向きを加算する
+	CameraRot.x -= (fMoveZ * CAMERA_ROT_CORRECT);
 
 	if (CameraRot.x >= D3DX_PI - 0.01f)
 	{ // 向きが一定を超えた場合
@@ -721,11 +884,16 @@ void CPlayer::ElevationCamera(void)
 //=======================================
 void CPlayer::Shot(void)
 {
+	// 残弾数を取得する
+	int nNumBullet = m_pBulletUI->GetNumBullet();
+
 	if ((m_pAction->GetAction() == CPlayerAction::ACTION_NONE ||
 		m_pAction->GetAction() == CPlayerAction::ACTION_SHOT) &&
 		(CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_RB, 0) == true ||
-		CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_LB, 0) == true))
-	{ // RB・LBキーを押した場合
+		CManager::Get()->GetInputGamePad()->GetPress(CInputGamePad::JOYKEY_LB, 0) == true ||
+		CManager::Get()->GetInputMouse()->GetPress(CInputMouse::MOUSE_L) == true) &&
+		nNumBullet > 0)
+	{ // 残弾があり、RB・LBキーを押した場合
 
 		// 射撃状態にする
 		m_pAction->SetAction(CPlayerAction::ACTION_SHOT);
@@ -745,15 +913,31 @@ void CPlayer::Shot(void)
 			// 向きの正規化
 			useful::RotNormalize(&rot.x);
 
-			for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
-			{
+			if (nNumBullet > 0)
+			{ // まだ弾丸がある場合
+
 				// 位置を設定する
-				pos.x = GetPos().x + sinf(GetRot().y + SHOT_SHIFT_ROT[nCnt]) * SHOT_SHIFT_LENGTH;
+				pos.x = GetPos().x + sinf(GetRot().y + SHOT_SHIFT_ROT[(int)(m_bRightShot)]) * SHOT_SHIFT_LENGTH;
 				pos.y = GetPos().y + SHOT_ADD_HEIGHT;
-				pos.z = GetPos().z + cosf(GetRot().y + SHOT_SHIFT_ROT[nCnt]) * SHOT_SHIFT_LENGTH;
+				pos.z = GetPos().z + cosf(GetRot().y + SHOT_SHIFT_ROT[(int)(m_bRightShot)]) * SHOT_SHIFT_LENGTH;
 
 				// 弾を撃つ
 				CBullet::Create(pos, rot, CBullet::TYPE::TYPE_HANDGUN);
+
+				// 右で撃つかどうかを変える
+				m_bRightShot = !m_bRightShot;
+
+				// 残弾数を減らす
+				nNumBullet--;
+
+				if (nNumBullet <= 0)
+				{
+					// 弾丸を補充する
+					nNumBullet = MAX_REMAINING_BULLET;
+				}
+
+				// 残弾数を適用する
+				m_pBulletUI->SetNumBullet(nNumBullet);
 			}
 		}
 
@@ -780,7 +964,8 @@ void CPlayer::Avoid(void)
 {
 	if (m_bJump == false &&
 		m_pAction->IsDodgeUse() == true &&
-		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_B, 0) == true)
+		(CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_B, 0) == true ||
+			CManager::Get()->GetInputMouse()->GetTrigger(CInputMouse::MOUSE_R) == true))
 	{ // 地上でBキーを押した場合
 
 		// 回避状態にする
@@ -812,7 +997,8 @@ void CPlayer::Avoid(void)
 //=======================================
 void CPlayer::Dagger(void)
 {
-	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_X, 0) == true)
+	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_X, 0) == true ||
+		CManager::Get()->GetInputMouse()->GetTrigger(CInputMouse::MOUSE_WHEEL) == true)
 	{ // Xキーを押した場合
 
 		// ダガー状態にする

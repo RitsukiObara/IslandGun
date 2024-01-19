@@ -124,6 +124,9 @@ void CPlayerAction::Update(CPlayer* pPlayer)
 
 	case CPlayerAction::ACTION_RELOAD:	// リロード状態
 
+		// リロード処理
+		ReloadProcess(pPlayer);
+
 		break;
 
 	default:
@@ -370,8 +373,9 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 	// 移動量を取得する
 	D3DXVECTOR3 move = pPlayer->GetMove();
 
-	// 移動量を0.0fにする
+	// 移動量を設定する
 	move.x = 0.0f;
+	move.y = -20.0f;
 	move.z = 0.0f;
 
 	// 移動量を適用する
@@ -396,4 +400,12 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 		pPlayer->GetHandGun(0)->SetEnableDisp(true);
 		pPlayer->GetHandGun(1)->SetEnableDisp(true);
 	}
+}
+
+//=========================
+// リロード処理
+//=========================
+void CPlayerAction::ReloadProcess(CPlayer* pPlayer)
+{
+
 }

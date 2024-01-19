@@ -25,6 +25,7 @@ class CPlayerAction;		// プレイヤーの行動
 class CHandgun;				// 拳銃
 class CDagger;				// ダガー
 class CAim;					// エイム
+class CBulletUI;			// 弾丸UI
 
 //--------------------------------------------
 // クラス(プレイヤークラス)
@@ -85,10 +86,12 @@ private:		// 自分だけアクセスできる
 	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
 
 	// 操作感系
+	void CameraControl(void);		// カメラの操作処理
+	void CameraMouse(void);			// マウスでのカメラの操作処理
 	void Control(void);				// 操作処理
 	void RotMove(void);				// 向きの設定処理
+	void KeyboardMove(void);		// キーボードでの設定処理
 	void Jump(void);				// ジャンプ処理
-	void CameraControl(void);		// カメラの操作処理
 	void Shot(void);				// 射撃処理
 	void Avoid(void);				// 回避処理
 	void Dagger(void);				// ダガー処理
@@ -97,8 +100,9 @@ private:		// 自分だけアクセスできる
 	CMotion* m_pMotion;					// モーションの情報
 	CPlayerAction* m_pAction;			// プレイヤーの行動の情報
 	CHandgun* m_apHandGun[NUM_HANDGUN];	// 拳銃の情報
-	CAim* m_pAim;						// エイムの情報
 	CDagger* m_pDagger;					// ダガーの情報
+	CAim* m_pAim;						// エイムの情報
+	CBulletUI* m_pBulletUI;				// 弾丸の情報
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 	D3DXVECTOR3 m_move;			// 移動量
@@ -110,6 +114,7 @@ private:		// 自分だけアクセスできる
 	float m_fStickRot;			// スティックの向き
 	bool m_bMove;				// 移動状況
 	bool m_bJump;				// ジャンプ状況
+	bool m_bRightShot;			// 右で撃つかどうか
 
 };
 
