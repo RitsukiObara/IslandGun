@@ -40,10 +40,10 @@ public:
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd);				// 情報の設定処理
+	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd, const bool bZTest);				// 情報の設定処理
 
 	// 静的メンバ関数
-	static CEffect* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd);		// 生成処理
+	static CEffect* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd, const bool bZTest);	// 生成処理
 
 private:
 
@@ -65,6 +65,7 @@ private:
 	float m_fSub;			// 透明になる間隔
 	float m_fContra;		// 半径の縮む間隔
 	bool m_bAdd;			// 加算合成状況
+	bool m_bZTest;			// Zテストの有無
 };
 
 #endif

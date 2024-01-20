@@ -46,6 +46,7 @@ CEffect::CEffect() : CBillboard(CObject::TYPE_EFFECT, CObject::PRIORITY_EFFECT)
 	m_fContra = 0.0f;								// 半径の縮む間隔
 	m_type = TYPE_NONE;								// 種類
 	m_bAdd = false;									// 加算合成状況
+	m_bZTest = false;								// Zテストの有無
 }
 
 //=========================
@@ -77,6 +78,7 @@ HRESULT CEffect::Init(void)
 	m_fContra = 0.0f;								// 半径の縮む間隔
 	m_type = TYPE_NONE;								// 種類
 	m_bAdd = false;									// 加算合成状況
+	m_bZTest = false;								// Zテストの有無
 
 	// 成功を返す
 	return S_OK;
@@ -214,7 +216,7 @@ void CEffect::Draw(void)
 		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
 		// 描画処理
-		CBillboard::DrawLightOff(false);
+		CBillboard::DrawLightOff(m_bZTest);
 
 		//αブレンディングを元に戻す
 		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
@@ -225,14 +227,14 @@ void CEffect::Draw(void)
 	{ // 上記以外
 
 		// 描画処理
-		CBillboard::DrawLightOff(false);
+		CBillboard::DrawLightOff(m_bZTest);
 	}
 }
 
 //=========================
 // 情報の設定処理
 //=========================
-void CEffect::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd)
+void CEffect::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd, const bool bZTest)
 {
 	// 情報の設定処理
 	SetPos(pos);			// 位置
@@ -247,6 +249,7 @@ void CEffect::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int
 	m_move = move;			// 移動量
 	m_col = col;			// 色
 	m_bAdd = bAdd;			// 加算合成状況
+	m_bZTest = bZTest;		// Zテストの有無
 
 	m_fSub = m_col.a * (1.0f / m_nLife);			// 透明になる間隔
 	m_fContra = fRadius * (1.0f / m_nLife);			// 半径の縮む間隔
@@ -264,7 +267,7 @@ void CEffect::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int
 //=========================
 // 生成処理
 //=========================
-CEffect* CEffect::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd)
+CEffect* CEffect::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const int nLife, const float fRadius, const TYPE type, const D3DXCOLOR& col, const bool bAdd, const bool bZTest)
 {
 	// ローカルオブジェクトを生成
 	CEffect* pEffect = nullptr;	// プレイヤーのインスタンスを生成
@@ -300,7 +303,7 @@ CEffect* CEffect::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, const 
 		}
 
 		// 情報の設定処理
-		pEffect->SetData(pos, move, nLife, fRadius, type, col, bAdd);
+		pEffect->SetData(pos, move, nLife, fRadius, type, col, bAdd, bZTest);
 	}
 	else
 	{ // オブジェクトが NULL の場合

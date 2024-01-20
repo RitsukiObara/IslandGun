@@ -38,6 +38,8 @@ public:			// 誰でもアクセスできる
 		TYPE_COIN,				// 小判
 		TYPE_HANDGUN,			// 拳銃
 		TYPE_DAGGER,			// ダガー
+		TYPE_GOLDBONE,			// 金の骨
+		TYPE_PALMTREE,			// ヤシの木
 
 		// プレイヤーモデル
 		TYPE_PLAYERWAIST,		// 腰

@@ -53,6 +53,7 @@ public:			// 誰でもアクセスできる
 		TYPE_ENEMY,				// 敵
 		TYPE_COIN,				// 小判
 		TYPE_BULLETUI,			// 弾丸UI
+		TYPE_GOLDBONE,			// 金の骨
 		TYPE_MAX				// この列挙型の総数
 	};
 

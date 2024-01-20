@@ -25,6 +25,7 @@
 #include "player.h"
 #include "coin.h"
 #include "enemy.h"
+#include "tree.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -91,6 +92,8 @@ HRESULT CGame::Init(void)
 	CCoin::Create(D3DXVECTOR3(400.0f, 50.0f, 400.0f));
 
 	CEnemy::Create(D3DXVECTOR3(400.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+
+	CTree::Create(D3DXVECTOR3(200.0f, 0.0f, -700.0f), NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

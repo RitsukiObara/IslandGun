@@ -36,15 +36,15 @@ public:			// 誰でもアクセス出来る
 	void Draw(void);		// 描画処理
 
 	// 静的メンバ関数
-	static void Create(const D3DXVECTOR3& pos, const CParticle::TYPE type);		// 生成処理
+	static void Create(const D3DXVECTOR3& pos, const CParticle::TYPE type, const bool bZTest);		// 生成処理
 
 private:		// 自分だけアクセスできる
 
 	// パーティクル発生処理
-	void InitFire(const D3DXVECTOR3& pos);			// 炎系の生成
-	void InitDust(const D3DXVECTOR3& pos);			// 着地煙の生成
-	void InitItemGet(const D3DXVECTOR3& pos);		// アイテムゲットの生成
-	void InitEnemyDeath(const D3DXVECTOR3& pos);	// 敵の死亡の生成
+	void InitFire(const D3DXVECTOR3& pos, const bool bZTest);			// 炎系の生成
+	void InitDust(const D3DXVECTOR3& pos, const bool bZTest);			// 着地煙の生成
+	void InitItemGet(const D3DXVECTOR3& pos, const bool bZTest);		// アイテムゲットの生成
+	void InitEnemyDeath(const D3DXVECTOR3& pos, const bool bZTest);	// 敵の死亡の生成
 };
 
 #endif

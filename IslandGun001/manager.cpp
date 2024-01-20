@@ -24,6 +24,8 @@
 #include "bullet_manager.h"
 #include "enemy_manager.h"
 #include "coin_manager.h"
+#include "gold_bone_manager.h"
+#include "tree_manager.h"
 
 //--------------------------------------------
 // 静的メンバ変数宣言
@@ -57,6 +59,8 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	CBulletManager::Create();			// 弾マネージャー
 	CEnemyManager::Create();			// 敵マネージャー
 	CCoinManager::Create();				// 小判マネージャー
+	CGoldBoneManager::Create();			// 金の骨マネージャー
+	CTreeManager::Create();				// 木マネージャー
 
 	if (m_pRenderer == nullptr)
 	{ // レンダラーへのポインタが NULL の場合
@@ -341,6 +345,8 @@ void CManager::Uninit(void)
 	CBulletManager::Get()->Uninit();		// 弾マネージャー
 	CEnemyManager::Get()->Uninit();			// 敵マネージャー
 	CCoinManager::Get()->Uninit();			// 小判マネージャー
+	CGoldBoneManager::Get()->Uninit();		// 金の骨マネージャー
+	CTreeManager::Get()->Uninit();			// 木マネージャー
 
 	// マネージャーのメモリを解放する
 	delete m_pManager;

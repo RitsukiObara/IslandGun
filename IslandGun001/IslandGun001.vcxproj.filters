@@ -58,6 +58,12 @@
     <Filter Include="gimmick">
       <UniqueIdentifier>{f19a198c-57e1-4dfe-975e-a3c089d2ce17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gimmick\Item">
+      <UniqueIdentifier>{430e4321-cac2-47cb-8a38-ac56ae0ae275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gimmick\Tree">
+      <UniqueIdentifier>{2a053623-af3f-4832-841d-7caccf1d96c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -312,12 +318,6 @@
     <ClCompile Include="enemy_manager.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
-    <ClCompile Include="coin.cpp">
-      <Filter>gimmick</Filter>
-    </ClCompile>
-    <ClCompile Include="coin_manager.cpp">
-      <Filter>gimmick</Filter>
-    </ClCompile>
     <ClCompile Include="enemy.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
@@ -332,6 +332,24 @@
     </ClCompile>
     <ClCompile Include="bulletUI.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="coin.cpp">
+      <Filter>gimmick\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="coin_manager.cpp">
+      <Filter>gimmick\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="gold_bone.cpp">
+      <Filter>gimmick\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="gold_bone_manager.cpp">
+      <Filter>gimmick\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="tree.cpp">
+      <Filter>gimmick\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="tree_manager.cpp">
+      <Filter>gimmick\Tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -590,12 +608,6 @@
     <ClInclude Include="enemy_manager.h">
       <Filter>enemy</Filter>
     </ClInclude>
-    <ClInclude Include="coin.h">
-      <Filter>gimmick</Filter>
-    </ClInclude>
-    <ClInclude Include="coin_manager.h">
-      <Filter>gimmick</Filter>
-    </ClInclude>
     <ClInclude Include="handgun.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -607,6 +619,24 @@
     </ClInclude>
     <ClInclude Include="bulletUI.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="coin.h">
+      <Filter>gimmick\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="coin_manager.h">
+      <Filter>gimmick\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="gold_bone.h">
+      <Filter>gimmick\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="gold_bone_manager.h">
+      <Filter>gimmick\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="tree.h">
+      <Filter>gimmick\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="tree_manager.h">
+      <Filter>gimmick\Tree</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -58,7 +58,7 @@ void CParticle::Draw(void)
 //===============================
 // 生成処理
 //===============================
-void CParticle::Create(const D3DXVECTOR3& pos, const CParticle::TYPE type)
+void CParticle::Create(const D3DXVECTOR3& pos, const CParticle::TYPE type, const bool bZTest)
 {
 	// ローカルポインタ宣言
 	CParticle* pParticle = nullptr;		// パーティクル2Dのポインタ
@@ -78,28 +78,28 @@ void CParticle::Create(const D3DXVECTOR3& pos, const CParticle::TYPE type)
 		case TYPE_FIRE:			// 炎系
 
 			// 爆発の初期化処理
-			pParticle->InitFire(pos);
+			pParticle->InitFire(pos, bZTest);
 
 			break;
 
 		case TYPE_DUST:			// 埃系
 
 			// 埃の初期化処理
-			pParticle->InitDust(pos);
+			pParticle->InitDust(pos, bZTest);
 
 			break;
 
 		case TYPE_ITEMGET:		// アイテム取得
 
 			// アイテムゲットの初期化処理
-			pParticle->InitItemGet(pos);
+			pParticle->InitItemGet(pos, bZTest);
 
 			break;
 
 		case TYPE_ENEMYDEATH:	// 敵の死亡
 
 			// 敵の死亡の初期化処理
-			pParticle->InitEnemyDeath(pos);
+			pParticle->InitEnemyDeath(pos, bZTest);
 
 			break;
 
@@ -130,7 +130,7 @@ void CParticle::Create(const D3DXVECTOR3& pos, const CParticle::TYPE type)
 //===============================
 // 爆発パーティクル処理
 //===============================
-void CParticle::InitFire(const D3DXVECTOR3& pos)
+void CParticle::InitFire(const D3DXVECTOR3& pos, const bool bZTest)
 {
 	//[引数用変数]
 	D3DXVECTOR3 ShiftPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 位置
@@ -172,7 +172,8 @@ void CParticle::InitFire(const D3DXVECTOR3& pos)
 			fRadius,			// 半径
 			CEffect::TYPE_FIRE,	// 種類
 			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-			true
+			true,
+			bZTest
 		);
 	}
 }
@@ -180,7 +181,7 @@ void CParticle::InitFire(const D3DXVECTOR3& pos)
 //===============================
 // 着地煙の生成
 //===============================
-void CParticle::InitDust(const D3DXVECTOR3& pos)
+void CParticle::InitDust(const D3DXVECTOR3& pos, const bool bZTest)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 EffectPos;		// エフェクトの位置
@@ -218,7 +219,8 @@ void CParticle::InitDust(const D3DXVECTOR3& pos)
 				50.0f,
 				CEffect::TYPE_DUST,
 				D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f),
-				false
+				false,
+				bZTest
 			);
 		}
 	}
@@ -227,7 +229,7 @@ void CParticle::InitDust(const D3DXVECTOR3& pos)
 //===============================
 // アイテムゲットの生成
 //===============================
-void CParticle::InitItemGet(const D3DXVECTOR3& pos)
+void CParticle::InitItemGet(const D3DXVECTOR3& pos, const bool bZTest)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 move;		// エフェクトの移動量
@@ -260,7 +262,8 @@ void CParticle::InitItemGet(const D3DXVECTOR3& pos)
 			fRadius,
 			CEffect::TYPE_NONE,
 			D3DXCOLOR(1.0f, 1.0f, 0.1f, 1.0f),
-			true
+			true,
+			bZTest
 		);
 	}
 }
@@ -268,7 +271,7 @@ void CParticle::InitItemGet(const D3DXVECTOR3& pos)
 //===============================
 // 敵の死亡の生成
 //===============================
-void CParticle::InitEnemyDeath(const D3DXVECTOR3& pos)
+void CParticle::InitEnemyDeath(const D3DXVECTOR3& pos, const bool bZTest)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 move;		// エフェクトの移動量
@@ -301,7 +304,8 @@ void CParticle::InitEnemyDeath(const D3DXVECTOR3& pos)
 			fRadius,
 			CEffect::TYPE_RUPTURE,
 			D3DXCOLOR(1.0f, 1.0f, 0.5f, 1.0f),
-			false
+			false,
+			bZTest
 		);
 	}
 }
