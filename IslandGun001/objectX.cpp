@@ -31,6 +31,8 @@ const char* CXFile::c_apModelData[CXFile::TYPE_MAX] =		// モデルの名前
 	"data\\MODEL\\Dagger.x",			// ダガー
 	"data\\MODEL\\GoldBone.x",			// 金の骨
 	"data\\MODEL\\PalmTree.x",			// ヤシの木
+	"data\\MODEL\\PalmFruit.x",			// ヤシの実
+	"data\\MODEL\\PalmItem.x",			// ヤシの実(アイテム体)
 
 	// プレイヤーモデル
 	"data/MODEL/PlayerWaist.x",			// プレイヤーの腰

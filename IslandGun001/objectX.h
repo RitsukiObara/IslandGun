@@ -40,6 +40,8 @@ public:			// 誰でもアクセスできる
 		TYPE_DAGGER,			// ダガー
 		TYPE_GOLDBONE,			// 金の骨
 		TYPE_PALMTREE,			// ヤシの木
+		TYPE_PALMFRUIT,			// ヤシの実
+		TYPE_PALMITEM,			// ヤシの実(アイテム体)
 
 		// プレイヤーモデル
 		TYPE_PLAYERWAIST,		// 腰

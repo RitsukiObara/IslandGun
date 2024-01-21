@@ -54,6 +54,8 @@ public:			// 誰でもアクセスできる
 		TYPE_COIN,				// 小判
 		TYPE_BULLETUI,			// 弾丸UI
 		TYPE_GOLDBONE,			// 金の骨
+		TYPE_TREE,				// 木
+		TYPE_PALMFRUIT,			// ヤシの実
 		TYPE_MAX				// この列挙型の総数
 	};
 

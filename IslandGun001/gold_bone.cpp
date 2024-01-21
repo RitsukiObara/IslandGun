@@ -161,13 +161,13 @@ void CGoldBone::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 {
 	// ローカルオブジェクトを生成
-	CGoldBone* pCoin = nullptr;	// インスタンスを生成
+	CGoldBone* pBone = nullptr;	// インスタンスを生成
 
-	if (pCoin == nullptr)
+	if (pBone == nullptr)
 	{ // オブジェクトが NULL の場合
 
 		// インスタンスを生成
-		pCoin = new CGoldBone;
+		pBone = new CGoldBone;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -179,11 +179,11 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 		return nullptr;
 	}
 
-	if (pCoin != nullptr)
+	if (pBone != nullptr)
 	{ // オブジェクトが NULL じゃない場合
 
 		// 初期化処理
-		if (FAILED(pCoin->Init()))
+		if (FAILED(pBone->Init()))
 		{ // 初期化に失敗した場合
 
 			// 停止
@@ -194,7 +194,7 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 		}
 
 		// 情報の設定処理
-		pCoin->SetData(pos, move);
+		pBone->SetData(pos, move);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -206,8 +206,8 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 		return nullptr;
 	}
 
-	// ネジのポインタを返す
-	return pCoin;
+	// 金の骨のポインタを返す
+	return pBone;
 }
 
 //=======================================

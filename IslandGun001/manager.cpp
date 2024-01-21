@@ -26,6 +26,7 @@
 #include "coin_manager.h"
 #include "gold_bone_manager.h"
 #include "tree_manager.h"
+#include "palm_fruit_manager.h"
 
 //--------------------------------------------
 // 静的メンバ変数宣言
@@ -61,6 +62,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	CCoinManager::Create();				// 小判マネージャー
 	CGoldBoneManager::Create();			// 金の骨マネージャー
 	CTreeManager::Create();				// 木マネージャー
+	CPalmFruitManager::Create();		// ヤシの実マネージャー
 
 	if (m_pRenderer == nullptr)
 	{ // レンダラーへのポインタが NULL の場合
@@ -347,6 +349,7 @@ void CManager::Uninit(void)
 	CCoinManager::Get()->Uninit();			// 小判マネージャー
 	CGoldBoneManager::Get()->Uninit();		// 金の骨マネージャー
 	CTreeManager::Get()->Uninit();			// 木マネージャー
+	CPalmFruitManager::Get()->Uninit();		// ヤシの実マネージャー
 
 	// マネージャーのメモリを解放する
 	delete m_pManager;

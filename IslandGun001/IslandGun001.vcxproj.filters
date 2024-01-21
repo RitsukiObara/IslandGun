@@ -351,6 +351,15 @@
     <ClCompile Include="tree_manager.cpp">
       <Filter>gimmick\Tree</Filter>
     </ClCompile>
+    <ClCompile Include="palm_tree.cpp">
+      <Filter>gimmick\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="palm_fruit.cpp">
+      <Filter>gimmick\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="palm_fruit_manager.cpp">
+      <Filter>gimmick\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -637,6 +646,15 @@
     </ClInclude>
     <ClInclude Include="tree_manager.h">
       <Filter>gimmick\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="palm_tree.h">
+      <Filter>gimmick\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="palm_fruit.h">
+      <Filter>gimmick\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="palm_fruit_manager.h">
+      <Filter>gimmick\Item</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

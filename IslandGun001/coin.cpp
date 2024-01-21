@@ -258,7 +258,7 @@ CCoin* CCoin::Create(const D3DXVECTOR3& pos)
 		return nullptr;
 	}
 
-	// ネジのポインタを返す
+	// 小判のポインタを返す
 	return pCoin;
 }
 
