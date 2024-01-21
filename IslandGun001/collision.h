@@ -13,6 +13,11 @@
 #include "main.h"
 
 //-----------------------------------
+// 前方宣言
+//-----------------------------------
+class CPlayer;			// プレイヤー
+
+//-----------------------------------
 // 名前空間(当たり判定)
 //-----------------------------------
 namespace collision
@@ -36,6 +41,10 @@ namespace collision
 
 	// 敵との当たり判定
 	bool EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& size);			// 敵と銃の当たり判定
+
+	// 木との当たり判定
+	bool TreeCollision(D3DXVECTOR3* pos, const float fRadius);						// 木の当たり判定
+	void TreeAttack(const CPlayer& pPlayer, const float fHeight);					// 木への攻撃判定処理
 
 	// 汎用的な当たり判定
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定

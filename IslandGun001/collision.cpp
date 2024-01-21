@@ -16,12 +16,24 @@
 #include "coin_manager.h"
 #include "enemy.h"
 #include "enemy_manager.h"
+#include "tree.h"
+#include "tree_manager.h"
+#include "player.h"
+#include "player_action.h"
 #include "useful.h"
 
 //===============================
 // マクロ定義
 //===============================
-#define COLLISION_ADD_DIFF_LENGTH		(0.01f)			// 僅かな誤差を埋めるためのマクロ定義(突っかかり防止)
+namespace
+{
+	const float COLLISION_ADD_DIFF_LENGTH = 0.01f;			// 僅かな誤差を埋めるためのマクロ定義(突っかかり防止)
+	const float TREE_RADIUS[CTree::TYPE_MAX] =				// 木の当たり判定時の半径
+	{
+		50.5f,		// 木の半径
+	};
+	const float DAGGER_RADIUS = 100.0f;						// ダガーの半径
+}
 
 //===============================
 // 起伏地面の範囲外の当たり判定
@@ -119,8 +131,8 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 	D3DXVECTOR3 bulletMin = D3DXVECTOR3(-size.x, -size.y, -size.x);	// 弾の最小値
 	D3DXVECTOR3 enemyMax;		// 敵の最大値
 	D3DXVECTOR3 enemyMin;		// 敵の最小値
-	CEnemy* pEnemy = CEnemyManager::Get()->GetTop();	// 先頭の小判を取得する
-	CEnemy* pEnemyNext = nullptr;		// 次の小判
+	CEnemy* pEnemy = CEnemyManager::Get()->GetTop();	// 先頭の敵を取得する
+	CEnemy* pEnemyNext = nullptr;		// 次の敵
 
 	while (pEnemy != nullptr)
 	{ // ブロックの情報が NULL じゃない場合
@@ -147,7 +159,7 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 			enemyMin,
 			bulletMax,
 			enemyMax) == true)
-		{ // 小判と重なった場合
+		{ // 敵と重なった場合
 
 			// ヒット処理
 			pEnemy->Hit(pos);
@@ -162,6 +174,68 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 
 	// false を返す
 	return false;
+}
+
+//===============================
+// 木の当たり判定
+//===============================
+bool collision::TreeCollision(D3DXVECTOR3* pos, const float fRadius)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posTree = NONE_D3DXVECTOR3;			// 木の位置
+	float fObjectRadius;							// 半径
+	CTree* pTree = CTreeManager::Get()->GetTop();	// 先頭の木を取得する
+	bool bCollision = false;						// 当たり判定状況
+
+	while (pTree != nullptr)
+	{ // ブロックの情報が NULL じゃない場合
+
+		posTree = pTree->GetPos();		// 木の位置
+		fObjectRadius = fRadius + TREE_RADIUS[pTree->GetType()];	// 半径
+
+		if (useful::CylinderCollision(pos, posTree, fObjectRadius) == true)
+		{ // 円柱の当たり判定に入った場合
+
+			// 当たり判定状況を true にする
+			bCollision = true;
+		}
+
+		// 次のオブジェクトを代入する
+		pTree = pTree->GetNext();
+	}
+
+	// 当たり判定状況 を返す
+	return bCollision;
+}
+
+//===============================
+// 木への攻撃判定処理
+//===============================
+void collision::TreeAttack(const CPlayer& pPlayer, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posTree = NONE_D3DXVECTOR3;			// 木の位置
+	D3DXVECTOR3 posPlayer = pPlayer.GetPos();		// プレイヤーの位置
+	CTree* pTree = CTreeManager::Get()->GetTop();	// 先頭の木を取得する
+
+	while (pTree != nullptr)
+	{ // ブロックの情報が NULL じゃない場合
+
+		// 木の位置を設定する
+		posTree = pTree->GetPos();
+
+		if (useful::CircleCollisionXZ(posPlayer, posTree, DAGGER_RADIUS, TREE_RADIUS[pTree->GetType()]) &&
+			posPlayer.y <= posTree.y + pTree->GetFileData().vtxMax.y &&
+			posPlayer.y + fHeight >= posTree.y)
+		{ // ダガーが木に接触した場合
+
+			// ヒット処理
+			pTree->Hit();
+		}
+
+		// 次のオブジェクトを代入する
+		pTree = pTree->GetNext();
+	}
 }
 
 /*

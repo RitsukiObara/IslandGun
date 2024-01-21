@@ -143,6 +143,36 @@ void CMotion::Set(int nType)
 }
 
 //============================================================
+// モーションのリセット処理
+//============================================================
+void CMotion::ResetMotion(int nType)
+{
+	// モーションの情報を初期化する
+	m_nType = nType;						// 種類
+	m_nNumKey = m_aInfo[nType].nNumKey;		// キーの総数
+	m_nKey = 1;								// 現在のキー
+	m_nCounter = 0;							// カウンター
+	m_bLoop = m_aInfo[nType].bLoop;			// ループ状況
+	m_bFinish = false;						// 終了したかどうか
+	m_nStopFrame = MOTION_SET_FRAME;		// 停止するフレーム数
+
+	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
+	{
+		// パーツの位置・向きを設定
+		m_posPast[nCntModel].x = m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fPosX;
+		m_posPast[nCntModel].y = m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fPosY;
+		m_posPast[nCntModel].z = m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fPosZ;
+		m_rotPast[nCntModel].x = m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fRotX;
+		m_rotPast[nCntModel].y = m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fRotY;
+		m_rotPast[nCntModel].z = m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fRotZ;
+
+		// 位置と向きを適用する
+		m_ppModel[nCntModel]->SetPos(m_posPast[nCntModel]);
+		m_ppModel[nCntModel]->SetRot(m_rotPast[nCntModel]);
+	}			
+}				
+
+//============================================================
 // モーションの更新処理
 //============================================================
 void CMotion::Update(void)

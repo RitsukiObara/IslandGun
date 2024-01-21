@@ -649,6 +649,7 @@ CInputMouse::CInputMouse()
 	// 全ての値をクリアする
 	ZeroMemory(&m_MouseState, sizeof(m_MouseState));
 	ZeroMemory(&m_MouseStateTrigger, sizeof(m_MouseStateTrigger));
+	ZeroMemory(&m_MouseStateRelease, sizeof(m_MouseStateRelease));
 	ZeroMemory(&m_MousePos, sizeof(m_MousePos));
 	ZeroMemory(&m_MouseMove, sizeof(m_MouseMove));
 }
@@ -727,6 +728,7 @@ HRESULT CInputMouse::Init(HINSTANCE hInstance, HWND hWnd)
 	// 全ての値を初期化する
 	ZeroMemory(&m_MouseState, sizeof(m_MouseState));					// マウスのプレス情報
 	ZeroMemory(&m_MouseStateTrigger, sizeof(m_MouseStateTrigger));		// マウスのトリガー情報
+	ZeroMemory(&m_MouseStateRelease, sizeof(m_MouseStateRelease));		// マウスのリリース情報
 	ZeroMemory(&m_MousePos, sizeof(m_MousePos));						// マウスの位置
 	ZeroMemory(&m_MouseMove, sizeof(m_MouseMove));						// マウスの移動量
 	
@@ -763,6 +765,9 @@ void CInputMouse::Update(void)
 			// マウスのトリガー情報を保存
 			m_MouseStateTrigger.rgbButtons[nCntButton] = ~m_MouseState.rgbButtons[nCntButton] & MouseState.rgbButtons[nCntButton];
 
+			//ゲームパッドのリリース情報を保存
+			m_MouseStateRelease.rgbButtons[nCntButton] = (m_MouseState.rgbButtons[nCntButton] ^ MouseState.rgbButtons[nCntButton]) & ~MouseState.rgbButtons[nCntButton];
+
 			// マウスのプレス情報を保存する
 			m_MouseState.rgbButtons[nCntButton] = MouseState.rgbButtons[nCntButton];
 		}
@@ -798,6 +803,14 @@ bool CInputMouse::GetPress(const MOUSE_BUTTON button)
 bool CInputMouse::GetTrigger(const MOUSE_BUTTON button)
 {
 	return (m_MouseStateTrigger.rgbButtons[button] & 0x80) ? true : false;
+}
+
+//======================================
+// クリックのリリース情報処理
+//======================================
+bool CInputMouse::GetRelease(const MOUSE_BUTTON button)
+{
+	return (m_MouseStateRelease.rgbButtons[button] & 0x80) ? true : false;
 }
 
 //======================================

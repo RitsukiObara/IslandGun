@@ -174,9 +174,6 @@ void CPalmFruit::Update(void)
 
 			// 重力を0.0fにする
 			m_move.y = 0.0f;
-
-			// モデルをヤシの実(アイテム型)にする
-			SetFileData(CXFile::TYPE_PALMITEM);
 		}
 
 		break;
@@ -184,6 +181,13 @@ void CPalmFruit::Update(void)
 	case CPalmFruit::STATE_STOP:
 
 
+
+		break;
+
+	case CPalmFruit::STATE_GET:
+
+		// モデルをヤシの実(アイテム型)にする
+		SetFileData(CXFile::TYPE_PALMITEM);
 
 		break;
 

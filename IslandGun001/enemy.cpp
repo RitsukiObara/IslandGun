@@ -216,6 +216,8 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		GetHierarchy(nCntData)->SetFileData(CXFile::TYPE(INIT_PLAYER + nCntData));	// データの設定処理
 	}
 
+	m_pMotion->ResetMotion(0);
+
 	// 全ての値を設定する
 	m_type = type;					// 種類
 	m_CollSize = COLLSIZE[m_type];	// 当たり判定のサイズ

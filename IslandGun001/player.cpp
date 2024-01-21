@@ -47,6 +47,16 @@ namespace
 	const float CAMERA_MIN_HEIGHT = 0.0f;			// カメラの高さの最小値
 	const float CAMERA_ELEVATION_HEIGHT = 30.0f;	// カメラの起伏地面の高さ
 	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 130.0f, 40.0f);		// 当たり判定時のサイズ
+	const D3DXVECTOR3 GUN_POS[NUM_HANDGUN] =		// 拳銃の位置
+	{
+		D3DXVECTOR3(-10.0f, 0.0f, 0.0f),
+		D3DXVECTOR3(+10.0f, 0.0f, 0.0f)
+	};
+	const D3DXVECTOR3 GUN_ROT[NUM_HANDGUN] =		// 拳銃の向き
+	{
+		D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, -D3DX_PI * 0.5f),
+		D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, D3DX_PI * 0.5f)
+	};
 	const float SHOT_SHIFT_ROT[NUM_HANDGUN] =		// 射撃時のずらす向き
 	{
 		(-D3DX_PI * 0.06f),
@@ -258,8 +268,13 @@ void CPlayer::Update(void)
 	// 小判との当たり判定
 	collision::CoinCollision(GetPos(), COLLISION_SIZE);
 
+	// 木との当たり判定
+	TreeCollision();
+
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
+
+	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
 
 //===========================================
@@ -353,11 +368,13 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	}
 
 	// モーションの設定処理
-	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+	m_pMotion->ResetMotion(MOTIONTYPE_NEUTRAL);
 
-	// 拳銃の情報を生成する
-	m_apHandGun[0] = CHandgun::Create(D3DXVECTOR3(-10.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, -D3DX_PI * 0.5f), GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
-	m_apHandGun[1] = CHandgun::Create(D3DXVECTOR3(+10.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, D3DX_PI * 0.5f), GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->GetMatrixP());
+	for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
+	{
+		// 拳銃の情報を生成する
+		m_apHandGun[nCnt] = CHandgun::Create(GUN_POS[nCnt], GUN_ROT[nCnt], GetHierarchy((CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER) + nCnt)->GetMatrixP());
+	}
 
 	// ダガーを生成する
 	m_pDagger = CDagger::Create(GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
@@ -880,6 +897,21 @@ void CPlayer::ElevationCamera(void)
 }
 
 //=======================================
+// 木との当たり判定
+//=======================================
+void CPlayer::TreeCollision(void)
+{
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
+
+	// 木との当たり判定
+	collision::TreeCollision(&pos, COLLISION_SIZE.x);
+
+	// 位置を適用する
+	SetPos(pos);
+}
+
+//=======================================
 // 攻撃処理
 //=======================================
 void CPlayer::Shot(void)
@@ -946,7 +978,8 @@ void CPlayer::Shot(void)
 	}
 
 	if (CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_RB, 0) == true ||
-		CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_LB, 0) == true)
+		CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_LB, 0) == true ||
+		CManager::Get()->GetInputMouse()->GetRelease(CInputMouse::MOUSE_L) == true)
 	{ // RB・LBボタンを離した場合
 
 		// 射撃カウントを0にする

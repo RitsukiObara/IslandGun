@@ -26,6 +26,7 @@ public:			// 誰でもアクセスできる
 		STATE_FALL,		// 落下状態
 		STATE_BOUND,	// バウンド状態
 		STATE_STOP,		// 停止状態
+		STATE_GET,		// 入手後状態
 		STATE_MAX		// この列挙型の総数
 	};
 

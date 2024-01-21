@@ -179,6 +179,7 @@ public:			// 誰でもアクセスできる
 	// 入力関係
 	bool GetPress(const MOUSE_BUTTON button);		// クリックのプレス処理
 	bool GetTrigger(const MOUSE_BUTTON button);		// クリックのトリガー処理
+	bool GetRelease(const MOUSE_BUTTON button);		// クリックのリリース情報処理
 	D3DXVECTOR3 GetMove(void);						// マウスカーソルの移動量取得処理
 	POINT GetPos(void);								// マウスカーソルの位置設定処理
 
@@ -190,6 +191,7 @@ private:		// 誰でもアクセスできる
 	// メンバ変数
 	DIMOUSESTATE m_MouseState;			// プレス(ドラッグ)の状態
 	DIMOUSESTATE m_MouseStateTrigger;	// トリガーの状態
+	DIMOUSESTATE m_MouseStateRelease;	// リリースの状態
 	POINT m_MousePos;					// マウスの位置
 	D3DXVECTOR3 m_MouseMove;			// マウスの移動量
 };

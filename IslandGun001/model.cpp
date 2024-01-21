@@ -655,6 +655,25 @@ D3DXMATERIAL CModel::GetMaterial(const int nCnt)
 }
 
 //========================
+// テクスチャの割り当て処理
+//========================
+void CModel::BindTexture(const int nIdx, const int nCnt)
+{
+	if (nCnt < (int)(m_XFileData.dwNumMat))
+	{ // 番号が最大数未満の場合
+
+		// テクスチャの番号を設定する
+		m_XFileData.m_nTexIdx[nCnt] = nIdx;
+	}
+	else
+	{ // 上記以外
+
+		// 停止
+		assert(false);
+	}
+}
+
+//========================
 // 位置設定処理
 //========================
 void CModel::SetPos(const D3DXVECTOR3& pos)

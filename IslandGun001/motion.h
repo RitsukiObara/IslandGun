@@ -62,6 +62,7 @@ public:			// 誰でもアクセスできる
 	void Uninit(void);									// 終了処理
 	void ResetData(void);								// モーション情報のリセット処理
 	void Set(int nType);								// モーションの種類の設定処理
+	void ResetMotion(int nType);						// モーションのリセット処理
 	void Update(void);									// モーションの更新処理
 	int GetType(void);									// 種類の取得処理
 	bool IsFinish(void);								// モーションの終了処理

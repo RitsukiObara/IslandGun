@@ -10,6 +10,7 @@
 #include "manager.h"
 #include "chara_blur.h"
 #include "model.h"
+#include "renderer.h"
 #include "useful.h"
 
 //=========================================
@@ -98,8 +99,21 @@ void CCharaBlur::Update(void)
 //===========================================
 void CCharaBlur::Draw(void)
 {
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::Get()->GetRenderer()->GetDevice();
+
+	//αブレンディングを加算処理に設定
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
 	// 描画処理
 	CCharacter::Draw(m_col);
+
+	//αブレンディングを元に戻す
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }
 
 //===========================================

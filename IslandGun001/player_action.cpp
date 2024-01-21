@@ -15,6 +15,8 @@
 #include "player.h"
 #include "handgun.h"
 #include "dagger.h"
+#include "chara_blur.h"
+#include "collision.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -25,6 +27,9 @@ namespace
 	const int DODGE_COUNT = 27;			// 回避状態のカウント数
 	const int DAGGER_COUNT = 40;		// ダガー状態のカウント数
 	const int SWOOP_COUNT = 65;			// 急降下状態のカウント数
+	const int DODGE_BLUR_LIFE = 10;		// 回避状態のブラーの寿命
+	const D3DXCOLOR DODGE_BLUR_COL = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);		// 回避状態のブラーの色
+	const float DAGGER_HEIGHT = 80.0f;	// ダガーの高さ
 }
 
 //=========================
@@ -311,6 +316,9 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 	// 移動量を適用する
 	pPlayer->SetMove(move);
 
+	// 木への攻撃判定処理
+	collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
+
 	// 行動カウントを加算する
 	m_nActionCount++;
 
@@ -345,6 +353,35 @@ void CPlayerAction::DodgeProcess(CPlayer* pPlayer)
 
 	// 位置を適用する
 	pPlayer->SetPos(pos);
+
+	CCharaBlur* pBlur = CCharaBlur::Create
+	(
+		pPlayer->GetPos(),
+		pPlayer->GetRot(),
+		pPlayer->GetScale(),
+		pPlayer->GetNumModel(),
+		DODGE_BLUR_COL,
+		DODGE_BLUR_LIFE,
+		CObject::PRIORITY_BG
+	);
+
+	if (pBlur != nullptr)
+	{ // ブラーが NULL じゃない場合
+
+		for (int nCnt = 0; nCnt < pPlayer->GetNumModel(); nCnt++)
+		{
+			// モデルの情報設定処理
+			pBlur->SetModelData
+			(
+				nCnt,
+				pPlayer->GetHierarchy(nCnt)->GetPos(),
+				pPlayer->GetHierarchy(nCnt)->GetRot(),
+				pPlayer->GetHierarchy(nCnt)->GetScale(),
+				pPlayer->GetHierarchy(nCnt)->GetFileData(),
+				pPlayer->GetHierarchy(nCnt)->GetParentIdx()
+			);
+		}
+	}
 
 	// 行動カウントを加算する
 	m_nActionCount++;

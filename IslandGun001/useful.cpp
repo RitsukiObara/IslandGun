@@ -124,7 +124,7 @@ bool useful::CircleCollisionXY(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2,
 	// 円の範囲を算出
 	fLength = (pos2.x - pos1.x) * (pos2.x - pos1.x) + (pos2.y - pos1.y) * (pos2.y - pos1.y);
 
-	if (fLength <= (fRadius1 * fRadius2))
+	if (fLength <= (fRadius1 + fRadius2) * (fRadius1 + fRadius2))
 	{ // オブジェクトが当たった場合
 
 		// true を返す
@@ -154,7 +154,7 @@ bool useful::CircleCollisionXZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2,
 	// 円の範囲を算出
 	fLength = (pos2.x - pos1.x) * (pos2.x - pos1.x) + (pos2.z - pos1.z) * (pos2.z - pos1.z);
 
-	if (fLength <= (fRadius1 * fRadius2))
+	if (fLength <= (fRadius1 + fRadius2) * (fRadius1 + fRadius2))
 	{ // オブジェクトが当たった場合
 
 	  // true を返す
@@ -478,8 +478,9 @@ bool useful::RectangleCollisionYZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& po
 * @param TargetPos [in/out] 対象の位置
 * @param ObjectPos [in] オブジェクトの位置
 * @param fObjectRadius [in] 対象とオブジェクト間の距離(半径)
+* @return bool 当たり判定に入ったかどうか
 */
-void useful::CylinderCollision(D3DXVECTOR3* TargetPos, const D3DXVECTOR3& ObjectPos, const float fObjectRadius)
+bool useful::CylinderCollision(D3DXVECTOR3* TargetPos, const D3DXVECTOR3& ObjectPos, const float fObjectRadius)
 {
 	// ローカル変数宣言
 	float fLength = 0.0f;			// 距離
@@ -497,7 +498,13 @@ void useful::CylinderCollision(D3DXVECTOR3* TargetPos, const D3DXVECTOR3& Object
 		// 位置を設定する
 		TargetPos->x = ObjectPos.x + sinf(fAngle) * fObjectRadius;
 		TargetPos->z = ObjectPos.z + cosf(fAngle) * fObjectRadius;
+
+		// true を返す
+		return true;
 	}
+
+	// false を返す
+	return false;
 }
 
 /*

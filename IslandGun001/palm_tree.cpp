@@ -14,6 +14,7 @@
 #include "useful.h"
 
 #include "palm_fruit.h"
+#include "texture.h"
 
 //-------------------------------------------
 // –³–¼–¼‘O‹óŠÔ
