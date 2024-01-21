@@ -27,6 +27,7 @@
 #include "enemy.h"
 #include "tree.h"
 #include "rock.h"
+#include "block.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -97,6 +98,8 @@ HRESULT CGame::Init(void)
 	CTree::Create(D3DXVECTOR3(200.0f, 0.0f, -700.0f), NONE_D3DXVECTOR3, CTree::TYPE_PALM);
 
 	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -1.9f, 0.0f), NONE_SCALE);
+
+	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f));
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

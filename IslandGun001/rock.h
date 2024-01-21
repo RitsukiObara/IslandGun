@@ -19,8 +19,8 @@ class CRock : public CModel
 {
 public:			// 誰でもアクセスできる
 
-	CRock(CObject::TYPE type = TYPE_ROCK, PRIORITY priority = PRIORITY_BLOCK);				// オーバーロードコンストラクタ
-	~CRock();		// デストラクタ
+	CRock();			// コンストラクタ
+	~CRock();			// デストラクタ
 
 	// リスト構造関係
 	void SetPrev(CRock* pPrev);		// 前のポインタの設定処理

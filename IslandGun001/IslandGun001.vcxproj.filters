@@ -369,6 +369,12 @@
     <ClCompile Include="rock_manager.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
+    <ClCompile Include="block.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="block_manager.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -669,6 +675,12 @@
       <Filter>gimmick\Map</Filter>
     </ClInclude>
     <ClInclude Include="rock_manager.h">
+      <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
+      <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="block_manager.h">
       <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>

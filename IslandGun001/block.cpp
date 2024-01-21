@@ -1,6 +1,6 @@
 //===========================================
 //
-// 岩のメイン処理[rock.cpp]
+// ブロックのメイン処理[block.cpp]
 // Author 小原立暉
 //
 //===========================================
@@ -9,50 +9,33 @@
 //*******************************************
 #include "main.h"
 #include "manager.h"
-#include "rock.h"
+#include "block.h"
 #include "texture.h"
 #include "useful.h"
 
-#include "rock_manager.h"
-
-//-------------------------------------------
-// 無名名前空間
-//-------------------------------------------
-namespace
-{
-	const int MAX_BREAK_LEVEL = 3;				// 破壊レベルの最大値
-	const char* TEXTURE[MAX_BREAK_LEVEL] =		// 破壊レベルごとのテクスチャ
-	{
-		"data\\TEXTURE\\Rock001.png",
-		"data\\TEXTURE\\Rock002.png",
-		"data\\TEXTURE\\Rock003.png",
-	};
-	const int TEXTURE_IDX = 0;					// 変えるテクスチャの番号
-}
+#include "block_manager.h"
 
 //==============================
 // コンストラクタ
 //==============================
-CRock::CRock() : CModel(TYPE_ROCK, PRIORITY_BLOCK)
+CBlock::CBlock() : CModel(TYPE_BLOCK, PRIORITY_BLOCK)
 {
 	// 全ての値をクリアする
-	m_nBreakLevel = 0;			// 破壊レベル
-
 	m_pPrev = nullptr;			// 前のポインタ
 	m_pNext = nullptr;			// 次のポインタ
 
-	if (CRockManager::Get() != nullptr)
+	if (CBlockManager::Get() != nullptr)
 	{ // マネージャーが存在していた場合
 
 		// マネージャーへの登録処理
-		CRockManager::Get()->Regist(this);
+		CBlockManager::Get()->Regist(this);
 	}
 }
 
 //==============================
 // デストラクタ
 //==============================
-CRock::~CRock()
+CBlock::~CBlock()
 {
 
 }
@@ -60,7 +43,7 @@ CRock::~CRock()
 //============================
 // 前のポインタの設定処理
 //============================
-void CRock::SetPrev(CRock* pPrev)
+void CBlock::SetPrev(CBlock* pPrev)
 {
 	// 前のポインタを設定する
 	m_pPrev = pPrev;
@@ -69,7 +52,7 @@ void CRock::SetPrev(CRock* pPrev)
 //============================
 // 後のポインタの設定処理
 //============================
-void CRock::SetNext(CRock* pNext)
+void CBlock::SetNext(CBlock* pNext)
 {
 	// 次のポインタを設定する
 	m_pNext = pNext;
@@ -78,7 +61,7 @@ void CRock::SetNext(CRock* pNext)
 //============================
 // 前のポインタの設定処理
 //============================
-CRock* CRock::GetPrev(void) const
+CBlock* CBlock::GetPrev(void) const
 {
 	// 前のポインタを返す
 	return m_pPrev;
@@ -87,7 +70,7 @@ CRock* CRock::GetPrev(void) const
 //============================
 // 次のポインタの設定処理
 //============================
-CRock* CRock::GetNext(void) const
+CBlock* CBlock::GetNext(void) const
 {
 	// 次のポインタを返す
 	return m_pNext;
@@ -96,7 +79,7 @@ CRock* CRock::GetNext(void) const
 //==============================
 //ブロックの初期化処理
 //==============================
-HRESULT CRock::Init(void)
+HRESULT CBlock::Init(void)
 {
 	if (FAILED(CModel::Init()))
 	{ // 初期化処理に失敗した場合
@@ -112,16 +95,16 @@ HRESULT CRock::Init(void)
 //========================================
 //ブロックの終了処理
 //========================================
-void CRock::Uninit(void)
+void CBlock::Uninit(void)
 {
 	// 終了処理
 	CModel::Uninit();
 
-	if (CRockManager::Get() != nullptr)
+	if (CBlockManager::Get() != nullptr)
 	{ // マネージャーが存在していた場合
 
 		// リスト構造の引き抜き処理
-		CRockManager::Get()->Pull(this);
+		CBlockManager::Get()->Pull(this);
 	}
 
 	// リスト構造関係のポインタを NULL にする
@@ -132,7 +115,7 @@ void CRock::Uninit(void)
 //========================================
 //ブロックの更新処理
 //========================================
-void CRock::Update(void)
+void CBlock::Update(void)
 {
 
 }
@@ -140,7 +123,7 @@ void CRock::Update(void)
 //=====================================
 //ブロックの描画処理
 //=====================================
-void CRock::Draw(void)
+void CBlock::Draw(void)
 {
 	// 描画処理
 	CModel::Draw();
@@ -149,56 +132,29 @@ void CRock::Draw(void)
 //=====================================
 // 情報の設定処理
 //=====================================
-void CRock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
+void CBlock::SetData(const D3DXVECTOR3& pos)
 {
 	// 情報の設定処理
 	SetPos(pos);					// 位置
 	SetPosOld(pos);					// 前回の位置
-	SetRot(rot);					// 向き
-	SetScale(scale);				// 拡大率
+	SetRot(NONE_D3DXVECTOR3);		// 向き
+	SetScale(NONE_SCALE);			// 拡大率
 	SetFileData(CXFile::TYPE_ROCK);	// モデルの情報
-
-	// 全ての値を設定する
-	m_nBreakLevel = 0;			// 破壊レベル
-
-	// テクスチャの割り当て処理
-	BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE[m_nBreakLevel]), TEXTURE_IDX);
-}
-
-//=====================================
-// 破壊処理
-//=====================================
-void CRock::Break(void)
-{
-	// 破壊レベルを加算する
-	m_nBreakLevel++;
-
-	if (m_nBreakLevel >= MAX_BREAK_LEVEL)
-	{ // 破壊レベルが最大数以上の場合
-
-		// 破片ばら撒く
-	}
-	else
-	{ // 上記以外
-
-		// テクスチャの割り当て処理
-		BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE[m_nBreakLevel]), TEXTURE_IDX);
-	}
 }
 
 //=======================================
 // 生成処理
 //=======================================
-CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
+CBlock* CBlock::Create(const D3DXVECTOR3& pos)
 {
 	// ローカルオブジェクトを生成
-	CRock* pRock = nullptr;		// インスタンスを生成
+	CBlock* pBlock = nullptr;		// インスタンスを生成
 
-	if (pRock == nullptr)
+	if (pBlock == nullptr)
 	{ // オブジェクトが NULL の場合
 
-		// 岩を生成する
-		pRock = new CRock;
+		// ブロックを生成する
+		pBlock = new CBlock;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -210,11 +166,11 @@ CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXV
 		return nullptr;
 	}
 
-	if (pRock != nullptr)
+	if (pBlock != nullptr)
 	{ // オブジェクトが NULL じゃない場合
 
 		// 初期化処理
-		if (FAILED(pRock->Init()))
+		if (FAILED(pBlock->Init()))
 		{ // 初期化に失敗した場合
 
 			// 停止
@@ -225,7 +181,7 @@ CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXV
 		}
 
 		// 情報の設定処理
-		pRock->SetData(pos, rot, scale);
+		pBlock->SetData(pos);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -237,6 +193,6 @@ CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXV
 		return nullptr;
 	}
 
-	// 岩のポインタを返す
-	return pRock;
+	// ブロックのポインタを返す
+	return pBlock;
 }

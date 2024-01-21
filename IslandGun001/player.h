@@ -85,6 +85,7 @@ private:		// 自分だけアクセスできる
 	void ElevationCollision(void);	// 起伏地面の当たり判定処理
 	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
 	void TreeCollision(void);		// 木との当たり判定
+	void BlockCollision(void);		// ブロックとの当たり判定
 
 	// 操作感系
 	void CameraControl(void);		// カメラの操作処理

@@ -156,6 +156,8 @@
   <ItemGroup>
     <ClCompile Include="aim.cpp" />
     <ClCompile Include="anim_reaction.cpp" />
+    <ClCompile Include="block.cpp" />
+    <ClCompile Include="block_manager.cpp" />
     <ClCompile Include="blur.cpp" />
     <ClCompile Include="blur_col.cpp" />
     <ClCompile Include="blur_org.cpp" />
@@ -261,6 +263,8 @@
   <ItemGroup>
     <ClInclude Include="aim.h" />
     <ClInclude Include="anim_reaction.h" />
+    <ClInclude Include="block.h" />
+    <ClInclude Include="block_manager.h" />
     <ClInclude Include="blur.h" />
     <ClInclude Include="blur_col.h" />
     <ClInclude Include="blur_org.h" />

@@ -28,6 +28,8 @@
 #include "objectElevation.h"
 #include "motion.h"
 #include "bullet.h"
+#include "block.h"
+#include "block_manager.h"
 #include "orbit.h"
 
 //--------------------------------------------
@@ -273,6 +275,9 @@ void CPlayer::Update(void)
 
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
+
+	// ブロックとの当たり判定処理
+	BlockCollision();
 
 	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
@@ -906,6 +911,49 @@ void CPlayer::TreeCollision(void)
 
 	// 木との当たり判定
 	collision::TreeCollision(&pos, COLLISION_SIZE.x);
+
+	// 位置を適用する
+	SetPos(pos);
+}
+
+//=======================================
+// ブロックとの当たり判定
+//=======================================
+void CPlayer::BlockCollision(void)
+{
+	// ローカル変数宣言
+	CBlock* pBlock = CBlockManager::Get()->GetTop();	// 先頭の木を取得する
+	collision::SCollision coll = { false,false,false,false,false,false };				// 当たり判定の変数
+	D3DXVECTOR3 pos = GetPos();							// 位置を取得する
+	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-COLLISION_SIZE.x, 0.0f, -COLLISION_SIZE.z);		// 最小値を取得する
+	D3DXVECTOR3 vtxMax = COLLISION_SIZE;				// 最大値を取得する
+
+	while (pBlock != nullptr)
+	{ // ブロックの情報が NULL じゃない場合
+
+		// 六面体の当たり判定
+		coll = collision::HexahedronClush
+		(
+			&pos,
+			pBlock->GetPos(),
+			GetPosOld(),
+			pBlock->GetPosOld(),
+			vtxMin,
+			pBlock->GetFileData().vtxMin,
+			vtxMax,
+			pBlock->GetFileData().vtxMax
+		);
+
+		if (coll.bTop == true)
+		{ // 上に乗った場合
+
+			// 移動量を設定する
+			m_move.y = 0.0f;
+		}
+
+		// 次のオブジェクトを代入する
+		pBlock = pBlock->GetNext();
+	}
 
 	// 位置を適用する
 	SetPos(pos);
