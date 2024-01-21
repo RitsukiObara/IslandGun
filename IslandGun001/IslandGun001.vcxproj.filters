@@ -64,6 +64,9 @@
     <Filter Include="gimmick\Tree">
       <UniqueIdentifier>{2a053623-af3f-4832-841d-7caccf1d96c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gimmick\Map">
+      <UniqueIdentifier>{be448ae6-17da-4803-9aef-b8d491d3d2ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -360,6 +363,12 @@
     <ClCompile Include="palm_fruit_manager.cpp">
       <Filter>gimmick\Item</Filter>
     </ClCompile>
+    <ClCompile Include="rock.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="rock_manager.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -655,6 +664,12 @@
     </ClInclude>
     <ClInclude Include="palm_fruit_manager.h">
       <Filter>gimmick\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="rock.h">
+      <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="rock_manager.h">
+      <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

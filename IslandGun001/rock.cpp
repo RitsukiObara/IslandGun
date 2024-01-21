@@ -1,6 +1,6 @@
 //===========================================
 //
-// 木のメイン処理[tree.cpp]
+// 岩のメイン処理[rock.cpp]
 // Author 小原立暉
 //
 //===========================================
@@ -9,48 +9,50 @@
 //*******************************************
 #include "main.h"
 #include "manager.h"
-#include "tree.h"
+#include "rock.h"
+#include "texture.h"
 #include "useful.h"
 
-#include "tree_manager.h"
-
-#include "palm_tree.h"
+#include "rock_manager.h"
 
 //-------------------------------------------
 // 無名名前空間
 //-------------------------------------------
 namespace
 {
-	const CXFile::TYPE FILE_TYPE[CTree::TYPE_MAX] =		// Xファイルの種類
+	const int MAX_BREAK_LEVEL = 3;				// 破壊レベルの最大値
+	const char* TEXTURE[MAX_BREAK_LEVEL] =		// 破壊レベルごとのテクスチャ
 	{
-		CXFile::TYPE_PALMTREE,			// ヤシの木
+		"data\\TEXTURE\\Rock001.png",
+		"data\\TEXTURE\\Rock002.png",
+		"data\\TEXTURE\\Rock003.png",
 	};
+	const int TEXTURE_IDX = 0;					// 変えるテクスチャの番号
 }
 
 //==============================
 // コンストラクタ
 //==============================
-CTree::CTree(CObject::TYPE type, PRIORITY priority) : CModel(type, priority)
+CRock::CRock(CObject::TYPE type, PRIORITY priority) : CModel(type, priority)
 {
 	// 全ての値をクリアする
-	m_type = TYPE_PALM;		// 種類
+	m_nBreakLevel = 0;			// 破壊レベル
 
-	// 全ての値をクリアする
 	m_pPrev = nullptr;			// 前のポインタ
 	m_pNext = nullptr;			// 次のポインタ
 
-	if (CTreeManager::Get() != nullptr)
+	if (CRockManager::Get() != nullptr)
 	{ // マネージャーが存在していた場合
 
 		// マネージャーへの登録処理
-		CTreeManager::Get()->Regist(this);
+		CRockManager::Get()->Regist(this);
 	}
 }
 
 //==============================
 // デストラクタ
 //==============================
-CTree::~CTree()
+CRock::~CRock()
 {
 
 }
@@ -58,7 +60,7 @@ CTree::~CTree()
 //============================
 // 前のポインタの設定処理
 //============================
-void CTree::SetPrev(CTree* pPrev)
+void CRock::SetPrev(CRock* pPrev)
 {
 	// 前のポインタを設定する
 	m_pPrev = pPrev;
@@ -67,7 +69,7 @@ void CTree::SetPrev(CTree* pPrev)
 //============================
 // 後のポインタの設定処理
 //============================
-void CTree::SetNext(CTree* pNext)
+void CRock::SetNext(CRock* pNext)
 {
 	// 次のポインタを設定する
 	m_pNext = pNext;
@@ -76,7 +78,7 @@ void CTree::SetNext(CTree* pNext)
 //============================
 // 前のポインタの設定処理
 //============================
-CTree* CTree::GetPrev(void) const
+CRock* CRock::GetPrev(void) const
 {
 	// 前のポインタを返す
 	return m_pPrev;
@@ -85,7 +87,7 @@ CTree* CTree::GetPrev(void) const
 //============================
 // 次のポインタの設定処理
 //============================
-CTree* CTree::GetNext(void) const
+CRock* CRock::GetNext(void) const
 {
 	// 次のポインタを返す
 	return m_pNext;
@@ -94,7 +96,7 @@ CTree* CTree::GetNext(void) const
 //==============================
 //ブロックの初期化処理
 //==============================
-HRESULT CTree::Init(void)
+HRESULT CRock::Init(void)
 {
 	if (FAILED(CModel::Init()))
 	{ // 初期化処理に失敗した場合
@@ -110,16 +112,16 @@ HRESULT CTree::Init(void)
 //========================================
 //ブロックの終了処理
 //========================================
-void CTree::Uninit(void)
+void CRock::Uninit(void)
 {
 	// 終了処理
 	CModel::Uninit();
 
-	if (CTreeManager::Get() != nullptr)
+	if (CRockManager::Get() != nullptr)
 	{ // マネージャーが存在していた場合
 
 		// リスト構造の引き抜き処理
-		CTreeManager::Get()->Pull(this);
+		CRockManager::Get()->Pull(this);
 	}
 
 	// リスト構造関係のポインタを NULL にする
@@ -130,7 +132,7 @@ void CTree::Uninit(void)
 //========================================
 //ブロックの更新処理
 //========================================
-void CTree::Update(void)
+void CRock::Update(void)
 {
 
 }
@@ -138,7 +140,7 @@ void CTree::Update(void)
 //=====================================
 //ブロックの描画処理
 //=====================================
-void CTree::Draw(void)
+void CRock::Draw(void)
 {
 	// 描画処理
 	CModel::Draw();
@@ -147,54 +149,56 @@ void CTree::Draw(void)
 //=====================================
 // 情報の設定処理
 //=====================================
-void CTree::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type)
+void CRock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
 {
 	// 情報の設定処理
 	SetPos(pos);					// 位置
 	SetPosOld(pos);					// 前回の位置
 	SetRot(rot);					// 向き
-	SetScale(NONE_SCALE);			// 拡大率
-	SetFileData(FILE_TYPE[type]);	// モデルの情報
+	SetScale(scale);				// 拡大率
+	SetFileData(CXFile::TYPE_ROCK);	// モデルの情報
 
 	// 全ての値を設定する
-	m_type = type;		// 種類
+	m_nBreakLevel = 0;			// 破壊レベル
+
+	// テクスチャの割り当て処理
+	BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE[m_nBreakLevel]), TEXTURE_IDX);
 }
 
 //=====================================
-// ヒット処理
+// 破壊処理
 //=====================================
-void CTree::Hit(void)
+void CRock::Break(void)
 {
+	// 破壊レベルを加算する
+	m_nBreakLevel++;
 
+	if (m_nBreakLevel >= MAX_BREAK_LEVEL)
+	{ // 破壊レベルが最大数以上の場合
+
+		// 破片ばら撒く
+	}
+	else
+	{ // 上記以外
+
+		// テクスチャの割り当て処理
+		BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE[m_nBreakLevel]), TEXTURE_IDX);
+	}
 }
 
 //=======================================
 // 生成処理
 //=======================================
-CTree* CTree::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type)
+CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
 {
 	// ローカルオブジェクトを生成
-	CTree* pTree = nullptr;	// インスタンスを生成
+	CRock* pRock = nullptr;		// インスタンスを生成
 
-	if (pTree == nullptr)
+	if (pRock == nullptr)
 	{ // オブジェクトが NULL の場合
 
-		switch (type)
-		{
-		case CTree::TYPE_PALM:		// ヤシの木
-
-			// ヤシの木を生成する
-			pTree = new CPalmTree;
-
-			break;
-
-		default:
-
-			// 停止
-			assert(false);
-
-			break;
-		}
+		// 岩を生成する
+		pRock = new CRock;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -206,11 +210,11 @@ CTree* CTree::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		return nullptr;
 	}
 
-	if (pTree != nullptr)
+	if (pRock != nullptr)
 	{ // オブジェクトが NULL じゃない場合
 
 		// 初期化処理
-		if (FAILED(pTree->Init()))
+		if (FAILED(pRock->Init()))
 		{ // 初期化に失敗した場合
 
 			// 停止
@@ -221,7 +225,7 @@ CTree* CTree::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		}
 
 		// 情報の設定処理
-		pTree->SetData(pos, rot, type);
+		pRock->SetData(pos, rot, scale);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -233,15 +237,6 @@ CTree* CTree::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		return nullptr;
 	}
 
-	// 木のポインタを返す
-	return pTree;
-}
-
-//=======================================
-// 種類の取得処理
-//=======================================
-CTree::TYPE CTree::GetType(void) const
-{
-	// 種類を返す
-	return m_type;
+	// 岩のポインタを返す
+	return pRock;
 }

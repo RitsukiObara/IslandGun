@@ -42,6 +42,7 @@ public:			// 誰でもアクセスできる
 		TYPE_PALMTREE,			// ヤシの木
 		TYPE_PALMFRUIT,			// ヤシの実
 		TYPE_PALMITEM,			// ヤシの実(アイテム体)
+		TYPE_ROCK,				// 岩
 
 		// プレイヤーモデル
 		TYPE_PLAYERWAIST,		// 腰
