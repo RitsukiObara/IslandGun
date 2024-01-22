@@ -36,7 +36,6 @@ private:				// 自分だけアクセスできる
 	// メンバ関数
 	void Chase(void);			// 追跡処理
 	void Move(void);			// 移動処理
-	void TreeCollision(void);	// 木との当たり判定
 	void RotMove(void);			// 向きの移動処理
 
 	// メンバ変数

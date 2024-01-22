@@ -13,7 +13,6 @@
 
 #include "game.h"
 #include "player.h"
-#include "collision.h"
 #include "useful.h"
 
 //------------------------------------------------------------
@@ -75,6 +74,9 @@ void CTordle::Uninit(void)
 //================================
 void CTordle::Update(void)
 {
+	// 前回の位置を設定する
+	SetPosOld(GetPos());
+
 	// 追跡処理
 	Chase();
 
@@ -86,9 +88,6 @@ void CTordle::Update(void)
 
 	// 更新処理
 	CEnemy::Update();
-
-	// 木との当たり判定
-	TreeCollision();
 }
 
 //================================
@@ -160,22 +159,6 @@ void CTordle::Move(void)
 	// 移動する
 	pos.x += m_move.x;
 	pos.z += m_move.z;
-
-	// 位置を適用する
-	SetPos(pos);
-}
-
-//===========================================
-// 木との当たり判定
-//===========================================
-void CTordle::TreeCollision(void)
-{
-	// 位置と半径を取得する
-	D3DXVECTOR3 pos = GetPos();
-	float fRadius = GetCollSize().x;
-
-	// 木との当たり判定
-	collision::TreeCollision(&pos, fRadius);
 
 	// 位置を適用する
 	SetPos(pos);

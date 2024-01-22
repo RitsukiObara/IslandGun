@@ -55,6 +55,11 @@ public:					// 誰でもアクセスできる
 
 private:				// 自分だけアクセスできる
 
+	// メンバ関数
+	void TreeCollision(void);	// 木との当たり判定
+	void RockCollision(void);	// 岩との当たり判定
+	void BlockCollision(void);	// ブロックとの当たり判定
+
 	// メンバ変数
 	CMotion* m_pMotion;		// モーションの情報
 

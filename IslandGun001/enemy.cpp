@@ -17,6 +17,9 @@
 #include "anim_reaction.h"
 
 #include "tordle.h"
+#include "collision.h"
+#include "block.h"
+#include "block_manager.h"
 
 // マクロ定義
 namespace
@@ -186,6 +189,15 @@ void CEnemy::Update(void)
 {
 	// モーションの更新処理
 	m_pMotion->Update();
+
+	// 木との当たり判定
+	TreeCollision();
+
+	// 岩との当たり判定
+	RockCollision();
+
+	// ブロックとの当たり判定
+	BlockCollision();
 }
 
 //================================
@@ -307,4 +319,72 @@ D3DXVECTOR3 CEnemy::GetCollSize(void) const
 {
 	// 当たり判定のサイズを取得する
 	return m_CollSize;
+}
+
+//===========================================
+// 木との当たり判定
+//===========================================
+void CEnemy::TreeCollision(void)
+{
+	// 位置と半径を取得する
+	D3DXVECTOR3 pos = GetPos();
+	float fRadius = m_CollSize.x;
+
+	// 木との当たり判定
+	collision::TreeCollision(&pos, fRadius);
+
+	// 位置を適用する
+	SetPos(pos);
+}
+
+//===========================================
+// 岩との当たり判定
+//===========================================
+void CEnemy::RockCollision(void)
+{
+
+}
+
+//===========================================
+// ブロックとの当たり判定
+//===========================================
+void CEnemy::BlockCollision(void)
+{
+	// ローカル変数宣言
+	CBlock* pBlock = CBlockManager::Get()->GetTop();	// 先頭の木を取得する
+	collision::SCollision coll = { false,false,false,false,false,false };				// 当たり判定の変数
+	D3DXVECTOR3 pos = GetPos();							// 位置を取得する
+	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-m_CollSize.x, 0.0f, -m_CollSize.z);		// 最小値を取得する
+	D3DXVECTOR3 vtxMax = m_CollSize;					// 最大値を取得する
+
+	while (pBlock != nullptr)
+	{ // ブロックの情報が NULL じゃない場合
+
+		// 六面体の当たり判定
+		coll = collision::HexahedronClush
+		(
+			&pos,
+			pBlock->GetPos(),
+			GetPosOld(),
+			pBlock->GetPosOld(),
+			vtxMin,
+			pBlock->GetFileData().vtxMin,
+			vtxMax,
+			pBlock->GetFileData().vtxMax
+		);
+
+		if (coll.bNear == true ||
+			coll.bFar == true ||
+			coll.bLeft == true ||
+			coll.bRight == true)
+		{
+			int n = 0;
+		}
+
+		// 次のオブジェクトを代入する
+		pBlock = pBlock->GetNext();
+	}
+
+	// 位置を適用する
+	SetPos(pos);
 }
