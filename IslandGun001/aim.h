@@ -28,12 +28,12 @@ public:
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);			// 情報の設定処理
+	void SetData(const D3DXVECTOR3& pos);			// 情報の設定処理
 
-	void SetAim(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);			// エイムの設置処理
+	void SetAim(const D3DXVECTOR3& pos);			// エイムの設置処理
 
 	// 静的メンバ関数
-	static CAim* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);	// 生成処理
+	static CAim* Create(const D3DXVECTOR3& pos);	// 生成処理
 
 private:
 

@@ -66,10 +66,10 @@ namespace
 	};
 	const float SHOT_SHIFT_LENGTH = 95.0f;			// 射撃時のずらす幅
 	const float SHOT_ADD_HEIGHT = 160.0f;			// 射撃時の高さの追加量
-	const float SHOT_ADD_ROT = 0.9f;				// 射撃時の向きの加算数
 	const int DODGE_INTERVAL = 100;					// 回避インターバル
 	const int SHOT_INTERVAL = 5;					// 撃つインターバル
 	const float CAMERA_MOUSE_MAGNI = 5000.0f;		// マウスでのカメラ操作の倍率
+	const float AIM_SHIFT = 1000.0f;					// エイムを表示する幅
 }
 
 //=========================================
@@ -384,9 +384,16 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	// ダガーを生成する
 	m_pDagger = CDagger::Create(GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
 
-	// エイムを生成する
-	m_pAim = CAim::Create(GetPos(), CManager::Get()->GetCamera()->GetRot());
+	D3DXVECTOR3 posCamera;
 
+	// 位置を設定する
+	posCamera.x = GetPos().x + sinf(CManager::Get()->GetCamera()->GetRot().y) * SHOT_SHIFT_LENGTH;
+	posCamera.y = GetPos().y + cosf(CManager::Get()->GetCamera()->GetRot().x) * SHOT_SHIFT_LENGTH;
+	posCamera.z = GetPos().z + cosf(CManager::Get()->GetCamera()->GetRot().y) * SHOT_SHIFT_LENGTH;
+
+	// エイムを生成する
+	m_pAim = CAim::Create(CManager::Get()->GetCamera()->GetPosR());
+	
 	// 全ての値を設定する
 	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
 	m_move = NONE_D3DXVECTOR3;		// 移動量
@@ -532,11 +539,18 @@ void CPlayer::ElevationCollision(void)
 //=======================================
 void CPlayer::Control(void)
 {
-	// カメラの操作処理
-	CameraControl();
+	if (CManager::Get()->GetInputGamePad()->GetConnect() == true)
+	{ // ゲームパッドが接続されている場合
 
-	// マウスでのカメラの操作処理
-	CameraMouse();
+		// カメラの操作処理
+		CameraControl();
+	}
+	else
+	{ // 上記以外
+
+		// マウスでのカメラの操作処理
+		CameraMouse();
+	}
 
 	if (m_pAction->GetAction() != CPlayerAction::ACTION_DODGE &&
 		m_pAction->GetAction() != CPlayerAction::ACTION_DAGGER &&
@@ -799,15 +813,16 @@ void CPlayer::CameraControl(void)
 	if (m_pAim != nullptr)
 	{ // エイムが NULL じゃない場合
 
-		D3DXVECTOR3 pos;
+		D3DXVECTOR3 posAim;
+		D3DXVECTOR3 posR = CManager::Get()->GetCamera()->GetPosR();
 
-		// 位置を設定する
-		pos.x = GetPos().x + sinf(CameraRot.y) * SHOT_SHIFT_LENGTH;
-		pos.y = GetPos().y + SHOT_ADD_HEIGHT;
-		pos.z = GetPos().z + cosf(CameraRot.y) * SHOT_SHIFT_LENGTH;
+		// 目的の視点を設定する
+		posAim.x = GetPos().x + sinf(CameraRot.y) * AIM_SHIFT;
+		posAim.y = GetPos().y + cosf(CameraRot.x) * AIM_SHIFT + SHOT_ADD_HEIGHT;
+		posAim.z = GetPos().z + cosf(CameraRot.y) * AIM_SHIFT;
 
 		// エイムの設置処理
-		m_pAim->SetAim(pos, D3DXVECTOR3(CameraRot.x - SHOT_ADD_ROT, CameraRot.y, CameraRot.z));
+		m_pAim->SetAim(posAim);
 	}
 
 	//// 起伏地面とカメラの当たり判定
@@ -852,15 +867,14 @@ void CPlayer::CameraMouse(void)
 	if (m_pAim != nullptr)
 	{ // エイムが NULL じゃない場合
 
-		D3DXVECTOR3 pos;
+		D3DXVECTOR3 posAim;
 
-		// 位置を設定する
-		pos.x = GetPos().x + sinf(CameraRot.y) * SHOT_SHIFT_LENGTH;
-		pos.y = GetPos().y + SHOT_ADD_HEIGHT;
-		pos.z = GetPos().z + cosf(CameraRot.y) * SHOT_SHIFT_LENGTH;
+		posAim.x = GetPos().x + sinf(CameraRot.y) * AIM_SHIFT;
+		posAim.y = GetPos().y + cosf(CameraRot.x) * AIM_SHIFT;
+		posAim.z = GetPos().z + cosf(CameraRot.y) * AIM_SHIFT;
 
 		// エイムの設置処理
-		m_pAim->SetAim(pos, D3DXVECTOR3(CameraRot.x - SHOT_ADD_ROT, CameraRot.y, CameraRot.z));
+		m_pAim->SetAim(posAim);
 	}
 
 	//// 起伏地面とカメラの当たり判定
@@ -986,9 +1000,6 @@ void CPlayer::Shot(void)
 
 			// 向きを設定する
 			rot = CManager::Get()->GetCamera()->GetRot();
-
-			// 向きを少し上げる(カメラ通りだと射撃がしにくいため)
-			rot.x -= SHOT_ADD_ROT;
 
 			// 向きの正規化
 			useful::RotNormalize(&rot.x);

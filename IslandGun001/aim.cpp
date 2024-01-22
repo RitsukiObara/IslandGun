@@ -12,8 +12,7 @@
 // 無名名前空間
 namespace
 {
-	const float RADIUS = 40.0f;		// 半径
-	const float SHIFT = 500.0f;		// ずらす幅
+	const float RADIUS = 80.0f;		// 半径
 }
 
 //=========================
@@ -77,7 +76,7 @@ void CAim::Draw(void)
 //=========================
 // 情報の設定処理
 //=========================
-void CAim::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
+void CAim::SetData(const D3DXVECTOR3& pos)
 {
 	// 情報の設定処理
 	SetPos(pos);			// 位置
@@ -89,7 +88,7 @@ void CAim::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	SetEnableLookY(true);	// Y軸状況
 
 	// エイムの設置処理
-	SetAim(pos, rot);
+	SetAim(pos);
 
 	// 頂点情報の初期化
 	SetVertex();
@@ -98,7 +97,7 @@ void CAim::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 //=========================
 // 生成処理
 //=========================
-CAim* CAim::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
+CAim* CAim::Create(const D3DXVECTOR3& pos)
 {
 	// ローカルオブジェクトを生成
 	CAim* pAim = nullptr;	// エイムのインスタンスを生成
@@ -134,7 +133,7 @@ CAim* CAim::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 		}
 
 		// 情報の設定処理
-		pAim->SetData(pos, rot);
+		pAim->SetData(pos);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -153,15 +152,13 @@ CAim* CAim::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 //=========================
 // エイムの設置処理
 //=========================
-void CAim::SetAim(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
+void CAim::SetAim(const D3DXVECTOR3& pos)
 {
 	// エイムの位置を宣言する
 	D3DXVECTOR3 posAim;
 
 	// 位置を設定する
-	posAim.x = pos.x + sinf(rot.y) * SHIFT;
-	posAim.y = pos.y + cosf(rot.x) * SHIFT;
-	posAim.z = pos.z + cosf(rot.y) * SHIFT;
+	posAim = pos;
 
 	// 位置を適用する
 	SetPos(posAim);
