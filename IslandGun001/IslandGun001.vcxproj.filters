@@ -67,6 +67,9 @@
     <Filter Include="gimmick\Map">
       <UniqueIdentifier>{be448ae6-17da-4803-9aef-b8d491d3d2ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="useful\ListManager">
+      <UniqueIdentifier>{bcaa9909-52fa-48c4-931a-c66d1ab20624}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -688,6 +691,9 @@
     </ClInclude>
     <ClInclude Include="tordle.h">
       <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="list_manager.h">
+      <Filter>useful\ListManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

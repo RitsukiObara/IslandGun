@@ -299,6 +299,7 @@
     <ClInclude Include="handgun.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="list_manager.h" />
     <ClInclude Include="locus2D.h" />
     <ClInclude Include="locus3D.h" />
     <ClInclude Include="logo.h" />

@@ -30,6 +30,9 @@ namespace
 	};
 }
 
+// 静的メンバ変数
+CListManager<CEnemy*> CEnemy::m_list = {};				// リスト
+
 //================================
 // コンストラクタ
 //================================
@@ -41,16 +44,8 @@ CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 	m_type = TYPE_TORDLE;			// 種類
 	m_CollSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
 
-	// 全ての値をクリアする
-	m_pPrev = nullptr;		// 前のアウトボールへのポインタ
-	m_pNext = nullptr;		// 次のアウトボールへのポインタ
-
-	if (CEnemyManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CEnemyManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //================================
@@ -59,42 +54,6 @@ CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 CEnemy::~CEnemy()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CEnemy::SetPrev(CEnemy* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CEnemy::SetNext(CEnemy* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CEnemy* CEnemy::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CEnemy* CEnemy::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //================================
@@ -170,16 +129,8 @@ void CEnemy::Uninit(void)
 	// 終了処理
 	CCharacter::Uninit();
 
-	if (CEnemyManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CEnemyManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //================================
@@ -322,6 +273,15 @@ D3DXVECTOR3 CEnemy::GetCollSize(void) const
 }
 
 //===========================================
+// リストの取得処理
+//===========================================
+CListManager<CEnemy*> CEnemy::GetList(void)
+{
+	// リストの情報を返す
+	return m_list;
+}
+
+//===========================================
 // 木との当たり判定
 //===========================================
 void CEnemy::TreeCollision(void)
@@ -372,14 +332,6 @@ void CEnemy::BlockCollision(void)
 			vtxMax,
 			pBlock->GetFileData().vtxMax
 		);
-
-		if (coll.bNear == true ||
-			coll.bFar == true ||
-			coll.bLeft == true ||
-			coll.bRight == true)
-		{
-			int n = 0;
-		}
 
 		// 次のオブジェクトを代入する
 		pBlock = pBlock->GetNext();

@@ -60,7 +60,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	CElevationManager::Create();		// 起伏マネージャー
 	CMeshManager::Create();				// メッシュマネージャー
 	CBulletManager::Create();			// 弾マネージャー
-	CEnemyManager::Create();			// 敵マネージャー
 	CCoinManager::Create();				// 小判マネージャー
 	CGoldBoneManager::Create();			// 金の骨マネージャー
 	CTreeManager::Create();				// 木マネージャー
@@ -349,7 +348,6 @@ void CManager::Uninit(void)
 	CElevationManager::Get()->Uninit();		// 起伏マネージャー
 	CMeshManager::Get()->Uninit();			// メッシュマネージャー
 	CBulletManager::Get()->Uninit();		// 弾マネージャー
-	CEnemyManager::Get()->Uninit();			// 敵マネージャー
 	CCoinManager::Get()->Uninit();			// 小判マネージャー
 	CGoldBoneManager::Get()->Uninit();		// 金の骨マネージャー
 	CTreeManager::Get()->Uninit();			// 木マネージャー

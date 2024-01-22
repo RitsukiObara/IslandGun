@@ -11,6 +11,7 @@
 // インクルードファイル
 //***********************************
 #include "character.h"
+#include "list_manager.h"
 
 // 前方宣言
 class CMotion;		// モーション
@@ -32,12 +33,6 @@ public:					// 誰でもアクセスできる
 	CEnemy();				// コンストラクタ
 	virtual ~CEnemy();		// デストラクタ
 
-	// リスト構造関係
-	void SetPrev(CEnemy* pPrev);	// 前のポインタの設定処理
-	void SetNext(CEnemy* pNext);	// 後のポインタの設定処理
-	CEnemy* GetPrev(void) const;	// 前のポインタの設定処理
-	CEnemy* GetNext(void) const;	// 次のポインタの設定処理
-
 	// メンバ関数
 	virtual HRESULT Init(void) override;	// 初期化処理
 	virtual void Uninit(void) override;		// 終了処理
@@ -53,6 +48,8 @@ public:					// 誰でもアクセスできる
 	// 静的メンバ関数
 	static CEnemy* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
 
+	static CListManager<CEnemy*> GetList(void);			// リストの取得処理
+
 private:				// 自分だけアクセスできる
 
 	// メンバ関数
@@ -66,9 +63,8 @@ private:				// 自分だけアクセスできる
 	TYPE m_type;			// 種類
 	D3DXVECTOR3 m_CollSize;	// 当たり判定のサイズ
 
-	// リスト構造関係
-	CEnemy* m_pPrev;		// 前へのポインタ
-	CEnemy* m_pNext;		// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CEnemy*> m_list;		// リスト
 };
 
 #endif

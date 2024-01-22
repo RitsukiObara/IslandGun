@@ -15,7 +15,7 @@
 #include "coin.h"
 #include "coin_manager.h"
 #include "enemy.h"
-#include "enemy_manager.h"
+//#include "enemy_manager.h"
 #include "tree.h"
 #include "tree_manager.h"
 #include "player.h"
@@ -131,45 +131,64 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 	D3DXVECTOR3 bulletMin = D3DXVECTOR3(-size.x, -size.y, -size.x);	// 弾の最小値
 	D3DXVECTOR3 enemyMax;		// 敵の最大値
 	D3DXVECTOR3 enemyMin;		// 敵の最小値
-	CEnemy* pEnemy = CEnemyManager::Get()->GetTop();	// 先頭の敵を取得する
-	CEnemy* pEnemyNext = nullptr;		// 次の敵
+	CEnemy* pEnemy = nullptr;		// 先頭の敵
+	CEnemy* pEnemyEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
 
-	while (pEnemy != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (CEnemy::GetList().IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 次の敵を取得する
-		pEnemyNext = pEnemy->GetNext();
+		// 先頭の値を取得する
+		pEnemy = CEnemy::GetList().GetTop();
 
-		// 敵関係の変数を設定
-		enemyMax = pEnemy->GetCollSize();
-		enemyMin = D3DXVECTOR3
-		(
-			-pEnemy->GetCollSize().x,
-			0.0f,
-			-pEnemy->GetCollSize().z
-		);
+		// 末尾の値を取得する
+		pEnemyEnd = CEnemy::GetList().GetEnd();	
 
-		if (HexahedronHit
-		(
-			pos,
-			pEnemy->GetPos(),
-			posOld,
-			pEnemy->GetPosOld(),
-			bulletMin,
-			enemyMin,
-			bulletMax,
-			enemyMax) == true)
-		{ // 敵と重なった場合
+		while (true)
+		{ // 無限ループ
 
-			// ヒット処理
-			pEnemy->Hit(pos);
+			// 敵関係の変数を設定
+			enemyMax = pEnemy->GetCollSize();
+			enemyMin = D3DXVECTOR3
+			(
+				-pEnemy->GetCollSize().x,
+				0.0f,
+				-pEnemy->GetCollSize().z
+			);
 
-			// true を返す
-			return true;
+			if (HexahedronHit
+			(
+				pos,
+				pEnemy->GetPos(),
+				posOld,
+				pEnemy->GetPosOld(),
+				bulletMin,
+				enemyMin,
+				bulletMax,
+				enemyMax) == true)
+			{ // 敵と重なった場合
+
+				// ヒット処理
+				pEnemy->Hit(pos);
+
+				// true を返す
+				return true;
+			}
+
+			if (pEnemy == pEnemyEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pEnemy = CEnemy::GetList().GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のオブジェクトを代入する
-		pEnemy = pEnemyNext;
 	}
 
 	// false を返す
