@@ -283,6 +283,9 @@ void CPlayer::Update(void)
 	// ブロックとの当たり判定処理
 	BlockCollision();
 
+	// 金の骨との当たり判定
+	collision::GoldBoneCollision(GetPos(), COLLISION_SIZE);
+
 	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
 

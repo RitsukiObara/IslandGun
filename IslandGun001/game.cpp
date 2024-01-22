@@ -28,6 +28,7 @@
 #include "tree.h"
 #include "rock.h"
 #include "block.h"
+#include "gold_bone.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -100,6 +101,8 @@ HRESULT CGame::Init(void)
 	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -1.9f, 0.0f), NONE_SCALE);
 
 	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f));
+
+	CGoldBone::Create(D3DXVECTOR3(-400.0f, 0.0f, 400.0f), NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

@@ -215,7 +215,8 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 //=======================================
 void CGoldBone::Hit(void)
 {
-
+	// èIóπèàóù
+	Uninit();
 }
 
 //=======================================

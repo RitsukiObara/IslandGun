@@ -18,6 +18,8 @@
 //#include "enemy_manager.h"
 #include "tree.h"
 #include "tree_manager.h"
+#include "gold_bone.h"
+#include "gold_bone_manager.h"
 #include "player.h"
 #include "player_action.h"
 #include "useful.h"
@@ -193,6 +195,45 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 
 	// false を返す
 	return false;
+}
+
+//===============================
+// 金の骨との当たり判定
+//===============================
+void collision::GoldBoneCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posCoin = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 vtxMaxBone = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 vtxMinBone = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 vtxMax = size;		// 最大値
+	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, 0.0f, -size.z);	// 最小値
+	CGoldBone* pBone = CGoldBoneManager::Get()->GetTop();			// 先頭の小判を取得する
+	CGoldBone* pBoneNext = nullptr;		// 次のの小判
+
+	while (pBone != nullptr)
+	{ // ブロックの情報が NULL じゃない場合
+
+		// 次の小判を取得する
+		pBoneNext = pBone->GetNext();
+
+		// コインの変数を取得する
+		posCoin = pBone->GetPos();
+		vtxMaxBone = pBone->GetFileData().vtxMax;
+		vtxMinBone = pBone->GetFileData().vtxMin;
+
+		if (useful::RectangleCollisionXY(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
+			useful::RectangleCollisionXZ(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
+			useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true)
+		{ // 小判と重なった場合
+
+			// 取得処理
+			pBone->Hit();
+		}
+
+		// 次のオブジェクトを代入する
+		pBone = pBoneNext;
+	}
 }
 
 //===============================

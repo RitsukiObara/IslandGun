@@ -381,6 +381,9 @@
     <ClCompile Include="tordle.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
+    <ClCompile Include="gold_bone_UI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -694,6 +697,9 @@
     </ClInclude>
     <ClInclude Include="list_manager.h">
       <Filter>useful\ListManager</Filter>
+    </ClInclude>
+    <ClInclude Include="gold_bone_UI.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -188,6 +188,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gold_bone.cpp" />
     <ClCompile Include="gold_bone_manager.cpp" />
+    <ClCompile Include="gold_bone_UI.cpp" />
     <ClCompile Include="handgun.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="light.cpp" />
@@ -296,6 +297,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gold_bone.h" />
     <ClInclude Include="gold_bone_manager.h" />
+    <ClInclude Include="gold_bone_UI.h" />
     <ClInclude Include="handgun.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
