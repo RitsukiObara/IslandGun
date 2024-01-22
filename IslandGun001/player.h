@@ -95,6 +95,8 @@ private:		// 自分だけアクセスできる
 	void KeyboardMove(void);		// キーボードでの設定処理
 	void Jump(void);				// ジャンプ処理
 	void Shot(void);				// 射撃処理
+	void HandGun(int* nNumBullet);	// 拳銃処理
+	void ShotGun(int* nNumBullet);	// 散弾処理
 	void Avoid(void);				// 回避処理
 	void Dagger(void);				// ダガー処理
 

@@ -44,8 +44,8 @@ public:					// 誰でもアクセスできる
 	virtual void Update(void) override;		// 更新処理
 	virtual void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 情報の設定処理
-	void Hit(const D3DXVECTOR3& pos);		// ヒット処理
+	virtual void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 情報の設定処理
+	virtual void Hit(const D3DXVECTOR3& pos);		// ヒット処理
 
 	// セット・ゲット関係
 	D3DXVECTOR3 GetCollSize(void) const;	// 当たり判定のサイズの取得処理

@@ -27,6 +27,7 @@ namespace
 	const int DODGE_COUNT = 27;			// 回避状態のカウント数
 	const int DAGGER_COUNT = 40;		// ダガー状態のカウント数
 	const int SWOOP_COUNT = 65;			// 急降下状態のカウント数
+	const int SHOTGUN_COUNT = 60;		// 散弾状態のカウント数
 	const int DODGE_BLUR_LIFE = 10;		// 回避状態のブラーの寿命
 	const D3DXCOLOR DODGE_BLUR_COL = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);		// 回避状態のブラーの色
 	const float DAGGER_HEIGHT = 80.0f;	// ダガーの高さ
@@ -399,7 +400,33 @@ void CPlayerAction::DodgeProcess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::ShotgunProcess(CPlayer* pPlayer)
 {
+	// 向きを取得する
+	D3DXVECTOR3 rotDest = pPlayer->GetRotDest();
+	D3DXVECTOR3 rotCamera = CManager::Get()->GetCamera()->GetRot();
 
+	// カメラの向きを同じ向きを揃える
+	rotDest.y = rotCamera.y;
+
+	// 向きを適用する
+	pPlayer->SetRotDest(rotDest);
+
+	// 腕を真っ直ぐ伸ばす
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTARM - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f));
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTARM - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f));
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
+
+	// 行動カウントを加算する
+	m_nActionCount++;
+
+	if (m_nActionCount >= SHOTGUN_COUNT)
+	{ // 行動カウントが一定数以上になった場合
+
+		// 行動を設定する
+		SetAction(ACTION_NONE);
+	}
 }
 
 //=========================

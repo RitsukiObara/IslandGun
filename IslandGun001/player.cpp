@@ -39,7 +39,7 @@ namespace
 {
 	const float GRAVITY = 1.0f;						// 重力
 	const float LAND_GRAVITY = -50.0f;				// 着地時の重力
-	const float JUMP = 23.0f;						// ジャンプ力
+	const float JUMP = 24.0f;						// ジャンプ力
 	const float SPEED = 10.0f;						// 速度
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
@@ -66,10 +66,14 @@ namespace
 	};
 	const float SHOT_SHIFT_LENGTH = 95.0f;			// 射撃時のずらす幅
 	const float SHOT_ADD_HEIGHT = 160.0f;			// 射撃時の高さの追加量
-	const int DODGE_INTERVAL = 100;					// 回避インターバル
+	const int DODGE_INTERVAL = 90;					// 回避インターバル
 	const int SHOT_INTERVAL = 5;					// 撃つインターバル
 	const float CAMERA_MOUSE_MAGNI = 5000.0f;		// マウスでのカメラ操作の倍率
-	const float AIM_SHIFT = 1000.0f;					// エイムを表示する幅
+	const float AIM_SHIFT = 1000.0f;				// エイムを表示する幅
+	const int NUM_SHOTGUN_BULLET = 6;				// 散弾で飛ばす弾の数
+	const int SHOTGUN_RAND_ROT = 60;				// 散弾のランダムで飛ばす向き
+	const float SHOTGUN_GRAVITY = 15.0f;			// 散弾状態の時の重力
+	const float SHOTGUN_RECOIL = 7.0f;				// 散弾状態の反動
 }
 
 //=========================================
@@ -554,6 +558,7 @@ void CPlayer::Control(void)
 
 	if (m_pAction->GetAction() != CPlayerAction::ACTION_DODGE &&
 		m_pAction->GetAction() != CPlayerAction::ACTION_DAGGER &&
+		m_pAction->GetAction() != CPlayerAction::ACTION_SHOTGUN &&
 		m_pAction->GetAction() != CPlayerAction::ACTION_SWOOP)
 	{ // 一定状態以外の場合
 
@@ -963,6 +968,9 @@ void CPlayer::BlockCollision(void)
 
 			// 移動量を設定する
 			m_move.y = 0.0f;
+
+			// ジャンプしていない
+			m_bJump = false;
 		}
 
 		// 次のオブジェクトを代入する
@@ -989,56 +997,27 @@ void CPlayer::Shot(void)
 		nNumBullet > 0)
 	{ // 残弾があり、RB・LBキーを押した場合
 
-		// 射撃状態にする
-		m_pAction->SetAction(CPlayerAction::ACTION_SHOT);
+		if (m_bJump == true)
+		{ // ジャンプしていた場合
 
-		if (m_nShotCount % 10 == 0)
-		{ // 一定カウントごとに
+			// 散弾処理
+			ShotGun(&nNumBullet);
+		}
+		else
+		{ // 上記以外
 
-			D3DXVECTOR3 pos;		// 弾の出る位置を宣言
-			D3DXVECTOR3 rot;		// 弾の出る向きを宣言
-
-			// 向きを設定する
-			rot = CManager::Get()->GetCamera()->GetRot();
-
-			// 向きの正規化
-			useful::RotNormalize(&rot.x);
-
-			if (nNumBullet > 0)
-			{ // まだ弾丸がある場合
-
-				// 位置を設定する
-				pos.x = GetPos().x + sinf(GetRot().y + SHOT_SHIFT_ROT[(int)(m_bRightShot)]) * SHOT_SHIFT_LENGTH;
-				pos.y = GetPos().y + SHOT_ADD_HEIGHT;
-				pos.z = GetPos().z + cosf(GetRot().y + SHOT_SHIFT_ROT[(int)(m_bRightShot)]) * SHOT_SHIFT_LENGTH;
-
-				// 弾を撃つ
-				CBullet::Create(pos, rot, CBullet::TYPE::TYPE_HANDGUN);
-
-				// 右で撃つかどうかを変える
-				m_bRightShot = !m_bRightShot;
-
-				// 残弾数を減らす
-				nNumBullet--;
-
-				if (nNumBullet <= 0)
-				{
-					// 弾丸を補充する
-					nNumBullet = MAX_REMAINING_BULLET;
-				}
-
-				// 残弾数を適用する
-				m_pBulletUI->SetNumBullet(nNumBullet);
-			}
+			// 拳銃処理
+			HandGun(&nNumBullet);
 		}
 
 		// 射撃カウントを加算する
 		m_nShotCount++;
 	}
 
-	if (CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_RB, 0) == true ||
+	if (m_pAction->GetAction() != CPlayerAction::ACTION_SHOTGUN &&
+		(CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_RB, 0) == true ||
 		CManager::Get()->GetInputGamePad()->GetRelease(CInputGamePad::JOYKEY_LB, 0) == true ||
-		CManager::Get()->GetInputMouse()->GetRelease(CInputMouse::MOUSE_L) == true)
+		CManager::Get()->GetInputMouse()->GetRelease(CInputMouse::MOUSE_L) == true))
 	{ // RB・LBボタンを離した場合
 
 		// 射撃カウントを0にする
@@ -1047,6 +1026,91 @@ void CPlayer::Shot(void)
 		// 通常状態にする
 		m_pAction->SetAction(CPlayerAction::ACTION_NONE);
 	}
+}
+
+//=======================================
+// 拳銃処理
+//=======================================
+void CPlayer::HandGun(int* nNumBullet)
+{
+	// 射撃状態にする
+	m_pAction->SetAction(CPlayerAction::ACTION_SHOT);
+
+	if (m_nShotCount % 10 == 0)
+	{ // 一定カウントごとに
+
+		D3DXVECTOR3 pos;		// 弾の出る位置を宣言
+		D3DXVECTOR3 rot;		// 弾の出る向きを宣言
+
+		// 向きを設定する
+		rot = CManager::Get()->GetCamera()->GetRot();
+
+		// 向きの正規化
+		useful::RotNormalize(&rot.x);
+
+		// 位置を設定する
+		pos.x = GetPos().x + sinf(GetRot().y + SHOT_SHIFT_ROT[(int)(m_bRightShot)]) * SHOT_SHIFT_LENGTH;
+		pos.y = GetPos().y + SHOT_ADD_HEIGHT;
+		pos.z = GetPos().z + cosf(GetRot().y + SHOT_SHIFT_ROT[(int)(m_bRightShot)]) * SHOT_SHIFT_LENGTH;
+
+		// 弾を撃つ
+		CBullet::Create(pos, rot, CBullet::TYPE::TYPE_HANDGUN);
+
+		// 右で撃つかどうかを変える
+		m_bRightShot = !m_bRightShot;
+
+		// 残弾数を減らす
+		(*nNumBullet)--;
+
+		// 残弾数を適用する
+		m_pBulletUI->SetNumBullet(*nNumBullet);
+	}
+}
+
+//=======================================
+// 散弾処理
+//=======================================
+void CPlayer::ShotGun(int* nNumBullet)
+{
+	// 散弾状態にする
+	m_pAction->SetAction(CPlayerAction::ACTION_SHOTGUN);
+
+	// 移動量を設定する
+	m_move.x = sinf(GetRot().y) * -SHOTGUN_RECOIL;
+	m_move.y = SHOTGUN_GRAVITY;
+	m_move.z = cosf(GetRot().y) * -SHOTGUN_RECOIL;
+
+	D3DXVECTOR3 pos = GetPos();		// プレイヤーの位置を宣言
+	D3DXVECTOR3 rot;				// プレイヤーの向きを宣言
+	D3DXVECTOR3 rotBullet;			// 弾の出る向きを宣言
+
+	// 向きを設定する
+	rot = CManager::Get()->GetCamera()->GetRot();
+
+	// 向きの正規化
+	useful::RotNormalize(&rot.x);
+
+	// 位置を設定する
+	pos.x = GetPos().x;
+	pos.y = GetPos().y + SHOT_ADD_HEIGHT;
+	pos.z = GetPos().z;
+
+	for (int nCnt = 0; nCnt < NUM_SHOTGUN_BULLET; nCnt++)
+	{
+		// 弾の出る向きを設定する
+		rotBullet.x = rot.x + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT/ 2)) * 0.01f);
+		rotBullet.y = rot.y + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT/ 2)) * 0.01f);
+		rotBullet.z = rot.z + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT/ 2)) * 0.01f);
+
+		// 弾を撃つ
+		CBullet::Create(pos, rotBullet, CBullet::TYPE::TYPE_SHOTGUN);
+	}
+
+	// 残弾数を減らす
+	(*nNumBullet)--;
+
+	// 残弾数を適用する
+	m_pBulletUI->SetNumBullet(*nNumBullet);
 }
 
 //=======================================
@@ -1093,8 +1157,18 @@ void CPlayer::Dagger(void)
 		CManager::Get()->GetInputMouse()->GetTrigger(CInputMouse::MOUSE_WHEEL) == true)
 	{ // Xキーを押した場合
 
-		// ダガー状態にする
-		m_pAction->SetAction(CPlayerAction::ACTION_DAGGER);
+		if (m_bJump == true)
+		{ // ジャンプ状況が true の場合
+
+			// 急降下状態にする
+			m_pAction->SetAction(CPlayerAction::ACTION_SWOOP);
+		}
+		else
+		{ // 上記以外
+
+			// ダガー状態にする
+			m_pAction->SetAction(CPlayerAction::ACTION_DAGGER);
+		}
 
 		if (m_pMotion->GetType() != MOTIONTYPE_DAGGER)
 		{ // ダガーモーション以外の場合

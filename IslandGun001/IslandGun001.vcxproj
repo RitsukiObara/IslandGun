@@ -255,6 +255,7 @@
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="tordle.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="tree_manager.cpp" />
     <ClCompile Include="tutorial.cpp" />
@@ -359,6 +360,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="tordle.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="tree_manager.h" />
     <ClInclude Include="tutorial.h" />

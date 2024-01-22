@@ -375,6 +375,9 @@
     <ClCompile Include="block_manager.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
+    <ClCompile Include="tordle.cpp">
+      <Filter>enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -682,6 +685,9 @@
     </ClInclude>
     <ClInclude Include="block_manager.h">
       <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="tordle.h">
+      <Filter>enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

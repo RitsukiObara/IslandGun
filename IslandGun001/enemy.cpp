@@ -16,6 +16,8 @@
 #include "motion.h"
 #include "anim_reaction.h"
 
+#include "tordle.h"
+
 // マクロ定義
 namespace
 {
@@ -246,8 +248,22 @@ CEnemy* CEnemy::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYP
 	if (pEnemy == nullptr)
 	{ // オブジェクトが NULL の場合
 
-		// メモリを確保する
-		pEnemy = new CEnemy;
+		switch (type)
+		{
+		case CEnemy::TYPE_TORDLE:		// タードル
+
+			// タードルを生成する
+			pEnemy = new CTordle;
+
+			break;
+
+		default:
+
+			// 停止
+			assert(false);
+
+			break;
+		}
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合

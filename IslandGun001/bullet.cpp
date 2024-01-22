@@ -22,8 +22,8 @@ namespace
 	const char* TEXTURE = "data\\TEXTURE\\Bullet.png";		// ’e‚ÌƒeƒNƒXƒ`ƒƒ
 	const D3DXVECTOR3 RADIUS[CBullet::TYPE_MAX] =
 	{
-		D3DXVECTOR3(15.0f,15.0f,0.0f),		// “ñ’šŒe
-		D3DXVECTOR3(3.0f,3.0f,0.0f),		// U’ee
+		D3DXVECTOR3(20.0f,20.0f,0.0f),		// “ñ’šŒe
+		D3DXVECTOR3(10.0f,10.0f,0.0f),		// U’ee
 	};
 	const float SPEED = 45.0f;		// ‘¬“x
 	const int LIFE = 90;			// õ–½

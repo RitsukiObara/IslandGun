@@ -13,6 +13,7 @@
 namespace
 {
 	const float RADIUS = 80.0f;		// 半径
+	const char* TEXTURE = "data\\TEXTURE\\Aim.png";		// テクスチャ
 }
 
 //=========================
@@ -92,6 +93,9 @@ void CAim::SetData(const D3DXVECTOR3& pos)
 
 	// 頂点情報の初期化
 	SetVertex();
+
+	// テクスチャの割り当て処理
+	BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE));
 }
 
 //=========================
