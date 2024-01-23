@@ -354,6 +354,9 @@
     <ClCompile Include="gold_bone_UI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="grass.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -640,6 +643,9 @@
     </ClInclude>
     <ClInclude Include="gold_bone_UI.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="grass.h">
+      <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
