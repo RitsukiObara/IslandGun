@@ -21,6 +21,7 @@
 
 #include "objectElevation.h"
 #include "skybox.h"
+#include "motion.h"
 
 #include "player.h"
 #include "coin.h"

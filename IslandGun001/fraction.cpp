@@ -19,15 +19,25 @@
 //-------------------------------------------
 // マクロ定義
 //-------------------------------------------
-#define GRAVITY					(0.4f)		// 重力
-#define RAND_MOVE_WIDTH			(3)			// XZ軸のランダムの移動量
-#define RAND_MOVE_HEIGHT		(5)			// Y軸のランダムの移動量
-#define MIN_MOVE_WIDTH			(3)			// XZ軸の最小限の移動量
-#define MIN_MOVE_HEIGHT			(4)			// Y軸の最小限の移動量
-#define RAND_ROT_MOVE			(30)		// 向きのランダムの移動量
-#define MIN_ROT_MOVE			(12)		// 向きの最小限の移動量
-#define SUB_ALPHA				(0.05f)		// 透明度の減算量
-#define DELETE_COUNT			(80)		// 消去状態になるまでのカウント
+namespace
+{
+	const char* MODEL[CFraction::TYPE_MAX] =	// モデル
+	{
+		"data\\MODEL\\Platform\\FracScrew.x",
+		"data\\MODEL\\Platform\\FracGear.x",
+		"data\\MODEL\\Platform\\FracRing.x",
+		"data\\MODEL\\Platform\\FracWood.x",
+	};
+	const float GRAVITY = 0.4f;			// 重力
+	const int RAND_MOVE_WIDTH = 3;		// XZ軸のランダムの移動量
+	const int RAND_MOVE_HEIGHT = 5;		// Y軸のランダムの移動量
+	const int MIN_MOVE_WIDTH = 3;		// XZ軸の最小限の移動量
+	const int MIN_MOVE_HEIGHT = 4;		// Y軸の最小限の移動量
+	const int RAND_ROT_MOVE = 30;		// 向きのランダムの移動量
+	const int MIN_ROT_MOVE = 12;		// 向きの最小限の移動量
+	const float SUB_ALPHA = 0.05f;		// 透明度の減算量
+	const int DELETE_COUNT = 80;		// 消去状態になるまでのカウント
+}
 
 //==============================
 // コンストラクタ
@@ -181,44 +191,7 @@ void CFraction::SetData(const D3DXVECTOR3& pos, const TYPE type)
 	SetPosOld(pos);					// 前回の位置
 	SetRot(NONE_D3DXVECTOR3);		// 向き
 	SetScale(NONE_SCALE);			// 拡大率
-
-	switch (type)
-	{
-	case TYPE_SCREW:		// ネジ
-
-		// モデル情報を設定する
-		SetFileData(CXFile::TYPE_FRAC_SCREW);
-
-		break;
-
-	case TYPE_GEAR:			// 歯車
-
-		// モデル情報を設定する
-		SetFileData(CXFile::TYPE_FRAC_GEAR);
-
-		break;
-
-	case TYPE_RING:			// 輪
-
-		// モデル情報を設定する
-		SetFileData(CXFile::TYPE_FRAC_RING);
-
-		break;
-
-	case TYPE_WOOD:		// 木
-
-		// モデル情報を設定する
-		SetFileData(CXFile::TYPE_FRAC_WOOD);
-
-		break;
-
-	default:
-
-		// 停止
-		assert(false);
-
-		break;
-	}
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL[type]));		// モデル情報を設定する
 
 	// 移動量の設定処理
 	MoveSet();

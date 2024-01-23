@@ -27,6 +27,7 @@ class CDebugProc;		// デバッグ表示
 class CCamera;			// カメラ
 class CLight;			// ライト
 class CTexture;			// テクスチャ
+class CXFile;			// Xファイル
 class CFade;			// フェード
 
 //--------------------------------------------
@@ -63,6 +64,7 @@ public:						// 誰でもアクセスできる
 	CFade* GetFade(void);					// フェードの取得処理
 	void SetMode(const CScene::MODE mode);	// モードの設定処理
 	CScene::MODE GetMode(void);				// モードの取得処理
+	CXFile* GetXFile(void);					// Xファイルの取得処理
 
 	// 静的メンバ関数
 	static CManager* Create(void);			// マネージャーの生成処理
@@ -83,6 +85,7 @@ private:					// 自分だけアクセスできる
 	CTexture* m_pTexture;					// テクスチャの情報
 	CScene* m_pScene;						// シーンの情報
 	CFade* m_pFade;							// フェードの情報
+	CXFile* m_pXFile;						// Xファイルの情報
 
 #ifdef _DEBUG		// デバッグ時のみ
 

@@ -14,66 +14,19 @@
 #include "texture.h"
 
 //------------------------------------------------------------
-// コンスト定義
+// 無名名前空間
 //------------------------------------------------------------
-const char* CXFile::c_apModelData[CXFile::TYPE_MAX] =		// モデルの名前
+namespace
 {
-	// 演出モデル
-	"data\\MODEL\\Platform\\FracScrew.x",		// ネジ(破片)
-	"data\\MODEL\\Platform\\FracGear.x",		// 歯車(破片)
-	"data\\MODEL\\Platform\\FracRing.x",		// 輪(破片)
-	"data\\MODEL\\Platform\\FracWood.x",		// 木片(破片)
-	"data\\MODEL\\Platform\\Ripple.x",			// 波紋
-
-	// ゲームモデル
-	"data\\MODEL\\Coin.x",				// 小判
-	"data\\MODEL\\Pistol.x",			// 拳銃
-	"data\\MODEL\\Dagger.x",			// ダガー
-	"data\\MODEL\\GoldBone.x",			// 金の骨
-	"data\\MODEL\\PalmTree.x",			// ヤシの木
-	"data\\MODEL\\PalmFruit.x",			// ヤシの実
-	"data\\MODEL\\PalmItem.x",			// ヤシの実(アイテム体)
-	"data\\MODEL\\Rock.x",				// 岩
-
-	// プレイヤーモデル
-	"data/MODEL/PlayerWaist.x",			// プレイヤーの腰
-	"data/MODEL/PlayerBody.x",			// プレイヤーの体
-	"data/MODEL/PlayerNeck.x",			// プレイヤーの首
-	"data/MODEL/PlayerCloak.x",			// プレイヤーのマント
-	"data/MODEL/PlayerHead.x",			// プレイヤーの頭
-	"data/MODEL/PlayerRArm.x",			// プレイヤーの右上腕
-	"data/MODEL/PlayerLArm.x",			// プレイヤーの左上腕
-	"data/MODEL/PlayerRUpper.x",		// プレイヤーの右腕
-	"data/MODEL/PlayerLUpper.x",		// プレイヤーの左腕
-	"data/MODEL/PlayerRHand.x",			// プレイヤーの右手
-	"data/MODEL/PlayerLHand.x",			// プレイヤーの左手
-	"data/MODEL/PlayerRLeg.x",			// プレイヤーの右脚
-	"data/MODEL/PlayerLLeg.x",			// プレイヤーの左脚
-	"data/MODEL/PlayerRShin.x",			// プレイヤーの右脛
-	"data/MODEL/PlayerLShin.x",			// プレイヤーの左脛
-	"data/MODEL/PlayerRFoot.x",			// プレイヤーの右足
-	"data/MODEL/PlayerLFoot.x",			// プレイヤーの左足
-
-	// タードルモデル
-	"data/MODEL/TordleBody.x",			// タードルの体
-	"data/MODEL/TordleHead.x",			// タードルの頭
-	"data/MODEL/TordleRFLeg.x",			// タードルの右前足
-	"data/MODEL/TordleLFLeg.x",			// タードルの左前足
-	"data/MODEL/TordleRBLeg.x",			// タードルの右後ろ足
-	"data/MODEL/TordleLBLeg.x",			// タードルの左後ろ足
-};
-
-//------------------------------------------------------------
-// モデルの情報
-//------------------------------------------------------------
-CXFile::SXFile CXFile::m_apModel[CXFile::TYPE_MAX] = {};
+	const char* LOAD_TXT = "data/TXT/Model.txt";		// モデルの情報テキスト
+}
 
 //============================================================
 // コンストラクタ
 //============================================================
 CXFile::CXFile()
 {
-	for (int nCnt = 0; nCnt < CXFile::TYPE_MAX; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_XFILE; nCnt++)
 	{
 		// モデルの情報を初期化する
 		m_apModel[nCnt].pMesh = nullptr;			// メッシュ (頂点情報) へのポインタ
@@ -85,11 +38,14 @@ CXFile::CXFile()
 		m_apModel[nCnt].vtxPos = nullptr;			// 頂点の位置
 		m_apModel[nCnt].fRadius = 0.0f;				// 半径
 		m_apModel[nCnt].nNumFace = 0;				// 面の数
+		m_apModel[nCnt].bEmpty = true;				// 空白状況
 
 		for (int nCntMat = 0; nCntMat < MAX_MATERIAL; nCntMat++)
 		{
 			m_apModel[nCnt].m_nTexIdx[nCntMat] = NONE_TEXIDX;		// テクスチャのインデックス
 		}
+
+		*m_apModelName[nCnt] = {};					// モデルの名前
 	}
 }
 
@@ -106,7 +62,7 @@ CXFile::~CXFile()
 //============================================================
 HRESULT CXFile::Init(void)
 {
-	for (int nCnt = 0; nCnt < CXFile::TYPE_MAX; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_XFILE; nCnt++)
 	{
 		// モデルの情報を初期化する
 		m_apModel[nCnt].pMesh = nullptr;			// メッシュ (頂点情報) へのポインタ
@@ -118,36 +74,14 @@ HRESULT CXFile::Init(void)
 		m_apModel[nCnt].vtxPos = nullptr;			// 頂点の位置
 		m_apModel[nCnt].fRadius = 0.0f;				// 半径
 		m_apModel[nCnt].nNumFace = 0;				// 面の数
+		m_apModel[nCnt].bEmpty = true;				// 空白状況
 
 		for (int nCntMat = 0; nCntMat < MAX_MATERIAL; nCntMat++)
 		{
 			m_apModel[nCnt].m_nTexIdx[nCntMat] = NONE_TEXIDX;		// テクスチャのインデックス
 		}
-	}
 
-	// xファイルの読み込み
-	if (FAILED(LoadXFile()))
-	{ // xファイルの読み込みに失敗した場合
-
-		// 停止
-		assert(false);
-
-		// 失敗を返す
-		return E_FAIL;
-	}
-
-	// 当たり判定の作成
-	SetCollision();
-
-	// テクスチャの読み込み
-	if (FAILED(LoadTexture()))
-	{ // テクスチャの読み込みに失敗した場合
-
-		// 停止
-		assert(false);
-
-		// 失敗を返す
-		return E_FAIL;
+		*m_apModelName[nCnt] = {};					// モデルの名前
 	}
 
 	// 成功を返す
@@ -157,10 +91,10 @@ HRESULT CXFile::Init(void)
 //============================================================
 // モデルの終了処理
 //============================================================
-void CXFile::Uninit(void)
+void CXFile::Unload(void)
 {
 	// テクスチャの破棄
-	for (int nCntModel = 0; nCntModel < CXFile::TYPE_MAX; nCntModel++)
+	for (int nCntModel = 0; nCntModel < MAX_XFILE; nCntModel++)
 	{ // モデルの最大数分繰り返す
 
 		if (m_apModel[nCntModel].pMesh != nullptr)
@@ -185,35 +119,130 @@ void CXFile::Uninit(void)
 		}
 	}
 
-// デバッグモード
-#ifdef _DEBUG
+	// メモリを開放する
+	delete this;
+}
 
-	// テクスチャの破棄
-	for (int nCntModel = 0; nCntModel < CXFile::TYPE_MAX; nCntModel++)
-	{ // モデルの最大数分繰り返す
+//============================================================
+// Xファイルの登録処理
+//============================================================
+CXFile::SXFile CXFile::Regist(const char* filename)
+{
+	// ローカル変数宣言
+	SXFile XFile;		// 返り値用変数
 
-		if (m_apModel[nCntModel].pMesh != nullptr)
-		{ // 変数 (m_apModel[nCntModel].pMesh) がNULLではない場合
+	for (int nCntModel = 0; nCntModel < MAX_TEXTURE; nCntModel++)
+	{
+		if (m_apModel[nCntModel].bEmpty == true)
+		{ // 中に情報が入っていない場合
 
-			// 停止
-			assert(false);
+			// テクスチャの読み込み
+			if (FAILED(LoadXFile(filename,&m_apModel[nCntModel])))
+			{ // テクスチャの生成に失敗した場合
+
+				// 停止
+				assert(false);
+			}
+
+			// 当たり判定の作成
+			SetCollision(&m_apModel[nCntModel]);
+
+			// テクスチャの読み込み
+			if (FAILED(LoadTexture(&m_apModel[nCntModel])))
+			{ // テクスチャの読み込みに失敗した場合
+
+				// 停止
+				assert(false);
+			}
+
+			// パスを登録する
+			strcpy(&m_apModelName[nCntModel][0], filename);
+
+			// 空白状況を false にする
+			m_apModel[nCntModel].bEmpty = false;
+
+			// モデルを代入する
+			XFile = m_apModel[nCntModel];
+
+			// 抜け出す
+			break;
 		}
+		else
+		{ // ポインタが NULL じゃない場合
 
-		if (m_apModel[nCntModel].pBuffMat != nullptr)
-		{ // 変数 (m_apModel[nCntModel].pBuffMat) がNULLではない場合
+			if (strcmp(&m_apModelName[nCntModel][0], filename) == 0)
+			{ // 過去に読み込んでいた場合
 
-			// 停止
-			assert(false);
+				// モデルを代入する
+				XFile = m_apModel[nCntModel];
+
+				// 抜け出す
+				break;
+			}
 		}
 	}
 
-#endif
+	// 結果のモデルを返す
+	return XFile;
+}
+
+//============================================================
+// ロード処理
+//============================================================
+HRESULT CXFile::Load(void)
+{
+	// ローカル変数宣言
+	int nEnd;						// テキスト読み込み終了の確認用
+	char aString[MAX_STRING];		// テキストの文字列の代入用
+	char aModelName[MAX_STRING];	// テクスチャの名前(相対パス)
+
+	// ポインタを宣言
+	FILE* pFile;						// ファイルポインタ
+
+	// ファイルを読み込み形式で開く
+	pFile = fopen(LOAD_TXT, "r");
+
+	if (pFile != nullptr)
+	{ // ファイルが開けた場合
+
+		do
+		{ // 読み込んだ文字列が EOF ではない場合ループ
+
+			// ファイルから文字列を読み込む
+			nEnd = fscanf(pFile, "%s", &aString[0]);	// テキストを読み込みきったら EOF を返す
+
+			if (strcmp(&aString[0], "MODEL_FILENAME") == 0)
+			{ // 読み込んだ文字列が MODEL_FILENAME の場合
+
+				fscanf(pFile, "%s", &aString[0]);			// = を読み込む (不要)
+				fscanf(pFile, "%s", &aModelName[0]);		// モデルの相対パスを読み込む
+
+				// テクスチャの登録処理
+				Regist(&aModelName[0]);
+			}
+		} while (nEnd != EOF);				// 読み込んだ文字列が EOF ではない場合ループ
+
+		// ファイルを閉じる
+		fclose(pFile);
+	}
+	else
+	{ // ファイルが開けなかった場合
+
+		// 停止
+		assert(false);
+
+		// 失敗を返す
+		return E_FAIL;
+	}
+
+	// 成功を返す
+	return S_OK;
 }
 
 //============================================================
 //	xファイルの読み込み
 //============================================================
-HRESULT CXFile::LoadXFile(void)
+HRESULT CXFile::LoadXFile(const char* filename, SXFile* pXFile)
 {
 	// 変数を宣言
 	HRESULT hr;		// 異常終了の確認用
@@ -221,31 +250,27 @@ HRESULT CXFile::LoadXFile(void)
 	// デバイスを取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::Get()->GetRenderer()->GetDevice();
 
-	for (int nCntModel = 0; nCntModel < CXFile::TYPE_MAX; nCntModel++)
-	{ // モデルの最大数分繰り返す
+	// xファイルの読み込み
+	hr = D3DXLoadMeshFromX
+	( // 引数
+		filename,				// モデルの相対パス
+		D3DXMESH_SYSTEMMEM,		// メッシュ作成用オプション
+		pDevice,				// デバイスへのポインタ
+		NULL,					// 隣接性データ
+		&pXFile->pBuffMat,		// マテリアルへのポインタ
+		NULL,					// エフェクトデータ
+		&pXFile->dwNumMat,		// マテリアルの数
+		&pXFile->pMesh			// メッシュ (頂点情報) へのポインタ
+	);
 
-		// xファイルの読み込み
-		hr = D3DXLoadMeshFromX
-		( // 引数
-			c_apModelData[nCntModel],		// モデルの相対パス
-			D3DXMESH_SYSTEMMEM,				// メッシュ作成用オプション
-			pDevice,						// デバイスへのポインタ
-			NULL,							// 隣接性データ
-			&m_apModel[nCntModel].pBuffMat,	// マテリアルへのポインタ
-			NULL,							// エフェクトデータ
-			&m_apModel[nCntModel].dwNumMat,	// マテリアルの数
-			&m_apModel[nCntModel].pMesh		// メッシュ (頂点情報) へのポインタ
-		);
+	if (FAILED(hr))
+	{ // xファイルの読み込みに失敗した場合
 
-		if (FAILED(hr))
-		{ // xファイルの読み込みに失敗した場合
+		// 停止
+		assert(false);
 
-			// 停止
-			assert(false);
-
-			// 失敗を返す
-			return E_FAIL;
-		}
+		// 失敗を返す
+		return E_FAIL;
 	}
 
 	// 成功を返す
@@ -255,123 +280,113 @@ HRESULT CXFile::LoadXFile(void)
 //============================================================
 //	当たり判定の作成
 //============================================================
-void CXFile::SetCollision(void)
+void CXFile::SetCollision(SXFile* pXFile)
 {
 	// 変数を宣言
 	int         nNumVtx;		// モデルの頂点数
 	DWORD       dwSizeFVF;		// モデルの頂点フォーマットのサイズ
-	BYTE        *pVtxBuff;		// モデルの頂点バッファへのポインタ
+	BYTE* pVtxBuff;				// モデルの頂点バッファへのポインタ
 	D3DXVECTOR3 vtx;			// モデルの頂点座標
 
-	// 当たり判定の作成
-	for (int nCntModel = 0; nCntModel < CXFile::TYPE_MAX; nCntModel++)
-	{ // モデルの最大数分繰り返す
+	// モデルの頂点数を取得
+	nNumVtx = pXFile->pMesh->GetNumVertices();
 
-		// モデルの頂点数を取得
-		nNumVtx = m_apModel[nCntModel].pMesh->GetNumVertices();
+	// 頂点位置のメモリを確保する
+	pXFile->vtxPos = new D3DXVECTOR3[nNumVtx];
 
-		// 頂点位置のメモリを確保する
-		m_apModel[nCntModel].vtxPos = new D3DXVECTOR3[nNumVtx];
+	// モデルの面の数を取得する
+	pXFile->nNumFace = pXFile->pMesh->GetNumFaces();
 
-		// モデルの面の数を取得する
-		m_apModel[nCntModel].nNumFace = m_apModel[nCntModel].pMesh->GetNumFaces();
+	// モデルの頂点フォーマットのサイズを取得
+	dwSizeFVF = D3DXGetFVFVertexSize(pXFile->pMesh->GetFVF());
 
-		// モデルの頂点フォーマットのサイズを取得
-		dwSizeFVF = D3DXGetFVFVertexSize(m_apModel[nCntModel].pMesh->GetFVF());
+	// モデルの頂点バッファをロック
+	pXFile->pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
-		// モデルの頂点バッファをロック
-		m_apModel[nCntModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+	for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
+	{ // モデルの頂点数分繰り返す
 
-		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
-		{ // モデルの頂点数分繰り返す
+		// モデルの頂点座標を代入
+		vtx = *(D3DXVECTOR3*)pVtxBuff;
 
-			// モデルの頂点座標を代入
-			vtx = *(D3DXVECTOR3*)pVtxBuff;
+		// 頂点座標 (x) の設定
+		if (vtx.x < pXFile->vtxMin.x)
+		{ // 今回の頂点座標 (x) が、現状の頂点座標 (x) よりも小さい場合
 
-			// 頂点座標 (x) の設定
-			if (vtx.x < m_apModel[nCntModel].vtxMin.x)
-			{ // 今回の頂点座標 (x) が、現状の頂点座標 (x) よりも小さい場合
+			// 今回の頂点情報 (x) を代入
+			pXFile->vtxMin.x = vtx.x;
+		}
+		else if (vtx.x > pXFile->vtxMax.x)
+		{ // 今回の頂点座標 (x) が、現状の頂点座標 (x) よりも大きい場合
 
-				// 今回の頂点情報 (x) を代入
-				m_apModel[nCntModel].vtxMin.x = vtx.x;
-			}
-			else if (vtx.x > m_apModel[nCntModel].vtxMax.x)
-			{ // 今回の頂点座標 (x) が、現状の頂点座標 (x) よりも大きい場合
-
-				// 今回の頂点情報 (x) を代入
-				m_apModel[nCntModel].vtxMax.x = vtx.x;
-			}
-
-			// 頂点座標 (y) の設定
-			if (vtx.y < m_apModel[nCntModel].vtxMin.y)
-			{ // 今回の頂点座標 (y) が、現状の頂点座標 (y) よりも小さい場合
-
-				// 今回の頂点情報 (y) を代入
-				m_apModel[nCntModel].vtxMin.y = vtx.y;
-			}
-			else if (vtx.y > m_apModel[nCntModel].vtxMax.y)
-			{ // 今回の頂点座標 (y) が、現状の頂点座標 (y) よりも大きい場合
-
-				// 今回の頂点情報 (y) を代入
-				m_apModel[nCntModel].vtxMax.y = vtx.y;
-			}
-
-			// 頂点座標 (z) の設定
-			if (vtx.z < m_apModel[nCntModel].vtxMin.z)
-			{ // 今回の頂点座標 (z) が、現状の頂点座標 (z) よりも小さい場合
-
-				// 今回の頂点情報 (z) を代入
-				m_apModel[nCntModel].vtxMin.z = vtx.z;
-			}
-			else if (vtx.z > m_apModel[nCntModel].vtxMax.z)
-			{ // 今回の頂点座標 (z) が、現状の頂点座標 (z) よりも大きい場合
-
-				// 今回の頂点情報 (z) を代入
-				m_apModel[nCntModel].vtxMax.z = vtx.z;
-			}
-
-			// 頂点の位置を設定する
-			m_apModel[nCntModel].vtxPos[nCntVtx] = vtx;
-
-			// 頂点フォーマットのサイズ分ポインタを進める
-			pVtxBuff += dwSizeFVF;
+			// 今回の頂点情報 (x) を代入
+			pXFile->vtxMax.x = vtx.x;
 		}
 
-		// モデルの頂点バッファをアンロック
-		m_apModel[nCntModel].pMesh->UnlockVertexBuffer();
+		// 頂点座標 (y) の設定
+		if (vtx.y < pXFile->vtxMin.y)
+		{ // 今回の頂点座標 (y) が、現状の頂点座標 (y) よりも小さい場合
 
-		// モデルサイズを求める
-		m_apModel[nCntModel].collsize = m_apModel[nCntModel].vtxMax - m_apModel[nCntModel].vtxMin;
+			// 今回の頂点情報 (y) を代入
+			pXFile->vtxMin.y = vtx.y;
+		}
+		else if (vtx.y > pXFile->vtxMax.y)
+		{ // 今回の頂点座標 (y) が、現状の頂点座標 (y) よりも大きい場合
 
-		// モデルの円の当たり判定を作成
-		m_apModel[nCntModel].fRadius = ((m_apModel[nCntModel].collsize.x * 0.5f) + (m_apModel[nCntModel].collsize.z * 0.5f)) * 0.5f;
+			// 今回の頂点情報 (y) を代入
+			pXFile->vtxMax.y = vtx.y;
+		}
+
+		// 頂点座標 (z) の設定
+		if (vtx.z < pXFile->vtxMin.z)
+		{ // 今回の頂点座標 (z) が、現状の頂点座標 (z) よりも小さい場合
+
+			// 今回の頂点情報 (z) を代入
+			pXFile->vtxMin.z = vtx.z;
+		}
+		else if (vtx.z > pXFile->vtxMax.z)
+		{ // 今回の頂点座標 (z) が、現状の頂点座標 (z) よりも大きい場合
+
+			// 今回の頂点情報 (z) を代入
+			pXFile->vtxMax.z = vtx.z;
+		}
+
+		// 頂点の位置を設定する
+		pXFile->vtxPos[nCntVtx] = vtx;
+
+		// 頂点フォーマットのサイズ分ポインタを進める
+		pVtxBuff += dwSizeFVF;
 	}
+
+	// モデルの頂点バッファをアンロック
+	pXFile->pMesh->UnlockVertexBuffer();
+
+	// モデルサイズを求める
+	pXFile->collsize = pXFile->vtxMax - pXFile->vtxMin;
+
+	// モデルの円の当たり判定を作成
+	pXFile->fRadius = ((pXFile->collsize.x * 0.5f) + (pXFile->collsize.z * 0.5f)) * 0.5f;
 }
 
 //============================================================
 //	テクスチャの読み込み
 //============================================================
-HRESULT CXFile::LoadTexture(void)
+HRESULT CXFile::LoadTexture(SXFile* pXFile)
 {
 	// デバイスを取得する
-	D3DXMATERIAL     *pMat;						// マテリアルへのポインタ
+	D3DXMATERIAL* pMat;						// マテリアルへのポインタ
 
-	// テクスチャの読み込み
-	for (int nCntModel = 0; nCntModel < CXFile::TYPE_MAX; nCntModel++)
-	{ // モデルに使用するモデルの最大数分繰り返す
+	// マテリアル情報に対するポインタを取得
+	pMat = (D3DXMATERIAL*)pXFile->pBuffMat->GetBufferPointer();
 
-		// マテリアル情報に対するポインタを取得
-		pMat = (D3DXMATERIAL*)m_apModel[nCntModel].pBuffMat->GetBufferPointer();
+	for (int nCntMat = 0; nCntMat < (int)pXFile->dwNumMat; nCntMat++)
+	{ // マテリアルの数分繰り返す
 
-		for (int nCntMat = 0; nCntMat < (int)m_apModel[nCntModel].dwNumMat; nCntMat++)
-		{ // マテリアルの数分繰り返す
+		if (pMat[nCntMat].pTextureFilename != nullptr)
+		{ // テクスチャファイルが存在する場合
 
-			if (pMat[nCntMat].pTextureFilename != nullptr)
-			{ // テクスチャファイルが存在する場合
-
-				// テクスチャの読み込み処理
-				m_apModel[nCntModel].m_nTexIdx[nCntMat] = CManager::Get()->GetTexture()->Regist(pMat[nCntMat].pTextureFilename);
-			}
+			// テクスチャの読み込み処理
+			pXFile->m_nTexIdx[nCntMat] = CManager::Get()->GetTexture()->Regist(pMat[nCntMat].pTextureFilename);
 		}
 	}
 
@@ -380,23 +395,53 @@ HRESULT CXFile::LoadTexture(void)
 }
 
 //============================================================
-// Xファイルの取得処理
+// 生成処理
 //============================================================
-CXFile::SXFile CXFile::GetXFile(TYPE type)
+CXFile* CXFile::Create(void)
 {
-	if (type >= 0 && type < TYPE_MAX)
-	{ // 種類が規定内の場合
+	// ローカルオブジェクトを生成
+	CXFile* pXFile = nullptr;		// Xファイルのインスタンスを生成
 
-		// モデルの情報を返す
-		return m_apModel[type];
+	if (pXFile == nullptr)
+	{ // オブジェクトが NULL の場合
+
+		// オブジェクトを生成
+		pXFile = new CXFile;
 	}
 	else
-	{ // 種類が規定外の場合
+	{ // オブジェクトが NULL じゃない場合
 
 		// 停止
 		assert(false);
 
-		// 0番目を返す
-		return m_apModel[0];
+		// NULL を返す
+		return nullptr;
 	}
+
+	if (pXFile != nullptr)
+	{ // オブジェクトが NULL じゃない場合
+
+		// 初期化処理
+		if (FAILED(pXFile->Init()))
+		{ // 初期化に失敗した場合
+
+			// 停止
+			assert(false);
+
+			// NULL を返す
+			return nullptr;
+		}
+	}
+	else
+	{ // オブジェクトが NULL の場合
+
+		// 停止
+		assert(false);
+
+		// NULL を返す
+		return nullptr;
+	}
+
+	// Xファイルのポインタを返す
+	return pXFile;
 }

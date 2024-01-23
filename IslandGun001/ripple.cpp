@@ -13,10 +13,14 @@
 //---------------------------------------
 // マクロ定義
 //---------------------------------------
-#define RIPPLE_INIT_SCALE			(D3DXVECTOR3(5.0f, 5.0f, 5.0f))			// 波紋の初期拡大率
-#define RIPPLE_INIT_ALPHA			(1.0f)									// 波紋の初期透明度
-#define RIPPLE_SUB_ALPHA			(0.05f)									// 波紋の透明度の減少量
-#define RIPPLE_ADD_SCALE			(0.6f)									// 波紋の拡大率の加算量
+namespace
+{
+	const char* MODEL = "data\\MODEL\\Platform\\Ripple.x";					// モデルの名前
+	const D3DXVECTOR3 RIPPLE_INIT_SCALE = D3DXVECTOR3(5.0f, 5.0f, 5.0f);	// 波紋の初期拡大率
+	const float RIPPLE_INIT_ALPHA = 1.0f;			// 波紋の初期透明度
+	const float RIPPLE_SUB_ALPHA = 0.05f;			// 波紋の透明度の減少量
+	const float RIPPLE_ADD_SCALE = 0.6f;			// 波紋の拡大率の加算量
+}
 
 //==========================================
 // コンストラクタ
@@ -124,7 +128,7 @@ void CRipple::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	SetPosOld(pos);								// 前回の位置設定
 	SetRot(rot);								// 向き設定
 	SetScale(RIPPLE_INIT_SCALE);				// 拡大率
-	SetFileData(CXFile::TYPE_RIPPLE);			// サイズ設定
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));			// サイズ設定
 
 	// 全ての値を初期化する
 	m_fAlpha = RIPPLE_INIT_ALPHA;				// 透明度

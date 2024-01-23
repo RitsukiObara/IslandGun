@@ -13,7 +13,7 @@
 //=======================================
 namespace
 {
-
+	const char* MODEL = "data\\MODEL\\Platform\\FracScrew.x";		// モデルの名前
 }
 
 //=========================
@@ -121,7 +121,7 @@ void CEffectModel::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move, cons
 	SetPosOld(pos);							// 前回の位置
 	SetRot(NONE_D3DXVECTOR3);				// 向き
 	SetScale(scale);						// 拡大率
-	SetFileData(CXFile::TYPE_FRAC_GEAR);	// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
 
 	// 全ての値を設定する
 	m_move = move;				// 移動量

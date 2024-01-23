@@ -21,12 +21,23 @@
 #include "block.h"
 #include "block_manager.h"
 
-// マクロ定義
+//------------------------------------------------------------
+// 無名名前空間
+//------------------------------------------------------------
 namespace
 {
 	const D3DXVECTOR3 COLLSIZE[CEnemy::TYPE_MAX] =		// 当たり判定のサイズ
 	{
 		D3DXVECTOR3(70.0f,140.0f,70.0f)
+	};
+	const char* MODEL[6] =
+	{
+		"data/MODEL/TordleBody.x",
+		"data/MODEL/TordleHead.x",
+		"data/MODEL/TordleRFLeg.x",
+		"data/MODEL/TordleLFLeg.x",
+		"data/MODEL/TordleRBLeg.x",
+		"data/MODEL/TordleLBLeg.x",
 	};
 }
 
@@ -178,7 +189,7 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		GetHierarchy(nCntData)->SetPosOld(pos);										// 前回の位置
 		GetHierarchy(nCntData)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));				// 向き
 		GetHierarchy(nCntData)->SetScale(NONE_SCALE);								// 拡大率
-		GetHierarchy(nCntData)->SetFileData(CXFile::TYPE(INIT_TORDLE + nCntData));	// データの設定処理
+		GetHierarchy(nCntData)->SetFileData(CManager::Get()->GetXFile()->Regist(MODEL[nCntData]));	// データの設定処理
 	}
 
 	// モーションのリセット処理

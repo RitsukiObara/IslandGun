@@ -47,7 +47,6 @@ public:			// 誰でもアクセスできる
 	void SetScale(const D3DXVECTOR3& scale);	// 拡大率設定処理
 	D3DXVECTOR3 GetScale(void) const;			// 拡大率取得処理
 
-	void SetFileData(const CXFile::TYPE type);						// データの設定処理
 	void SetFileData(const CXFile::SXFile filaData);				// データの設定処理(ファイルデータの設定版)
 
 	D3DXMATRIX GetMatrix(void) const;			// マトリックスの取得処理

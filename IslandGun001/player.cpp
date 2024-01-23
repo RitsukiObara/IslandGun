@@ -75,6 +75,26 @@ namespace
 	const int SHOTGUN_RAND_ROT = 60;				// 散弾のランダムで飛ばす向き
 	const float SHOTGUN_GRAVITY = 15.0f;			// 散弾状態の時の重力
 	const float SHOTGUN_RECOIL = 7.0f;				// 散弾状態の反動
+	const char* MODEL[17] =
+	{
+		"data/MODEL/PlayerWaist.x",		// 腰
+		"data/MODEL/PlayerBody.x",		// 体
+		"data/MODEL/PlayerNeck.x",		// 首
+		"data/MODEL/PlayerCloak.x",		// マント
+		"data/MODEL/PlayerHead.x",		// 頭
+		"data/MODEL/PlayerRArm.x",		// 右上腕
+		"data/MODEL/PlayerLArm.x",		// 左上腕
+		"data/MODEL/PlayerRUpper.x",		// 右腕
+		"data/MODEL/PlayerLUpper.x",		// 左腕
+		"data/MODEL/PlayerRHand.x",		// 右手
+		"data/MODEL/PlayerLHand.x",		// 左手
+		"data/MODEL/PlayerRLeg.x",		// 右脚
+		"data/MODEL/PlayerLLeg.x",		// 左脚
+		"data/MODEL/PlayerRShin.x",		// 右脛
+		"data/MODEL/PlayerLShin.x",		// 左脛
+		"data/MODEL/PlayerRFoot.x",		// 右足
+		"data/MODEL/PlayerLFoot.x",		// 左足
+	};
 }
 
 //=========================================
@@ -430,7 +450,7 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 		GetHierarchy(nCntData)->SetPosOld(pos);										// 前回の位置
 		GetHierarchy(nCntData)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));				// 向き
 		GetHierarchy(nCntData)->SetScale(NONE_SCALE);								// 拡大率
-		GetHierarchy(nCntData)->SetFileData(CXFile::TYPE(INIT_PLAYER + nCntData));	// データの設定処理
+		GetHierarchy(nCntData)->SetFileData(CManager::Get()->GetXFile()->Regist(MODEL[nCntData]));	// データの設定処理
 	}
 
 	// モーションの設定処理
@@ -439,11 +459,11 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
 	{
 		// 拳銃の情報を生成する
-		m_apHandGun[nCnt] = CHandgun::Create(GUN_POS[nCnt], GUN_ROT[nCnt], GetHierarchy((CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER) + nCnt)->GetMatrixP());
+		m_apHandGun[nCnt] = CHandgun::Create(GUN_POS[nCnt], GUN_ROT[nCnt], GetHierarchy(9 + nCnt)->GetMatrixP());
 	}
 
 	// ダガーを生成する
-	m_pDagger = CDagger::Create(GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->GetMatrixP());
+	m_pDagger = CDagger::Create(GetHierarchy(9)->GetMatrixP());
 
 	D3DXVECTOR3 posCamera;
 

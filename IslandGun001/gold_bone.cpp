@@ -15,6 +15,14 @@
 
 #include "gold_bone_manager.h"
 
+//-------------------------------------------
+// 無名名前空間
+//-------------------------------------------
+namespace
+{
+	const char* MODEL = "data\\MODEL\\GoldBone.x";		// モデルの名前
+}
+
 //==============================
 // コンストラクタ
 //==============================
@@ -149,7 +157,7 @@ void CGoldBone::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 	SetPosOld(pos);							// 前回の位置
 	SetRot(NONE_D3DXVECTOR3);				// 向き
 	SetScale(NONE_SCALE);					// 拡大率
-	SetFileData(CXFile::TYPE_GOLDBONE);		// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));		// モデルの情報
 
 	// 全ての値を設定する
 	m_move = move;	// 移動量

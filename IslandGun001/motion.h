@@ -67,7 +67,7 @@ public:			// 誰でもアクセスできる
 	int GetType(void);									// 種類の取得処理
 	bool IsFinish(void);								// モーションの終了処理
 	void SetInfo(Info info);							// モーションの情報の設定処理
-	void SetModel(CHierarchy **ppHier, int nNumModel);	// モデルの設定処理
+	void SetModel(CHierarchy** ppHier, int nNumModel);	// モデルの設定処理
 	void Load(const char* pTxtName);					// モーションのロード処理
 
 	// 静的メンバ関数

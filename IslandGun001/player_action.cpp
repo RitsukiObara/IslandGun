@@ -294,12 +294,12 @@ void CPlayerAction::ShotProcess(CPlayer* pPlayer)
 	pPlayer->SetRotDest(rotDest);
 
 	// 腕を真っ直ぐ伸ばす
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTARM - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTARM - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f,  0.0f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(5)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f));
+	pPlayer->GetHierarchy(6)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f));
+	pPlayer->GetHierarchy(7)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(8)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(9)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f,  0.0f, 0.0f));
+	pPlayer->GetHierarchy(10)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
 }
 
 //=========================
@@ -411,12 +411,12 @@ void CPlayerAction::ShotgunProcess(CPlayer* pPlayer)
 	pPlayer->SetRotDest(rotDest);
 
 	// 腕を真っ直ぐ伸ばす
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTARM - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTARM - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTUPPER - INIT_PLAYER)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERRIGHTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
-	pPlayer->GetHierarchy(CXFile::TYPE_PLAYERLEFTHAND - INIT_PLAYER)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(5)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f));
+	pPlayer->GetHierarchy(6)->SetRot(D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f));
+	pPlayer->GetHierarchy(7)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(8)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(9)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(10)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
 
 	// 行動カウントを加算する
 	m_nActionCount++;

@@ -21,9 +21,9 @@
 //-------------------------------------------
 namespace
 {
-	const CXFile::TYPE FILE_TYPE[CTree::TYPE_MAX] =		// Xファイルの種類
+	const char* FILE_NAME[CTree::TYPE_MAX] =	// Xファイルの名前
 	{
-		CXFile::TYPE_PALMTREE,			// ヤシの木
+		"data\\MODEL\\PalmTree.x",		// ヤシの木
 	};
 }
 
@@ -154,7 +154,7 @@ void CTree::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE t
 	SetPosOld(pos);					// 前回の位置
 	SetRot(rot);					// 向き
 	SetScale(NONE_SCALE);			// 拡大率
-	SetFileData(FILE_TYPE[type]);	// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(FILE_NAME[type]));	// モデルの情報
 
 	// 全ての値を設定する
 	m_type = type;		// 種類

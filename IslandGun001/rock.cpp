@@ -21,6 +21,7 @@
 namespace
 {
 	const int MAX_BREAK_LEVEL = 3;				// 破壊レベルの最大値
+	const char* MODEL = "data\\MODEL\\Rock.x";	// モデルの名前
 	const char* TEXTURE[MAX_BREAK_LEVEL] =		// 破壊レベルごとのテクスチャ
 	{
 		"data\\TEXTURE\\Rock001.png",
@@ -156,7 +157,7 @@ void CRock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVE
 	SetPosOld(pos);					// 前回の位置
 	SetRot(rot);					// 向き
 	SetScale(scale);				// 拡大率
-	SetFileData(CXFile::TYPE_ROCK);	// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
 
 	// 全ての値を設定する
 	m_nBreakLevel = 0;			// 破壊レベル

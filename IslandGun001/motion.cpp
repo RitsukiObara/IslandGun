@@ -169,8 +169,8 @@ void CMotion::ResetMotion(int nType)
 		// 位置と向きを適用する
 		m_ppModel[nCntModel]->SetPos(m_posPast[nCntModel]);
 		m_ppModel[nCntModel]->SetRot(m_rotPast[nCntModel]);
-	}			
-}				
+	}
+}
 
 //============================================================
 // モーションの更新処理
@@ -277,7 +277,7 @@ void CMotion::Update(void)
 				}
 			}
 		}
-		
+
 		// デバッグ
 		CManager::Get()->GetDebugProc()->Print("モーション中\n");
 	}
@@ -319,7 +319,7 @@ void CMotion::SetInfo(Info info)
 //============================================================
 // モデルの設定処理
 //============================================================
-void CMotion::SetModel(CHierarchy **ppHier, int nNumModel)
+void CMotion::SetModel(CHierarchy** ppHier, int nNumModel)
 {
 	// モデルの情報を設定する
 	m_ppModel = ppHier;
@@ -344,7 +344,7 @@ void CMotion::Load(const char* pTxtName)
 	char aString[MAX_STRING];		// テキストの文字列の代入用
 
 	// ファイルのポインタを宣言
-	FILE  *pFile;							// ファイルポインタ
+	FILE* pFile;							// ファイルポインタ
 
 	// ファイルを読み込み形式で開く
 	pFile = fopen(pTxtName, "r");

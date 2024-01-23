@@ -20,6 +20,7 @@
 //-------------------------------------------
 namespace
 {
+	const char* MODEL = "data\\MODEL\\Coin.x";	// モデルの名前
 	const float INIT_CYCLESPEED = 0.08f;		// 初期の回転速度
 	const float GET_CYCLESPEED = 0.2f;			// 取得時の回転速度
 	const float GET_HEIGHTDEST = 150.0f;		// 取得時の目的の高さ
@@ -198,7 +199,7 @@ void CCoin::SetData(const D3DXVECTOR3& pos)
 	SetPosOld(pos);						// 前回の位置
 	SetRot(NONE_D3DXVECTOR3);			// 向き
 	SetScale(NONE_SCALE);				// 拡大率
-	SetFileData(CXFile::TYPE_COIN);		// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));		// モデルの情報
 
 	// 全ての値を初期化する
 	m_state = STATE_NONE;						// 状態

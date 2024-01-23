@@ -59,7 +59,6 @@ public:			// 誰でもアクセスできる
 	D3DXMATRIX GetMatrix(void) const;			// マトリックスの取得処理
 	D3DXMATRIX* GetMatrixPoint(void);			// マトリックスポインタの取得処理
 
-	void SetFileData(const CXFile::TYPE type);						// データの設定処理
 	void SetFileData(const CXFile::SXFile filaData);				// データの設定処理(ファイルデータの設定版)
 
 	CXFile::SXFile GetFileData(void);			// Xファイルのデータの取得処理

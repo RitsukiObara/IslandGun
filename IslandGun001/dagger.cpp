@@ -20,6 +20,7 @@
 //-------------------------------------------
 namespace
 {
+	const char* MODEL = "data\\MODEL\\Dagger.x";		// モデルの名前
 	const D3DXVECTOR3 DAGGER_POS = D3DXVECTOR3(-10.0f, 0.0f, 0.0f);		// ダガーの位置
 	const D3DXVECTOR3 DAGGER_ROT = D3DXVECTOR3(0.0f, D3DX_PI, 0.0f);	// ダガーの向き
 }
@@ -126,7 +127,7 @@ void CDagger::SetData(D3DXMATRIX* mtx)
 	SetPosOld(DAGGER_POS);				// 前回の位置
 	SetRot(DAGGER_ROT);					// 向き
 	SetScale(NONE_SCALE);				// 拡大率
-	SetFileData(CXFile::TYPE_DAGGER);	// モデル情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデル情報
 
 	// 全ての値をクリアする
 	m_pMtxParent = mtx;		// 親のマトリックス

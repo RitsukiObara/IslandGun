@@ -197,6 +197,19 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		assert(false);
 	}
 
+	if (m_pXFile == nullptr)
+	{ // Xファイルへのポインタが NULL の場合
+
+		// Xファイルの生成処理
+		m_pXFile = CXFile::Create();
+	}
+	else
+	{ // 上記以外
+
+		// 停止
+		assert(false);
+	}
+
 	// テクスチャの読み込み処理
 	if (FAILED(TexLoad()))
 	{ // 読み込みに失敗した場合
@@ -326,6 +339,14 @@ void CManager::Uninit(void)
 		// テクスチャの破棄処理
 		m_pTexture->Unload();
 		m_pTexture = nullptr;
+	}
+
+	if (m_pXFile != nullptr)
+	{ // Xファイルが NULL じゃない場合
+
+		// Xファイルの破棄処理
+		m_pXFile->Unload();
+		m_pXFile = nullptr;
 	}
 
 	if (m_pFade != nullptr)
@@ -473,8 +494,8 @@ void CManager::Draw(void)
 //======================================
 HRESULT CManager::TexLoad(void)
 {
-	// Xファイルの初期化処理
-	CXFile::Init();
+	// Xファイルのロード処理
+	m_pXFile->Load();
 
 	// テクスチャのロード処理
 	m_pTexture->Load();
@@ -488,9 +509,6 @@ HRESULT CManager::TexLoad(void)
 //======================================
 void CManager::TexUnload(void)
 {
-	// Xファイルの終了処理
-	CXFile::Uninit();
-
 	// 全てのオブジェクトの破棄処理
 	CObject::ReleaseAll();
 }
@@ -641,6 +659,15 @@ CScene::MODE CManager::GetMode(void)
 {
 	// モードを返す
 	return m_pScene->GetMode();
+}
+
+//======================================
+// Xファイルの取得処理
+//======================================
+CXFile* CManager::GetXFile(void)
+{
+	// Xファイルの情報を返す
+	return m_pXFile;
 }
 
 //======================================

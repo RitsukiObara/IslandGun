@@ -15,6 +15,14 @@
 
 #include "block_manager.h"
 
+//-------------------------------------------
+// 無名名前空間
+//-------------------------------------------
+namespace
+{
+	const char* MODEL = "data\\MODEL\\Rock.x";		// モデルの名前
+}
+
 //==============================
 // コンストラクタ
 //==============================
@@ -139,7 +147,7 @@ void CBlock::SetData(const D3DXVECTOR3& pos)
 	SetPosOld(pos);					// 前回の位置
 	SetRot(NONE_D3DXVECTOR3);		// 向き
 	SetScale(NONE_SCALE);			// 拡大率
-	SetFileData(CXFile::TYPE_ROCK);	// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
 }
 
 //=======================================

@@ -113,28 +113,28 @@ void CShadowModel::Draw(void)
 //====================
 // 情報の設定処理
 //====================
-void CShadowModel::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const CXFile::TYPE type, const D3DXMATRIX& mtx)
+void CShadowModel::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const CXFile::SXFile file, const D3DXMATRIX& mtx)
 {
 	// 情報の設定
 	SetPos(pos);			// 位置
 	SetPosOld(pos);			// 前回の位置
 	SetRot(rot);			// 向き
 	SetScale(scale);		// 拡大率
-	SetFileData(type);		// 種類
+	SetFileData(file);		// 種類
 	m_mtxParent = mtx;		// 親のマトリックス
 
 	// Xファイルの情報を取得する
-	CXFile::SXFile file = GetFileData();
+	CXFile::SXFile XFile = GetFileData();
 
 	// 最大値を反映する
-	file.vtxMax.x *= scale.x;
-	file.vtxMax.y *= scale.y;
-	file.vtxMax.z *= scale.z;
+	XFile.vtxMax.x *= scale.x;
+	XFile.vtxMax.y *= scale.y;
+	XFile.vtxMax.z *= scale.z;
 
 	// 最小値を反映する
-	file.vtxMin.x *= scale.x;
-	file.vtxMin.y *= scale.y;
-	file.vtxMin.z *= scale.z;
+	XFile.vtxMin.x *= scale.x;
+	XFile.vtxMin.y *= scale.y;
+	XFile.vtxMin.z *= scale.z;
 
 	// データの設定処理
 	SetFileData(file);
@@ -143,7 +143,7 @@ void CShadowModel::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const
 //====================
 // 生成処理
 //====================
-CShadowModel* CShadowModel::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const CXFile::TYPE type, const D3DXMATRIX& mtx)
+CShadowModel* CShadowModel::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const CXFile::SXFile file, const D3DXMATRIX& mtx)
 {
 	// ローカルオブジェクトを生成
 	CShadowModel* pShadow = nullptr;	// 影のインスタンスを生成
@@ -179,7 +179,7 @@ CShadowModel* CShadowModel::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& ro
 		}
 
 		// 情報の設定処理
-		pShadow->SetData(pos, rot, scale, type, mtx);
+		pShadow->SetData(pos, rot, scale, file, mtx);
 	}
 	else
 	{ // オブジェクトが NULL の場合

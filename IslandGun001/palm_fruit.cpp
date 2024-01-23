@@ -19,6 +19,8 @@
 
 namespace
 {
+	const char* FRUIT_MODEL = "data\\MODEL\\PalmFruit.x";		// ヤシの実のモデル
+	const char* ITEM_MODEL = "data\\MODEL\\PalmItem.x";			// ヤシの実(アイテム体)のモデル
 	const float GRAVITY = 0.5f;			// 重力
 	const float BOUND_GRAVITY = 10.0f;	// バウンドしたときのY軸の移動量
 	const float BOUND_MOVE = 4.4f;		// バウンドしたときの移動量
@@ -186,9 +188,6 @@ void CPalmFruit::Update(void)
 
 	case CPalmFruit::STATE_GET:
 
-		// モデルをヤシの実(アイテム型)にする
-		SetFileData(CXFile::TYPE_PALMITEM);
-
 		break;
 
 	default:
@@ -219,7 +218,7 @@ void CPalmFruit::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	SetPosOld(pos);							// 前回の位置
 	SetRot(rot);							// 向き
 	SetScale(NONE_SCALE);					// 拡大率
-	SetFileData(CXFile::TYPE_PALMFRUIT);	// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(FRUIT_MODEL));	// モデルの情報
 
 	// 全ての値を設定する
 	m_move = NONE_D3DXVECTOR3;	// 移動量
@@ -322,7 +321,8 @@ CPalmFruit::STATE CPalmFruit::GetState(void) const
 //=======================================
 void CPalmFruit::Hit(void)
 {
-
+	// モデルをヤシの実(アイテム型)にする
+	SetFileData(CManager::Get()->GetXFile()->Regist(ITEM_MODEL));
 }
 
 //=======================================

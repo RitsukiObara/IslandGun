@@ -764,25 +764,6 @@ D3DXMATRIX* CModel::GetMatrixPoint(void)
 }
 
 //========================
-// データの設定処理
-//========================
-void CModel::SetFileData(const CXFile::TYPE type)
-{
-	if (type >= 0 && type < CXFile::TYPE_MAX)
-	{ // 種類が規定内の場合
-
-		// ファイルのデータを代入する
-		m_XFileData = CXFile::GetXFile(type);
-	}
-	else
-	{ // 上記以外
-
-		// 停止
-		assert(false);
-	}
-}
-
-//========================
 // データの設定処理(ファイルデータの設定版)
 //========================
 void CModel::SetFileData(const CXFile::SXFile filaData)

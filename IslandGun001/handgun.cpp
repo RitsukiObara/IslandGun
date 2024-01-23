@@ -12,6 +12,12 @@
 #include "handgun.h"
 #include "useful.h"
 
+// 無名名前空間
+namespace
+{
+	const char* MODEL = "data\\MODEL\\Pistol.x";		// モデルの名前
+}
+
 //==============================
 // コンストラクタ
 //==============================
@@ -86,7 +92,7 @@ void CHandgun::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3 rot, D3DXMATRIX
 	SetPosOld(pos);						// 前回の位置
 	SetRot(rot);						// 向き
 	SetScale(NONE_SCALE);				// 拡大率
-	SetFileData(CXFile::TYPE_HANDGUN);	// モデル情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデル情報
 
 	// 全ての値をクリアする
 	m_pMtxParent = mtx;		// 親のマトリックス
