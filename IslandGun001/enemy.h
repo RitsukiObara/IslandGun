@@ -23,6 +23,14 @@ class CEnemy : public CCharacter
 {
 public:					// 誰でもアクセスできる
 
+	// 列挙型定義(モーションの種類)
+	enum MOTIONTYPE
+	{
+		MOTIONTYPE_NEUTRAL = 0,		// 通常モーション
+		MOTIONTYPE_MOVE,			// 移動モーション
+		MOTIONTYPE_MAX				// この列挙型の総数
+	};
+
 	// 列挙型定義(種類)
 	enum TYPE
 	{
@@ -43,6 +51,8 @@ public:					// 誰でもアクセスできる
 	virtual void Hit(const D3DXVECTOR3& pos);		// ヒット処理
 
 	// セット・ゲット関係
+	CMotion* GetMotion(void) const;			// モーションの取得処理
+
 	D3DXVECTOR3 GetCollSize(void) const;	// 当たり判定のサイズの取得処理
 
 	// 静的メンバ関数

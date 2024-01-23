@@ -53,6 +53,14 @@ const char* CXFile::c_apModelData[CXFile::TYPE_MAX] =		// モデルの名前
 	"data/MODEL/PlayerLShin.x",			// プレイヤーの左脛
 	"data/MODEL/PlayerRFoot.x",			// プレイヤーの右足
 	"data/MODEL/PlayerLFoot.x",			// プレイヤーの左足
+
+	// タードルモデル
+	"data/MODEL/TordleBody.x",			// タードルの体
+	"data/MODEL/TordleHead.x",			// タードルの頭
+	"data/MODEL/TordleRFLeg.x",			// タードルの右前足
+	"data/MODEL/TordleLFLeg.x",			// タードルの左前足
+	"data/MODEL/TordleRBLeg.x",			// タードルの右後ろ足
+	"data/MODEL/TordleLBLeg.x",			// タードルの左後ろ足
 };
 
 //------------------------------------------------------------

@@ -9,6 +9,7 @@
 //************************************************************
 #include "main.h"
 #include "tordle.h"
+#include "motion.h"
 #include "manager.h"
 
 #include "game.h"
@@ -20,7 +21,7 @@
 //------------------------------------------------------------
 namespace
 {
-	const float SPEED = 5.0f;			// 移動量
+	const float SPEED = 3.0f;			// 移動量
 }
 
 //================================
@@ -106,6 +107,9 @@ void CTordle::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE
 {
 	// 情報の設定処理
 	CEnemy::SetData(pos, rot, type);
+
+	// モーションのリセット処理
+	GetMotion()->ResetMotion(MOTIONTYPE_MOVE);
 
 	// 全ての値を設定する
 	m_move = NONE_D3DXVECTOR3;			// 移動量

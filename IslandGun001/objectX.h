@@ -14,6 +14,7 @@
 #define INIT_VTX_MAX	(D3DXVECTOR3(-9999.0f, -9999.0f, -9999.0f))		// モデルの最大の頂点座標の初期値
 #define INIT_SIZE		(D3DXVECTOR3(0.0f, 0.0f, 0.0f))					// モデルサイズの初期値
 #define INIT_PLAYER		(CXFile::TYPE_PLAYERWAIST)						// プレイヤーの最初のモデル
+#define INIT_TORDLE		(CXFile::TYPE_TORDLEBODY)						// タードルの最初のモデル
 
 //------------------------------------------------------------
 // クラス定義(Xファイル)
@@ -62,6 +63,14 @@ public:			// 誰でもアクセスできる
 		TYPE_PLAYERLEFTSHIN,	// 左脛
 		TYPE_PLAYERRIGHTFOOT,	// 右足
 		TYPE_PLAYERLEFTFOOT,	// 左足
+
+		// タードルモデル
+		TYPE_TORDLEBODY,		// タードルの体
+		TYPE_TORDLEHEAD,		// タードルの頭
+		TYPE_TORDLERFLEG,		// タードルの右前足
+		TYPE_TORDLELFLEG,		// タードルの左前足
+		TYPE_TORDLERBLEG,		// タードルの右後ろ足
+		TYPE_TORDLELBLEG,		// タードルの左後ろ足
 
 		TYPE_MAX,				// 全モデルの総数
 	};

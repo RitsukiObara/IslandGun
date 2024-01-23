@@ -72,7 +72,7 @@ HRESULT CEnemy::Init(void)
 	}
 
 	// ベタ打ち
-	SetNumModel(17);
+	SetNumModel(6);
 
 	// データの設定処理
 	CCharacter::SetData();
@@ -97,7 +97,7 @@ HRESULT CEnemy::Init(void)
 		m_pMotion->SetModel(GetHierarchy(), GetNumModel());
 
 		// ロード処理
-		m_pMotion->Load("data\\TXT\\PlayerMotion.txt");
+		m_pMotion->Load("data\\TXT\\TordleMotion.txt");
 	}
 	else
 	{ // ポインタが NULL じゃない場合
@@ -178,10 +178,11 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		GetHierarchy(nCntData)->SetPosOld(pos);										// 前回の位置
 		GetHierarchy(nCntData)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));				// 向き
 		GetHierarchy(nCntData)->SetScale(NONE_SCALE);								// 拡大率
-		GetHierarchy(nCntData)->SetFileData(CXFile::TYPE(INIT_PLAYER + nCntData));	// データの設定処理
+		GetHierarchy(nCntData)->SetFileData(CXFile::TYPE(INIT_TORDLE + nCntData));	// データの設定処理
 	}
 
-	m_pMotion->ResetMotion(0);
+	// モーションのリセット処理
+	m_pMotion->ResetMotion(MOTIONTYPE_NEUTRAL);
 
 	// 全ての値を設定する
 	m_type = type;					// 種類
@@ -261,6 +262,15 @@ CEnemy* CEnemy::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYP
 
 	// 敵のポインタを返す
 	return pEnemy;
+}
+
+//===========================================
+// モーションの取得処理
+//===========================================
+CMotion* CEnemy::GetMotion(void) const
+{
+	// モーションの情報を返す
+	return m_pMotion;
 }
 
 //===========================================
