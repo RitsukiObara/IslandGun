@@ -1,6 +1,6 @@
 //============================================
 //
-// スコア処理[score.cpp]
+// 残弾UI処理[bulletUI.cpp]
 // Author：小原立暉
 //
 //============================================
@@ -172,7 +172,7 @@ void CBulletUI::SetData(void)
 CBulletUI* CBulletUI::Create(void)
 {
 	// ローカルオブジェクトを生成
-	CBulletUI* pUI = nullptr;	// プレイヤーのインスタンスを生成
+	CBulletUI* pUI = nullptr;	// UIのインスタンスを生成
 
 	if (pUI == nullptr)
 	{ // オブジェクトが NULL の場合
@@ -217,7 +217,7 @@ CBulletUI* CBulletUI::Create(void)
 		return nullptr;
 	}
 
-	// オブジェクト2Dのポインタを返す
+	// UIのポインタを返す
 	return pUI;
 }
 

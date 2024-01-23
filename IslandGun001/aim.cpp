@@ -71,7 +71,7 @@ void CAim::Update(void)
 void CAim::Draw(void)
 {
 	// •`‰æˆ—
-	CBillboard::DrawLightOff(true);
+	CBillboard::DrawLightOff(false);
 }
 
 //=========================

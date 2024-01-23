@@ -26,6 +26,7 @@ class CHandgun;				// 拳銃
 class CDagger;				// ダガー
 class CAim;					// エイム
 class CBulletUI;			// 弾丸UI
+class CGoldBoneUI;			// 金の骨UI
 
 //--------------------------------------------
 // クラス(プレイヤークラス)
@@ -69,6 +70,7 @@ public:			// 誰でもアクセスできる
 	CPlayerAction* GetAction(void) const;			// 行動の情報の取得処理
 	CHandgun* GetHandGun(const int nCount) const;	// 拳銃の情報の取得処理
 	CDagger* GetDagger(void) const;					// ダガーの情報の取得処理
+	CGoldBoneUI* GetGoldBoneUI(void) const;			// 金の骨UIの情報の取得処理
 
 	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
@@ -107,6 +109,7 @@ private:		// 自分だけアクセスできる
 	CDagger* m_pDagger;					// ダガーの情報
 	CAim* m_pAim;						// エイムの情報
 	CBulletUI* m_pBulletUI;				// 弾丸の情報
+	CGoldBoneUI* m_pGoldBoneUI;			// 金の骨UIの情報
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 	D3DXVECTOR3 m_move;			// 移動量

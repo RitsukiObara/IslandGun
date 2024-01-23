@@ -21,6 +21,7 @@
 #include "dagger.h"
 #include "aim.h"
 #include "bulletUI.h"
+#include "gold_bone_UI.h"
 
 #include "collision.h"
 #include "camera.h"
@@ -40,7 +41,7 @@ namespace
 	const float GRAVITY = 1.0f;						// 重力
 	const float LAND_GRAVITY = -50.0f;				// 着地時の重力
 	const float JUMP = 24.0f;						// ジャンプ力
-	const float SPEED = 10.0f;						// 速度
+	const float SPEED = 14.0f;						// 速度
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
 	const float CAMERA_ROT_CORRECT = 0.000003f;		// カメラの向きの補正倍率
@@ -90,7 +91,8 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	}
 	m_pAim = nullptr;						// エイムの情報
 	m_pDagger = nullptr;					// ダガーの情報
-	m_pBulletUI = nullptr;					// 弾丸の情報
+	m_pBulletUI = nullptr;					// 弾丸UIの情報
+	m_pGoldBoneUI = nullptr;				// 金の骨のUIの情報
 
 	m_rotDest = NONE_D3DXVECTOR3;			// 目標の向き
 	m_move = NONE_D3DXVECTOR3;				// 移動量
@@ -171,9 +173,38 @@ HRESULT CPlayer::Init(void)
 		// プレイヤーアクションの生成処理
 		m_pAction = CPlayerAction::Create();
 	}
+	else
+	{ // ポインタが NULL じゃない場合
 
-	// 弾丸UIの生成
-	m_pBulletUI = CBulletUI::Create();
+		// 停止
+		assert(false);
+	}
+
+	if (m_pBulletUI == nullptr)
+	{ // 残弾UIが NULL の場合
+
+		// 弾丸UIの生成
+		m_pBulletUI = CBulletUI::Create();
+	}
+	else
+	{ // ポインタが NULL じゃない場合
+
+		// 停止
+		assert(false);
+	}
+
+	if (m_pGoldBoneUI == nullptr)
+	{ // 金の骨UIが NULL の場合
+
+		// 金の骨のUIの生成
+		m_pGoldBoneUI = CGoldBoneUI::Create();
+	}
+	else
+	{ // ポインタが NULL じゃない場合
+
+		// 停止
+		assert(false);
+	}
 
 	// 全ての値を初期化する
 	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
@@ -247,6 +278,20 @@ void CPlayer::Uninit(void)
 		m_pDagger = nullptr;
 	}
 
+	if (m_pBulletUI != nullptr)
+	{ // 残弾UIの情報が NULL じゃない場合
+
+		// 残弾UIを NULL にする
+		m_pBulletUI = nullptr;
+	}
+
+	if (m_pGoldBoneUI != nullptr)
+	{ // 金の骨の情報が NULL じゃない場合
+
+		// 金の骨UIを NULL にする
+		m_pGoldBoneUI = nullptr;
+	}
+
 	// 終了処理
 	CCharacter::Uninit();
 }
@@ -284,7 +329,7 @@ void CPlayer::Update(void)
 	BlockCollision();
 
 	// 金の骨との当たり判定
-	collision::GoldBoneCollision(GetPos(), COLLISION_SIZE);
+	collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
 	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
@@ -356,6 +401,15 @@ CDagger* CPlayer::GetDagger(void) const
 {
 	// ダガーの情報を返す
 	return m_pDagger;
+}
+
+//===========================================
+// 金の骨UIの情報の取得処理
+//===========================================
+CGoldBoneUI* CPlayer::GetGoldBoneUI(void) const
+{
+	// 金の骨UIの情報を返す
+	return m_pGoldBoneUI;
 }
 
 //=======================================
@@ -821,13 +875,18 @@ void CPlayer::CameraControl(void)
 	if (m_pAim != nullptr)
 	{ // エイムが NULL じゃない場合
 
-		D3DXVECTOR3 posAim;
-		D3DXVECTOR3 posR = CManager::Get()->GetCamera()->GetPosR();
+		D3DXVECTOR3 posAim;			// レティクルを表示する場所
+		D3DXVECTOR3 posShot;		// 弾を出す位置
+
+		// 位置を設定する
+		posShot.x = GetPos().x;
+		posShot.y = GetPos().y + SHOT_ADD_HEIGHT;
+		posShot.z = GetPos().z;
 
 		// 目的の視点を設定する
-		posAim.x = GetPos().x + sinf(CameraRot.y) * AIM_SHIFT;
-		posAim.y = GetPos().y + cosf(CameraRot.x) * AIM_SHIFT + SHOT_ADD_HEIGHT;
-		posAim.z = GetPos().z + cosf(CameraRot.y) * AIM_SHIFT;
+		posAim.x = posShot.x + sinf(CameraRot.y) * AIM_SHIFT;
+		posAim.y = posShot.y + cosf(CameraRot.x) * AIM_SHIFT;
+		posAim.z = posShot.z + cosf(CameraRot.y) * AIM_SHIFT;
 
 		// エイムの設置処理
 		m_pAim->SetAim(posAim);
@@ -875,11 +934,18 @@ void CPlayer::CameraMouse(void)
 	if (m_pAim != nullptr)
 	{ // エイムが NULL じゃない場合
 
-		D3DXVECTOR3 posAim;
+		D3DXVECTOR3 posAim;			// レティクルを表示する場所
+		D3DXVECTOR3 posShot;		// 弾を出す位置
 
-		posAim.x = GetPos().x + sinf(CameraRot.y) * AIM_SHIFT;
-		posAim.y = GetPos().y + cosf(CameraRot.x) * AIM_SHIFT;
-		posAim.z = GetPos().z + cosf(CameraRot.y) * AIM_SHIFT;
+		// 位置を設定する
+		posShot.x = GetPos().x;
+		posShot.y = GetPos().y + SHOT_ADD_HEIGHT;
+		posShot.z = GetPos().z;
+
+		// 目的の視点を設定する
+		posAim.x = posShot.x + sinf(CameraRot.y) * AIM_SHIFT;
+		posAim.y = posShot.y + cosf(CameraRot.x) * AIM_SHIFT;
+		posAim.z = posShot.z + cosf(CameraRot.y) * AIM_SHIFT;
 
 		// エイムの設置処理
 		m_pAim->SetAim(posAim);
@@ -985,7 +1051,7 @@ void CPlayer::BlockCollision(void)
 }
 
 //=======================================
-// 攻撃処理
+// 射撃系処理
 //=======================================
 void CPlayer::Shot(void)
 {

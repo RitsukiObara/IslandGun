@@ -43,7 +43,7 @@ namespace collision
 	bool EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& size);			// “G‚Æe‚Ì“–‚½‚è”»’è
 
 	// ‹à‚Ìœ‚Æ‚Ì“–‚½‚è”»’è
-	void GoldBoneCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size);		// ‹à‚Ìœ‚Æ‚Ì“–‚½‚è”»’è
+	void GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& size);		// ‹à‚Ìœ‚Æ‚Ì“–‚½‚è”»’è
 
 	// –Ø‚Æ‚Ì“–‚½‚è”»’è
 	bool TreeCollision(D3DXVECTOR3* pos, const float fRadius);						// –Ø‚Ì“–‚½‚è”»’è

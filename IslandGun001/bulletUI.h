@@ -35,8 +35,8 @@ public:				// 誰でもアクセスできる
 		bool bDisp;				// 描画状況
 	};
 
-	CBulletUI();						// コンストラクタ
-	virtual ~CBulletUI();				// デストラクタ
+	CBulletUI();				// コンストラクタ
+	~CBulletUI();				// デストラクタ
 
 	// メンバ関数
 	HRESULT Init(void) override;		// 初期化処理

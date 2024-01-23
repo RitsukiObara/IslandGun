@@ -22,6 +22,7 @@
 #include "gold_bone_manager.h"
 #include "player.h"
 #include "player_action.h"
+#include "gold_bone_UI.h"
 #include "useful.h"
 
 //===============================
@@ -200,21 +201,22 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 //===============================
 // 金の骨との当たり判定
 //===============================
-void collision::GoldBoneCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
+void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& size)
 {
 	// ローカル変数宣言
+	D3DXVECTOR3 pos = pPlayer.GetPos();
 	D3DXVECTOR3 posCoin = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMaxBone = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMinBone = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMax = size;		// 最大値
 	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, 0.0f, -size.z);	// 最小値
-	CGoldBone* pBone = CGoldBoneManager::Get()->GetTop();			// 先頭の小判を取得する
-	CGoldBone* pBoneNext = nullptr;		// 次のの小判
+	CGoldBone* pBone = CGoldBoneManager::Get()->GetTop();			// 先頭の金の骨を取得する
+	CGoldBone* pBoneNext = nullptr;		// 次の金の骨
 
 	while (pBone != nullptr)
 	{ // ブロックの情報が NULL じゃない場合
 
-		// 次の小判を取得する
+		// 次の金の骨を取得する
 		pBoneNext = pBone->GetNext();
 
 		// コインの変数を取得する
@@ -225,10 +227,17 @@ void collision::GoldBoneCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& siz
 		if (useful::RectangleCollisionXY(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
 			useful::RectangleCollisionXZ(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
 			useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true)
-		{ // 小判と重なった場合
+		{ // 金の骨と重なった場合
 
 			// 取得処理
 			pBone->Hit();
+
+			if (pPlayer.GetGoldBoneUI() != nullptr)
+			{ // 金の骨UIが NULL じゃない場合
+
+				// 金の骨取得処理
+				pPlayer.GetGoldBoneUI()->GetGoldBone();
+			}
 		}
 
 		// 次のオブジェクトを代入する

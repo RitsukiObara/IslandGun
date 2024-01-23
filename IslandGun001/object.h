@@ -58,6 +58,7 @@ public:			// 誰でもアクセスできる
 		TYPE_PALMFRUIT,			// ヤシの実
 		TYPE_ROCK,				// 岩
 		TYPE_BLOCK,				// ブロック
+		TYPE_GOLDBONEUI,		// 金の骨UI
 		TYPE_MAX				// この列挙型の総数
 	};
 
