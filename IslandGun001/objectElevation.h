@@ -8,6 +8,7 @@
 #define _MESH_ELEVATION_H_			// 二重インクルード防止のマクロを定義する
 
 #include "object.h"
+#include "list_manager.h"
 
 //-----------------------------------------------------
 // クラス定義(起伏地面)
@@ -18,12 +19,6 @@ public:			// 誰でもアクセスできる
 
 	CElevation();		// コンストラクタ
 	~CElevation();		// デストラクタ
-
-	// リスト構造関係
-	void SetPrev(CElevation* pPrev);	// 前のポインタの設定処理
-	void SetNext(CElevation* pNext);	// 後のポインタの設定処理
-	CElevation* GetPrev(void) const;	// 前のポインタの設定処理
-	CElevation* GetNext(void) const;	// 次のポインタの設定処理
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -55,6 +50,8 @@ public:			// 誰でもアクセスできる
 	static CElevation* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const float fSizeX, const float fSizeZ, const int nDiviX, const int nDiviZ, char* texturename);		// 生成処理
 	static void TxtSet(void);					// テキスト読み込み処理
 
+	static CListManager<CElevation*> GetList(void);			// リストの取得処理
+
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
@@ -73,9 +70,8 @@ private:		// 自分だけアクセスできる
 	int		m_nNumIdx;			// 総インデックス数
 	int		m_nTexIdx;			// テクスチャのインデックス
 
-	// リスト構造関係
-	CElevation* m_pPrev;	// 前へのポインタ
-	CElevation* m_pNext;	// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CElevation*> m_list;		// リスト
 };
 
 

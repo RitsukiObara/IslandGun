@@ -102,6 +102,10 @@ HRESULT CGame::Init(void)
 	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -1.9f, 0.0f), NONE_SCALE);
 
 	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f));
+	CBlock::Create(D3DXVECTOR3(300.0f, 0.0f, 300.0f));
+	CBlock::Create(D3DXVECTOR3(-200.0f, 0.0f, 800.0f));
+	CBlock::Create(D3DXVECTOR3(500.0f, 0.0f, 600.0f));
+	CBlock::Create(D3DXVECTOR3(100.0f, 0.0f, 500.0f));
 
 	CGoldBone::Create(D3DXVECTOR3(-400.0f, 0.0f, 400.0f), NONE_D3DXVECTOR3);
 

@@ -157,18 +157,15 @@
     <ClCompile Include="aim.cpp" />
     <ClCompile Include="anim_reaction.cpp" />
     <ClCompile Include="block.cpp" />
-    <ClCompile Include="block_manager.cpp" />
     <ClCompile Include="blur.cpp" />
     <ClCompile Include="blur_col.cpp" />
     <ClCompile Include="blur_org.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="bulletUI.cpp" />
-    <ClCompile Include="bullet_manager.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="chara_blur.cpp" />
     <ClCompile Include="coin.cpp" />
-    <ClCompile Include="coin_manager.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="collpolygon.cpp" />
     <ClCompile Include="confetti.cpp" />
@@ -179,15 +176,12 @@
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="effect2D.cpp" />
     <ClCompile Include="effect_model.cpp" />
-    <ClCompile Include="elevation_manager.cpp" />
     <ClCompile Include="enemy.cpp" />
-    <ClCompile Include="enemy_manager.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="fraction.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gold_bone.cpp" />
-    <ClCompile Include="gold_bone_manager.cpp" />
     <ClCompile Include="gold_bone_UI.cpp" />
     <ClCompile Include="handgun.cpp" />
     <ClCompile Include="input.cpp" />
@@ -202,7 +196,6 @@
     <ClCompile Include="mesh_dome.cpp" />
     <ClCompile Include="mesh_donut.cpp" />
     <ClCompile Include="mesh_field.cpp" />
-    <ClCompile Include="mesh_manager.cpp" />
     <ClCompile Include="mesh_sphere.cpp" />
     <ClCompile Include="mesh_tornado.cpp" />
     <ClCompile Include="mesh_wall.cpp" />
@@ -226,7 +219,6 @@
     <ClCompile Include="objectX.cpp" />
     <ClCompile Include="orbit.cpp" />
     <ClCompile Include="palm_fruit.cpp" />
-    <ClCompile Include="palm_fruit_manager.cpp" />
     <ClCompile Include="palm_tree.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="particle2D.cpp" />
@@ -243,7 +235,6 @@
     <ClCompile Include="result.cpp" />
     <ClCompile Include="ripple.cpp" />
     <ClCompile Include="rock.cpp" />
-    <ClCompile Include="rock_manager.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="screen_effect.cpp" />
@@ -258,7 +249,6 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tordle.cpp" />
     <ClCompile Include="tree.cpp" />
-    <ClCompile Include="tree_manager.cpp" />
     <ClCompile Include="tutorial.cpp" />
     <ClCompile Include="useful.cpp" />
   </ItemGroup>
@@ -266,18 +256,15 @@
     <ClInclude Include="aim.h" />
     <ClInclude Include="anim_reaction.h" />
     <ClInclude Include="block.h" />
-    <ClInclude Include="block_manager.h" />
     <ClInclude Include="blur.h" />
     <ClInclude Include="blur_col.h" />
     <ClInclude Include="blur_org.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="bulletUI.h" />
-    <ClInclude Include="bullet_manager.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="chara_blur.h" />
     <ClInclude Include="coin.h" />
-    <ClInclude Include="coin_manager.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="collpolygon.h" />
     <ClInclude Include="confetti.h" />
@@ -288,15 +275,12 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="effect2D.h" />
     <ClInclude Include="effect_model.h" />
-    <ClInclude Include="elevation_manager.h" />
     <ClInclude Include="enemy.h" />
-    <ClInclude Include="enemy_manager.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="fraction.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gold_bone.h" />
-    <ClInclude Include="gold_bone_manager.h" />
     <ClInclude Include="gold_bone_UI.h" />
     <ClInclude Include="handgun.h" />
     <ClInclude Include="input.h" />
@@ -312,7 +296,6 @@
     <ClInclude Include="mesh_dome.h" />
     <ClInclude Include="mesh_donut.h" />
     <ClInclude Include="mesh_field.h" />
-    <ClInclude Include="mesh_manager.h" />
     <ClInclude Include="mesh_sphere.h" />
     <ClInclude Include="mesh_tornado.h" />
     <ClInclude Include="mesh_wall.h" />
@@ -336,7 +319,6 @@
     <ClInclude Include="objectX.h" />
     <ClInclude Include="orbit.h" />
     <ClInclude Include="palm_fruit.h" />
-    <ClInclude Include="palm_fruit_manager.h" />
     <ClInclude Include="palm_tree.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="particle2D.h" />
@@ -350,7 +332,6 @@
     <ClInclude Include="result.h" />
     <ClInclude Include="ripple.h" />
     <ClInclude Include="rock.h" />
-    <ClInclude Include="rock_manager.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="screen_effect.h" />
@@ -365,7 +346,6 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="tordle.h" />
     <ClInclude Include="tree.h" />
-    <ClInclude Include="tree_manager.h" />
     <ClInclude Include="tutorial.h" />
     <ClInclude Include="useful.h" />
   </ItemGroup>

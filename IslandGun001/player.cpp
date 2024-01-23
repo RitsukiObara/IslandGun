@@ -25,12 +25,10 @@
 
 #include "collision.h"
 #include "camera.h"
-#include "elevation_manager.h"
 #include "objectElevation.h"
 #include "motion.h"
 #include "bullet.h"
 #include "block.h"
-#include "block_manager.h"
 #include "orbit.h"
 
 //--------------------------------------------
@@ -71,30 +69,12 @@ namespace
 	const int SHOT_INTERVAL = 5;					// 撃つインターバル
 	const float CAMERA_MOUSE_MAGNI = 5000.0f;		// マウスでのカメラ操作の倍率
 	const float AIM_SHIFT = 1000.0f;				// エイムを表示する幅
-	const int NUM_SHOTGUN_BULLET = 6;				// 散弾で飛ばす弾の数
+	const int NUM_SHOTGUN_BULLET = 8;				// 散弾で飛ばす弾の数
 	const int SHOTGUN_RAND_ROT = 60;				// 散弾のランダムで飛ばす向き
 	const float SHOTGUN_GRAVITY = 15.0f;			// 散弾状態の時の重力
 	const float SHOTGUN_RECOIL = 7.0f;				// 散弾状態の反動
-	const char* MODEL[17] =
-	{
-		"data/MODEL/PlayerWaist.x",		// 腰
-		"data/MODEL/PlayerBody.x",		// 体
-		"data/MODEL/PlayerNeck.x",		// 首
-		"data/MODEL/PlayerCloak.x",		// マント
-		"data/MODEL/PlayerHead.x",		// 頭
-		"data/MODEL/PlayerRArm.x",		// 右上腕
-		"data/MODEL/PlayerLArm.x",		// 左上腕
-		"data/MODEL/PlayerRUpper.x",		// 右腕
-		"data/MODEL/PlayerLUpper.x",		// 左腕
-		"data/MODEL/PlayerRHand.x",		// 右手
-		"data/MODEL/PlayerLHand.x",		// 左手
-		"data/MODEL/PlayerRLeg.x",		// 右脚
-		"data/MODEL/PlayerLLeg.x",		// 左脚
-		"data/MODEL/PlayerRShin.x",		// 右脛
-		"data/MODEL/PlayerLShin.x",		// 左脛
-		"data/MODEL/PlayerRFoot.x",		// 右足
-		"data/MODEL/PlayerLFoot.x",		// 左足
-	};
+	const int INIT_GUN_IDX = 9;						// 銃の初期値のインデックス
+	const int INIT_DAGGER_IDX = 9;					// ダガーのインデックス
 }
 
 //=========================================
@@ -175,7 +155,7 @@ HRESULT CPlayer::Init(void)
 		m_pMotion->SetModel(GetHierarchy(), GetNumModel());
 
 		// ロード処理
-		m_pMotion->Load("data\\TXT\\PlayerMotion.txt");
+		m_pMotion->Load(CMotion::STYLE_PLAYER);
 	}
 	else
 	{ // ポインタが NULL じゃない場合
@@ -330,11 +310,26 @@ void CPlayer::Update(void)
 	// 移動処理
 	Move();
 
-	// モーションの更新処理
-	m_pMotion->Update();
+	if (m_pMotion != nullptr)
+	{ // モーションが NULL じゃない場合
 
-	// 行動の更新処理
-	m_pAction->Update(this);
+		// モーションの更新処理
+		m_pMotion->Update();
+	}
+
+	if (m_pAction != nullptr)
+	{ // 行動が NULL じゃない場合
+
+		// 行動の更新処理
+		m_pAction->Update(this);
+	}
+
+	if (m_pAim != nullptr)
+	{ // エイムが NULL じゃない場合
+
+		// エイムの更新処理
+		m_pAim->Update();
+	}
 
 	// 小判との当たり判定
 	collision::CoinCollision(GetPos(), COLLISION_SIZE);
@@ -446,11 +441,11 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	for (int nCntData = 0; nCntData < GetNumModel(); nCntData++)
 	{
 		// 初期化処理
-		GetHierarchy(nCntData)->SetPos(pos);										// 位置
-		GetHierarchy(nCntData)->SetPosOld(pos);										// 前回の位置
-		GetHierarchy(nCntData)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));				// 向き
-		GetHierarchy(nCntData)->SetScale(NONE_SCALE);								// 拡大率
-		GetHierarchy(nCntData)->SetFileData(CManager::Get()->GetXFile()->Regist(MODEL[nCntData]));	// データの設定処理
+		GetHierarchy(nCntData)->SetPos(pos);					// 位置
+		GetHierarchy(nCntData)->SetPosOld(pos);					// 前回の位置
+		GetHierarchy(nCntData)->SetRot(NONE_D3DXVECTOR3);		// 向き
+		GetHierarchy(nCntData)->SetScale(NONE_SCALE);			// 拡大率
+		GetHierarchy(nCntData)->SetFileData(CMotion::GetSaveData(CMotion::STYLE_PLAYER, nCntData));		// データの設定処理
 	}
 
 	// モーションの設定処理
@@ -459,11 +454,11 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
 	{
 		// 拳銃の情報を生成する
-		m_apHandGun[nCnt] = CHandgun::Create(GUN_POS[nCnt], GUN_ROT[nCnt], GetHierarchy(9 + nCnt)->GetMatrixP());
+		m_apHandGun[nCnt] = CHandgun::Create(GUN_POS[nCnt], GUN_ROT[nCnt], GetHierarchy(INIT_GUN_IDX + nCnt)->GetMatrixP());
 	}
 
 	// ダガーを生成する
-	m_pDagger = CDagger::Create(GetHierarchy(9)->GetMatrixP());
+	m_pDagger = CDagger::Create(GetHierarchy(INIT_DAGGER_IDX)->GetMatrixP());
 
 	D3DXVECTOR3 posCamera;
 
@@ -579,33 +574,57 @@ D3DXVECTOR3 CPlayer::GetMove(void) const
 void CPlayer::ElevationCollision(void)
 {
 	// ローカル変数宣言
-	CElevation* pMesh = CElevationManager::Get()->GetTop();		// 起伏の先頭のオブジェクトを取得する
 	D3DXVECTOR3 pos = GetPos();		// 位置を取得する
 	float fHeight = 0.0f;			// 高さ
 	bool bJump = true;				// ジャンプ状況
 	bool bRange = false;			// 範囲内状況
+	CListManager<CElevation*> list = CElevation::GetList();
+	CElevation* pElev = nullptr;			// 先頭の小判
+	CElevation* pElevEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
 
-	while (pMesh != nullptr)
-	{ // 地面の情報がある限り回す
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 当たり判定を取る
-		fHeight = pMesh->ElevationCollision(pos, bRange);
+		// 先頭の値を取得する
+		pElev = list.GetTop();
 
-		if (pos.y < fHeight)
-		{ // 当たり判定の位置が高かった場合
+		// 末尾の値を取得する
+		pElevEnd = list.GetEnd();
 
-			// 高さを設定する
-			pos.y = fHeight;
+		while (true)
+		{ // 無限ループ
 
-			// 重力を設定する
-			m_move.y = LAND_GRAVITY;
+			// 当たり判定を取る
+			fHeight = pElev->ElevationCollision(pos, bRange);
 
-			// ジャンプ状況を false にする
-			bJump = false;
+			if (pos.y < fHeight)
+			{ // 当たり判定の位置が高かった場合
+
+				// 高さを設定する
+				pos.y = fHeight;
+
+				// 重力を設定する
+				m_move.y = LAND_GRAVITY;
+
+				// ジャンプ状況を false にする
+				bJump = false;
+			}
+
+			if (pElev == pElevEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pElev = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のポインタを取得する
-		pMesh = pMesh->GetNext();
 	}
 
 	// ジャンプ状況を代入する
@@ -984,25 +1003,49 @@ void CPlayer::CameraMouse(void)
 void CPlayer::ElevationCamera(void)
 {
 	// ローカル変数宣言
-	CElevation* pMesh = CElevationManager::Get()->GetTop();		// 起伏の先頭のオブジェクトを取得する
 	D3DXVECTOR3 posV = CManager::Get()->GetCamera()->GetPosV();	// 位置を取得する
 	float fHeight = 0.0f;			// 高さ
+	CListManager<CElevation*> list = CElevation::GetList();
+	CElevation* pElev = nullptr;			// 先頭の小判
+	CElevation* pElevEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
 
-	while (pMesh != nullptr)
-	{ // 地面の情報がある限り回す
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 当たり判定を取る
-		fHeight = pMesh->ElevationCollision(posV) + CAMERA_ELEVATION_HEIGHT;
+		// 先頭の値を取得する
+		pElev = list.GetTop();
 
-		if (posV.y < fHeight)
-		{ // 当たり判定の位置が高かった場合
+		// 末尾の値を取得する
+		pElevEnd = list.GetEnd();
 
-			// 高さを設定する
-			posV.y = fHeight;
+		while (true)
+		{ // 無限ループ
+
+			// 当たり判定を取る
+			fHeight = pElev->ElevationCollision(posV) + CAMERA_ELEVATION_HEIGHT;
+
+			if (posV.y < fHeight)
+			{ // 当たり判定の位置が高かった場合
+
+				// 高さを設定する
+				posV.y = fHeight;
+			}
+
+			if (pElev == pElevEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pElev = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のポインタを取得する
-		pMesh = pMesh->GetNext();
 	}
 
 	// 位置を更新する
@@ -1030,40 +1073,64 @@ void CPlayer::TreeCollision(void)
 void CPlayer::BlockCollision(void)
 {
 	// ローカル変数宣言
-	CBlock* pBlock = CBlockManager::Get()->GetTop();	// 先頭の木を取得する
 	collision::SCollision coll = { false,false,false,false,false,false };				// 当たり判定の変数
 	D3DXVECTOR3 pos = GetPos();							// 位置を取得する
 	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-COLLISION_SIZE.x, 0.0f, -COLLISION_SIZE.z);		// 最小値を取得する
 	D3DXVECTOR3 vtxMax = COLLISION_SIZE;				// 最大値を取得する
+	CListManager<CBlock*> list = CBlock::GetList();
+	CBlock* pBlock = nullptr;		// 先頭の値
+	CBlock* pBlockEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
 
-	while (pBlock != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 六面体の当たり判定
-		coll = collision::HexahedronClush
-		(
-			&pos,
-			pBlock->GetPos(),
-			GetPosOld(),
-			pBlock->GetPosOld(),
-			vtxMin,
-			pBlock->GetFileData().vtxMin,
-			vtxMax,
-			pBlock->GetFileData().vtxMax
-		);
+		// 先頭の値を取得する
+		pBlock = list.GetTop();
 
-		if (coll.bTop == true)
-		{ // 上に乗った場合
+		// 末尾の値を取得する
+		pBlockEnd = list.GetEnd();
 
-			// 移動量を設定する
-			m_move.y = 0.0f;
+		while (true)
+		{ // 無限ループ
 
-			// ジャンプしていない
-			m_bJump = false;
+			// 六面体の当たり判定
+			coll = collision::HexahedronClush
+			(
+				&pos,
+				pBlock->GetPos(),
+				GetPosOld(),
+				pBlock->GetPosOld(),
+				vtxMin,
+				pBlock->GetFileData().vtxMin,
+				vtxMax,
+				pBlock->GetFileData().vtxMax
+			);
+
+			if (coll.bTop == true)
+			{ // 上に乗った場合
+
+				// 移動量を設定する
+				m_move.y = 0.0f;
+
+				// ジャンプしていない
+				m_bJump = false;
+			}
+
+			if (pBlock == pBlockEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBlock = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のオブジェクトを代入する
-		pBlock = pBlock->GetNext();
 	}
 
 	// 位置を適用する

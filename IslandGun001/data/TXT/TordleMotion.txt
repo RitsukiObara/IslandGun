@@ -14,12 +14,12 @@ NUM_MODEL = 6
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MODEL_FILENAME = data/MODEL/TordleBody.x		# [0]体
-MODEL_FILENAME = data/MODEL/TordleHead.x		# [1]頭
-MODEL_FILENAME = data/MODEL/TordleRFLeg.x		# [2]右前足
-MODEL_FILENAME = data/MODEL/TordleLFLeg.x		# [3]左前足
-MODEL_FILENAME = data/MODEL/TordleRBLeg.x		# [4]右後ろ足
-MODEL_FILENAME = data/MODEL/TordleLBLeg.x		# [5]左後ろ足
+MODEL_FILENAME = data\MODEL\TordleBody.x		# [0]体
+MODEL_FILENAME = data\MODEL\TordleHead.x		# [1]頭
+MODEL_FILENAME = data\MODEL\TordleRFLeg.x		# [2]右前足
+MODEL_FILENAME = data\MODEL\TordleLFLeg.x		# [3]左前足
+MODEL_FILENAME = data\MODEL\TordleRBLeg.x		# [4]右後ろ足
+MODEL_FILENAME = data\MODEL\TordleLBLeg.x		# [5]左後ろ足
 
 #------------------------------------------------------------------------------
 # キャラクター情報

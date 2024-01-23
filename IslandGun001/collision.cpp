@@ -11,15 +11,10 @@
 #include "collision.h"
 #include "shadowCircle.h"
 #include "objectElevation.h"
-#include "elevation_manager.h"
 #include "coin.h"
-#include "coin_manager.h"
 #include "enemy.h"
-//#include "enemy_manager.h"
 #include "tree.h"
-#include "tree_manager.h"
 #include "gold_bone.h"
-#include "gold_bone_manager.h"
 #include "player.h"
 #include "player_action.h"
 #include "gold_bone_UI.h"
@@ -44,41 +39,65 @@ namespace
 bool collision::ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posOld, const float fWidth)
 {
 	// ローカル変数宣言
-	CElevation* pElev = CElevationManager::Get()->GetTop();		// 先頭の起伏地面を取得する
 	bool bCollision = false;									// 当たり判定状況
+	CListManager<CElevation*> list = CElevation::GetList();
+	CElevation* pElev = nullptr;			// 先頭の小判
+	CElevation* pElevEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
 
-	while (pElev != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		if (pElev->GetPos().z + (pElev->GetSize().z * 0.5f) >= pPos->z &&
-			pElev->GetPos().z - (pElev->GetSize().z * 0.5f) <= pPos->z &&
-			pElev->GetPos().y > pPos->y)
-		{ // 起伏地面より下にいる場合
+		// 先頭の値を取得する
+		pElev = list.GetTop();
 
-			if (posOld.x + fWidth <= pElev->GetPos().x - (pElev->GetSize().x * 0.5f) &&
-				pPos->x + fWidth >= pElev->GetPos().x - (pElev->GetSize().x * 0.5f))
-			{ // 左の当たり判定
+		// 末尾の値を取得する
+		pElevEnd = list.GetEnd();
 
-				// 位置を設定する
-				pPos->x = pElev->GetPos().x - (pElev->GetSize().x * 0.5f) - fWidth;
+		while (true)
+		{ // 無限ループ
 
-				// 当たり判定状況を true にする
-				bCollision = true;
+			if (pElev->GetPos().z + (pElev->GetSize().z * 0.5f) >= pPos->z &&
+				pElev->GetPos().z - (pElev->GetSize().z * 0.5f) <= pPos->z &&
+				pElev->GetPos().y > pPos->y)
+			{ // 起伏地面より下にいる場合
+
+				if (posOld.x + fWidth <= pElev->GetPos().x - (pElev->GetSize().x * 0.5f) &&
+					pPos->x + fWidth >= pElev->GetPos().x - (pElev->GetSize().x * 0.5f))
+				{ // 左の当たり判定
+
+					// 位置を設定する
+					pPos->x = pElev->GetPos().x - (pElev->GetSize().x * 0.5f) - fWidth;
+
+					// 当たり判定状況を true にする
+					bCollision = true;
+				}
+				else if (posOld.x - fWidth >= pElev->GetPos().x + (pElev->GetSize().x * 0.5f) &&
+					pPos->x - fWidth <= pElev->GetPos().x + (pElev->GetSize().x * 0.5f))
+				{ // 右の当たり判定
+
+					// 位置を設定する
+					pPos->x = pElev->GetPos().x + (pElev->GetSize().x * 0.5f) + fWidth;
+
+					// 当たり判定状況を true にする
+					bCollision = true;
+				}
 			}
-			else if (posOld.x - fWidth >= pElev->GetPos().x + (pElev->GetSize().x * 0.5f) &&
-				pPos->x - fWidth <= pElev->GetPos().x + (pElev->GetSize().x * 0.5f))
-			{ // 右の当たり判定
 
-				// 位置を設定する
-				pPos->x = pElev->GetPos().x + (pElev->GetSize().x * 0.5f) + fWidth;
+			if (pElev == pElevEnd)
+			{ // 末尾に達した場合
 
-				// 当たり判定状況を true にする
-				bCollision = true;
+				// while文を抜け出す
+				break;
 			}
+
+			// 次のオブジェクトを代入する
+			pElev = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のオブジェクトを代入する
-		pElev = pElev->GetNext();
 	}
 
 	// 当たり判定状況を返す
@@ -96,31 +115,51 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 	D3DXVECTOR3 vtxMinCoin = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMax = size;		// 最大値
 	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, 0.0f, -size.z);	// 最小値
-	CCoin* pCoin = CCoinManager::Get()->GetTop();			// 先頭の小判を取得する
-	CCoin* pCoinNext = nullptr;		// 次のの小判
+	CListManager<CCoin*> list = CCoin::GetList();
+	CCoin* pCoin = nullptr;			// 先頭の小判
+	CCoin* pCoinEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
 
-	while (pCoin != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 次の小判を取得する
-		pCoinNext = pCoin->GetNext();
+		// 先頭の値を取得する
+		pCoin = list.GetTop();
 
-		// コインの変数を取得する
-		posCoin = pCoin->GetPos();
-		vtxMaxCoin = pCoin->GetFileData().vtxMax;
-		vtxMinCoin = pCoin->GetFileData().vtxMin;
+		// 末尾の値を取得する
+		pCoinEnd = list.GetEnd();
 
-		if (useful::RectangleCollisionXY(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
-			useful::RectangleCollisionXZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
-			useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
-		{ // 小判と重なった場合
+		while (true)
+		{ // 無限ループ
 
-			// 取得処理
-			pCoin->Hit();
+			// コインの変数を取得する
+			posCoin = pCoin->GetPos();
+			vtxMaxCoin = pCoin->GetFileData().vtxMax;
+			vtxMinCoin = pCoin->GetFileData().vtxMin;
+
+			if (useful::RectangleCollisionXY(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+				useful::RectangleCollisionXZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+				useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
+			{ // 小判と重なった場合
+
+				// 取得処理
+				pCoin->Hit();
+			}
+
+			if (pCoin == pCoinEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pCoin = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のオブジェクトを代入する
-		pCoin = pCoinNext;
 	}
 }
 
@@ -134,19 +173,20 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 	D3DXVECTOR3 bulletMin = D3DXVECTOR3(-size.x, -size.y, -size.x);	// 弾の最小値
 	D3DXVECTOR3 enemyMax;		// 敵の最大値
 	D3DXVECTOR3 enemyMin;		// 敵の最小値
+	CListManager<CEnemy*> list = CEnemy::GetList();
 	CEnemy* pEnemy = nullptr;		// 先頭の敵
 	CEnemy* pEnemyEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
 
 	// while文処理
-	if (CEnemy::GetList().IsEmpty() == false)
+	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
 		// 先頭の値を取得する
-		pEnemy = CEnemy::GetList().GetTop();
+		pEnemy = list.GetTop();
 
 		// 末尾の値を取得する
-		pEnemyEnd = CEnemy::GetList().GetEnd();	
+		pEnemyEnd = list.GetEnd();
 
 		while (true)
 		{ // 無限ループ
@@ -187,7 +227,7 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 			}
 
 			// 次のオブジェクトを代入する
-			pEnemy = CEnemy::GetList().GetData(nIdx + 1);
+			pEnemy = list.GetData(nIdx + 1);
 
 			// インデックスを加算する
 			nIdx++;
@@ -205,43 +245,63 @@ void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& siz
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 pos = pPlayer.GetPos();
-	D3DXVECTOR3 posCoin = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 posBone = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMaxBone = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMinBone = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMax = size;		// 最大値
 	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, 0.0f, -size.z);	// 最小値
-	CGoldBone* pBone = CGoldBoneManager::Get()->GetTop();			// 先頭の金の骨を取得する
-	CGoldBone* pBoneNext = nullptr;		// 次の金の骨
+	CListManager<CGoldBone*> list = CGoldBone::GetList();
+	CGoldBone* pBone = nullptr;		// 先頭の値
+	CGoldBone* pBoneEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
 
-	while (pBone != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 次の金の骨を取得する
-		pBoneNext = pBone->GetNext();
+		// 先頭の値を取得する
+		pBone = list.GetTop();
 
-		// コインの変数を取得する
-		posCoin = pBone->GetPos();
-		vtxMaxBone = pBone->GetFileData().vtxMax;
-		vtxMinBone = pBone->GetFileData().vtxMin;
+		// 末尾の値を取得する
+		pBoneEnd = list.GetEnd();
 
-		if (useful::RectangleCollisionXY(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
-			useful::RectangleCollisionXZ(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
-			useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true)
-		{ // 金の骨と重なった場合
+		while (true)
+		{ // 無限ループ
 
-			// 取得処理
-			pBone->Hit();
+			// 金の骨の変数を取得する
+			posBone = pBone->GetPos();
+			vtxMaxBone = pBone->GetFileData().vtxMax;
+			vtxMinBone = pBone->GetFileData().vtxMin;
 
-			if (pPlayer.GetGoldBoneUI() != nullptr)
-			{ // 金の骨UIが NULL じゃない場合
+			if (useful::RectangleCollisionXY(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
+				useful::RectangleCollisionXZ(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
+				useful::RectangleCollisionYZ(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true)
+			{ // 金の骨と重なった場合
 
-				// 金の骨取得処理
-				pPlayer.GetGoldBoneUI()->GetGoldBone();
+				// 取得処理
+				pBone->Hit();
+
+				if (pPlayer.GetGoldBoneUI() != nullptr)
+				{ // 金の骨UIが NULL じゃない場合
+
+					// 金の骨取得処理
+					pPlayer.GetGoldBoneUI()->GetGoldBone();
+				}
 			}
-		}
 
-		// 次のオブジェクトを代入する
-		pBone = pBoneNext;
+			if (pBone == pBoneEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBone = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
 	}
 }
 
@@ -253,24 +313,48 @@ bool collision::TreeCollision(D3DXVECTOR3* pos, const float fRadius)
 	// ローカル変数宣言
 	D3DXVECTOR3 posTree = NONE_D3DXVECTOR3;			// 木の位置
 	float fObjectRadius;							// 半径
-	CTree* pTree = CTreeManager::Get()->GetTop();	// 先頭の木を取得する
 	bool bCollision = false;						// 当たり判定状況
+	CListManager<CTree*> list = CTree::GetList();
+	CTree* pTree = nullptr;		// 先頭の値
+	CTree* pTreeEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
 
-	while (pTree != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		posTree = pTree->GetPos();		// 木の位置
-		fObjectRadius = fRadius + TREE_RADIUS[pTree->GetType()];	// 半径
+		// 先頭の値を取得する
+		pTree = list.GetTop();
 
-		if (useful::CylinderCollision(pos, posTree, fObjectRadius) == true)
-		{ // 円柱の当たり判定に入った場合
+		// 末尾の値を取得する
+		pTreeEnd = list.GetEnd();
 
-			// 当たり判定状況を true にする
-			bCollision = true;
+		while (true)
+		{ // 無限ループ
+
+			posTree = pTree->GetPos();		// 木の位置
+			fObjectRadius = fRadius + TREE_RADIUS[pTree->GetType()];	// 半径
+
+			if (useful::CylinderCollision(pos, posTree, fObjectRadius) == true)
+			{ // 円柱の当たり判定に入った場合
+
+				// 当たり判定状況を true にする
+				bCollision = true;
+			}
+
+			if (pTree == pTreeEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pTree = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のオブジェクトを代入する
-		pTree = pTree->GetNext();
 	}
 
 	// 当たり判定状況 を返す
@@ -285,25 +369,49 @@ void collision::TreeAttack(const CPlayer& pPlayer, const float fHeight)
 	// ローカル変数宣言
 	D3DXVECTOR3 posTree = NONE_D3DXVECTOR3;			// 木の位置
 	D3DXVECTOR3 posPlayer = pPlayer.GetPos();		// プレイヤーの位置
-	CTree* pTree = CTreeManager::Get()->GetTop();	// 先頭の木を取得する
+	CListManager<CTree*> list = CTree::GetList();
+	CTree* pTree = nullptr;		// 先頭の値
+	CTree* pTreeEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
 
-	while (pTree != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 木の位置を設定する
-		posTree = pTree->GetPos();
+		// 先頭の値を取得する
+		pTree = list.GetTop();
 
-		if (useful::CircleCollisionXZ(posPlayer, posTree, DAGGER_RADIUS, TREE_RADIUS[pTree->GetType()]) &&
-			posPlayer.y <= posTree.y + pTree->GetFileData().vtxMax.y &&
-			posPlayer.y + fHeight >= posTree.y)
-		{ // ダガーが木に接触した場合
+		// 末尾の値を取得する
+		pTreeEnd = list.GetEnd();
 
-			// ヒット処理
-			pTree->Hit();
+		while (true)
+		{ // 無限ループ
+
+			// 木の位置を設定する
+			posTree = pTree->GetPos();
+
+			if (useful::CircleCollisionXZ(posPlayer, posTree, DAGGER_RADIUS, TREE_RADIUS[pTree->GetType()]) &&
+				posPlayer.y <= posTree.y + pTree->GetFileData().vtxMax.y &&
+				posPlayer.y + fHeight >= posTree.y)
+			{ // ダガーが木に接触した場合
+
+				// ヒット処理
+				pTree->Hit();
+			}
+
+			if (pTree == pTreeEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pTree = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のオブジェクトを代入する
-		pTree = pTree->GetNext();
 	}
 }
 

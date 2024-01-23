@@ -27,7 +27,7 @@ namespace
 	const int DODGE_COUNT = 27;			// 回避状態のカウント数
 	const int DAGGER_COUNT = 40;		// ダガー状態のカウント数
 	const int SWOOP_COUNT = 65;			// 急降下状態のカウント数
-	const int SHOTGUN_COUNT = 60;		// 散弾状態のカウント数
+	const int SHOTGUN_COUNT = 45;		// 散弾状態のカウント数
 	const int DODGE_BLUR_LIFE = 10;		// 回避状態のブラーの寿命
 	const D3DXCOLOR DODGE_BLUR_COL = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);		// 回避状態のブラーの色
 	const float DAGGER_HEIGHT = 80.0f;	// ダガーの高さ
@@ -363,7 +363,7 @@ void CPlayerAction::DodgeProcess(CPlayer* pPlayer)
 		pPlayer->GetNumModel(),
 		DODGE_BLUR_COL,
 		DODGE_BLUR_LIFE,
-		CObject::PRIORITY_BG
+		CObject::PRIORITY_PAUSE
 	);
 
 	if (pBlur != nullptr)

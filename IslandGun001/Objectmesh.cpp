@@ -11,7 +11,6 @@
 #include "manager.h"
 #include "renderer.h"
 #include "Objectmesh.h"
-#include "mesh_manager.h"
 #include "useful.h"
 #include "texture.h"
 
@@ -30,6 +29,11 @@ namespace
 {
 	const char* MESH_TXT = "data/TXT/Mesh.txt";			// メッシュのテキスト
 }
+
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CMesh*> CMesh::m_list = {};		// リスト
 
 //================================
 // オーバーロードコンストラクタ
@@ -53,16 +57,8 @@ CMesh::CMesh(CObject::TYPE type, CObject::PRIORITY priority) : CObject(type, DIM
 	m_bCullOff = false;			// カリング状況
 	ZeroMemory(&m_mtxWorld, sizeof(D3DXMATRIX));	// ワールドマトリックス
 
-	// 全ての値をクリアする
-	m_pPrev = nullptr;		// 前のアウトボールへのポインタ
-	m_pNext = nullptr;		// 次のアウトボールへのポインタ
-
-	if (CMeshManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CMeshManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //================================
@@ -71,42 +67,6 @@ CMesh::CMesh(CObject::TYPE type, CObject::PRIORITY priority) : CObject(type, DIM
 CMesh::~CMesh()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CMesh::SetPrev(CMesh* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CMesh::SetNext(CMesh* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CMesh* CMesh::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CMesh* CMesh::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //================================
@@ -183,16 +143,8 @@ void CMesh::Uninit(void)
 	// 破棄処理
 	Release();
 
-	if (CMeshManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CMeshManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //================================
@@ -1310,4 +1262,13 @@ int CMesh::TxtSphere(FILE* pFile)
 
 	// 終了状況を返す
 	return nEnd;
+}
+
+//================================
+// リストの取得処理
+//================================
+CListManager<CMesh*> CMesh::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }

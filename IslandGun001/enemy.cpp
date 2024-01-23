@@ -12,14 +12,12 @@
 #include "manager.h"
 #include "model.h"
 
-#include "enemy_manager.h"
 #include "motion.h"
 #include "anim_reaction.h"
 
 #include "tordle.h"
 #include "collision.h"
 #include "block.h"
-#include "block_manager.h"
 
 //------------------------------------------------------------
 // 無名名前空間
@@ -108,7 +106,7 @@ HRESULT CEnemy::Init(void)
 		m_pMotion->SetModel(GetHierarchy(), GetNumModel());
 
 		// ロード処理
-		m_pMotion->Load("data\\TXT\\TordleMotion.txt");
+		m_pMotion->Load(CMotion::STYLE_TORDLE);
 	}
 	else
 	{ // ポインタが NULL じゃない場合
@@ -189,7 +187,7 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		GetHierarchy(nCntData)->SetPosOld(pos);										// 前回の位置
 		GetHierarchy(nCntData)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));				// 向き
 		GetHierarchy(nCntData)->SetScale(NONE_SCALE);								// 拡大率
-		GetHierarchy(nCntData)->SetFileData(CManager::Get()->GetXFile()->Regist(MODEL[nCntData]));	// データの設定処理
+		GetHierarchy(nCntData)->SetFileData(CMotion::GetSaveData(CMotion::STYLE_TORDLE, nCntData));	// データの設定処理
 	}
 
 	// モーションのリセット処理
@@ -332,30 +330,54 @@ void CEnemy::RockCollision(void)
 void CEnemy::BlockCollision(void)
 {
 	// ローカル変数宣言
-	CBlock* pBlock = CBlockManager::Get()->GetTop();	// 先頭の木を取得する
 	collision::SCollision coll = { false,false,false,false,false,false };				// 当たり判定の変数
 	D3DXVECTOR3 pos = GetPos();							// 位置を取得する
 	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-m_CollSize.x, 0.0f, -m_CollSize.z);		// 最小値を取得する
 	D3DXVECTOR3 vtxMax = m_CollSize;					// 最大値を取得する
+	CListManager<CBlock*> list = CBlock::GetList();
+	CBlock* pBlock = nullptr;		// 先頭の値
+	CBlock* pBlockEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
 
-	while (pBlock != nullptr)
-	{ // ブロックの情報が NULL じゃない場合
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 六面体の当たり判定
-		coll = collision::HexahedronClush
-		(
-			&pos,
-			pBlock->GetPos(),
-			GetPosOld(),
-			pBlock->GetPosOld(),
-			vtxMin,
-			pBlock->GetFileData().vtxMin,
-			vtxMax,
-			pBlock->GetFileData().vtxMax
-		);
+		// 先頭の値を取得する
+		pBlock = list.GetTop();
 
-		// 次のオブジェクトを代入する
-		pBlock = pBlock->GetNext();
+		// 末尾の値を取得する
+		pBlockEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 六面体の当たり判定
+			coll = collision::HexahedronClush
+			(
+				&pos,
+				pBlock->GetPos(),
+				GetPosOld(),
+				pBlock->GetPosOld(),
+				vtxMin,
+				pBlock->GetFileData().vtxMin,
+				vtxMax,
+				pBlock->GetFileData().vtxMax
+			);
+
+			if (pBlock == pBlockEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBlock = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
 	}
 
 	// 位置を適用する

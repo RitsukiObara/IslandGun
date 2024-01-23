@@ -14,23 +14,23 @@ NUM_MODEL = 17
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MODEL_FILENAME = data/MODEL/PlayerWaist.x		# [0]腰
-MODEL_FILENAME = data/MODEL/PlayerBody.x		# [1]体
-MODEL_FILENAME = data/MODEL/PlayerNeck.x		# [2]首
-MODEL_FILENAME = data/MODEL/PlayerCloak.x		# [3]マント
-MODEL_FILENAME = data/MODEL/PlayerHead.x		# [4]頭
-MODEL_FILENAME = data/MODEL/PlayerRArm.x		# [5]右上腕
-MODEL_FILENAME = data/MODEL/PlayerLArm.x		# [6]左上腕
-MODEL_FILENAME = data/MODEL/PlayerRUpper.x		# [7]右腕
-MODEL_FILENAME = data/MODEL/PlayerLUpper.x		# [8]左腕
-MODEL_FILENAME = data/MODEL/PlayerRHand.x		# [9]右手
-MODEL_FILENAME = data/MODEL/PlayerLHand.x		# [10]左手
-MODEL_FILENAME = data/MODEL/PlayerRLeg.x		# [11]右脚
-MODEL_FILENAME = data/MODEL/PlayerLLeg.x		# [12]左脚
-MODEL_FILENAME = data/MODEL/PlayerRShin.x		# [13]右脛
-MODEL_FILENAME = data/MODEL/PlayerLShin.x		# [14]左脛
-MODEL_FILENAME = data/MODEL/PlayerRFoot.x		# [15]右足
-MODEL_FILENAME = data/MODEL/PlayerLFoot.x		# [16]左足
+MODEL_FILENAME = data\MODEL\PlayerWaist.x		# [0]腰
+MODEL_FILENAME = data\MODEL\PlayerBody.x		# [1]体
+MODEL_FILENAME = data\MODEL\PlayerNeck.x		# [2]首
+MODEL_FILENAME = data\MODEL\PlayerCloak.x		# [3]マント
+MODEL_FILENAME = data\MODEL\PlayerHead.x		# [4]頭
+MODEL_FILENAME = data\MODEL\PlayerRArm.x		# [5]右上腕
+MODEL_FILENAME = data\MODEL\PlayerLArm.x		# [6]左上腕
+MODEL_FILENAME = data\MODEL\PlayerRUpper.x		# [7]右腕
+MODEL_FILENAME = data\MODEL\PlayerLUpper.x		# [8]左腕
+MODEL_FILENAME = data\MODEL\PlayerRHand.x		# [9]右手
+MODEL_FILENAME = data\MODEL\PlayerLHand.x		# [10]左手
+MODEL_FILENAME = data\MODEL\PlayerRLeg.x		# [11]右脚
+MODEL_FILENAME = data\MODEL\PlayerLLeg.x		# [12]左脚
+MODEL_FILENAME = data\MODEL\PlayerRShin.x		# [13]右脛
+MODEL_FILENAME = data\MODEL\PlayerLShin.x		# [14]左脛
+MODEL_FILENAME = data\MODEL\PlayerRFoot.x		# [15]右足
+MODEL_FILENAME = data\MODEL\PlayerLFoot.x		# [16]左足
 
 #------------------------------------------------------------------------------
 # キャラクター情報

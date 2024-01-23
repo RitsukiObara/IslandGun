@@ -13,8 +13,6 @@
 #include "renderer.h"
 #include "useful.h"
 
-#include "gold_bone_manager.h"
-
 //-------------------------------------------
 // 無名名前空間
 //-------------------------------------------
@@ -22,6 +20,11 @@ namespace
 {
 	const char* MODEL = "data\\MODEL\\GoldBone.x";		// モデルの名前
 }
+
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CGoldBone*> CGoldBone::m_list = {};		// リスト
 
 //==============================
 // コンストラクタ
@@ -31,16 +34,8 @@ CGoldBone::CGoldBone() : CModel(CObject::TYPE_GOLDBONE, CObject::PRIORITY_ENTITY
 	// 全ての値をクリアする
 	m_move = NONE_D3DXVECTOR3;	// 移動量
 
-	// 全ての値をクリアする
-	m_pPrev = nullptr;			// 前のポインタ
-	m_pNext = nullptr;			// 次のポインタ
-
-	if (CGoldBoneManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CGoldBoneManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -49,42 +44,6 @@ CGoldBone::CGoldBone() : CModel(CObject::TYPE_GOLDBONE, CObject::PRIORITY_ENTITY
 CGoldBone::~CGoldBone()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CGoldBone::SetPrev(CGoldBone* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CGoldBone::SetNext(CGoldBone* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CGoldBone* CGoldBone::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CGoldBone* CGoldBone::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //==============================
@@ -111,16 +70,8 @@ void CGoldBone::Uninit(void)
 	// 終了処理
 	CModel::Uninit();
 
-	if (CGoldBoneManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CGoldBoneManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
@@ -216,6 +167,15 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 
 	// 金の骨のポインタを返す
 	return pBone;
+}
+
+//=======================================
+// リストの取得処理
+//=======================================
+CListManager<CGoldBone*> CGoldBone::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }
 
 //=======================================

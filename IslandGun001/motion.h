@@ -21,6 +21,14 @@ class CMotion
 {
 public:			// 誰でもアクセスできる
 
+	// 列挙型定義(スタイル)
+	enum STYLE
+	{
+		STYLE_PLAYER = 0,		// プレイヤー
+		STYLE_TORDLE,			// タードル
+		STYLE_MAX				// この列挙型の総数
+	};
+
 	//------------------------------------------------------------
 	//	構造体定義(キーの構造体)
 	//------------------------------------------------------------
@@ -54,6 +62,12 @@ public:			// 誰でもアクセスできる
 		Key_Info aKeyInfo[MAX_KEY];	// キーの情報
 	};
 
+	// 構造体定義(保存データ)
+	struct SSaveData
+	{
+		CXFile::SXFile aModelData[MAX_PARTS];
+	};
+
 	CMotion();				// コンストラクタ
 	~CMotion();				// デストラクタ
 
@@ -68,10 +82,11 @@ public:			// 誰でもアクセスできる
 	bool IsFinish(void);								// モーションの終了処理
 	void SetInfo(Info info);							// モーションの情報の設定処理
 	void SetModel(CHierarchy** ppHier, int nNumModel);	// モデルの設定処理
-	void Load(const char* pTxtName);					// モーションのロード処理
+	void Load(const STYLE style);						// モーションのロード処理
 
 	// 静的メンバ関数
 	static CMotion* Create();							// モーションの生成処理
+	static CXFile::SXFile GetSaveData(const STYLE style, const int nCount);	// モデル情報の取得処理
 
 private:		// 自分だけアクセスできる
 
@@ -90,6 +105,9 @@ private:		// 自分だけアクセスできる
 	bool m_bFinish;						// 終了したかどうか
 	CHierarchy** m_ppModel;				// モデルへのダブルポインタ
 	int m_nNumModel;					// モデルの総数
+
+	// 静的メンバ変数
+	static SSaveData m_aSaveData[STYLE_MAX];		// 保存用変数
 };
 
 #endif

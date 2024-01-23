@@ -10,7 +10,6 @@
 #include "texture.h"
 #include "useful.h"
 
-#include "bullet_manager.h"
 #include "locus3D.h"
 #include "collision.h"
 
@@ -29,6 +28,11 @@ namespace
 	const int LIFE = 90;			// 寿命
 }
 
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CBullet*> CBullet::m_list = {};		// リスト
+
 //=========================
 // コンストラクタ
 //=========================
@@ -39,16 +43,8 @@ CBullet::CBullet() : CBillboard(CObject::TYPE_BULLET, CObject::PRIORITY_SHADOW)
 	m_type = TYPE_HANDGUN;		// 種類
 	m_nLife = LIFE;				// 寿命
 
-	// 全ての値をクリアする
-	m_pPrev = nullptr;		// 前のアウトボールへのポインタ
-	m_pNext = nullptr;		// 次のアウトボールへのポインタ
-
-	if (CBulletManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CBulletManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //=========================
@@ -57,42 +53,6 @@ CBullet::CBullet() : CBillboard(CObject::TYPE_BULLET, CObject::PRIORITY_SHADOW)
 CBullet::~CBullet()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CBullet::SetPrev(CBullet* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CBullet::SetNext(CBullet* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CBullet* CBullet::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CBullet* CBullet::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //=========================
@@ -124,16 +84,8 @@ void CBullet::Uninit(void)
 	// 終了
 	CBillboard::Uninit();
 
-	if (CBulletManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CBulletManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //=========================
@@ -280,4 +232,13 @@ CBullet* CBullet::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const T
 
 	// 弾のポインタを返す
 	return pBullet;
+}
+
+//=========================
+// リストの取得処理
+//=========================
+CListManager<CBullet*> CBullet::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }

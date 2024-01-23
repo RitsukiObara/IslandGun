@@ -14,7 +14,6 @@
 #include "useful.h"
 
 #include "objectElevation.h"
-#include "elevation_manager.h"
 
 //-------------------------------------------
 // マクロ定義
@@ -323,28 +322,52 @@ void CFraction::RotMove(void)
 void CFraction::Elevation(void)
 {
 	// ローカル変数宣言
-	CElevation* pMesh = CElevationManager::Get()->GetTop();		// 起伏の先頭のオブジェクトを取得する
 	D3DXVECTOR3 pos = GetPos();				// 位置を取得する
 	float fHeight = 0.0f;					// 高さ
+	CListManager<CElevation*> list = CElevation::GetList();
+	CElevation* pElev = nullptr;			// 先頭の小判
+	CElevation* pElevEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
 
-	while (pMesh != nullptr)
-	{ // 地面の情報がある限り回す
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 当たり判定を取る
-		fHeight = pMesh->ElevationCollision(pos);
-		
-		if (pos.y < fHeight)
-		{ // 当たり判定の位置が高かった場合
+		// 先頭の値を取得する
+		pElev = list.GetTop();
 
-			// 高さを設定する
-			pos.y = fHeight;
+		// 末尾の値を取得する
+		pElevEnd = list.GetEnd();
 
-			// 重力を設定する
-			m_move.y *= -0.7f;
+		while (true)
+		{ // 無限ループ
+
+			// 当たり判定を取る
+			fHeight = pElev->ElevationCollision(pos);
+
+			if (pos.y < fHeight)
+			{ // 当たり判定の位置が高かった場合
+
+				// 高さを設定する
+				pos.y = fHeight;
+
+				// 重力を設定する
+				m_move.y *= -0.7f;
+			}
+
+			if (pElev == pElevEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pElev = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のポインタを取得する
-		pMesh = pMesh->GetNext();
 	}
 
 	// 位置を更新する

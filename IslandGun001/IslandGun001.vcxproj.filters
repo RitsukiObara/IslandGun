@@ -144,9 +144,6 @@
     <ClCompile Include="character.cpp">
       <Filter>object</Filter>
     </ClCompile>
-    <ClCompile Include="elevation_manager.cpp">
-      <Filter>object</Filter>
-    </ClCompile>
     <ClCompile Include="model.cpp">
       <Filter>object</Filter>
     </ClCompile>
@@ -187,9 +184,6 @@
       <Filter>object</Filter>
     </ClCompile>
     <ClCompile Include="objectX.cpp">
-      <Filter>object</Filter>
-    </ClCompile>
-    <ClCompile Include="mesh_manager.cpp">
       <Filter>object</Filter>
     </ClCompile>
     <ClCompile Include="scene.cpp">
@@ -315,14 +309,8 @@
     <ClCompile Include="bullet.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="bullet_manager.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
     <ClCompile Include="locus3D.cpp">
       <Filter>staging</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy_manager.cpp">
-      <Filter>enemy</Filter>
     </ClCompile>
     <ClCompile Include="enemy.cpp">
       <Filter>enemy</Filter>
@@ -342,19 +330,10 @@
     <ClCompile Include="coin.cpp">
       <Filter>gimmick\Item</Filter>
     </ClCompile>
-    <ClCompile Include="coin_manager.cpp">
-      <Filter>gimmick\Item</Filter>
-    </ClCompile>
     <ClCompile Include="gold_bone.cpp">
       <Filter>gimmick\Item</Filter>
     </ClCompile>
-    <ClCompile Include="gold_bone_manager.cpp">
-      <Filter>gimmick\Item</Filter>
-    </ClCompile>
     <ClCompile Include="tree.cpp">
-      <Filter>gimmick\Tree</Filter>
-    </ClCompile>
-    <ClCompile Include="tree_manager.cpp">
       <Filter>gimmick\Tree</Filter>
     </ClCompile>
     <ClCompile Include="palm_tree.cpp">
@@ -363,19 +342,10 @@
     <ClCompile Include="palm_fruit.cpp">
       <Filter>gimmick\Item</Filter>
     </ClCompile>
-    <ClCompile Include="palm_fruit_manager.cpp">
-      <Filter>gimmick\Item</Filter>
-    </ClCompile>
     <ClCompile Include="rock.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
-    <ClCompile Include="rock_manager.cpp">
-      <Filter>gimmick\Map</Filter>
-    </ClCompile>
     <ClCompile Include="block.cpp">
-      <Filter>gimmick\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="block_manager.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
     <ClCompile Include="tordle.cpp">
@@ -456,12 +426,6 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="character.h">
-      <Filter>object</Filter>
-    </ClInclude>
-    <ClInclude Include="elevation_manager.h">
-      <Filter>object</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh_manager.h">
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="model.h">
@@ -629,16 +593,10 @@
     <ClInclude Include="bullet.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="bullet_manager.h">
-      <Filter>Player</Filter>
-    </ClInclude>
     <ClInclude Include="locus3D.h">
       <Filter>staging</Filter>
     </ClInclude>
     <ClInclude Include="enemy.h">
-      <Filter>enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="enemy_manager.h">
       <Filter>enemy</Filter>
     </ClInclude>
     <ClInclude Include="handgun.h">
@@ -656,19 +614,10 @@
     <ClInclude Include="coin.h">
       <Filter>gimmick\Item</Filter>
     </ClInclude>
-    <ClInclude Include="coin_manager.h">
-      <Filter>gimmick\Item</Filter>
-    </ClInclude>
     <ClInclude Include="gold_bone.h">
       <Filter>gimmick\Item</Filter>
     </ClInclude>
-    <ClInclude Include="gold_bone_manager.h">
-      <Filter>gimmick\Item</Filter>
-    </ClInclude>
     <ClInclude Include="tree.h">
-      <Filter>gimmick\Tree</Filter>
-    </ClInclude>
-    <ClInclude Include="tree_manager.h">
       <Filter>gimmick\Tree</Filter>
     </ClInclude>
     <ClInclude Include="palm_tree.h">
@@ -677,19 +626,10 @@
     <ClInclude Include="palm_fruit.h">
       <Filter>gimmick\Item</Filter>
     </ClInclude>
-    <ClInclude Include="palm_fruit_manager.h">
-      <Filter>gimmick\Item</Filter>
-    </ClInclude>
     <ClInclude Include="rock.h">
       <Filter>gimmick\Map</Filter>
     </ClInclude>
-    <ClInclude Include="rock_manager.h">
-      <Filter>gimmick\Map</Filter>
-    </ClInclude>
     <ClInclude Include="block.h">
-      <Filter>gimmick\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="block_manager.h">
       <Filter>gimmick\Map</Filter>
     </ClInclude>
     <ClInclude Include="tordle.h">

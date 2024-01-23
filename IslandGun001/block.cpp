@@ -13,8 +13,6 @@
 #include "texture.h"
 #include "useful.h"
 
-#include "block_manager.h"
-
 //-------------------------------------------
 // 無名名前空間
 //-------------------------------------------
@@ -23,21 +21,18 @@ namespace
 	const char* MODEL = "data\\MODEL\\Rock.x";		// モデルの名前
 }
 
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CBlock*> CBlock::m_list = {};			// リスト
+
 //==============================
 // コンストラクタ
 //==============================
 CBlock::CBlock() : CModel(TYPE_BLOCK, PRIORITY_BLOCK)
 {
-	// 全ての値をクリアする
-	m_pPrev = nullptr;			// 前のポインタ
-	m_pNext = nullptr;			// 次のポインタ
-
-	if (CBlockManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CBlockManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -46,42 +41,6 @@ CBlock::CBlock() : CModel(TYPE_BLOCK, PRIORITY_BLOCK)
 CBlock::~CBlock()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CBlock::SetPrev(CBlock* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CBlock::SetNext(CBlock* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CBlock* CBlock::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CBlock* CBlock::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //==============================
@@ -108,16 +67,8 @@ void CBlock::Uninit(void)
 	// 終了処理
 	CModel::Uninit();
 
-	if (CBlockManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CBlockManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
@@ -203,4 +154,13 @@ CBlock* CBlock::Create(const D3DXVECTOR3& pos)
 
 	// ブロックのポインタを返す
 	return pBlock;
+}
+
+//=======================================
+// リストの取得処理
+//=======================================
+CListManager<CBlock*> CBlock::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }

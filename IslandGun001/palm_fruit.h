@@ -11,6 +11,7 @@
 // インクルードファイル
 //***********************************
 #include "model.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // クラス定義(ヤシの実)
@@ -33,12 +34,6 @@ public:			// 誰でもアクセスできる
 	CPalmFruit();					// コンストラクタ
 	~CPalmFruit();					// デストラクタ
 
-	// リスト構造関係
-	void SetPrev(CPalmFruit* pPrev);	// 前のポインタの設定処理
-	void SetNext(CPalmFruit* pNext);	// 後のポインタの設定処理
-	CPalmFruit* GetPrev(void) const;	// 前のポインタの設定処理
-	CPalmFruit* GetNext(void) const;	// 次のポインタの設定処理
-
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
 	void Uninit(void) override;		// 終了処理
@@ -57,6 +52,8 @@ public:			// 誰でもアクセスできる
 	// 静的メンバ関数
 	static CPalmFruit* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);	// 生成処理
 
+	static CListManager<CPalmFruit*> GetList(void);		// リストの取得処理
+
 private:		// 自分だけアクセスできる
 	
 	// メンバ関数
@@ -68,9 +65,8 @@ private:		// 自分だけアクセスできる
 	D3DXVECTOR3 m_move;			// 移動量
 	STATE m_state;				// 状態
 
-	// リスト構造関係
-	CPalmFruit* m_pPrev;		// 前へのポインタ
-	CPalmFruit* m_pNext;		// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CPalmFruit*> m_list;		// リスト
 };
 
 #endif

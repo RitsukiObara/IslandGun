@@ -11,6 +11,7 @@
 // インクルードファイル
 //***********************************
 #include "model.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // クラス定義(岩)
@@ -21,12 +22,6 @@ public:			// 誰でもアクセスできる
 
 	CRock();			// コンストラクタ
 	~CRock();			// デストラクタ
-
-	// リスト構造関係
-	void SetPrev(CRock* pPrev);		// 前のポインタの設定処理
-	void SetNext(CRock* pNext);		// 後のポインタの設定処理
-	CRock* GetPrev(void) const;		// 前のポインタの設定処理
-	CRock* GetNext(void) const;		// 次のポインタの設定処理
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -40,14 +35,15 @@ public:			// 誰でもアクセスできる
 	// 静的メンバ関数
 	static CRock* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale);		// 生成処理
 
+	static CListManager<CRock*> GetList(void);			// リストの取得処理
+
 private:		// 自分だけアクセスできる
 	
 	// メンバ変数
 	int m_nBreakLevel;	// 破壊レベル
 
-	// リスト構造関係
-	CRock* m_pPrev;		// 前へのポインタ
-	CRock* m_pNext;		// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CRock*> m_list;		// リスト
 };
 
 #endif

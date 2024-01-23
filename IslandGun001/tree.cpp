@@ -12,8 +12,6 @@
 #include "tree.h"
 #include "useful.h"
 
-#include "tree_manager.h"
-
 #include "palm_tree.h"
 
 //-------------------------------------------
@@ -27,6 +25,11 @@ namespace
 	};
 }
 
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CTree*> CTree::m_list = {};		// リスト
+
 //==============================
 // コンストラクタ
 //==============================
@@ -35,16 +38,8 @@ CTree::CTree(CObject::TYPE type, PRIORITY priority) : CModel(type, priority)
 	// 全ての値をクリアする
 	m_type = TYPE_PALM;		// 種類
 
-	// 全ての値をクリアする
-	m_pPrev = nullptr;			// 前のポインタ
-	m_pNext = nullptr;			// 次のポインタ
-
-	if (CTreeManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CTreeManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -53,42 +48,6 @@ CTree::CTree(CObject::TYPE type, PRIORITY priority) : CModel(type, priority)
 CTree::~CTree()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CTree::SetPrev(CTree* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CTree::SetNext(CTree* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CTree* CTree::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CTree* CTree::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //==============================
@@ -115,16 +74,8 @@ void CTree::Uninit(void)
 	// 終了処理
 	CModel::Uninit();
 
-	if (CTreeManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CTreeManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
@@ -235,6 +186,15 @@ CTree* CTree::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 
 	// 木のポインタを返す
 	return pTree;
+}
+
+//=======================================
+// リストの取得処理
+//=======================================
+CListManager<CTree*> CTree::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }
 
 //=======================================

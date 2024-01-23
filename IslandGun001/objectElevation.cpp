@@ -11,7 +11,6 @@
 #include "manager.h"
 #include "renderer.h"
 #include "objectElevation.h"
-#include "elevation_manager.h"
 #include "Effect.h"
 #include "input.h"
 #include "debugproc.h"
@@ -24,6 +23,11 @@
 #define ELEVATION_TXT			"data/TXT/Elevation.txt"			// 起伏地面のテキスト
 #define TEXTURE_DIVI_X			(0.2f)								// テクスチャの分割数(X軸)
 #define TEXTURE_DIVI_Z			(1.0f / 6.0f)						// テクスチャの分割数(Z軸)
+
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CElevation*> CElevation::m_list = {};		// リスト
 
 //================================
 // コンストラクタ
@@ -46,16 +50,8 @@ CElevation::CElevation() : CObject(CObject::TYPE_ELEVATION, DIM_3D, CObject::PRI
 	m_nNumIdx = 0;									// 総インデックス数
 	m_nTexIdx = NONE_TEXIDX;						// テクスチャのインデックス
 
-	// 全ての値をクリアする
-	m_pPrev = nullptr;		// 前のアウトボールへのポインタ
-	m_pNext = nullptr;		// 次のアウトボールへのポインタ
-
-	if (CElevationManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CElevationManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //================================
@@ -64,42 +60,6 @@ CElevation::CElevation() : CObject(CObject::TYPE_ELEVATION, DIM_3D, CObject::PRI
 CElevation::~CElevation()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CElevation::SetPrev(CElevation* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CElevation::SetNext(CElevation* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CElevation* CElevation::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CElevation* CElevation::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //================================
@@ -182,16 +142,8 @@ void CElevation::Uninit(void)
 	// 破棄処理
 	Release();
 
-	if (CElevationManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CElevationManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //================================
@@ -1237,4 +1189,13 @@ void CElevation::TxtSet(void)
 		// 停止
 		assert(false);
 	}
+}
+
+//================================
+// リストの取得処理
+//================================
+CListManager<CElevation*> CElevation::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }

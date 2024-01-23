@@ -17,11 +17,13 @@
 
 namespace
 {
-	const char* TEXTURE = "data\\TEXTURE\\BoneMark.png";				// テクスチャ
-	const D3DXVECTOR3 MARK_SIZE = D3DXVECTOR3(45.0f, 30.0f, 0.0f);		// マークのサイズ
-	const D3DXVECTOR3 INIT_MARK_POS = D3DXVECTOR3(60.0f, 40.0f, 0.0f);	// マークの初期位置
+	const char* TEXTURE = "data\\TEXTURE\\BoneMark.png";					// テクスチャ
+	const D3DXVECTOR3 MARK_SIZE = D3DXVECTOR3(45.0f, 30.0f, 0.0f);			// マークのサイズ
+	const D3DXVECTOR3 INIT_MARK_POS = D3DXVECTOR3(60.0f, 40.0f, 0.0f);		// マークの初期位置
+	const D3DXVECTOR3 EXTEND_MARK_SIZE = D3DXVECTOR3(60.0f, 40.0f, 0.0f);	// マークの拡大時のサイズ
 	const float MARK_SHIFT = 90.0f;			// マークのずらす幅
-	const D3DXCOLOR SHADOW_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);		// 影の色
+	const D3DXCOLOR SHADOW_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);			// 影の色
+	const D3DXVECTOR3 STATE_CORRECT = D3DXVECTOR3(1.5f, 1.0f, 0.0f);		// 状態による補正の倍率
 }
 
 //========================
@@ -112,9 +114,47 @@ void CGoldBoneUI::Update(void)
 
 		case STATE_EXTEND:		// 拡大状態
 
+			if (m_aBoneMark[nCnt].pMark != nullptr)
+			{ // マークの情報が NULL じゃない場合
+
+				// サイズを取得する
+				D3DXVECTOR3 size = m_aBoneMark[nCnt].pMark->GetSize();
+
+				// 均等な補正処理
+				if (useful::FrameCorrect(EXTEND_MARK_SIZE.x, &size.x, STATE_CORRECT.x) == true ||
+					useful::FrameCorrect(EXTEND_MARK_SIZE.y, &size.y, STATE_CORRECT.y) == true)
+				{ // 一定のサイズになった場合
+
+					// 縮小状態にする
+					m_aBoneMark[nCnt].state = STATE_SHRINK;
+				}
+
+				// サイズを適用する
+				m_aBoneMark[nCnt].pMark->SetSize(size);
+			}
+
 			break;
 
 		case STATE_SHRINK:		// 縮小状態
+
+			if (m_aBoneMark[nCnt].pMark != nullptr)
+			{ // マークの情報が NULL じゃない場合
+
+				// サイズを取得する
+				D3DXVECTOR3 size = m_aBoneMark[nCnt].pMark->GetSize();
+
+				// 均等な補正処理
+				if (useful::FrameCorrect(MARK_SIZE.x, &size.x, STATE_CORRECT.x) == true ||
+					useful::FrameCorrect(MARK_SIZE.y, &size.y, STATE_CORRECT.y) == true)
+				{ // 一定のサイズになった場合
+
+					// 停止状態にする
+					m_aBoneMark[nCnt].state = STATE_STOP;
+				}
+
+				// サイズを適用する
+				m_aBoneMark[nCnt].pMark->SetSize(size);
+			}
 
 			break;
 
@@ -128,6 +168,13 @@ void CGoldBoneUI::Update(void)
 			assert(false);
 
 			break;
+		}
+
+		if (m_aBoneMark[nCnt].pMark != nullptr)
+		{ // マークが NULL じゃない場合
+
+			// 頂点座標の設定処理
+			m_aBoneMark[nCnt].pMark->SetVertex();
 		}
 	}
 }
@@ -145,7 +192,10 @@ void CGoldBoneUI::Draw(void)
 			// 影の情報の終了
 			m_aBoneMark[nCnt].pShadow->Draw();
 		}
+	}
 
+	for (int nCnt = 0; nCnt < MAX_BONE_MARK; nCnt++)
+	{
 		if (m_aBoneMark[nCnt].pMark != nullptr)
 		{ // マークの情報が NULL じゃない場合
 
@@ -274,7 +324,7 @@ void CGoldBoneUI::GetGoldBone(void)
 			m_aBoneMark[nCnt].pMark->SetPos(posMark);				// 位置
 			m_aBoneMark[nCnt].pMark->SetPosOld(posMark);			// 前回の位置
 			m_aBoneMark[nCnt].pMark->SetRot(NONE_D3DXVECTOR3);		// 向き
-			m_aBoneMark[nCnt].pMark->SetSize(MARK_SIZE);			// サイズ
+			m_aBoneMark[nCnt].pMark->SetSize(NONE_D3DXVECTOR3);		// サイズ
 			m_aBoneMark[nCnt].pMark->SetAngle();					// 方向
 			m_aBoneMark[nCnt].pMark->SetLength();					// 長さ
 
@@ -283,6 +333,9 @@ void CGoldBoneUI::GetGoldBone(void)
 
 			// 頂点座標の設定処理
 			m_aBoneMark[nCnt].pMark->SetVertex();
+
+			// 拡大状態を設定する
+			m_aBoneMark[nCnt].state = STATE_EXTEND;
 
 			// 抜け出す
 			break;

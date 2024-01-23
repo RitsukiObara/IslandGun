@@ -18,7 +18,20 @@
 //----------------------------------------------------------------------------------------------------------------------
 // マクロ定義
 //----------------------------------------------------------------------------------------------------------------------
-#define MOTION_SET_FRAME		(7)			// モーション設定時のフレーム数
+namespace
+{
+	const char* MOTION_TXT[CMotion::STYLE_MAX] =		// モーションテキストのパス
+	{
+		"data\\TXT\\PlayerMotion.txt",
+		"data\\TXT\\TordleMotion.txt",
+	};
+	const int MOTION_SET_FRAME = 7;						// モーション設定時のフレーム数
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// 静的メンバ変数宣言
+//----------------------------------------------------------------------------------------------------------------------
+CMotion::SSaveData CMotion::m_aSaveData[STYLE_MAX] = {};		// 保存用変数
 
 //============================================================
 // コンストラクタ
@@ -331,7 +344,7 @@ void CMotion::SetModel(CHierarchy** ppHier, int nNumModel)
 //============================================================
 // モーションのロード処理
 //============================================================
-void CMotion::Load(const char* pTxtName)
+void CMotion::Load(const STYLE style)
 {
 	// 変数を宣言
 	D3DXVECTOR3 rot;				// 向きの設定処理
@@ -341,13 +354,15 @@ void CMotion::Load(const char* pTxtName)
 	int nLoop = 0;					// ループの読み込み変数
 	int nCntKey = 0;				// キーの番号
 	int nParent = NONE_PARENT;		// 親の番号
+	int nCntModel = 0;				// モデルのカウント
 	char aString[MAX_STRING];		// テキストの文字列の代入用
+	char aModelName[MAX_STRING];	// モデルの名前の文字列の代入用
 
 	// ファイルのポインタを宣言
 	FILE* pFile;							// ファイルポインタ
 
 	// ファイルを読み込み形式で開く
-	pFile = fopen(pTxtName, "r");
+	pFile = fopen(MOTION_TXT[style], "r");
 
 	if (pFile != nullptr)
 	{ // ファイルが開けた場合
@@ -364,6 +379,20 @@ void CMotion::Load(const char* pTxtName)
 				// モデルの数を読み込む
 				fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
 				fscanf(pFile, "%d", &m_nNumModel);				// 総モデル数を読み込む
+			}
+
+			if (strcmp(&aString[0], "MODEL_FILENAME") == 0)
+			{ // 読み込んだ文字列が MODEL_FILENAME だった場合
+
+				// モデルの数を読み込む
+				fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+				fscanf(pFile, "%s", &aModelName[0]);			// モデルの名前を読み込む
+
+				// モデル情報を取得する
+				m_aSaveData[style].aModelData[nCntModel] = CManager::Get()->GetXFile()->Regist(&aModelName[0]);
+				
+				// モデルのカウントを加算する
+				nCntModel++;
 			}
 
 			if (strcmp(&aString[0], "CHARACTERSET") == 0)
@@ -597,4 +626,13 @@ CMotion* CMotion::Create()
 
 	// オブジェクト2Dのポインタを返す
 	return pMotion;
+}
+
+//============================================================
+// モデル情報の取得処理
+//============================================================
+CXFile::SXFile CMotion::GetSaveData(const STYLE style, const int nCount)
+{
+	// モデルの情報を返す
+	return m_aSaveData[style].aModelData[nCount];
 }

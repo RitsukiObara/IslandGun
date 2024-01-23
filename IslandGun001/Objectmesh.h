@@ -7,10 +7,15 @@
 #ifndef _MESH_H_			// このマクロ定義がされていない場合
 #define _MESH_H_			// 二重インクルード防止のマクロを定義する
 
+//**********************************************************************************************************************
+// インクルードファイル
+//**********************************************************************************************************************
 #include "object.h"
-#include "objectX.h"
+#include "list_manager.h"
 
+//----------------------------------------------------------------------------------------------------------------------
 // クラス定義(メッシュ)
+//----------------------------------------------------------------------------------------------------------------------
 class CMesh : public CObject
 {
 public:			// 誰でもアクセスできる
@@ -36,12 +41,6 @@ public:			// 誰でもアクセスできる
 
 	CMesh(CObject::TYPE type, CObject::PRIORITY priority = PRIORITY_BG);			// オーバーロードコンストラクタ
 	virtual ~CMesh();	// デストラクタ
-
-	// リスト構造関係
-	void SetPrev(CMesh* pPrev);	// 前のポインタの設定処理
-	void SetNext(CMesh* pNext);	// 後のポインタの設定処理
-	CMesh* GetPrev(void) const;	// 前のポインタの設定処理
-	CMesh* GetNext(void) const;	// 次のポインタの設定処理
 
 	// メンバ関数
 	virtual HRESULT Init(void) override;	// 初期化処理
@@ -97,6 +96,8 @@ public:			// 誰でもアクセスできる
 	static int TxtTornado(FILE* pFile);		// トルネードの読み込み処理
 	static int TxtSphere(FILE* pFile);		// スフィアの読み込み処理
 
+	static CListManager<CMesh*> GetList(void);			// リストの取得処理
+
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
@@ -114,9 +115,8 @@ private:		// 自分だけアクセスできる
 	bool	m_bLightOff;		// ライティング状況
 	bool	m_bCullOff;			// カリング状況
 
-	// リスト構造関係
-	CMesh* m_pPrev;	// 前へのポインタ
-	CMesh* m_pNext;	// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CMesh*> m_list;		// リスト
 };
 
 

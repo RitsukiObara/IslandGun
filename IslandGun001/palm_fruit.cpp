@@ -13,10 +13,11 @@
 #include "renderer.h"
 #include "useful.h"
 
-#include "palm_fruit_manager.h"
-#include "elevation_manager.h"
 #include "objectElevation.h"
 
+//-------------------------------------------
+// 無名名前空間
+//-------------------------------------------
 namespace
 {
 	const char* FRUIT_MODEL = "data\\MODEL\\PalmFruit.x";		// ヤシの実のモデル
@@ -27,6 +28,11 @@ namespace
 	const float BOUND_MOVE_ROT = 0.6f;	// バウンドしたときの移動量の向き
 }
 
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CPalmFruit*> CPalmFruit::m_list = {};		// リスト
+
 //==============================
 // コンストラクタ
 //==============================
@@ -36,15 +42,8 @@ CPalmFruit::CPalmFruit() : CModel(CObject::TYPE_PALMFRUIT, CObject::PRIORITY_ENT
 	m_move = NONE_D3DXVECTOR3;	// 移動量
 	m_state = STATE_NONE;		// 状態
 
-	m_pPrev = nullptr;			// 前のポインタ
-	m_pNext = nullptr;			// 次のポインタ
-
-	if (CPalmFruitManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CPalmFruitManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -53,42 +52,6 @@ CPalmFruit::CPalmFruit() : CModel(CObject::TYPE_PALMFRUIT, CObject::PRIORITY_ENT
 CPalmFruit::~CPalmFruit()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CPalmFruit::SetPrev(CPalmFruit* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CPalmFruit::SetNext(CPalmFruit* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CPalmFruit* CPalmFruit::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CPalmFruit* CPalmFruit::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //==============================
@@ -115,16 +78,8 @@ void CPalmFruit::Uninit(void)
 	// 終了処理
 	CModel::Uninit();
 
-	if (CPalmFruitManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CPalmFruitManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
@@ -281,6 +236,15 @@ CPalmFruit* CPalmFruit::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 }
 
 //=======================================
+// リストの取得処理
+//=======================================
+CListManager<CPalmFruit*> CPalmFruit::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
+}
+
+//=======================================
 // 移動量の設定処理
 //=======================================
 void CPalmFruit::SetMove(const D3DXVECTOR3& move)
@@ -362,34 +326,58 @@ void CPalmFruit::Gravity(void)
 bool CPalmFruit::ElevationCollision(void)
 {
 	// ローカル変数宣言
-	CElevation* pMesh = CElevationManager::Get()->GetTop();		// 起伏の先頭のオブジェクトを取得する
 	D3DXVECTOR3 pos = GetPos();		// 位置を取得する
 	float fHeight = 0.0f;			// 高さ
+	CListManager<CElevation*> list = CElevation::GetList();
+	CElevation* pElev = nullptr;			// 先頭の小判
+	CElevation* pElevEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
 
-	while (pMesh != nullptr)
-	{ // 地面の情報がある限り回す
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-		// 当たり判定を取る
-		fHeight = pMesh->ElevationCollision(pos);
+		// 先頭の値を取得する
+		pElev = list.GetTop();
 
-		if (pos.y < fHeight)
-		{ // 当たり判定の位置が高かった場合
+		// 末尾の値を取得する
+		pElevEnd = list.GetEnd();
 
-			// 高さを設定する
-			pos.y = fHeight;
+		while (true)
+		{ // 無限ループ
 
-			// 重力を設定する
-			m_move.y = 0.0f;
+			// 当たり判定を取る
+			fHeight = pElev->ElevationCollision(pos);
 
-			// 位置を更新する
-			SetPos(pos);
+			if (pos.y < fHeight)
+			{ // 当たり判定の位置が高かった場合
 
-			// true を返す
-			return true;
+				// 高さを設定する
+				pos.y = fHeight;
+
+				// 重力を設定する
+				m_move.y = 0.0f;
+
+				// 位置を更新する
+				SetPos(pos);
+
+				// true を返す
+				return true;
+			}
+
+			if (pElev == pElevEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pElev = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
 		}
-
-		// 次のポインタを取得する
-		pMesh = pMesh->GetNext();
 	}
 
 	// false を返す

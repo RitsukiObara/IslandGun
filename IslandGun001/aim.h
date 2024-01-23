@@ -37,6 +37,9 @@ public:
 
 private:
 
+	// ƒƒ“ƒoŠÖ”
+	void EnemyCollision(void);		// “G‚Æ‚Ì“–‚½‚è”»’è
+
 	// ƒƒ“ƒo•Ï”
 };
 

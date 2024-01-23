@@ -13,8 +13,6 @@
 #include "texture.h"
 #include "useful.h"
 
-#include "rock_manager.h"
-
 //-------------------------------------------
 // 無名名前空間
 //-------------------------------------------
@@ -31,6 +29,11 @@ namespace
 	const int TEXTURE_IDX = 0;					// 変えるテクスチャの番号
 }
 
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CRock*> CRock::m_list = {};		// リスト
+
 //==============================
 // コンストラクタ
 //==============================
@@ -39,15 +42,8 @@ CRock::CRock() : CModel(TYPE_ROCK, PRIORITY_BLOCK)
 	// 全ての値をクリアする
 	m_nBreakLevel = 0;			// 破壊レベル
 
-	m_pPrev = nullptr;			// 前のポインタ
-	m_pNext = nullptr;			// 次のポインタ
-
-	if (CRockManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// マネージャーへの登録処理
-		CRockManager::Get()->Regist(this);
-	}
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -56,42 +52,6 @@ CRock::CRock() : CModel(TYPE_ROCK, PRIORITY_BLOCK)
 CRock::~CRock()
 {
 
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-void CRock::SetPrev(CRock* pPrev)
-{
-	// 前のポインタを設定する
-	m_pPrev = pPrev;
-}
-
-//============================
-// 後のポインタの設定処理
-//============================
-void CRock::SetNext(CRock* pNext)
-{
-	// 次のポインタを設定する
-	m_pNext = pNext;
-}
-
-//============================
-// 前のポインタの設定処理
-//============================
-CRock* CRock::GetPrev(void) const
-{
-	// 前のポインタを返す
-	return m_pPrev;
-}
-
-//============================
-// 次のポインタの設定処理
-//============================
-CRock* CRock::GetNext(void) const
-{
-	// 次のポインタを返す
-	return m_pNext;
 }
 
 //==============================
@@ -118,16 +78,8 @@ void CRock::Uninit(void)
 	// 終了処理
 	CModel::Uninit();
 
-	if (CRockManager::Get() != nullptr)
-	{ // マネージャーが存在していた場合
-
-		// リスト構造の引き抜き処理
-		CRockManager::Get()->Pull(this);
-	}
-
-	// リスト構造関係のポインタを NULL にする
-	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
@@ -240,4 +192,13 @@ CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXV
 
 	// 岩のポインタを返す
 	return pRock;
+}
+
+//=======================================
+// リストの取得処理
+//=======================================
+CListManager<CRock*> CRock::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }

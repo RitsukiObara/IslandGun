@@ -11,6 +11,7 @@
 // インクルードファイル
 //***********************************
 #include "model.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // クラス定義(小判)
@@ -31,12 +32,6 @@ public:			// 誰でもアクセスできる
 	CCoin();					// コンストラクタ
 	~CCoin();					// デストラクタ
 
-	// リスト構造関係
-	void SetPrev(CCoin* pPrev);	// 前のポインタの設定処理
-	void SetNext(CCoin* pNext);	// 後のポインタの設定処理
-	CCoin* GetPrev(void) const;	// 前のポインタの設定処理
-	CCoin* GetNext(void) const;	// 次のポインタの設定処理
-
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
 	void Uninit(void) override;		// 終了処理
@@ -48,6 +43,8 @@ public:			// 誰でもアクセスできる
 
 	// 静的メンバ関数
 	static CCoin* Create(const D3DXVECTOR3& pos);	// 生成処理
+
+	static CListManager<CCoin*> GetList(void);		// リストの取得処理
 
 private:		// 自分だけアクセスできる
 
@@ -61,9 +58,8 @@ private:		// 自分だけアクセスできる
 	float m_fCycleSpeed;	// 回転速度
 	float m_fHeightDest;	// 目標の高さ
 
-	// リスト構造関係
-	CCoin* m_pPrev;	// 前へのポインタ
-	CCoin* m_pNext;	// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CCoin*> m_list;		// リスト
 };
 
 #endif

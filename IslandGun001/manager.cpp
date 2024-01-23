@@ -19,17 +19,6 @@
 #include "light.h"
 #include "fade.h"
 
-#include "elevation_manager.h"
-#include "mesh_manager.h"
-#include "bullet_manager.h"
-#include "enemy_manager.h"
-#include "coin_manager.h"
-#include "gold_bone_manager.h"
-#include "tree_manager.h"
-#include "palm_fruit_manager.h"
-#include "rock_manager.h"
-#include "block_manager.h"
-
 //--------------------------------------------
 // 静的メンバ変数宣言
 //--------------------------------------------
@@ -56,17 +45,6 @@ CManager::~CManager()
 //=========================================
 HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
-	// マネージャーの生成処理
-	CElevationManager::Create();		// 起伏マネージャー
-	CMeshManager::Create();				// メッシュマネージャー
-	CBulletManager::Create();			// 弾マネージャー
-	CCoinManager::Create();				// 小判マネージャー
-	CGoldBoneManager::Create();			// 金の骨マネージャー
-	CTreeManager::Create();				// 木マネージャー
-	CPalmFruitManager::Create();		// ヤシの実マネージャー
-	CRockManager::Create();				// 岩マネージャー
-	CBlockManager::Create();			// ブロックマネージャー
-
 	if (m_pRenderer == nullptr)
 	{ // レンダラーへのポインタが NULL の場合
 
@@ -364,17 +342,6 @@ void CManager::Uninit(void)
 		m_pScene->Uninit();
 		m_pScene = nullptr;
 	}
-
-	// マネージャーの終了処理
-	CElevationManager::Get()->Uninit();		// 起伏マネージャー
-	CMeshManager::Get()->Uninit();			// メッシュマネージャー
-	CBulletManager::Get()->Uninit();		// 弾マネージャー
-	CCoinManager::Get()->Uninit();			// 小判マネージャー
-	CGoldBoneManager::Get()->Uninit();		// 金の骨マネージャー
-	CTreeManager::Get()->Uninit();			// 木マネージャー
-	CPalmFruitManager::Get()->Uninit();		// ヤシの実マネージャー
-	CRockManager::Get()->Uninit();			// 岩マネージャー
-	CBlockManager::Get()->Uninit();			// ブロックマネージャー
 
 	// マネージャーのメモリを解放する
 	delete m_pManager;

@@ -11,6 +11,7 @@
 // インクルードファイル
 //***********************************
 #include "objectbillboard.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // クラス定義(CBullet)
@@ -30,12 +31,6 @@ public:
 	CBullet();				// コンストラクタ
 	~CBullet();				// デストラクタ
 
-	// リスト構造関係
-	void SetPrev(CBullet* pPrev);	// 前のポインタの設定処理
-	void SetNext(CBullet* pNext);	// 後のポインタの設定処理
-	CBullet* GetPrev(void) const;	// 前のポインタの設定処理
-	CBullet* GetNext(void) const;	// 次のポインタの設定処理
-
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
 	void Uninit(void) override;		// 終了処理
@@ -47,6 +42,8 @@ public:
 	// 静的メンバ関数
 	static CBullet* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
 
+	static CListManager<CBullet*> GetList(void);			// リストの取得処理
+
 private:
 
 	// メンバ変数
@@ -54,9 +51,8 @@ private:
 	TYPE m_type;			// 種類
 	int m_nLife;			// 寿命
 
-	// リスト構造関係
-	CBullet* m_pPrev;		// 前へのポインタ
-	CBullet* m_pNext;		// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CBullet*> m_list;		// リスト
 };
 
 #endif

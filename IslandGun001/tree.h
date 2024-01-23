@@ -11,6 +11,7 @@
 // インクルードファイル
 //***********************************
 #include "model.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // クラス定義(木)
@@ -29,12 +30,6 @@ public:			// 誰でもアクセスできる
 	CTree(CObject::TYPE type = TYPE_TREE, PRIORITY priority = PRIORITY_BLOCK);				// オーバーロードコンストラクタ
 	virtual ~CTree();		// デストラクタ
 
-	// リスト構造関係
-	void SetPrev(CTree* pPrev);		// 前のポインタの設定処理
-	void SetNext(CTree* pNext);		// 後のポインタの設定処理
-	CTree* GetPrev(void) const;		// 前のポインタの設定処理
-	CTree* GetNext(void) const;		// 次のポインタの設定処理
-
 	// メンバ関数
 	virtual HRESULT Init(void) override;	// 初期化処理
 	virtual void Uninit(void) override;		// 終了処理
@@ -50,14 +45,15 @@ public:			// 誰でもアクセスできる
 	// 静的メンバ関数
 	static CTree* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);	// 生成処理
 
+	static CListManager<CTree*> GetList(void);			// リストの取得処理
+
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
 	TYPE m_type;		// 種類
 	
-	// リスト構造関係
-	CTree* m_pPrev;		// 前へのポインタ
-	CTree* m_pNext;		// 次へのポインタ
+	// 静的メンバ変数
+	static CListManager<CTree*> m_list;		// リスト
 };
 
 #endif
