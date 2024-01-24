@@ -13,7 +13,7 @@
 #include "object3D.h"
 
 //--------------------------------------------
-// クラス(弾クラス)
+// クラス(当たり判定クラス)
 //--------------------------------------------
 class CCollPolygon : public CObject3D
 {
@@ -31,9 +31,10 @@ public:			// 誰でもアクセスできる
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& VtxMax, const D3DXVECTOR3& VtxMin);		// 情報の設定処理
 
 	// セット・ゲット関数
-	D3DXVECTOR3 GetVtxMax(void) const;		// 最大値の取得処理
-
-	D3DXVECTOR3 GetVtxMin(void) const;		// 最小値の取得処理
+	D3DXVECTOR3 GetLeftUp(void) const;		// 左上座標の取得処理
+	D3DXVECTOR3 GetRightUp(void) const;		// 右上座標の取得処理
+	D3DXVECTOR3 GetLeftDown(void) const;	// 左下座標の取得処理
+	D3DXVECTOR3 GetRightDown(void) const;	// 右下座標の取得処理
 
 	int GetNumID(void) const;				// ポリゴンの番号の取得処理
 
@@ -46,8 +47,10 @@ public:			// 誰でもアクセスできる
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
-	D3DXVECTOR3 m_vtxMax;		// 右上の座標
-	D3DXVECTOR3 m_vtxMin;		// 左下の座標
+	D3DXVECTOR3 m_vtxLeftUp;	// 左上の座標
+	D3DXVECTOR3 m_vtxRightUp;	// 右上の座標
+	D3DXVECTOR3 m_vtxLeftDown;	// 左下の座標
+	D3DXVECTOR3 m_vtxRightDown;	// 右下の座標
 	int m_nNumID;				// ポリゴンの番号
 
 	// 静的メンバ変数

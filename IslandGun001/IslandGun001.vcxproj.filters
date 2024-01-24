@@ -357,6 +357,9 @@
     <ClCompile Include="grass.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
+    <ClCompile Include="object3D_multitex.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -646,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="grass.h">
       <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="object3D_multitex.h">
+      <Filter>object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

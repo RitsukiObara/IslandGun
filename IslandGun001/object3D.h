@@ -31,8 +31,9 @@ public:			// 誰でもアクセスできる
 
 	// 頂点操作系
 	void SetVertex(void);									// 頂点情報の設定
-	void SetVertexHardCoding(const D3DXVECTOR3& VtxMax, const D3DXVECTOR3& VtxMin);			// 頂点情報の設定(決め打ち)
+	void SetVertexHardCoding(const D3DXVECTOR3& leftUp, const D3DXVECTOR3& rightUp, const D3DXVECTOR3& leftDown, const D3DXVECTOR3& rightDown);			// 頂点情報の設定(決め打ち)
 	void SetVertexElev(float fHeight);						// 起伏のある頂点情報の設定
+	void SetVertexUnder(void);								// 下中心の頂点座標の設定処理
 	void SetVtxColor(const D3DXCOLOR& col);					// 頂点カラーの設定処理
 	void SetVtxTextureWidth(const D3DXVECTOR2& size);		// 頂点テクスチャの設定処理(縦の一定間隔のテクスチャ配分)
 	void SetVtxTextureHeight(const D3DXVECTOR2& size);		// 頂点テクスチャの設定処理(横の一定間隔のテクスチャ配分)

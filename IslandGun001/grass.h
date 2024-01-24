@@ -38,7 +38,14 @@ public:
 
 private:
 
+	// メンバ関数
+	//void SetVertexPos(void);		// 頂点座標の設定処理
+
 	// メンバ変数
+	D3DXVECTOR3 m_LeftUp;			// 目的の左上の座標
+	D3DXVECTOR3 m_RightUp;			// 目的の右上の座標
+	D3DXVECTOR3 m_LeftUpDest;		// 目的の左上の座標
+	D3DXVECTOR3 m_RightUpDest;		// 目的の右上の座標
 
 	// 静的メンバ変数
 	static CListManager<CGrass*> m_list;		// リスト

@@ -5,17 +5,21 @@
 //
 //=======================================
 #include "manager.h"
+#include "game.h"
 #include "grass.h"
 #include "renderer.h"
 #include "texture.h"
 #include "useful.h"
+
+#include "player.h"
 
 //---------------------------------------
 // 無名名前空間
 //---------------------------------------
 namespace
 {
-	const char* TEXTURE = "data\\TEXTURE\\Grass001.png";		// テクスチャ
+	const char* TEXTURE = "data\\TEXTURE\\Diabolo.jpg";		// テクスチャ
+	const float SUB_LENGTH = 500.0f;			// 傾き始める長さ
 }
 
 //---------------------------------------
@@ -26,8 +30,12 @@ CListManager<CGrass*> CGrass::m_list = {};		// リスト
 //=========================
 // コンストラクタ
 //=========================
-CGrass::CGrass() : CObject3D(CObject::TYPE_CONFETTI, CObject::PRIORITY_BLOCK)
+CGrass::CGrass() : CObject3D(CObject::TYPE_GRASS, CObject::PRIORITY_BG)
 {
+	// 全ての値をクリアする
+	m_LeftUpDest = NONE_D3DXVECTOR3;		// 目的の左上の座標
+	m_RightUpDest = NONE_D3DXVECTOR3;		// 目的の右上の座標
+
 	// リストに追加する
 	m_list.Regist(this);
 }
@@ -73,7 +81,8 @@ void CGrass::Uninit(void)
 //=========================
 void CGrass::Update(void)
 {
-
+	// 頂点座標の設定処理
+	SetVertexUnder();
 }
 
 //=========================
@@ -107,6 +116,9 @@ void CGrass::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXV
 
 	// テクスチャの割り当て処理
 	BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE));
+
+	// 頂点座標の設定処理
+	SetVertexUnder();
 }
 
 //=========================
@@ -172,3 +184,81 @@ CListManager<CGrass*> CGrass::GetList(void)
 	// リストマネージャーを返す
 	return m_list;
 }
+//
+////=========================
+//// 頂点座標の設定処理
+////=========================
+//void CGrass::SetVertexPos(void)
+//{
+//	if (CGame::GetPlayer() != nullptr)
+//	{ // プレイヤーが NULL じゃない場合
+//
+//		D3DXVECTOR3 posPlayer = CGame::GetPlayer()->GetPos();	// プレイヤーの位置
+//		D3DXVECTOR3 pos = GetPos();		// 位置
+//		float fRotY = GetRot().y;		// Y軸の向き
+//		D3DXVECTOR3 size = GetSize();	// サイズ
+//		float fRotTop = 0.0f;			// 上の向き
+//		float fLength = 0.0f;			// 長さ
+//
+//		// 上頂点の向きを設定する
+//		fRotTop = atan2f(pos.x - posPlayer.x, pos.z - posPlayer.z);
+//
+//		// 長さを設定する
+//		fLength = sqrtf((posPlayer.x - pos.x) * (posPlayer.x - pos.x) + (posPlayer.z - pos.z) * (posPlayer.z - pos.z));
+//
+//		D3DXVECTOR3 posLeftUp;			// 左上の座標
+//		D3DXVECTOR3 posRightUp;			// 右上の座標
+//		D3DXVECTOR3 posLeftDown;		// 左下の座標
+//		D3DXVECTOR3 posRightDown;		// 右下の座標
+//
+//		// 左下の座標を設定する
+//		posLeftDown.x = -size.x;
+//		posLeftDown.y = 0.0f;
+//		posLeftDown.z = 0.0f;
+//
+//		// 右下の座標を設定する
+//		posRightDown.x = size.x;
+//		posRightDown.y = 0.0f;
+//		posRightDown.z = 0.0f;
+//
+//		if (fLength <= 140.0f)
+//		{ // 一定の距離まで近づいた場合
+//
+//			// 左上の座標を設定する
+//			m_LeftUpDest.x = posLeftDown.x + sinf(fRotTop + fRotY + (GetMatrix()._11 - GetMatrix()._13)) * size.y;
+//			m_LeftUpDest.y = 40.0f;
+//			m_LeftUpDest.z = posLeftDown.z + cosf(fRotTop + fRotY + (GetMatrix()._11 - GetMatrix()._13)) * size.y;
+//
+//			// 右上の座標を設定する
+//			m_RightUpDest.x = posRightDown.x + sinf(fRotTop + fRotY + (GetMatrix()._11 - GetMatrix()._13)) * size.y;
+//			m_RightUpDest.y = 40.0f;
+//			m_RightUpDest.z = posRightDown.z + cosf(fRotTop + fRotY + (GetMatrix()._11 - GetMatrix()._13)) * size.y;
+//		}
+//		else
+//		{ // 上記以外
+//
+//			// 左上の座標を設定する
+//			m_LeftUpDest.x = -size.x;
+//			m_LeftUpDest.y = size.y;
+//			m_LeftUpDest.z = 0.0f;
+//
+//			// 右上の座標を設定する
+//			m_RightUpDest.x = size.x;
+//			m_RightUpDest.y = size.y;
+//			m_RightUpDest.z = 0.0f;
+//		}
+//
+//		// 均等な補正処理
+//		useful::Correct(m_LeftUpDest.x, &m_LeftUp.x, 0.15f);
+//		useful::Correct(m_LeftUpDest.y, &m_LeftUp.y, 0.15f);
+//		useful::Correct(m_LeftUpDest.z, &m_LeftUp.z, 0.15f);
+//
+//		// 均等な補正処理
+//		useful::Correct(m_RightUpDest.x, &m_RightUp.x, 0.15f);
+//		useful::Correct(m_RightUpDest.y, &m_RightUp.y, 0.15f);
+//		useful::Correct(m_RightUpDest.z, &m_RightUp.z, 0.15f);
+//
+//		// 頂点座標の設定処理
+//		SetVertexHardCoding(m_LeftUp, m_RightUp, posLeftDown, posRightDown);
+//	}
+//}

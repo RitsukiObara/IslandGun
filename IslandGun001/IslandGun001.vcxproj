@@ -209,6 +209,7 @@
     <ClCompile Include="object2D.cpp" />
     <ClCompile Include="object3D.cpp" />
     <ClCompile Include="object3Dfan.cpp" />
+    <ClCompile Include="object3D_multitex.cpp" />
     <ClCompile Include="objectAnim.cpp" />
     <ClCompile Include="objectbillboard.cpp" />
     <ClCompile Include="objectDonut2D.cpp" />
@@ -310,6 +311,7 @@
     <ClInclude Include="object2D.h" />
     <ClInclude Include="object3D.h" />
     <ClInclude Include="object3Dfan.h" />
+    <ClInclude Include="object3D_multitex.h" />
     <ClInclude Include="objectAnim.h" />
     <ClInclude Include="objectbillboard.h" />
     <ClInclude Include="objectDonut2D.h" />

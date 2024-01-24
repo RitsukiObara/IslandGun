@@ -22,9 +22,11 @@ int CCollPolygon::m_nNumAll = 0;			// ポリゴンの総数
 CCollPolygon::CCollPolygon() : CObject3D(TYPE_COLLPOLY, CObject::PRIORITY_BG)
 {
 	// 全ての値をクリアする
-	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 最大値
-	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 最小値
-	m_nNumID = NONE_COLLIDX;						// ポリゴンの番号
+	m_vtxLeftUp = NONE_D3DXVECTOR3;		// 左上の座標
+	m_vtxRightUp = NONE_D3DXVECTOR3;	// 右上の座標
+	m_vtxLeftDown = NONE_D3DXVECTOR3;	// 左下の座標
+	m_vtxRightDown = NONE_D3DXVECTOR3;	// 右下の座標
+	m_nNumID = NONE_COLLIDX;			// ポリゴンの番号
 }
 
 //===========================================
@@ -46,11 +48,6 @@ HRESULT CCollPolygon::Init(void)
 		// 失敗を返す
 		return E_FAIL;
 	}
-
-	// 全ての値を初期化する
-	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 最大値
-	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 最小値
-	m_nNumID = NONE_COLLIDX;						// ポリゴンの番号
 
 	// 成功を返す
 	return S_OK;
@@ -113,12 +110,14 @@ void CCollPolygon::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& VtxMax, co
 	SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));		// 向き
 	SetSize(D3DXVECTOR3(0.0f, 0.0f, 0.0f));		// サイズ
 
-	// 全ての値を初期化する
-	m_vtxMax = VtxMax;			// 最大値
-	m_vtxMin = VtxMin;			// 最小値
+	// 全ての値を設定する
+	m_vtxLeftUp = D3DXVECTOR3();		// 左上の座標
+	m_vtxRightUp = NONE_D3DXVECTOR3;	// 右上の座標
+	m_vtxLeftDown = NONE_D3DXVECTOR3;	// 左下の座標
+	m_vtxRightDown = NONE_D3DXVECTOR3;	// 右下の座標
 
 	// 頂点情報の設定処理(決め打ち版)
-	SetVertexHardCoding(VtxMax, VtxMin);
+	SetVertexHardCoding(m_vtxLeftUp, m_vtxRightUp, m_vtxLeftDown, m_vtxRightDown);
 
 	// ポリゴンの番号を設定する
 	m_nNumID = m_nNumAll;
@@ -141,21 +140,39 @@ void CCollPolygon::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& VtxMax, co
 }
 
 //===========================================
-// 最大値の取得処理
+// 左上座標の取得処理
 //===========================================
-D3DXVECTOR3 CCollPolygon::GetVtxMax(void) const
+D3DXVECTOR3 CCollPolygon::GetLeftUp(void) const
 {
-	// 最大数を返す
-	return m_vtxMax;
+	// 左上の座標を返す
+	return m_vtxLeftUp;
 }
 
 //===========================================
-// 最小値の取得処理
+// 右上座標の取得処理
 //===========================================
-D3DXVECTOR3 CCollPolygon::GetVtxMin(void) const
+D3DXVECTOR3 CCollPolygon::GetRightUp(void) const
 {
-	// 最小数を返す
-	return m_vtxMin;
+	// 右上の座標を返す
+	return m_vtxRightUp;
+}
+
+//===========================================
+// 左下座標の取得処理
+//===========================================
+D3DXVECTOR3 CCollPolygon::GetLeftDown(void) const
+{
+	// 左下の座標を返す
+	return m_vtxLeftDown;
+}
+
+//===========================================
+// 右下座標の取得処理
+//===========================================
+D3DXVECTOR3 CCollPolygon::GetRightDown(void) const
+{
+	// 右下の座標を返す
+	return m_vtxRightDown;
 }
 
 //===========================================
