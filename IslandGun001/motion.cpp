@@ -321,24 +321,44 @@ bool CMotion::IsFinish(void)
 }
 
 //============================================================
-// モーションの情報の設定処理
+// 情報の設定処理
 //============================================================
-void CMotion::SetInfo(Info info)
-{
-	// モーションの情報を入れる
-	m_aInfo[m_nType] = info;
-}
-
-//============================================================
-// モデルの設定処理
-//============================================================
-void CMotion::SetModel(CHierarchy** ppHier, int nNumModel)
+void CMotion::SetInfo(const STYLE style, CHierarchy** ppHier, int nNumModel)
 {
 	// モデルの情報を設定する
 	m_ppModel = ppHier;
 
 	// パーツの総数を設定する
 	m_nNumModel = nNumModel;
+
+	for (int nCntMotion = 0; nCntMotion < MAX_MOTION; nCntMotion++)
+	{
+		// モーション情報を設定する
+		m_aInfo[nCntMotion] = m_aSaveData[style].aInfo[nCntMotion];
+	}
+
+	for (int nCntData = 0; nCntData < m_nNumModel; nCntData++)
+	{
+		// モデル情報を設定
+		m_ppModel[nCntData]->SetFileData(m_aSaveData[style].aModelData[nCntData]);
+		m_ppModel[nCntData]->SetParentIdx(m_aSaveData[style].aParent[nCntData]);
+
+		if (m_aSaveData[style].aParent[nCntData] != NONE_PARENT)
+		{ // 親が居た場合
+
+			// 親の設定処理
+			m_ppModel[nCntData]->SetParent(m_ppModel[m_aSaveData[style].aParent[nCntData]]);
+		}
+
+		// 位置の設定処理
+		m_ppModel[nCntData]->SetPos(m_aSaveData[style].posInit[nCntData]);
+
+		// 初期位置を設定する
+		m_posInit[nCntData] = m_aSaveData[style].posInit[nCntData];
+
+		// 向きの設定処理
+		m_ppModel[nCntData]->SetRot(m_aSaveData[style].rotInit[nCntData]);
+	}
 }
 
 //============================================================
@@ -347,13 +367,11 @@ void CMotion::SetModel(CHierarchy** ppHier, int nNumModel)
 void CMotion::Load(const STYLE style)
 {
 	// 変数を宣言
-	D3DXVECTOR3 rot;				// 向きの設定処理
 	int nEnd;						// テキスト読み込み終了の確認用
 	int nCntPart = 0;				// セットしたパーツの数
 	int nMotionCnt = 0;				// モーションの番号
 	int nLoop = 0;					// ループの読み込み変数
 	int nCntKey = 0;				// キーの番号
-	int nParent = NONE_PARENT;		// 親の番号
 	int nCntModel = 0;				// モデルのカウント
 	char aString[MAX_STRING];		// テキストの文字列の代入用
 	char aModelName[MAX_STRING];	// モデルの名前の文字列の代入用
@@ -377,8 +395,8 @@ void CMotion::Load(const STYLE style)
 			{ // 読み込んだ文字列が NUM_MODEL だった場合
 
 				// モデルの数を読み込む
-				fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
-				fscanf(pFile, "%d", &m_nNumModel);				// 総モデル数を読み込む
+				fscanf(pFile, "%s", &aString[0]);						// = を読み込む (不要)
+				fscanf(pFile, "%d", &m_aSaveData[style].nNumModel);		// 総モデル数を読み込む
 			}
 
 			if (strcmp(&aString[0], "MODEL_FILENAME") == 0)
@@ -421,41 +439,25 @@ void CMotion::Load(const STYLE style)
 							else if (strcmp(&aString[0], "PARENT") == 0)
 							{ // 読み込んだ文字列が PARENT の場合
 								fscanf(pFile, "%s", &aString[0]);		// = を読み込む (不要)
-								fscanf(pFile, "%d", &nParent);			// 親の番号を読み込む
-
-								// 親モデルのインデックスを設定する
-								m_ppModel[nCntPart]->SetParentIdx(nParent);
-
-								if (nParent != NONE_PARENT)
-								{ // 親が居た場合
-
-									// 親の設定処理
-									m_ppModel[nCntPart]->SetParent(m_ppModel[nParent]);
-								}
+								fscanf(pFile, "%d", &m_aSaveData[style].aParent[nCntPart]);			// 親の番号を読み込む
 							}
 							else if (strcmp(&aString[0], "POS") == 0)
 							{ // 読み込んだ文字列が POS の場合
 								fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
 								fscanf(pFile, "%f%f%f",							// モデルの位置を読み込む
-									&m_posInit[nCntPart].x,
-									&m_posInit[nCntPart].y,
-									&m_posInit[nCntPart].z
+									&m_aSaveData[style].posInit[nCntPart].x,
+									&m_aSaveData[style].posInit[nCntPart].y,
+									&m_aSaveData[style].posInit[nCntPart].z
 								);
-
-								// 位置の設定処理
-								m_ppModel[nCntPart]->SetPos(m_posInit[nCntPart]);
 							}
 							else if (strcmp(&aString[0], "ROT") == 0)
 							{ // 読み込んだ文字列が ROT の場合
 								fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
 								fscanf(pFile, "%f%f%f",							// モデルの向きを読み込む
-									&rot.x,
-									&rot.y,
-									&rot.z
+									&m_aSaveData[style].rotInit[nCntPart].x,
+									&m_aSaveData[style].rotInit[nCntPart].y,
+									&m_aSaveData[style].rotInit[nCntPart].z
 								);
-
-								// 向きの設定処理
-								m_ppModel[nCntPart]->SetRot(rot);
 							}
 						} while (strcmp(&aString[0], "END_PARTSSET") != 0);		// 読み込んだ文字列が PARTSSET ではない場合ループ
 
@@ -482,21 +484,21 @@ void CMotion::Load(const STYLE style)
 						{ // ループしない判定を読み込んだ場合
 
 							// ループしない判定にする
-							m_aInfo[nMotionCnt].bLoop = false;
+							m_aSaveData[style].aInfo[nMotionCnt].bLoop = false;
 						}
 						else
 						{ // ループする判定を読み込んだ場合
 
 							// ループする判定にする
-							m_aInfo[nMotionCnt].bLoop = true;
+							m_aSaveData[style].aInfo[nMotionCnt].bLoop = true;
 						}
 					}
 
 					if (strcmp(&aString[0], "NUM_KEY") == 0)
 					{ // 読み込んだ文字列が NUM_KEY だった場合
 
-						fscanf(pFile, "%s", &aString[0]);							// = を読み込む (不要)
-						fscanf(pFile, "%d", &m_aInfo[nMotionCnt].nNumKey);			// キーの総数を読み込む
+						fscanf(pFile, "%s", &aString[0]);											// = を読み込む (不要)
+						fscanf(pFile, "%d", &m_aSaveData[style].aInfo[nMotionCnt].nNumKey);			// キーの総数を読み込む
 					}
 
 					if (strcmp(&aString[0], "KEYSET") == 0)
@@ -511,8 +513,8 @@ void CMotion::Load(const STYLE style)
 							if (strcmp(&aString[0], "FRAME") == 0)
 							{ // 読み込んだ文字列が FRAME だった場合
 
-								fscanf(pFile, "%s", &aString[0]);											// = を読み込む (不要)
-								fscanf(pFile, "%d", &m_aInfo[nMotionCnt].aKeyInfo[nCntKey].nFrame);			// フレームの総数を読み込む
+								fscanf(pFile, "%s", &aString[0]);												// = を読み込む (不要)
+								fscanf(pFile, "%d", &m_aSaveData[style].aInfo[nMotionCnt].aKeyInfo[nCntKey].nFrame);	// フレームの総数を読み込む
 							}
 
 							if (strcmp(&aString[0], "<<") == 0)
@@ -533,9 +535,9 @@ void CMotion::Load(const STYLE style)
 									{ // 読み込んだ文字列が POS だった場合
 										fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
 										fscanf(pFile, "%f%f%f",							// モデルの位置を読み込む
-											&m_aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fPosX,
-											&m_aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fPosY,
-											&m_aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fPosZ
+											&m_aSaveData[style].aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fPosX,
+											&m_aSaveData[style].aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fPosY,
+											&m_aSaveData[style].aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fPosZ
 										);
 									}
 
@@ -543,9 +545,9 @@ void CMotion::Load(const STYLE style)
 									{ // 読み込んだ文字列が ROT の場合
 										fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
 										fscanf(pFile, "%f%f%f",							// モデルの向きを読み込む
-											&m_aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fRotX,
-											&m_aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fRotY,
-											&m_aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fRotZ
+											&m_aSaveData[style].aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fRotX,
+											&m_aSaveData[style].aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fRotY,
+											&m_aSaveData[style].aInfo[nMotionCnt].aKeyInfo[nCntKey].aKey[nCntPart].fRotZ
 										);
 									}
 								} while (strcmp(&aString[0], "END_KEY") != 0);		// 読み込んだ文字列が END_KEY ではない場合ループ
@@ -629,10 +631,10 @@ CMotion* CMotion::Create()
 }
 
 //============================================================
-// モデル情報の取得処理
+// モデルの総数の取得処理
 //============================================================
-CXFile::SXFile CMotion::GetSaveData(const STYLE style, const int nCount)
+int CMotion::GetNumModel(const STYLE style)
 {
-	// モデルの情報を返す
-	return m_aSaveData[style].aModelData[nCount];
+	// モデルの総数を返す
+	return m_aSaveData[style].nNumModel;
 }

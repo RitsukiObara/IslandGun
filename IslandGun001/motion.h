@@ -65,7 +65,12 @@ public:			// 誰でもアクセスできる
 	// 構造体定義(保存データ)
 	struct SSaveData
 	{
-		CXFile::SXFile aModelData[MAX_PARTS];
+		Info aInfo[MAX_MOTION];						// モーションの情報
+		CXFile::SXFile aModelData[MAX_PARTS];		// モデルの情報
+		D3DXVECTOR3 posInit[MAX_PARTS];				// 初期位置
+		D3DXVECTOR3 rotInit[MAX_PARTS];				// 初期向き
+		int aParent[MAX_PARTS];						// 親の番号
+		int nNumModel;								// モデルの総数
 	};
 
 	CMotion();				// コンストラクタ
@@ -80,13 +85,13 @@ public:			// 誰でもアクセスできる
 	void Update(void);									// モーションの更新処理
 	int GetType(void);									// 種類の取得処理
 	bool IsFinish(void);								// モーションの終了処理
-	void SetInfo(Info info);							// モーションの情報の設定処理
-	void SetModel(CHierarchy** ppHier, int nNumModel);	// モデルの設定処理
-	void Load(const STYLE style);						// モーションのロード処理
+	void SetInfo(const STYLE style, CHierarchy** ppHier, int nNumModel);	// モデルの設定処理
 
 	// 静的メンバ関数
 	static CMotion* Create();							// モーションの生成処理
-	static CXFile::SXFile GetSaveData(const STYLE style, const int nCount);	// モデル情報の取得処理
+
+	static void Load(const STYLE style);				// モーションのロード処理
+	static int GetNumModel(const STYLE style);			// モデルの総数の取得処理
 
 private:		// 自分だけアクセスできる
 

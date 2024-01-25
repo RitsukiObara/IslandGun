@@ -132,8 +132,8 @@ HRESULT CPlayer::Init(void)
 		return E_FAIL;
 	}
 
-	// ベタ打ち
-	SetNumModel(17);
+	// モデルの総数を設定する
+	SetNumModel(CMotion::GetNumModel(CMotion::STYLE_PLAYER));
 
 	// データの設定処理
 	CCharacter::SetData();
@@ -155,10 +155,7 @@ HRESULT CPlayer::Init(void)
 	{ // ポインタが NULL じゃない場合
 
 		// モーションの情報を取得する
-		m_pMotion->SetModel(GetHierarchy(), GetNumModel());
-
-		// ロード処理
-		m_pMotion->Load(CMotion::STYLE_PLAYER);
+		m_pMotion->SetInfo(CMotion::STYLE_PLAYER, GetHierarchy(), GetNumModel());
 	}
 	else
 	{ // ポインタが NULL じゃない場合
@@ -467,7 +464,6 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 		GetHierarchy(nCntData)->SetPosOld(pos);					// 前回の位置
 		GetHierarchy(nCntData)->SetRot(NONE_D3DXVECTOR3);		// 向き
 		GetHierarchy(nCntData)->SetScale(NONE_SCALE);			// 拡大率
-		GetHierarchy(nCntData)->SetFileData(CMotion::GetSaveData(CMotion::STYLE_PLAYER, nCntData));		// データの設定処理
 	}
 
 	// モーションの設定処理

@@ -80,8 +80,8 @@ HRESULT CEnemy::Init(void)
 		return E_FAIL;
 	}
 
-	// ベタ打ち
-	SetNumModel(6);
+	// モデルの総数を設定
+	SetNumModel(CMotion::GetNumModel(CMotion::STYLE_TORDLE));
 
 	// データの設定処理
 	CCharacter::SetData();
@@ -103,10 +103,7 @@ HRESULT CEnemy::Init(void)
 	{ // ポインタが NULL じゃない場合
 
 		// モーションの情報を取得する
-		m_pMotion->SetModel(GetHierarchy(), GetNumModel());
-
-		// ロード処理
-		m_pMotion->Load(CMotion::STYLE_TORDLE);
+		m_pMotion->SetInfo(CMotion::STYLE_TORDLE, GetHierarchy(), GetNumModel());
 	}
 	else
 	{ // ポインタが NULL じゃない場合
@@ -187,7 +184,6 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 		GetHierarchy(nCntData)->SetPosOld(pos);										// 前回の位置
 		GetHierarchy(nCntData)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));				// 向き
 		GetHierarchy(nCntData)->SetScale(NONE_SCALE);								// 拡大率
-		GetHierarchy(nCntData)->SetFileData(CMotion::GetSaveData(CMotion::STYLE_TORDLE, nCntData));	// データの設定処理
 	}
 
 	// モーションのリセット処理

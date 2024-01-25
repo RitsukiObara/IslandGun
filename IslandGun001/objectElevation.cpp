@@ -164,7 +164,7 @@ void CElevation::Draw(void)
 	D3DXMATRIX mtxRot, mtxTrans;		// 計算用マトリックス
 
 	// ライティングをOFFにする
-	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	//pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	// ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -204,7 +204,7 @@ void CElevation::Draw(void)
 		m_nNumIdx - 2);										// 描画するプリミティブ数
 
 	// ライティングをONにする
-	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+	//pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
 //================================

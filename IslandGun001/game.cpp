@@ -86,6 +86,10 @@ HRESULT CGame::Init(void)
 	//	m_pField = CField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1000.0f, 0.0f, 1000.0f));
 	//}
 
+	// モーションの読み込み処理
+	CMotion::Load(CMotion::STYLE_PLAYER);		// プレイヤー
+	CMotion::Load(CMotion::STYLE_TORDLE);		// タードル
+
 	// スカイボックスの生成処理
 	CSkyBox::Create();
 
