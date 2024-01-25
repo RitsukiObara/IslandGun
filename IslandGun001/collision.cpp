@@ -7,8 +7,9 @@
 //*******************************************
 // インクルードファイル
 //*******************************************
-#include "game.h"
 #include "collision.h"
+#include "useful.h"
+
 #include "shadowCircle.h"
 #include "objectElevation.h"
 #include "coin.h"
@@ -19,7 +20,7 @@
 #include "player_action.h"
 #include "gold_bone_UI.h"
 #include "palm_fruit.h"
-#include "useful.h"
+#include "rock.h"
 
 //===============================
 // マクロ定義
@@ -464,6 +465,48 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fHeight)
 
 			// 次のオブジェクトを代入する
 			pFruit = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+}
+
+//===============================
+// 岩との当たり判定
+//===============================
+void collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius)
+{
+	// ローカル変数宣言
+	CListManager<CRock*> list = CRock::GetList();
+	CRock* pRock = nullptr;			// 先頭の値
+	CRock* pRockEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pRock = list.GetTop();
+
+		// 末尾の値を取得する
+		pRockEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 円周の判定を付ける
+
+			if (pRock == pRockEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pRock = list.GetData(nIdx + 1);
 
 			// インデックスを加算する
 			nIdx++;

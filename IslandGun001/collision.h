@@ -52,6 +52,9 @@ namespace collision
 	// ƒ„ƒV‚ÌŽÀ‚Æ‚Ì“–‚½‚è”»’è
 	void PalmFruitHit(CPlayer* pPlayer, const float fHeight);			// ƒ„ƒV‚Ì–Ø‚Æ‚Ì“–‚½‚è”»’è
 
+	// Šâ‚Æ‚Ì“–‚½‚è”»’è
+	void RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius);		// Šâ‚Æ‚Ì“–‚½‚è”»’è
+	
 	// ”Ä—p“I‚È“–‚½‚è”»’è
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// ˜Z–Ê‘Ì‚Ì“–‚½‚è”»’è
 	bool HexahedronHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// ˜Z–Ê‘Ì‚Ìƒqƒbƒg”»’è

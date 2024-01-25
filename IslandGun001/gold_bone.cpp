@@ -19,6 +19,7 @@
 namespace
 {
 	const char* MODEL = "data\\MODEL\\GoldBone.x";		// モデルの名前
+	const float ROT_MOVE = 0.01f;						// モデルの向きの移動量
 }
 
 //-------------------------------------------
@@ -31,9 +32,6 @@ CListManager<CGoldBone*> CGoldBone::m_list = {};		// リスト
 //==============================
 CGoldBone::CGoldBone() : CModel(CObject::TYPE_GOLDBONE, CObject::PRIORITY_ENTITY)
 {
-	// 全ての値をクリアする
-	m_move = NONE_D3DXVECTOR3;	// 移動量
-
 	// リストに追加する
 	m_list.Regist(this);
 }
@@ -79,14 +77,17 @@ void CGoldBone::Uninit(void)
 //========================================
 void CGoldBone::Update(void)
 {
-	// 位置を取得する
-	D3DXVECTOR3 pos = GetPos();
+	// 向きを取得する
+	D3DXVECTOR3 rot = GetRot();
 
-	// 移動させる
-	pos += m_move;
+	// 回す
+	rot.y += ROT_MOVE;
 
-	// 位置を適用する
-	SetPos(pos);
+	// 向きの正規化
+	useful::RotNormalize(&rot.y);
+
+	// 向きを適用する
+	SetRot(rot);
 }
 
 //=====================================
@@ -109,9 +110,6 @@ void CGoldBone::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& move)
 	SetRot(NONE_D3DXVECTOR3);				// 向き
 	SetScale(NONE_SCALE);					// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));		// モデルの情報
-
-	// 全ての値を設定する
-	m_move = move;	// 移動量
 }
 
 //=======================================

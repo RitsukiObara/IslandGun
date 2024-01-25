@@ -20,4 +20,3 @@ MODEL_FILENAME = data\MODEL\GoldBone.x				# 金の骨
 MODEL_FILENAME = data\MODEL\PalmTree.x				# ヤシの木
 MODEL_FILENAME = data\MODEL\PalmFruit.x				# ヤシの実
 MODEL_FILENAME = data\MODEL\PalmItem.x				# ヤシの実(アイテム体)
-MODEL_FILENAME = data\MODEL\Rock.x					# 岩

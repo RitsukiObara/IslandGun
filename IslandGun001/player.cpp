@@ -353,6 +353,9 @@ void CPlayer::Update(void)
 	// ブロックとの当たり判定処理
 	BlockCollision();
 
+	// 岩との当たり判定
+	RockCollision();
+
 	// 金の骨との当たり判定
 	collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
@@ -1157,6 +1160,21 @@ void CPlayer::BlockCollision(void)
 	}
 
 	// 位置を適用する
+	SetPos(pos);
+}
+
+//=======================================
+// 岩との当たり判定
+//=======================================
+void CPlayer::RockCollision(void)
+{
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
+
+	// 岩との当たり判定
+	collision::RockCollision(&pos, GetPosOld(), COLLISION_SIZE.x);
+
+	// 位置の設定処理
 	SetPos(pos);
 }
 

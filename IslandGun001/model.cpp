@@ -578,16 +578,16 @@ bool CModel::ModelCollision(D3DXVECTOR3* pos)
 				// 頂点座標を設定する
 				vtxPos[nCntIndex] = m_XFileData.vtxPos[dwIdx[nCntIndex]];
 
-				if (useful::LineOuterProductXZ(vtxPos[0], vtxPos[1], *pos) >= 0 &&
-					useful::LineOuterProductXZ(vtxPos[1], vtxPos[2], *pos) >= 0 &&
-					useful::LineOuterProductXZ(vtxPos[2], vtxPos[0], *pos) >= 0)
+				if (useful::LineOuterProductXZ(m_pos + vtxPos[0], m_pos + vtxPos[1], *pos) >= 0 &&
+					useful::LineOuterProductXZ(m_pos + vtxPos[1], m_pos + vtxPos[2], *pos) >= 0 &&
+					useful::LineOuterProductXZ(m_pos + vtxPos[2], m_pos + vtxPos[0], *pos) >= 0)
 				{ // 真ん中の境界線より左側に居た場合
 
 					// 法線の計算(正規化)
 					//NormalizeVector(nor, pVtx[nVtxRightDown].pos, pVtx[nVtxLeftUp].pos, pVtx[nVtxLeftDown].pos);
 
-					vec1 = vtxPos[1] - vtxPos[0];
-					vec2 = vtxPos[2] - vtxPos[0];
+					vec1 = (m_pos + vtxPos[1]) - (m_pos + vtxPos[0]);
+					vec2 = (m_pos + vtxPos[2]) - (m_pos + vtxPos[0]);
 
 					D3DXVec3Cross(&nor, &vec1, &vec2);
 
@@ -597,7 +597,7 @@ bool CModel::ModelCollision(D3DXVECTOR3* pos)
 					{ // 法線のYが0.0f以外の場合
 
 						// 高さを設定する
-						pos->y = (((pos->x - vtxPos[0].x) * nor.x + (-vtxPos[0].y) * nor.y + (pos->z - vtxPos[0].z) * nor.z) * -1.0f) / nor.y;
+						pos->y = (((pos->x - (m_pos.x + vtxPos[0].x)) * nor.x + (-(m_pos.y + vtxPos[0].y)) * nor.y + (pos->z - (m_pos.z + vtxPos[0].z)) * nor.z) * -1.0f) / nor.y;
 
 						// 着地判定を true にする
 						bLand = true;

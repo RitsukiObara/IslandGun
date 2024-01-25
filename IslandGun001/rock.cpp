@@ -19,7 +19,11 @@
 namespace
 {
 	const int MAX_BREAK_LEVEL = 3;				// 破壊レベルの最大値
-	const char* MODEL = "data\\MODEL\\Rock.x";	// モデルの名前
+	const char* MODEL[CRock::TYPE_MAX] =		// モデルの名前
+	{
+		"data\\MODEL\\Rock001.x",				// 柔らかい岩
+		"data\\MODEL\\Rock002.x"				// 硬い岩
+	};
 	const char* TEXTURE[MAX_BREAK_LEVEL] =		// 破壊レベルごとのテクスチャ
 	{
 		"data\\TEXTURE\\Rock001.png",
@@ -40,6 +44,7 @@ CListManager<CRock*> CRock::m_list = {};		// リスト
 CRock::CRock() : CModel(TYPE_ROCK, PRIORITY_BLOCK)
 {
 	// 全ての値をクリアする
+	m_type = TYPE_SOFT;			// 種類
 	m_nBreakLevel = 0;			// 破壊レベル
 
 	// リストに追加する
@@ -102,16 +107,17 @@ void CRock::Draw(void)
 //=====================================
 // 情報の設定処理
 //=====================================
-void CRock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
+void CRock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const TYPE type)
 {
 	// 情報の設定処理
 	SetPos(pos);					// 位置
 	SetPosOld(pos);					// 前回の位置
 	SetRot(rot);					// 向き
 	SetScale(scale);				// 拡大率
-	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL[type]));	// モデルの情報
 
 	// 全ての値を設定する
+	m_type = type;				// 種類
 	m_nBreakLevel = 0;			// 破壊レベル
 
 	// テクスチャの割り当て処理
@@ -142,7 +148,7 @@ void CRock::Break(void)
 //=======================================
 // 生成処理
 //=======================================
-CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
+CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const TYPE type)
 {
 	// ローカルオブジェクトを生成
 	CRock* pRock = nullptr;		// インスタンスを生成
@@ -178,7 +184,7 @@ CRock* CRock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXV
 		}
 
 		// 情報の設定処理
-		pRock->SetData(pos, rot, scale);
+		pRock->SetData(pos, rot, scale, type);
 	}
 	else
 	{ // オブジェクトが NULL の場合
