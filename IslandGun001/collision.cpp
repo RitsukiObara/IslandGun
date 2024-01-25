@@ -18,6 +18,7 @@
 #include "player.h"
 #include "player_action.h"
 #include "gold_bone_UI.h"
+#include "palm_fruit.h"
 #include "useful.h"
 
 //===============================
@@ -408,6 +409,61 @@ void collision::TreeAttack(const CPlayer& pPlayer, const float fHeight)
 
 			// 次のオブジェクトを代入する
 			pTree = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+}
+
+//===============================
+// ヤシの木との当たり判定
+//===============================
+void collision::PalmFruitHit(CPlayer* pPlayer, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posFruit = NONE_D3DXVECTOR3;		// 木の位置
+	D3DXVECTOR3 posPlayer = pPlayer->GetPos();		// プレイヤーの位置
+	float fRadiusFruit = 0.0f;						// 半径
+	CListManager<CPalmFruit*> list = CPalmFruit::GetList();
+	CPalmFruit* pFruit = nullptr;		// 先頭の値
+	CPalmFruit* pFruitEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
+
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pFruit = list.GetTop();
+
+		// 末尾の値を取得する
+		pFruitEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			posFruit = pFruit->GetPos();					// 木の位置
+			fRadiusFruit = pFruit->GetFileData().vtxMax.x;	// 半径
+
+			if (posPlayer.y <= posFruit.y + pFruit->GetFileData().vtxMax.y &&
+				posPlayer.y + fHeight >= posFruit.y &&
+				useful::CircleCollisionXZ(posPlayer, posFruit, DAGGER_RADIUS, fRadiusFruit) == true)
+			{ // 円柱の当たり判定に入った場合
+
+				// ヒット処理
+				pFruit->Hit();
+			}
+
+			if (pFruit == pFruitEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pFruit = list.GetData(nIdx + 1);
 
 			// インデックスを加算する
 			nIdx++;

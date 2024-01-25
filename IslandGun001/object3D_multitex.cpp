@@ -493,6 +493,13 @@ void CObject3DMultiTex::SetType(const TYPE type)
 
 		break;
 
+	case CObject3DMultiTex::TYPE_FUSION:
+
+		// 合成
+		m_pTexStyle = new CFusion;
+
+		break;
+
 	default:
 
 		// 停止
@@ -631,6 +638,39 @@ void CObject3DMultiTex::SetVtxTextureHeight(const D3DXVECTOR2& size, int nCnt)
 		pVtx[1].texM = D3DXVECTOR2(1.0f, 0.0f);
 		pVtx[2].texM = D3DXVECTOR2(0.0f, fTexHeight);
 		pVtx[3].texM = D3DXVECTOR2(1.0f, fTexHeight);
+	}
+
+	// 頂点バッファをアンロックする
+	m_pVtxBuff->Unlock();
+}
+
+//===========================================
+// 頂点テクスチャの設定処理(アニメーション版)
+//===========================================
+void CObject3DMultiTex::SetVtxTextureAnim(const D3DXVECTOR2& anim, int nCnt)
+{
+	VERTEX_3D_MULTI* pVtx;			// 頂点情報へのポインタ
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	if (nCnt == 0)
+	{ // 0の場合
+
+		// 頂点テクスチャの設定
+		pVtx[0].tex = D3DXVECTOR2(anim.x, anim.y);
+		pVtx[1].tex = D3DXVECTOR2(anim.x + 1.0f, anim.y);
+		pVtx[2].tex = D3DXVECTOR2(anim.x, anim.y + 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(anim.x + 1.0f, anim.y + 1.0f);
+	}
+	else
+	{ // 上記以外
+
+		// 頂点テクスチャの設定
+		pVtx[0].texM = D3DXVECTOR2(anim.x, anim.y);
+		pVtx[1].texM = D3DXVECTOR2(anim.x + 1.0f, anim.y);
+		pVtx[2].texM = D3DXVECTOR2(anim.x, anim.y + 1.0f);
+		pVtx[3].texM = D3DXVECTOR2(anim.x + 1.0f, anim.y + 1.0f);
 	}
 
 	// 頂点バッファをアンロックする

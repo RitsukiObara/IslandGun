@@ -18,7 +18,7 @@
 //-------------------------------------------
 namespace
 {
-	const char* MODEL = "data\\MODEL\\Rock.x";		// モデルの名前
+	const char* MODEL = "data\\MODEL\\IronBlock.x";		// モデルの名前
 }
 
 //-------------------------------------------
@@ -31,6 +31,10 @@ CListManager<CBlock*> CBlock::m_list = {};			// リスト
 //==============================
 CBlock::CBlock() : CModel(TYPE_BLOCK, PRIORITY_BLOCK)
 {
+	// 全ての値をクリアする
+	m_vtxMax = NONE_D3DXVECTOR3;		// 頂点の最大値
+	m_vtxMin = NONE_D3DXVECTOR3;		// 頂点の最小値
+
 	// リストに追加する
 	m_list.Regist(this);
 }
@@ -91,20 +95,33 @@ void CBlock::Draw(void)
 //=====================================
 // 情報の設定処理
 //=====================================
-void CBlock::SetData(const D3DXVECTOR3& pos)
+void CBlock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& scale)
 {
 	// 情報の設定処理
 	SetPos(pos);					// 位置
 	SetPosOld(pos);					// 前回の位置
 	SetRot(NONE_D3DXVECTOR3);		// 向き
-	SetScale(NONE_SCALE);			// 拡大率
+	SetScale(scale);				// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
+
+	// モデルの情報を取得する
+	CXFile::SXFile file = GetFileData();
+
+	// 最大値を反映する
+	m_vtxMax.x = file.vtxMax.x * scale.x;
+	m_vtxMax.y = file.vtxMax.y * scale.y;
+	m_vtxMax.z = file.vtxMax.z * scale.z;
+
+	// 最小値を反映する
+	m_vtxMin.x = file.vtxMin.x * scale.x;
+	m_vtxMin.y = file.vtxMin.y * scale.y;
+	m_vtxMin.z = file.vtxMin.z * scale.z;
 }
 
 //=======================================
 // 生成処理
 //=======================================
-CBlock* CBlock::Create(const D3DXVECTOR3& pos)
+CBlock* CBlock::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& scale)
 {
 	// ローカルオブジェクトを生成
 	CBlock* pBlock = nullptr;		// インスタンスを生成
@@ -140,7 +157,7 @@ CBlock* CBlock::Create(const D3DXVECTOR3& pos)
 		}
 
 		// 情報の設定処理
-		pBlock->SetData(pos);
+		pBlock->SetData(pos, scale);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -154,6 +171,24 @@ CBlock* CBlock::Create(const D3DXVECTOR3& pos)
 
 	// ブロックのポインタを返す
 	return pBlock;
+}
+
+//=======================================
+// 頂点の最大値の取得処理
+//=======================================
+D3DXVECTOR3 CBlock::GetVtxMax(void) const
+{
+	// 頂点の最大値を返す
+	return m_vtxMax;
+}
+
+//=======================================
+// 頂点の最小値の取得処理
+//=======================================
+D3DXVECTOR3 CBlock::GetVtxMin(void) const
+{
+	// 頂点の最小値を返す
+	return m_vtxMin;
 }
 
 //=======================================

@@ -70,11 +70,14 @@ namespace
 	const float CAMERA_MOUSE_MAGNI = 5000.0f;		// マウスでのカメラ操作の倍率
 	const float AIM_SHIFT = 1000.0f;				// エイムを表示する幅
 	const int NUM_SHOTGUN_BULLET = 8;				// 散弾で飛ばす弾の数
+	const int LAST_SHOT_BULLET = 20;				// ラストファイアの弾の数
 	const int SHOTGUN_RAND_ROT = 60;				// 散弾のランダムで飛ばす向き
+	const int LAST_RAND_ROT = 80;					// ラストファイアのランダムで飛ばす向き
 	const float SHOTGUN_GRAVITY = 15.0f;			// 散弾状態の時の重力
 	const float SHOTGUN_RECOIL = 7.0f;				// 散弾状態の反動
 	const int INIT_GUN_IDX = 9;						// 銃の初期値のインデックス
 	const int INIT_DAGGER_IDX = 9;					// ダガーのインデックス
+	const int LAST_SHOTCOUNT = 2;					// ラストファイアの猶予フレーム
 }
 
 //=========================================
@@ -324,6 +327,16 @@ void CPlayer::Update(void)
 		m_pAction->Update(this);
 	}
 
+	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
+	{
+		if (m_apHandGun[nCntGun] != nullptr)
+		{ // 拳銃が NULL じゃない場合
+
+			// 更新処理
+			m_apHandGun[nCntGun]->Update();
+		}
+	}
+
 	if (m_pAim != nullptr)
 	{ // エイムが NULL じゃない場合
 
@@ -416,6 +429,15 @@ CDagger* CPlayer::GetDagger(void) const
 {
 	// ダガーの情報を返す
 	return m_pDagger;
+}
+
+//===========================================
+// 残弾UIの情報の取得処理
+//===========================================
+CBulletUI* CPlayer::GetBulletUI(void) const
+{
+	// 残弾UIの情報を返す
+	return m_pBulletUI;
 }
 
 //===========================================
@@ -671,17 +693,22 @@ void CPlayer::Control(void)
 			KeyboardMove();
 		}
 
-		// ジャンプ処理
-		Jump();
+		if (m_pAction != nullptr &&
+			m_pAction->GetAction() != CPlayerAction::ACTION_RELOAD)
+		{ // リロード状態以外
 
-		// 攻撃処理
-		Shot();
+			// ジャンプ処理
+			Jump();
 
-		// ダガー処理
-		Dagger();
+			// 攻撃処理
+			Shot();
 
-		// 回避処理
-		Avoid();
+			// ダガー処理
+			Dagger();
+
+			// 回避処理
+			Avoid();
+		}
 	}
 }
 
@@ -1103,9 +1130,9 @@ void CPlayer::BlockCollision(void)
 				GetPosOld(),
 				pBlock->GetPosOld(),
 				vtxMin,
-				pBlock->GetFileData().vtxMin,
+				pBlock->GetVtxMin(),
 				vtxMax,
-				pBlock->GetFileData().vtxMax
+				pBlock->GetVtxMax()
 			);
 
 			if (coll.bTop == true)
@@ -1220,6 +1247,23 @@ void CPlayer::HandGun(int* nNumBullet)
 
 		// 残弾数を適用する
 		m_pBulletUI->SetNumBullet(*nNumBullet);
+
+		if (*nNumBullet <= 0)
+		{ // 残弾が0になった場合
+
+			// リロード状態にする
+			m_pAction->SetAction(CPlayerAction::ACTION_RELOAD);
+
+			for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
+			{
+				if (m_apHandGun[nCnt] != nullptr)
+				{ // 拳銃が NULL じゃない場合
+
+					// リロード状態に設定する
+					m_apHandGun[nCnt]->SetState(CHandgun::STATE_RELOAD);
+				}
+			}
+		}
 	}
 }
 
@@ -1251,15 +1295,34 @@ void CPlayer::ShotGun(int* nNumBullet)
 	pos.y = GetPos().y + SHOT_ADD_HEIGHT;
 	pos.z = GetPos().z;
 
-	for (int nCnt = 0; nCnt < NUM_SHOTGUN_BULLET; nCnt++)
-	{
-		// 弾の出る向きを設定する
-		rotBullet.x = rot.x + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT/ 2)) * 0.01f);
-		rotBullet.y = rot.y + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT/ 2)) * 0.01f);
-		rotBullet.z = rot.z + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT/ 2)) * 0.01f);
+	if (*nNumBullet == 1 &&
+		m_nShotCount < LAST_SHOTCOUNT)
+	{ // 最後の弾だった場合
 
-		// 弾を撃つ
-		CBullet::Create(pos, rotBullet, CBullet::TYPE::TYPE_SHOTGUN);
+		for (int nCnt = 0; nCnt < LAST_SHOT_BULLET; nCnt++)
+		{
+			// 弾の出る向きを設定する
+			rotBullet.x = rot.x + (float)((rand() % LAST_RAND_ROT - (LAST_RAND_ROT / 2)) * 0.01f);
+			rotBullet.y = rot.y + (float)((rand() % LAST_RAND_ROT - (LAST_RAND_ROT / 2)) * 0.01f);
+			rotBullet.z = rot.z + (float)((rand() % LAST_RAND_ROT - (LAST_RAND_ROT / 2)) * 0.01f);
+
+			// 弾を撃つ
+			CBullet::Create(pos, rotBullet, CBullet::TYPE::TYPE_SHOTGUN);
+		}
+	}
+	else
+	{ // 上記以外
+
+		for (int nCnt = 0; nCnt < NUM_SHOTGUN_BULLET; nCnt++)
+		{
+			// 弾の出る向きを設定する
+			rotBullet.x = rot.x + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
+			rotBullet.y = rot.y + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
+			rotBullet.z = rot.z + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
+
+			// 弾を撃つ
+			CBullet::Create(pos, rotBullet, CBullet::TYPE::TYPE_SHOTGUN);
+		}
 	}
 
 	// 残弾数を減らす
@@ -1267,6 +1330,23 @@ void CPlayer::ShotGun(int* nNumBullet)
 
 	// 残弾数を適用する
 	m_pBulletUI->SetNumBullet(*nNumBullet);
+
+	if (*nNumBullet <= 0)
+	{ // 残弾が0になった場合
+
+		// リロード状態にする
+		m_pAction->SetAction(CPlayerAction::ACTION_RELOAD);
+
+		for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
+		{
+			if (m_apHandGun[nCnt] != nullptr)
+			{ // 拳銃が NULL じゃない場合
+
+				// リロード状態に設定する
+				m_apHandGun[nCnt]->SetState(CHandgun::STATE_RELOAD);
+			}
+		}
+	}
 }
 
 //=======================================

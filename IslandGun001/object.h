@@ -60,6 +60,7 @@ public:			// 誰でもアクセスできる
 		TYPE_BLOCK,				// ブロック
 		TYPE_GOLDBONEUI,		// 金の骨UI
 		TYPE_GRASS,				// 草
+		TYPE_LAKE,				// 水場
 		TYPE_MAX				// この列挙型の総数
 	};
 

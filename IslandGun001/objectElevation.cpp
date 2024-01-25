@@ -706,8 +706,9 @@ void CElevation::SetIndex(void)
 float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 {
 	// ローカル変数宣言
-	D3DXVECTOR3 nor, vec1, vec2;	// 位置
 	float fHeight = pos.y;			// 対象の高さ
+	int nNumWidth = 0;				// 幅の番号
+	int nNumDepth = 0;				// 奥行の番号
 	int nNum = 0;					// 現在の番号
 
 	// 頂点の番号
@@ -720,23 +721,31 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 	D3DXVECTOR3 vtxRightUp;		// 右上の位置
 	D3DXVECTOR3 vtxRightDown;	// 右下の位置
 
-	if (pos.x <= m_pos.x + m_size.x &&
-		pos.x >= m_pos.x - m_size.x &&
-		pos.z <= m_pos.z + m_size.z &&
-		pos.z >= m_pos.z - m_size.z)
-	{ // 地面の範囲にいる場合
+	VERTEX_3D* pVtx;				//頂点情報へのポインタ
 
-		VERTEX_3D * pVtx;				//頂点情報へのポインタ
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-		//頂点バッファをロックし、頂点情報へのポインタを取得
-		m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+	// 番号を求める
+	nNumWidth = (int)((m_size.x - ((m_size.x * 0.5f) - pos.x)) / m_sizeDivi.x);
+	nNumDepth = (int)((m_size.z - ((m_size.z * 0.5f) + pos.z)) / m_sizeDivi.z);
 
-		for (int nCntDep = 0; nCntDep < m_nVtxZ - 1; nCntDep++)
+	if (nNumWidth >= 0 ||
+		nNumDepth >= 0)
+	{ // 範囲内に入っている場合
+
+		for (int nCntDep = nNumDepth - 1; nCntDep < nNumDepth + 2; nCntDep++)
 		{
-			for (int nCntWid = 0; nCntWid < m_nVtxX - 1; nCntWid++)
+			for (int nCntWid = nNumWidth - 1; nCntWid < nNumWidth + 2; nCntWid++)
 			{
 				// 現在の頂点の番号を設定する
 				nNum = (m_nVtxX * nCntDep) + nCntWid;
+
+				if (nNum < 0 ||
+					nNum >= m_nNumVtx)
+				{
+					continue;
+				}
 
 				// 頂点の番号を設定する
 				nVtxLeftUp = nNum;					// 左上
@@ -761,50 +770,22 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 						useful::LineOuterProductXZ(vtxRightDown, vtxLeftDown, pos) >= 0)
 					{ // 真ん中の境界線より左側に居た場合
 
-						// 法線の計算(正規化)
-						//NormalizeVector(nor, pVtx[nVtxRightDown].pos, pVtx[nVtxLeftUp].pos, pVtx[nVtxLeftDown].pos);
+						// 起伏の当たり判定
+						fHeight = ElevationPoint(pos, vtxLeftDown, vtxRightDown, vtxLeftUp);
 
-						vec1 = vtxLeftUp - vtxLeftDown;
-						vec2 = vtxRightDown - vtxLeftDown;
-
-						D3DXVec3Cross(&nor, &vec1, &vec2);
-
-						D3DXVec3Normalize(&nor, &nor);
-
-						if (nor.y != 0.0f)
-						{ // 法線のYが0.0f以外の場合
-
-							// 高さを設定する
-							fHeight = (((pos.x - vtxLeftDown.x) * nor.x + (-vtxLeftDown.y) * nor.y + (pos.z - vtxLeftDown.z) * nor.z) * -1.0f) / nor.y;
-
-							// 高さを返す
-							return fHeight;
-						}
+						// 高さを返す
+						return fHeight;
 					}
 					else if (useful::LineOuterProductXZ(vtxLeftUp, vtxRightUp, pos) >= 0 &&
 						useful::LineOuterProductXZ(vtxRightDown, vtxLeftUp, pos) >= 0 &&
 						useful::LineOuterProductXZ(vtxRightUp, vtxRightDown, pos) >= 0)
 					{ // 真ん中の境界線より右側に居た場合
 
-						// 法線の計算(正規化)
-						//NormalizeVector(nor, pVtx[nVtxLeftUp].pos, pVtx[nVtxRightDown].pos, pVtx[nVtxRightUp].pos);
+						// 起伏の当たり判定
+						fHeight = ElevationPoint(pos, vtxRightUp, vtxLeftUp, vtxRightDown);
 
-						vec1 = vtxRightDown - vtxRightUp;
-						vec2 = vtxLeftUp - vtxRightUp;
-
-						D3DXVec3Cross(&nor, &vec1, &vec2);
-
-						D3DXVec3Normalize(&nor, &nor);
-
-						if (nor.y != 0.0f)
-						{ // 法線のYが0.0f以外の場合
-
-							// 高さを設定する
-							fHeight = (((pos.x - vtxRightUp.x) * nor.x + (-vtxRightUp.y) * nor.y + (pos.z - vtxRightUp.z) * nor.z) * -1.0f) / nor.y;
-
-							// 高さを返す
-							return fHeight;
-						}
+						// 高さを返す
+						return fHeight;
 					}
 				}
 			}
@@ -817,10 +798,9 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 		return fHeight;
 	}
 	else
-	{ // 地面の範囲内にいない場合
-
+	{
 		// 高さを返す
-		return pos.y;
+		return fHeight;
 	}
 }
 
@@ -830,8 +810,9 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
 {
 	// ローカル変数宣言
-	D3DXVECTOR3 nor, vec1, vec2;	// 位置
 	float fHeight = pos.y;			// 対象の高さ
+	int nNumWidth = 0;				// 幅の番号
+	int nNumDepth = 0;				// 奥行の番号
 	int nNum = 0;					// 現在の番号
 
 	// 頂点の番号
@@ -844,23 +825,31 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
 	D3DXVECTOR3 vtxRightUp;		// 右上の位置
 	D3DXVECTOR3 vtxRightDown;	// 右下の位置
 
-	if (pos.x <= m_pos.x + (m_size.x * 0.5f) &&
-		pos.x >= m_pos.x - (m_size.x * 0.5f) &&
-		pos.z <= m_pos.z + (m_size.z * 0.5f) &&
-		pos.z >= m_pos.z - (m_size.z * 0.5f))
-	{ // 地面の範囲にいる場合
+	VERTEX_3D* pVtx;				//頂点情報へのポインタ
 
-		VERTEX_3D * pVtx;				//頂点情報へのポインタ
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-		//頂点バッファをロックし、頂点情報へのポインタを取得
-		m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+	// 番号を求める
+	nNumWidth = (int)((m_size.x - ((m_size.x * 0.5f) - pos.x)) / m_sizeDivi.x);
+	nNumDepth = (int)((m_size.z - ((m_size.z * 0.5f) + pos.z)) / m_sizeDivi.z);
 
-		for (int nCntDep = 0; nCntDep < m_nVtxZ - 1; nCntDep++)
+	if (nNumWidth >= 0 ||
+		nNumDepth >= 0)
+	{ // 範囲内に入っている場合
+
+		for (int nCntDep = nNumDepth - 1; nCntDep < nNumDepth + 2; nCntDep++)
 		{
-			for (int nCntWid = 0; nCntWid < m_nVtxX - 1; nCntWid++)
+			for (int nCntWid = nNumWidth - 1; nCntWid < nNumWidth + 2; nCntWid++)
 			{
 				// 現在の頂点の番号を設定する
 				nNum = (m_nVtxX * nCntDep) + nCntWid;
+
+				if (nNum < 0 ||
+					nNum >= m_nNumVtx)
+				{
+					continue;
+				}
 
 				// 頂点の番号を設定する
 				nVtxLeftUp = nNum;					// 左上
@@ -885,56 +874,28 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
 						useful::LineOuterProductXZ(vtxRightDown, vtxLeftDown, pos) >= 0)
 					{ // 真ん中の境界線より左側に居た場合
 
-						// 法線の計算(正規化)
-						//NormalizeVector(nor, pVtx[nVtxRightDown].pos, pVtx[nVtxLeftUp].pos, pVtx[nVtxLeftDown].pos);
+						// 起伏の当たり判定
+						fHeight = ElevationPoint(pos, vtxLeftDown, vtxRightDown, vtxLeftUp);
 
-						vec1 = vtxLeftUp - vtxLeftDown;
-						vec2 = vtxRightDown - vtxLeftDown;
+						// 範囲内にいる
+						bRange = true;
 
-						D3DXVec3Cross(&nor, &vec1, &vec2);
-
-						D3DXVec3Normalize(&nor, &nor);
-
-						if (nor.y != 0.0f)
-						{ // 法線のYが0.0f以外の場合
-
-							// 高さを設定する
-							fHeight = (((pos.x - vtxLeftDown.x) * nor.x + (-vtxLeftDown.y) * nor.y + (pos.z - vtxLeftDown.z) * nor.z) * -1.0f) / nor.y;
-
-							// 範囲内にいる
-							bRange = true;
-
-							// 高さを返す
-							return fHeight;
-						}
+						// 高さを返す
+						return fHeight;
 					}
 					else if (useful::LineOuterProductXZ(vtxLeftUp, vtxRightUp, pos) >= 0 &&
 						useful::LineOuterProductXZ(vtxRightDown, vtxLeftUp, pos) >= 0 &&
 						useful::LineOuterProductXZ(vtxRightUp, vtxRightDown, pos) >= 0)
 					{ // 真ん中の境界線より右側に居た場合
 
-						// 法線の計算(正規化)
-						//NormalizeVector(nor, pVtx[nVtxLeftUp].pos, pVtx[nVtxRightDown].pos, pVtx[nVtxRightUp].pos);
+						// 起伏の当たり判定
+						fHeight = ElevationPoint(pos, vtxRightUp, vtxLeftUp, vtxRightDown);
 
-						vec1 = vtxRightDown - vtxRightUp;
-						vec2 = vtxLeftUp - vtxRightUp;
+						// 範囲内にいる
+						bRange = true;
 
-						D3DXVec3Cross(&nor, &vec1, &vec2);
-
-						D3DXVec3Normalize(&nor, &nor);
-
-						if (nor.y != 0.0f)
-						{ // 法線のYが0.0f以外の場合
-
-							// 高さを設定する
-							fHeight = (((pos.x - vtxRightUp.x) * nor.x + (-vtxRightUp.y) * nor.y + (pos.z - vtxRightUp.z) * nor.z) * -1.0f) / nor.y;
-
-							// 範囲内にいる
-							bRange = true;
-
-							// 高さを返す
-							return fHeight;
-						}
+						// 高さを返す
+						return fHeight;
 					}
 				}
 			}
@@ -950,70 +911,45 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
 		return fHeight;
 	}
 	else
-	{ // 地面の範囲内にいない場合
-
+	{
 		// 高さを返す
-		return pos.y;
+		return fHeight;
 	}
 }
 
 //================================
-// 近くの頂点を探す処理
+// 一つ一つの地点の起伏の当たり判定
 //================================
-int CElevation::NearVertexSearch(const D3DXVECTOR3& pos)
+float CElevation::ElevationPoint(const D3DXVECTOR3& posTarget, const D3DXVECTOR3& posCenter, const D3DXVECTOR3& posRight, const D3DXVECTOR3& posLeft)
 {
-	// ローカル変数宣言
-	D3DXVECTOR3 distance;		// 距離
-	int nNum = 0;				// 頂点の番号
-	int nNearNum = 0;			// 一番近い番号
-	float fSum = 0.0f;			// 合計値
-	float fNearSum = 0.0f;		// 一番近い頂点の合計値
+	D3DXVECTOR3 nor, vec1, vec2;	// 法線と位置
+	float fHeight;					// 高さ
 
-	VERTEX_3D * pVtx;			//頂点情報へのポインタ
+	// ベクトルを取る
+	vec1 = posLeft - posCenter;
+	vec2 = posRight - posCenter;
+	
+	// 外積を算出する
+	D3DXVec3Cross(&nor, &vec1, &vec2);
 
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+	// 法線の正規化
+	D3DXVec3Normalize(&nor, &nor);
 
-	for (int nCntDep = 0; nCntDep < m_nVtxZ; nCntDep++)
-	{
-		for (int nCntWid = 0; nCntWid < m_nVtxX; nCntWid++)
-		{
-			// 現在の頂点の番号を設定する
-			nNum = (m_nVtxX * nCntDep) + nCntWid;
+	if (nor.y != 0.0f)
+	{ // 法線のYが0.0f以外の場合
 
-			// 距離を測る
-			distance.x = fabsf(pos.x - (m_pos.x + pVtx[nNum].pos.x));
-			distance.z = fabsf(pos.z - (m_pos.z + pVtx[nNum].pos.z));
+		// 高さを設定する
+		fHeight = (((posTarget.x - posCenter.x) * nor.x + (-posCenter.y) * nor.y + (posTarget.z - posCenter.z) * nor.z) * -1.0f) / nor.y;
+	}
+	else
+	{ // 上記以外
 
-			// 合計値を取る
-			fSum = distance.x + distance.z;
-
-			if (nNum == 0)
-			{ // 一番近い番号が無い場合
-
-				// 候補の距離を設定する
-				fNearSum = fSum;
-
-				// 候補の番号を設定する
-				nNearNum = nNum;
-			}
-			else if(fNearSum >= fSum)
-			{ // 現在の距離の方が短い場合
-
-				// 候補の距離を設定する
-				fNearSum = fSum;
-
-				// 候補の番号を設定する
-				nNearNum = nNum;
-			}
-		}
+		// 高さを設定する
+		fHeight = posTarget.y;
 	}
 
-	//頂点バッファをアンロックする
-	m_pVtxBuff->Unlock();
-
-	// 番号を返す
-	return nNearNum;
+	// 高さを返す
+	return fHeight;
 }
 
 //================================

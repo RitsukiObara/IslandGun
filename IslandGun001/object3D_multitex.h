@@ -66,6 +66,7 @@ public:			// 誰でもアクセスできる
 		TYPE_BACKGROUND_SP,				// 背景切り抜き(完全透過)
 		TYPE_NEGA_SP,					// ネガテクスチャ(完全透過)
 		TYPE_BACKGROUND_NEGA,			// ネガテクスチャ(背景切り抜き)
+		TYPE_FUSION,					// 合体処理
 		TYPE_MAX						// この列挙型の総数
 	};
 
@@ -87,6 +88,7 @@ public:			// 誰でもアクセスできる
 	void SetVtxColor(const D3DXCOLOR& col);					// 頂点カラーの設定処理
 	void SetVtxTextureWidth(const D3DXVECTOR2& size, int nCnt = 0);		// 頂点テクスチャの設定処理(縦の一定間隔のテクスチャ配分)
 	void SetVtxTextureHeight(const D3DXVECTOR2& size, int nCnt = 0);	// 頂点テクスチャの設定処理(横の一定間隔のテクスチャ配分)
+	void SetVtxTextureAnim(const D3DXVECTOR2& anim, int nCnt = 0);		// 頂点テクスチャの設定処理(アニメーション版)
 
 	// セット・ゲット関係
 	void SetPos(const D3DXVECTOR3& pos);	// 位置設定処理
@@ -385,6 +387,25 @@ public:
 		pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TEXTURE);
 		pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_SUBTRACT);
 		pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+		pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_TEXTURE);
+	}
+};
+
+//--------------------------------------------
+// クラス定義(合体)
+//--------------------------------------------
+class CFusion : public CTextureStyle
+{
+public:
+	// 描画初めの処理
+	void DispStart(void) override
+	{
+		//デバイスの取得
+		LPDIRECT3DDEVICE9 pDevice = CManager::Get()->GetRenderer()->GetDevice();
+
+		// テクスチャステージステートの設定
+		pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADDSMOOTH);
+		pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_CURRENT);
 		pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_TEXTURE);
 	}
 };

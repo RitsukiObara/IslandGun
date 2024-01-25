@@ -17,6 +17,7 @@
 #include "dagger.h"
 #include "chara_blur.h"
 #include "collision.h"
+#include "bulletUI.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -320,6 +321,9 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 	// 木への攻撃判定処理
 	collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
 
+	// ヤシの実との当たり判定
+	collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
+
 	// 行動カウントを加算する
 	m_nActionCount++;
 
@@ -445,6 +449,12 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 	// 移動量を適用する
 	pPlayer->SetMove(move);
 
+	// 木への攻撃判定処理
+	collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
+
+	// ヤシの実との当たり判定
+	collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
+
 	// 行動カウントを加算する
 	m_nActionCount++;
 
@@ -471,5 +481,22 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::ReloadProcess(CPlayer* pPlayer)
 {
+	// 腕を少し上にあげる
+	pPlayer->GetHierarchy(5)->SetRot(D3DXVECTOR3(0.0f, 0.0f, -D3DX_PI * 0.25f));
+	pPlayer->GetHierarchy(6)->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI * 0.25f));
+	pPlayer->GetHierarchy(7)->SetRot(D3DXVECTOR3(-D3DX_PI * 0.5f, 0.0f, -D3DX_PI * 0.25f));
+	pPlayer->GetHierarchy(8)->SetRot(D3DXVECTOR3(-D3DX_PI * 0.5f, 0.0f, D3DX_PI * 0.25f));
+	pPlayer->GetHierarchy(9)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
+	pPlayer->GetHierarchy(10)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
 
+	if (pPlayer->GetHandGun(0)->GetState() == CHandgun::STATE_NONE &&
+		pPlayer->GetHandGun(1)->GetState() == CHandgun::STATE_NONE)
+	{ // どっちのハンドガンも通常に戻った場合
+
+		// リロード完了にする
+		pPlayer->GetBulletUI()->SetNumBullet(MAX_REMAINING_BULLET);
+
+		// 通常状態にする
+		SetAction(ACTION_NONE);
+	}
 }

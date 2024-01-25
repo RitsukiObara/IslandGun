@@ -360,9 +360,9 @@ void CEnemy::BlockCollision(void)
 				GetPosOld(),
 				pBlock->GetPosOld(),
 				vtxMin,
-				pBlock->GetFileData().vtxMin,
+				pBlock->GetVtxMin(),
 				vtxMax,
-				pBlock->GetFileData().vtxMax
+				pBlock->GetVtxMax()
 			);
 
 			if (pBlock == pBlockEnd)

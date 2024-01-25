@@ -31,6 +31,7 @@
 #include "block.h"
 #include "gold_bone.h"
 #include "grass.h"
+#include "lake.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -92,7 +93,7 @@ HRESULT CGame::Init(void)
 	CScene::Init();
 
 	// プレイヤーの生成処理
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(600.0f, 0.0f, 700.0f));
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 300.0f));
 
 	CCoin::Create(D3DXVECTOR3(400.0f, 50.0f, 400.0f));
 
@@ -102,11 +103,13 @@ HRESULT CGame::Init(void)
 
 	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -1.9f, 0.0f), NONE_SCALE);
 
-	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f));
+	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f), NONE_SCALE);
 
 	CGoldBone::Create(D3DXVECTOR3(-400.0f, 0.0f, 400.0f), NONE_D3DXVECTOR3);
 
 	CGrass::Create(D3DXVECTOR3(300.0f, 0.0f, 50.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(20.0f, 60.0f, 0.0f));
+
+	CLake::Create(D3DXVECTOR3(0.0f, 100.0f, -400.0f), D3DXVECTOR3(200.0f, 0.0f, 200.0f));
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

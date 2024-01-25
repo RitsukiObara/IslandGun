@@ -33,7 +33,8 @@ public:			// 誰でもアクセスできる
 	void SetIndex(void);		// インデックスの設定処理
 	float ElevationCollision(const D3DXVECTOR3& pos);					// 起伏の当たり判定
 	float ElevationCollision(const D3DXVECTOR3& pos, bool& bRange);		// 起伏の当たり判定(範囲判定付き)
-	int NearVertexSearch(const D3DXVECTOR3& pos);			// 近くの頂点を探す処理
+
+	float ElevationPoint(const D3DXVECTOR3& posTarget, const D3DXVECTOR3& posCenter, const D3DXVECTOR3& posRight, const D3DXVECTOR3& posLeft);		// 一つ一つの地点の起伏の当たり判定
 
 	void BindTexture(int nIdx);		// テクスチャの割り当て処理
 

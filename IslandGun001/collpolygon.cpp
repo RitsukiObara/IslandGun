@@ -111,10 +111,10 @@ void CCollPolygon::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& VtxMax, co
 	SetSize(D3DXVECTOR3(0.0f, 0.0f, 0.0f));		// サイズ
 
 	// 全ての値を設定する
-	m_vtxLeftUp = D3DXVECTOR3();		// 左上の座標
-	m_vtxRightUp = NONE_D3DXVECTOR3;	// 右上の座標
-	m_vtxLeftDown = NONE_D3DXVECTOR3;	// 左下の座標
-	m_vtxRightDown = NONE_D3DXVECTOR3;	// 右下の座標
+	m_vtxLeftUp = D3DXVECTOR3(VtxMin.x, VtxMax.y, VtxMax.z);	// 左上の座標
+	m_vtxRightUp = D3DXVECTOR3(VtxMax.x, VtxMax.y, VtxMin.z);	// 右上の座標
+	m_vtxLeftDown = D3DXVECTOR3(VtxMin.x, VtxMin.y, VtxMax.z);	// 左下の座標
+	m_vtxRightDown = D3DXVECTOR3(VtxMax.x, VtxMin.y, VtxMin.z);	// 右下の座標
 
 	// 頂点情報の設定処理(決め打ち版)
 	SetVertexHardCoding(m_vtxLeftUp, m_vtxRightUp, m_vtxLeftDown, m_vtxRightDown);

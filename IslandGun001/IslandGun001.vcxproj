@@ -186,6 +186,7 @@
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="handgun.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="lake.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="locus2D.cpp" />
     <ClCompile Include="locus3D.cpp" />
@@ -287,6 +288,7 @@
     <ClInclude Include="grass.h" />
     <ClInclude Include="handgun.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="lake.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="list_manager.h" />
     <ClInclude Include="locus2D.h" />

@@ -70,6 +70,7 @@ public:			// 誰でもアクセスできる
 	CPlayerAction* GetAction(void) const;			// 行動の情報の取得処理
 	CHandgun* GetHandGun(const int nCount) const;	// 拳銃の情報の取得処理
 	CDagger* GetDagger(void) const;					// ダガーの情報の取得処理
+	CBulletUI* GetBulletUI(void) const;				// 残弾UIの情報の取得処理
 	CGoldBoneUI* GetGoldBoneUI(void) const;			// 金の骨UIの情報の取得処理
 
 	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理

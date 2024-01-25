@@ -46,8 +46,11 @@ namespace collision
 	void GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& size);		// 金の骨との当たり判定
 
 	// 木との当たり判定
-	bool TreeCollision(D3DXVECTOR3* pos, const float fRadius);						// 木の当たり判定
-	void TreeAttack(const CPlayer& pPlayer, const float fHeight);					// 木への攻撃判定処理
+	bool TreeCollision(D3DXVECTOR3* pos, const float fRadius);			// 木の当たり判定
+	void TreeAttack(const CPlayer& pPlayer, const float fHeight);		// 木への攻撃判定処理
+
+	// ヤシの実との当たり判定
+	void PalmFruitHit(CPlayer* pPlayer, const float fHeight);			// ヤシの木との当たり判定
 
 	// 汎用的な当たり判定
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定
