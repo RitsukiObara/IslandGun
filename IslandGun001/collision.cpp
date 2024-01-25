@@ -241,6 +241,67 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 }
 
 //===============================
+// 敵とダガーの当たり判定
+//===============================
+bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, const float fRadius)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posEnemy = NONE_D3DXVECTOR3;		// 敵の位置
+	D3DXVECTOR3 sizeEnemy = NONE_D3DXVECTOR3;		// 敵のサイズ
+	CListManager<CEnemy*> list = CEnemy::GetList();
+	CEnemy* pEnemy = nullptr;		// 先頭の敵
+	CEnemy* pEnemyEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
+
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pEnemy = list.GetTop();
+
+		// 末尾の値を取得する
+		pEnemyEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 敵関係の変数を設定する
+			posEnemy = pEnemy->GetPos();				// 敵の位置
+			sizeEnemy = pEnemy->GetCollSize();		// 敵の高さ
+
+			if (pos.y <= posEnemy.y + sizeEnemy.y &&
+				pos.y + fHeight >= posEnemy.y &&
+				useful::CircleCollisionXZ(pos, posEnemy, fRadius, (sizeEnemy.x + sizeEnemy.z) * 0.5f) == true)
+			{ // 敵と重なった場合
+
+				// ヒット処理
+				pEnemy->Hit(pos);
+
+				// true を返す
+				return true;
+			}
+
+			if (pEnemy == pEnemyEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pEnemy = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
 // 金の骨との当たり判定
 //===============================
 void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& size)

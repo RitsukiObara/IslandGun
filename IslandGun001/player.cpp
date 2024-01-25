@@ -47,7 +47,7 @@ namespace
 	const float CAMERA_MAX_HEIGHT = 500.0f;			// カメラの高さの最大値
 	const float CAMERA_MIN_HEIGHT = 0.0f;			// カメラの高さの最小値
 	const float CAMERA_ELEVATION_HEIGHT = 30.0f;	// カメラの起伏地面の高さ
-	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 130.0f, 40.0f);		// 当たり判定時のサイズ
+	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 190.0f, 40.0f);		// 当たり判定時のサイズ
 	const D3DXVECTOR3 GUN_POS[NUM_HANDGUN] =		// 拳銃の位置
 	{
 		D3DXVECTOR3(-10.0f, 0.0f, 0.0f),

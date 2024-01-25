@@ -32,6 +32,8 @@ namespace
 	const int DODGE_BLUR_LIFE = 10;		// 回避状態のブラーの寿命
 	const D3DXCOLOR DODGE_BLUR_COL = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);		// 回避状態のブラーの色
 	const float DAGGER_HEIGHT = 80.0f;	// ダガーの高さ
+	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ダガー攻撃時の高さ
+	const float ATTACK_DAGGER_RADIUS = 60.0f;	// ダガー攻撃時の半径
 }
 
 //=========================
@@ -324,6 +326,9 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 	// ヤシの実との当たり判定
 	collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
 
+	// 敵とダガーの当たり判定
+	collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
+
 	// 行動カウントを加算する
 	m_nActionCount++;
 
@@ -454,6 +459,9 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 
 	// ヤシの実との当たり判定
 	collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
+
+	// 敵とダガーの当たり判定
+	collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
 
 	// 行動カウントを加算する
 	m_nActionCount++;
