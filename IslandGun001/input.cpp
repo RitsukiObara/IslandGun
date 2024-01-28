@@ -780,6 +780,15 @@ void CInputMouse::Update(void)
 
 		// マウスの移動量を設定する
 		m_MouseMove = D3DXVECTOR3((float)MouseState.lX, (float)MouseState.lY, (float)MouseState.lZ);
+
+		//// カーソルを表示しない
+		//ShowCursor(FALSE);
+
+		//// 画面サイズの構造体を生成する
+		//RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+
+		//// カーソルを画面にとどめる
+		//ClipCursor(&rect);
 	}
 	else
 	{ // 上記以外

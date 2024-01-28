@@ -756,15 +756,15 @@ void CCharacter::Draw(void)
 	D3DXMatrixIdentity(&mtxWorld);
 
 	// 拡大率を反映
-	D3DXMatrixScaling(&mtxScale, GetScale().x, GetScale().y, GetScale().z);
+	D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
 
 	// 向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, GetRot().y + (D3DX_PI), GetRot().x, GetRot().z);
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y + D3DX_PI, m_rot.x, m_rot.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
 
 	// 位置を反映
-	D3DXMatrixTranslation(&mtxTrans, GetPos().x, GetPos().y, GetPos().z);
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
 	// ワールドマトリックスの設定
@@ -793,15 +793,15 @@ void CCharacter::Draw(D3DXCOLOR col)
 	D3DXMatrixIdentity(&mtxWorld);
 
 	// 拡大率を反映
-	D3DXMatrixScaling(&mtxScale, GetScale().x, GetScale().y, GetScale().z);
+	D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
 
 	// 向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, GetRot().y + (D3DX_PI), GetRot().x, GetRot().z);
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y + D3DX_PI, m_rot.x, m_rot.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
 
 	// 位置を反映
-	D3DXMatrixTranslation(&mtxTrans, GetPos().x, GetPos().y, GetPos().z);
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
 	// ワールドマトリックスの設定
@@ -830,15 +830,15 @@ void CCharacter::DrawShadow(void)
 	D3DXMatrixIdentity(&mtxWorld);
 
 	// 拡大率を反映
-	D3DXMatrixScaling(&mtxScale, GetScale().x, GetScale().y, GetScale().z);
+	D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
 
 	// 向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, GetRot().y + (D3DX_PI), GetRot().x, GetRot().z);
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y + D3DX_PI, m_rot.x, m_rot.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
 
 	// 位置を反映
-	D3DXMatrixTranslation(&mtxTrans, GetPos().x, GetPos().y, GetPos().z);
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
 	// ワールドマトリックスの設定
@@ -867,15 +867,15 @@ void CCharacter::Draw(D3DXCOLOR* col)
 	D3DXMatrixIdentity(&mtxWorld);
 
 	// 拡大率を反映
-	D3DXMatrixScaling(&mtxScale, GetScale().x, GetScale().y, GetScale().z);
+	D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
 
 	// 向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, GetRot().y + (D3DX_PI), GetRot().x, GetRot().z);
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y + D3DX_PI, m_rot.x, m_rot.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
 
 	// 位置を反映
-	D3DXMatrixTranslation(&mtxTrans, GetPos().x, GetPos().y, GetPos().z);
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
 	// ワールドマトリックスの設定
@@ -904,15 +904,15 @@ void CCharacter::Draw(float fAlpha)
 	D3DXMatrixIdentity(&mtxWorld);
 
 	// 拡大率を反映
-	D3DXMatrixScaling(&mtxScale, GetScale().x, GetScale().y, GetScale().z);
+	D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
 
 	// 向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, GetRot().y + (D3DX_PI), GetRot().x, GetRot().z);
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y + D3DX_PI, m_rot.x, m_rot.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
 
 	// 位置を反映
-	D3DXMatrixTranslation(&mtxTrans, GetPos().x, GetPos().y, GetPos().z);
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
 	// ワールドマトリックスの設定
