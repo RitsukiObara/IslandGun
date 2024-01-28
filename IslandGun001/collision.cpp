@@ -145,8 +145,12 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 				useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
 			{ // 小判と重なった場合
 
-				// 取得処理
-				pCoin->Hit();
+				if (pCoin->GetState() == CCoin::STATE_NONE)
+				{ // 無状態の場合
+
+					// 取得処理
+					pCoin->Hit();
+				}
 			}
 
 			if (pCoin == pCoinEnd)
@@ -536,9 +540,11 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fHeight)
 //===============================
 // 岩との当たり判定
 //===============================
-void collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius)
+void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight)
 {
 	// ローカル変数宣言
+	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
+	CXFile::SXFile filedata;					// 岩のモデル情報
 	CListManager<CRock*> list = CRock::GetList();
 	CRock* pRock = nullptr;			// 先頭の値
 	CRock* pRockEnd = nullptr;		// 末尾の値
@@ -557,7 +563,19 @@ void collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const
 		while (true)
 		{ // 無限ループ
 
-			// 円周の判定を付ける
+			// 岩の位置を取得する
+			posRock = pRock->GetPos();
+
+			// モデルの情報を取得する
+			filedata = pRock->GetFileData();
+
+			if (pos->y <= posRock.y + filedata.vtxMax.y &&
+				pos->y + fHeight >= posRock.y + filedata.vtxMin.y)
+			{ // 範囲内にいた場合
+
+				// 円柱の当たり判定
+				useful::CylinderCollision(pos, posRock, filedata.fRadius + fRadius);
+			}
 
 			if (pRock == pRockEnd)
 			{ // 末尾に達した場合

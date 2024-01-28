@@ -19,16 +19,16 @@ class CRipple : public CModel
 {
 public:		// 誰でもアクセスできる
 
-	CRipple();			// コンストラクタ
-	~CRipple();			// デストラクタ
+	CRipple(const CObject::TYPE type = TYPE_RIPPLE, const CObject::PRIORITY priority = PRIORITY_PLAYER);	// オーバーロードコンストラクタ
+	virtual ~CRipple();		// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void) override;	// 初期化処理
-	void Uninit(void) override;		// 終了処理
-	void Update(void) override;		// 更新処理
-	void Draw(void) override;		// 描画処理
+	virtual HRESULT Init(void) override;	// 初期化処理
+	virtual void Uninit(void) override;		// 終了処理
+	virtual void Update(void) override;		// 更新処理
+	virtual void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);			// 情報の設定処理
+	virtual void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);			// 情報の設定処理
 
 	// 静的メンバ関数
 	static CRipple* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 生成処理

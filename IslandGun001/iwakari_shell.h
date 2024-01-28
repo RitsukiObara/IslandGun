@@ -1,27 +1,26 @@
 //===================================
 //
-// 金の骨ヘッダー[gold_bone.h]
+// イワカリの殻ヘッダー[iwakari_shell.h]
 // Author 小原立暉
 //
 //===================================
-#ifndef _GOLD_BONE_H_
-#define _GOLD_BONE_H_
+#ifndef _IWAKARI_SHELL_H_
+#define _IWAKARI_SHELL_H_
 
 //***********************************
 // インクルードファイル
 //***********************************
 #include "model.h"
-#include "list_manager.h"
 
 //-----------------------------------
-// クラス定義(金の骨)
+// クラス定義(イワカリの殻)
 //-----------------------------------
-class CGoldBone : public CModel
+class CIwakariShell : public CModel
 {
 public:			// 誰でもアクセスできる
 
-	CGoldBone();					// コンストラクタ
-	~CGoldBone();					// デストラクタ
+	CIwakariShell();				// コンストラクタ
+	~CIwakariShell();				// デストラクタ
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -29,21 +28,13 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos);				// 情報の設定処理
-	void Hit(void);					// ヒット処理
+	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);					// 情報の設定処理
 
 	// 静的メンバ関数
-	static CGoldBone* Create(const D3DXVECTOR3& pos);	// 生成処理
-
-	static CListManager<CGoldBone*> GetList(void);		// リストの取得処理
+	static CIwakariShell* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);	// 生成処理
 
 private:		// 自分だけアクセスできる
 
-	// メンバ関数
-	void Get(void);			// 取得状態処理
-
-	// 静的メンバ変数
-	static CListManager<CGoldBone*> m_list;		// リスト
 };
 
 #endif

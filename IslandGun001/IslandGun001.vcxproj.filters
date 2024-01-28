@@ -70,6 +70,9 @@
     <Filter Include="useful\ListManager">
       <UniqueIdentifier>{bcaa9909-52fa-48c4-931a-c66d1ab20624}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Edit">
+      <UniqueIdentifier>{fcae8205-47c1-4ac0-b035-30e596254b2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -362,6 +365,18 @@
     </ClCompile>
     <ClCompile Include="lake.cpp">
       <Filter>gimmick\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="slash_ripple.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="edit.cpp">
+      <Filter>Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="iwakari.cpp">
+      <Filter>enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="iwakari_shell.cpp">
+      <Filter>enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -658,6 +673,18 @@
     </ClInclude>
     <ClInclude Include="lake.h">
       <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="slash_ripple.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="edit.h">
+      <Filter>Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="iwakari.h">
+      <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="iwakari_shell.h">
+      <Filter>enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

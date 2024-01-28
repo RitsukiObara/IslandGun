@@ -47,6 +47,9 @@ public:			// 誰でもアクセスできる
 	void Update(CPlayer* pPlayer);		// 更新処理
 
 	// セット・ゲット関数
+	void SetMoveRecoil(const D3DXVECTOR3& move);	// 移動量の設定処理
+	D3DXVECTOR3 GetMoveRecoil(void) const;			// 移動量の取得処理
+
 	void SetAction(const ACTION action);			// 行動の設定処理
 	ACTION GetAction(void) const;					// 行動の取得処理
 
@@ -63,7 +66,7 @@ public:			// 誰でもアクセスできる
 private:		// 誰でもアクセスできる
 
 	// メンバ関数
-	void NoneProcess(CPlayer* pPlayer);		// 通常状態処理
+	void NoneProcess(void);					// 通常状態処理
 	void ShotProcess(CPlayer* pPlayer);		// 射撃状態処理
 	void DaggerPrecess(CPlayer* pPlayer);	// ダガー状態処理
 	void DodgeProcess(CPlayer* pPlayer);	// 回避状態処理
@@ -72,11 +75,12 @@ private:		// 誰でもアクセスできる
 	void ReloadProcess(CPlayer* pPlayer);	// リロード処理
 
 	// メンバ変数
-	ACTION m_action;		// 行動
-	int m_nActionCount;		// 行動カウント
-	int m_nDodgeInterval;	// 回避のインターバルカウント
-	float m_fDodgeRot;		// 回避する向き
-	bool m_bDodgeUse;		// 回避使用可能状況
+	D3DXVECTOR3 m_moveRecoil;	// 反動の移動量
+	ACTION m_action;			// 行動
+	int m_nActionCount;			// 行動カウント
+	int m_nDodgeInterval;		// 回避のインターバルカウント
+	float m_fDodgeRot;			// 回避する向き
+	bool m_bDodgeUse;			// 回避使用可能状況
 };
 
 #endif

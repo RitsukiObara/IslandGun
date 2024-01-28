@@ -25,7 +25,7 @@ namespace
 //==========================================
 // コンストラクタ
 //==========================================
-CRipple::CRipple() : CModel(CObject::TYPE_RIPPLE, CObject::PRIORITY_PLAYER)
+CRipple::CRipple(const CObject::TYPE type, const CObject::PRIORITY priority) : CModel(type, priority)
 {
 	// 全ての値をクリアする
 	m_fAlpha = 0.0f;			// 透明度

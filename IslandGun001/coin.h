@@ -41,6 +41,9 @@ public:			// 誰でもアクセスできる
 	void SetData(const D3DXVECTOR3& pos);			// 情報の設定処理
 	void Hit(void);					// ヒット処理
 
+	// セット・ゲット関数
+	STATE GetState(void) const;		// 状態の取得処理
+
 	// 静的メンバ関数
 	static CCoin* Create(const D3DXVECTOR3& pos);	// 生成処理
 

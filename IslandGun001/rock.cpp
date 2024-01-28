@@ -120,8 +120,12 @@ void CRock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVE
 	m_type = type;				// 種類
 	m_nBreakLevel = 0;			// 破壊レベル
 
-	// テクスチャの割り当て処理
-	BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE[m_nBreakLevel]), TEXTURE_IDX);
+	if (m_type == TYPE_SOFT)
+	{ // 柔らかい岩の場合
+
+		// テクスチャの割り当て処理
+		BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE[m_nBreakLevel]), TEXTURE_IDX);
+	}
 }
 
 //=====================================

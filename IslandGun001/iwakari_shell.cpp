@@ -1,6 +1,6 @@
 //===========================================
 //
-// 金の骨のメイン処理[gold_bone.cpp]
+// イワカリの殻のメイン処理[iwakari_shell.cpp]
 // Author 小原立暉
 //
 //===========================================
@@ -9,7 +9,7 @@
 //*******************************************
 #include "main.h"
 #include "manager.h"
-#include "gold_bone.h"
+#include "iwakari_shell.h"
 #include "renderer.h"
 #include "useful.h"
 
@@ -18,28 +18,21 @@
 //-------------------------------------------
 namespace
 {
-	const char* MODEL = "data\\MODEL\\GoldBone.x";		// モデルの名前
-	const float ROT_MOVE = 0.01f;						// モデルの向きの移動量
+	const char* MODEL = "data\\MODEL\\IwakariShell.x";	// イワカリの殻の名前
 }
-
-//-------------------------------------------
-// 静的メンバ変数宣言
-//-------------------------------------------
-CListManager<CGoldBone*> CGoldBone::m_list = {};		// リスト
 
 //==============================
 // コンストラクタ
 //==============================
-CGoldBone::CGoldBone() : CModel(CObject::TYPE_GOLDBONE, CObject::PRIORITY_ENTITY)
+CIwakariShell::CIwakariShell() : CModel(CObject::TYPE_NONE, CObject::PRIORITY_ENTITY)
 {
-	// リストに追加する
-	m_list.Regist(this);
+
 }
 
 //==============================
 // デストラクタ
 //==============================
-CGoldBone::~CGoldBone()
+CIwakariShell::~CIwakariShell()
 {
 
 }
@@ -47,7 +40,7 @@ CGoldBone::~CGoldBone()
 //==============================
 //ブロックの初期化処理
 //==============================
-HRESULT CGoldBone::Init(void)
+HRESULT CIwakariShell::Init(void)
 {
 	if (FAILED(CModel::Init()))
 	{ // 初期化処理に失敗した場合
@@ -63,37 +56,24 @@ HRESULT CGoldBone::Init(void)
 //========================================
 //ブロックの終了処理
 //========================================
-void CGoldBone::Uninit(void)
+void CIwakariShell::Uninit(void)
 {
 	// 終了処理
 	CModel::Uninit();
-
-	// 引き抜き処理
-	m_list.Pull(this);
 }
 
 //========================================
 //ブロックの更新処理
 //========================================
-void CGoldBone::Update(void)
+void CIwakariShell::Update(void)
 {
-	// 向きを取得する
-	D3DXVECTOR3 rot = GetRot();
 
-	// 回す
-	rot.y += ROT_MOVE;
-
-	// 向きの正規化
-	useful::RotNormalize(&rot.y);
-
-	// 向きを適用する
-	SetRot(rot);
 }
 
 //=====================================
 //ブロックの描画処理
 //=====================================
-void CGoldBone::Draw(void)
+void CIwakariShell::Draw(void)
 {
 	// 描画処理
 	CModel::Draw();
@@ -102,29 +82,29 @@ void CGoldBone::Draw(void)
 //=====================================
 // 情報の設定処理
 //=====================================
-void CGoldBone::SetData(const D3DXVECTOR3& pos)
+void CIwakariShell::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 {
 	// 情報の設定処理
-	SetPos(pos);							// 位置
-	SetPosOld(pos);							// 前回の位置
-	SetRot(NONE_D3DXVECTOR3);				// 向き
-	SetScale(NONE_SCALE);					// 拡大率
+	SetPos(pos);						// 位置
+	SetPosOld(pos);						// 前回の位置
+	SetRot(rot);						// 向き
+	SetScale(NONE_SCALE);				// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));		// モデルの情報
 }
 
 //=======================================
 // 生成処理
 //=======================================
-CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos)
+CIwakariShell* CIwakariShell::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 {
 	// ローカルオブジェクトを生成
-	CGoldBone* pBone = nullptr;	// インスタンスを生成
+	CIwakariShell* pShell = nullptr;	// インスタンスを生成
 
-	if (pBone == nullptr)
+	if (pShell == nullptr)
 	{ // オブジェクトが NULL の場合
 
 		// インスタンスを生成
-		pBone = new CGoldBone;
+		pShell = new CIwakariShell;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -136,11 +116,11 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos)
 		return nullptr;
 	}
 
-	if (pBone != nullptr)
+	if (pShell != nullptr)
 	{ // オブジェクトが NULL じゃない場合
 
 		// 初期化処理
-		if (FAILED(pBone->Init()))
+		if (FAILED(pShell->Init()))
 		{ // 初期化に失敗した場合
 
 			// 停止
@@ -151,7 +131,7 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos)
 		}
 
 		// 情報の設定処理
-		pBone->SetData(pos);
+		pShell->SetData(pos, rot);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -163,32 +143,6 @@ CGoldBone* CGoldBone::Create(const D3DXVECTOR3& pos)
 		return nullptr;
 	}
 
-	// 金の骨のポインタを返す
-	return pBone;
-}
-
-//=======================================
-// リストの取得処理
-//=======================================
-CListManager<CGoldBone*> CGoldBone::GetList(void)
-{
-	// リストマネージャーを返す
-	return m_list;
-}
-
-//=======================================
-// ヒット処理
-//=======================================
-void CGoldBone::Hit(void)
-{
-	// 終了処理
-	Uninit();
-}
-
-//=======================================
-// 取得状態処理
-//=======================================
-void CGoldBone::Get(void)
-{
-
+	// 殻のポインタを返す
+	return pShell;
 }

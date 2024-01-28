@@ -173,6 +173,7 @@
     <ClCompile Include="danger_mark.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="destruction.cpp" />
+    <ClCompile Include="edit.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="effect2D.cpp" />
     <ClCompile Include="effect_model.cpp" />
@@ -186,6 +187,8 @@
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="handgun.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="iwakari.cpp" />
+    <ClCompile Include="iwakari_shell.cpp" />
     <ClCompile Include="lake.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="locus2D.cpp" />
@@ -244,6 +247,7 @@
     <ClCompile Include="shadowCircle.cpp" />
     <ClCompile Include="shadowModel.cpp" />
     <ClCompile Include="skybox.cpp" />
+    <ClCompile Include="slash_ripple.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="speech_message.cpp" />
     <ClCompile Include="stun.cpp" />
@@ -275,6 +279,7 @@
     <ClInclude Include="danger_mark.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="destruction.h" />
+    <ClInclude Include="edit.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="effect2D.h" />
     <ClInclude Include="effect_model.h" />
@@ -288,6 +293,8 @@
     <ClInclude Include="grass.h" />
     <ClInclude Include="handgun.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="iwakari.h" />
+    <ClInclude Include="iwakari_shell.h" />
     <ClInclude Include="lake.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="list_manager.h" />
@@ -344,6 +351,7 @@
     <ClInclude Include="shadowCircle.h" />
     <ClInclude Include="shadowModel.h" />
     <ClInclude Include="skybox.h" />
+    <ClInclude Include="slash_ripple.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="speech_message.h" />
     <ClInclude Include="stun.h" />

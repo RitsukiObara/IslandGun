@@ -89,6 +89,7 @@ HRESULT CGame::Init(void)
 	// モーションの読み込み処理
 	CMotion::Load(CMotion::STYLE_PLAYER);		// プレイヤー
 	CMotion::Load(CMotion::STYLE_TORDLE);		// タードル
+	CMotion::Load(CMotion::STYLE_IWAKARI);		// イワカリ
 
 	// スカイボックスの生成処理
 	CSkyBox::Create();
@@ -102,18 +103,21 @@ HRESULT CGame::Init(void)
 	CCoin::Create(D3DXVECTOR3(400.0f, 50.0f, 400.0f));
 
 	CEnemy::Create(D3DXVECTOR3(400.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+	CEnemy::Create(D3DXVECTOR3(700.0f, 100.0f, 300.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+	CEnemy::Create(D3DXVECTOR3(-500.0f, 100.0f, -400.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+	CEnemy::Create(D3DXVECTOR3(800.0f, 100.0f, 700.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
 
 	CTree::Create(D3DXVECTOR3(200.0f, 0.0f, -700.0f), NONE_D3DXVECTOR3, CTree::TYPE_PALM);
 
-	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), NONE_D3DXVECTOR3, NONE_SCALE, CRock::TYPE_SOFT);
+	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), NONE_D3DXVECTOR3, NONE_SCALE, CRock::TYPE_HARD);
 
 	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f), NONE_SCALE);
 
-	CGoldBone::Create(D3DXVECTOR3(-400.0f, 0.0f, 400.0f), NONE_D3DXVECTOR3);
+	CGoldBone::Create(D3DXVECTOR3(-400.0f, 0.0f, 400.0f));
 
 	CGrass::Create(D3DXVECTOR3(300.0f, 0.0f, 50.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(20.0f, 60.0f, 0.0f));
 
-	CLake::Create(D3DXVECTOR3(0.0f, 100.0f, -400.0f), D3DXVECTOR3(200.0f, 0.0f, 200.0f));
+	//CLake::Create(D3DXVECTOR3(0.0f, 100.0f, -400.0f), D3DXVECTOR3(200.0f, 0.0f, 200.0f));
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

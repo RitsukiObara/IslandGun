@@ -13,11 +13,12 @@
 #include "model.h"
 
 #include "motion.h"
+#include "block.h"
+#include "collision.h"
 #include "anim_reaction.h"
 
 #include "tordle.h"
-#include "collision.h"
-#include "block.h"
+#include "iwakari.h"
 
 //------------------------------------------------------------
 // 無名名前空間
@@ -26,7 +27,8 @@ namespace
 {
 	const D3DXVECTOR3 COLLSIZE[CEnemy::TYPE_MAX] =		// 当たり判定のサイズ
 	{
-		D3DXVECTOR3(70.0f,140.0f,70.0f)
+		D3DXVECTOR3(85.0f,85.0f,85.0f),
+		D3DXVECTOR3(80.0f,0.0f,80.0f),
 	};
 	const char* MODEL[6] =
 	{
@@ -51,7 +53,7 @@ CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 	m_pMotion = nullptr;			// モーション
 
 	m_type = TYPE_TORDLE;			// 種類
-	m_CollSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
+	m_collSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -63,64 +65,6 @@ CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 CEnemy::~CEnemy()
 {
 
-}
-
-//================================
-// 初期化処理
-//================================
-HRESULT CEnemy::Init(void)
-{
-	if (FAILED(CCharacter::Init()))
-	{ // 初期化処理に失敗した場合
-
-		// 停止
-		assert(false);
-
-		// 失敗を返す
-		return E_FAIL;
-	}
-
-	// モデルの総数を設定
-	SetNumModel(CMotion::GetNumModel(CMotion::STYLE_TORDLE));
-
-	// データの設定処理
-	CCharacter::SetData();
-
-	if (m_pMotion == nullptr)
-	{ // モーションが NULL だった場合
-
-		// モーションの生成処理
-		m_pMotion = CMotion::Create();
-	}
-	else
-	{ // ポインタが NULL じゃない場合
-
-		// 停止
-		assert(false);
-	}
-
-	if (m_pMotion != nullptr)
-	{ // ポインタが NULL じゃない場合
-
-		// モーションの情報を取得する
-		m_pMotion->SetInfo(CMotion::STYLE_TORDLE, GetHierarchy(), GetNumModel());
-	}
-	else
-	{ // ポインタが NULL じゃない場合
-
-		// 停止
-		assert(false);
-	}
-
-	// モーションの設定処理
-	m_pMotion->Set(0);
-
-	// 全ての値を初期化する
-	m_type = TYPE_TORDLE;			// 種類
-	m_CollSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
-
-	// 値を返す
-	return S_OK;
 }
 
 //================================
@@ -191,7 +135,7 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 
 	// 全ての値を設定する
 	m_type = type;					// 種類
-	m_CollSize = COLLSIZE[m_type];	// 当たり判定のサイズ
+	m_collSize = COLLSIZE[m_type];	// 当たり判定のサイズ
 }
 
 //===========================================
@@ -223,6 +167,13 @@ CEnemy* CEnemy::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYP
 
 			// タードルを生成する
 			pEnemy = new CTordle;
+
+			break;
+
+		case CEnemy::TYPE_IWAKARI:		// イワカリ
+
+			// イワカリを生成する
+			pEnemy = new CIwakari;
 
 			break;
 
@@ -279,12 +230,34 @@ CMotion* CEnemy::GetMotion(void) const
 }
 
 //===========================================
+// モーションの生成処理
+//===========================================
+void CEnemy::CreateMotion(void)
+{
+	if (m_pMotion == nullptr)
+	{ // モーションが NULL の場合
+
+		// モーションを生成する
+		m_pMotion = CMotion::Create();
+	}
+}
+
+//===========================================
+// 当たり判定のサイズの設定処理
+//===========================================
+void CEnemy::SetCollSize(const D3DXVECTOR3& size)
+{
+	// 当たり判定のサイズを設定する
+	m_collSize = size;
+}
+
+//===========================================
 // 当たり判定のサイズの取得処理
 //===========================================
 D3DXVECTOR3 CEnemy::GetCollSize(void) const
 {
 	// 当たり判定のサイズを取得する
-	return m_CollSize;
+	return m_collSize;
 }
 
 //===========================================
@@ -303,7 +276,7 @@ void CEnemy::TreeCollision(void)
 {
 	// 位置と半径を取得する
 	D3DXVECTOR3 pos = GetPos();
-	float fRadius = m_CollSize.x;
+	float fRadius = m_collSize.x;
 
 	// 木との当たり判定
 	collision::TreeCollision(&pos, fRadius);
@@ -326,10 +299,10 @@ void CEnemy::RockCollision(void)
 void CEnemy::BlockCollision(void)
 {
 	// ローカル変数宣言
-	collision::SCollision coll = { false,false,false,false,false,false };				// 当たり判定の変数
+	collision::SCollision coll = { false,false,false,false,false,false };		// 当たり判定の変数
 	D3DXVECTOR3 pos = GetPos();							// 位置を取得する
-	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-m_CollSize.x, 0.0f, -m_CollSize.z);		// 最小値を取得する
-	D3DXVECTOR3 vtxMax = m_CollSize;					// 最大値を取得する
+	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-m_collSize.x, 0.0f, -m_collSize.z);		// 最小値を取得する
+	D3DXVECTOR3 vtxMax = m_collSize;					// 最大値を取得する
 	CListManager<CBlock*> list = CBlock::GetList();
 	CBlock* pBlock = nullptr;		// 先頭の値
 	CBlock* pBlockEnd = nullptr;	// 末尾の値

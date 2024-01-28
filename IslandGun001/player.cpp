@@ -590,6 +590,24 @@ D3DXVECTOR3 CPlayer::GetMove(void) const
 }
 
 //=======================================
+// ジャンプ状況の設定処理
+//=======================================
+void CPlayer::SetEnableJump(const bool bJump)
+{
+	// ジャンプ状況を設定する
+	m_bJump = bJump;
+}
+
+//=======================================
+// ジャンプ状況の取得処理
+//=======================================
+bool CPlayer::IsJump(void) const
+{
+	//ジャンプ状況を返す
+	return m_bJump;
+}
+
+//=======================================
 // 起伏地面の当たり判定処理
 //=======================================
 void CPlayer::ElevationCollision(void)
@@ -696,11 +714,11 @@ void CPlayer::Control(void)
 			m_pAction->GetAction() != CPlayerAction::ACTION_RELOAD)
 		{ // リロード状態以外
 
-			// ジャンプ処理
-			Jump();
-
 			// 攻撃処理
 			Shot();
+
+			// ジャンプ処理
+			Jump();
 
 			// ダガー処理
 			Dagger();
@@ -1172,7 +1190,7 @@ void CPlayer::RockCollision(void)
 	D3DXVECTOR3 pos = GetPos();
 
 	// 岩との当たり判定
-	collision::RockCollision(&pos, GetPosOld(), COLLISION_SIZE.x);
+	collision::RockCollision(&pos, COLLISION_SIZE.x, COLLISION_SIZE.y);
 
 	// 位置の設定処理
 	SetPos(pos);
@@ -1220,8 +1238,13 @@ void CPlayer::Shot(void)
 		// 射撃カウントを0にする
 		m_nShotCount = 0;
 
-		// 通常状態にする
-		m_pAction->SetAction(CPlayerAction::ACTION_NONE);
+		if (m_pAction != nullptr &&
+			m_pAction->GetAction() != CPlayerAction::ACTION_RELOAD)
+		{ // リロード状態以外の場合
+
+			// 通常状態にする
+			m_pAction->SetAction(CPlayerAction::ACTION_NONE);
+		}
 	}
 }
 
@@ -1289,10 +1312,19 @@ void CPlayer::ShotGun(int* nNumBullet)
 	// 散弾状態にする
 	m_pAction->SetAction(CPlayerAction::ACTION_SHOTGUN);
 
+	// 反動の移動量を宣言
+	D3DXVECTOR3 move;
+
 	// 移動量を設定する
-	m_move.x = sinf(GetRot().y) * -SHOTGUN_RECOIL;
-	m_move.y = SHOTGUN_GRAVITY;
-	m_move.z = cosf(GetRot().y) * -SHOTGUN_RECOIL;
+	move.x = sinf(GetRot().y) * -SHOTGUN_RECOIL;
+	move.y = SHOTGUN_GRAVITY;
+	move.z = cosf(GetRot().y) * -SHOTGUN_RECOIL;
+
+	// 反動の移動量を設定する
+	m_pAction->SetMoveRecoil(move);
+
+	// 移動量を初期化する
+	m_move = NONE_D3DXVECTOR3;
 
 	D3DXVECTOR3 pos = GetPos();		// プレイヤーの位置を宣言
 	D3DXVECTOR3 rot;				// プレイヤーの向きを宣言

@@ -21,7 +21,7 @@
 //------------------------------------------------------------
 namespace
 {
-	const float SPEED = 3.0f;			// 移動量
+	const float SPEED = 5.0f;			// 移動量
 }
 
 //================================
@@ -47,7 +47,7 @@ CTordle::~CTordle()
 //================================
 HRESULT CTordle::Init(void)
 {
-	if (FAILED(CEnemy::Init()))
+	if (FAILED(CCharacter::Init()))
 	{ // 初期化処理に失敗した場合
 
 		// 停止
@@ -55,6 +55,38 @@ HRESULT CTordle::Init(void)
 
 		// 失敗を返す
 		return E_FAIL;
+	}
+
+	// モデルの総数を設定
+	SetNumModel(CMotion::GetNumModel(CMotion::STYLE_TORDLE));
+
+	// データの設定処理
+	CCharacter::SetData();
+
+	if (GetMotion() == nullptr)
+	{ // モーションが NULL だった場合
+
+		// モーションの生成処理
+		CreateMotion();
+	}
+	else
+	{ // ポインタが NULL じゃない場合
+
+		// 停止
+		assert(false);
+	}
+
+	if (GetMotion() != nullptr)
+	{ // ポインタが NULL じゃない場合
+
+		// モーションの情報を取得する
+		GetMotion()->SetInfo(CMotion::STYLE_TORDLE, GetHierarchy(), GetNumModel());
+	}
+	else
+	{ // ポインタが NULL じゃない場合
+
+		// 停止
+		assert(false);
 	}
 
 	// 値を返す

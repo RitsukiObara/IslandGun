@@ -15,6 +15,7 @@
 #include "player.h"
 #include "handgun.h"
 #include "dagger.h"
+#include "slash_ripple.h"
 #include "chara_blur.h"
 #include "collision.h"
 #include "bulletUI.h"
@@ -42,11 +43,12 @@ namespace
 CPlayerAction::CPlayerAction()
 {
 	// 全ての値をクリアする
-	m_action = ACTION_NONE;		// 行動
-	m_nActionCount = 0;			// 行動カウント
-	m_nDodgeInterval = 0;		// 回避のインターバルカウント
-	m_fDodgeRot = 0.0f;			// 回避する向き
-	m_bDodgeUse = true;			// 回避使用可能状況
+	m_moveRecoil = NONE_D3DXVECTOR3;	// 反動の移動量
+	m_action = ACTION_NONE;				// 行動
+	m_nActionCount = 0;					// 行動カウント
+	m_nDodgeInterval = 0;				// 回避のインターバルカウント
+	m_fDodgeRot = 0.0f;					// 回避する向き
+	m_bDodgeUse = true;					// 回避使用可能状況
 }
 
 //=========================
@@ -58,23 +60,24 @@ CPlayerAction::~CPlayerAction()
 }
 
 //=========================
-// ライトの初期化処理
+// 行動の初期化処理
 //=========================
 HRESULT CPlayerAction::Init(void)
 {
 	// 全ての値を初期化する
-	m_action = ACTION_NONE;		// 行動
-	m_nActionCount = 0;			// 行動カウント
-	m_nDodgeInterval = 0;		// 回避のインターバルカウント
-	m_fDodgeRot = 0.0f;			// 回避する向き
-	m_bDodgeUse = true;			// 回避使用可能状況
+	m_moveRecoil = NONE_D3DXVECTOR3;	// 反動の移動量
+	m_action = ACTION_NONE;				// 行動
+	m_nActionCount = 0;					// 行動カウント
+	m_nDodgeInterval = 0;				// 回避のインターバルカウント
+	m_fDodgeRot = 0.0f;					// 回避する向き
+	m_bDodgeUse = true;					// 回避使用可能状況
 
 	// 成功を返す
 	return S_OK;
 }
 
 //=========================
-// ライトの終了処理
+// 行動の終了処理
 //=========================
 void CPlayerAction::Uninit(void)
 {
@@ -83,7 +86,7 @@ void CPlayerAction::Uninit(void)
 }
 
 //=========================
-// ライトの更新処理
+// 行動の更新処理
 //=========================
 void CPlayerAction::Update(CPlayer* pPlayer)
 {
@@ -92,7 +95,7 @@ void CPlayerAction::Update(CPlayer* pPlayer)
 	case CPlayerAction::ACTION_NONE:	// 通常状態
 
 		// 通常状態処理
-		NoneProcess(pPlayer);
+		NoneProcess();
 
 		break;
 
@@ -217,6 +220,24 @@ CPlayerAction* CPlayerAction::Create(void)
 }
 
 //=========================
+// 移動量の設定処理
+//=========================
+void CPlayerAction::SetMoveRecoil(const D3DXVECTOR3& move)
+{
+	// 反動の移動量を設定する
+	m_moveRecoil = move;
+}
+
+//=========================
+// 移動量の取得処理
+//=========================
+D3DXVECTOR3 CPlayerAction::GetMoveRecoil(void) const
+{
+	// 反動の移動量を返す
+	return m_moveRecoil;
+}
+
+//=========================
 // 行動の設定処理
 //=========================
 void CPlayerAction::SetAction(const ACTION action)
@@ -276,7 +297,7 @@ bool CPlayerAction::IsDodgeUse(void) const
 //=========================
 // 通常状態処理
 //=========================
-void CPlayerAction::NoneProcess(CPlayer* pPlayer)
+void CPlayerAction::NoneProcess(void)
 {
 
 }
@@ -409,14 +430,23 @@ void CPlayerAction::DodgeProcess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::ShotgunProcess(CPlayer* pPlayer)
 {
-	// 向きを取得する
+	// 位置と向きを取得する
+	D3DXVECTOR3 pos = pPlayer->GetPos();
 	D3DXVECTOR3 rotDest = pPlayer->GetRotDest();
 	D3DXVECTOR3 rotCamera = CManager::Get()->GetCamera()->GetRot();
+
+	if (pPlayer->IsJump() == true)
+	{ // 空中にいる場合
+
+		// 位置を移動する
+		pos += m_moveRecoil;
+	}
 
 	// カメラの向きを同じ向きを揃える
 	rotDest.y = rotCamera.y;
 
-	// 向きを適用する
+	// 位置と向きを適用する
+	pPlayer->SetPos(pos);
 	pPlayer->SetRotDest(rotDest);
 
 	// 腕を真っ直ぐ伸ばす
@@ -445,6 +475,13 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 {
 	// 移動量を取得する
 	D3DXVECTOR3 move = pPlayer->GetMove();
+
+	if (pPlayer->IsJump() == false)
+	{ // 地上に立った瞬間
+
+		// 斬撃の波紋を生成する
+		CSlashRipple::Create(pPlayer->GetPos(), pPlayer->GetRot());
+	}
 
 	// 移動量を設定する
 	move.x = 0.0f;
@@ -489,6 +526,19 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::ReloadProcess(CPlayer* pPlayer)
 {
+	// 位置を取得する
+	D3DXVECTOR3 pos = pPlayer->GetPos();
+
+	if (pPlayer->IsJump() == true)
+	{ // 空中にいる場合
+
+		// 位置を移動する
+		pos += m_moveRecoil;
+	}
+
+	// 位置を適用する
+	pPlayer->SetPos(pos);
+
 	// 腕を少し上にあげる
 	pPlayer->GetHierarchy(5)->SetRot(D3DXVECTOR3(0.0f, 0.0f, -D3DX_PI * 0.25f));
 	pPlayer->GetHierarchy(6)->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI * 0.25f));

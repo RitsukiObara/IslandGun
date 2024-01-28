@@ -77,6 +77,8 @@ public:			// 誰でもアクセスできる
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
 	void SetMove(const D3DXVECTOR3& move);		// 移動量の設定処理
 	D3DXVECTOR3 GetMove(void) const;			// 移動量の取得処理
+	void SetEnableJump(const bool bJump);		// ジャンプ状況の設定処理
+	bool IsJump(void) const;					// ジャンプ状況の取得処理
 
 	// 静的メンバ関数
 	static CPlayer* Create(const D3DXVECTOR3& pos);	// 生成処理
