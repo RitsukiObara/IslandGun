@@ -19,6 +19,7 @@
 namespace
 {
 	const char* MODEL = "data\\MODEL\\IwakariShell.x";	// イワカリの殻の名前
+	const int LIFE = 80;								// 殻の寿命
 }
 
 //==============================
@@ -26,7 +27,8 @@ namespace
 //==============================
 CIwakariShell::CIwakariShell() : CModel(CObject::TYPE_NONE, CObject::PRIORITY_ENTITY)
 {
-
+	// 全ての値をクリアする
+	m_nLife = 0;		// 体力
 }
 
 //==============================
@@ -90,6 +92,9 @@ void CIwakariShell::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	SetRot(rot);						// 向き
 	SetScale(NONE_SCALE);				// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));		// モデルの情報
+
+	// 全ての値を設定する
+	m_nLife = LIFE;			// 体力
 }
 
 //=======================================
@@ -145,4 +150,22 @@ CIwakariShell* CIwakariShell::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& 
 
 	// 殻のポインタを返す
 	return pShell;
+}
+
+//=======================================
+// 体力の設定処理
+//=======================================
+void CIwakariShell::SetLife(const int nLife)
+{
+	// 体力を設定する
+	m_nLife = nLife;
+}
+
+//=======================================
+// 体力の取得処理
+//=======================================
+int CIwakariShell::GetLife(void) const
+{
+	// 体力を返す
+	return m_nLife;
 }

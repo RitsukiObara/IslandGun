@@ -93,13 +93,13 @@ void useful::Correct(const float fDest, float *pValue, const float fCorrect)
 */
 void useful::ColReverse(float *pData)
 {
-	if (*pData >= 1.0f)
+	if (*pData > 1.0f)
 	{ // データが 0.0f 以下の場合
 
 		// データを 1.0f にする
 		*pData = 0.0f;
 	}
-	else if (*pData <= 0.0f)
+	else if (*pData < 0.0f)
 	{ // データが 1.0f 以上の場合
 
 		// データを 0.0f にする

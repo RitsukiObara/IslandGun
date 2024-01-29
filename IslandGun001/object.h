@@ -62,7 +62,6 @@ public:			// 誰でもアクセスできる
 		TYPE_GRASS,				// 草
 		TYPE_LAKE,				// 水場
 		TYPE_SLASHRIPPLE,		// 斬撃の波紋
-		TYPE_SHELL,				// 殻
 		TYPE_MAX				// この列挙型の総数
 	};
 

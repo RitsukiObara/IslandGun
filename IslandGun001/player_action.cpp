@@ -29,7 +29,6 @@ namespace
 	const int DODGE_COUNT = 27;			// 回避状態のカウント数
 	const int DAGGER_COUNT = 40;		// ダガー状態のカウント数
 	const int SWOOP_COUNT = 65;			// 急降下状態のカウント数
-	const int SHOTGUN_COUNT = 45;		// 散弾状態のカウント数
 	const int DODGE_BLUR_LIFE = 10;		// 回避状態のブラーの寿命
 	const D3DXCOLOR DODGE_BLUR_COL = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);		// 回避状態のブラーの色
 	const float DAGGER_HEIGHT = 80.0f;	// ダガーの高さ
@@ -49,6 +48,7 @@ CPlayerAction::CPlayerAction()
 	m_nDodgeInterval = 0;				// 回避のインターバルカウント
 	m_fDodgeRot = 0.0f;					// 回避する向き
 	m_bDodgeUse = true;					// 回避使用可能状況
+	m_bRecoil = false;					// 反動状況
 }
 
 //=========================
@@ -71,6 +71,7 @@ HRESULT CPlayerAction::Init(void)
 	m_nDodgeInterval = 0;				// 回避のインターバルカウント
 	m_fDodgeRot = 0.0f;					// 回避する向き
 	m_bDodgeUse = true;					// 回避使用可能状況
+	m_bRecoil = false;					// 反動状況
 
 	// 成功を返す
 	return S_OK;
@@ -295,11 +296,30 @@ bool CPlayerAction::IsDodgeUse(void) const
 }
 
 //=========================
+// 反動状況の設定処理
+//=========================
+void CPlayerAction::SetEnableRecoil(const bool bRecoil)
+{
+	// 反動状況を設定する
+	m_bRecoil = bRecoil;
+}
+
+//=========================
+// 反動状況の取得処理
+//=========================
+bool CPlayerAction::IsRecoil(void) const
+{
+	// 反動状況を取得する
+	return m_bRecoil;
+}
+
+//=========================
 // 通常状態処理
 //=========================
 void CPlayerAction::NoneProcess(void)
 {
-
+	// 緊急時に移動できるようにしておく
+	m_bRecoil = false;
 }
 
 //=========================
@@ -441,6 +461,15 @@ void CPlayerAction::ShotgunProcess(CPlayer* pPlayer)
 		// 位置を移動する
 		pos += m_moveRecoil;
 	}
+	else
+	{ // 上記以外
+
+		// 行動を設定する
+		SetAction(ACTION_NONE);
+
+		// 反動状況を false にする
+		m_bRecoil = false;
+	}
 
 	// カメラの向きを同じ向きを揃える
 	rotDest.y = rotCamera.y;
@@ -456,16 +485,6 @@ void CPlayerAction::ShotgunProcess(CPlayer* pPlayer)
 	pPlayer->GetHierarchy(8)->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	pPlayer->GetHierarchy(9)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
 	pPlayer->GetHierarchy(10)->SetRot(D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f));
-
-	// 行動カウントを加算する
-	m_nActionCount++;
-
-	if (m_nActionCount >= SHOTGUN_COUNT)
-	{ // 行動カウントが一定数以上になった場合
-
-		// 行動を設定する
-		SetAction(ACTION_NONE);
-	}
 }
 
 //=========================
@@ -534,6 +553,12 @@ void CPlayerAction::ReloadProcess(CPlayer* pPlayer)
 
 		// 位置を移動する
 		pos += m_moveRecoil;
+	}
+	else
+	{ // 上記以外
+
+		// 反動状況を false にする
+		m_bRecoil = false;
 	}
 
 	// 位置を適用する

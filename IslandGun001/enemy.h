@@ -49,7 +49,8 @@ public:					// 誰でもアクセスできる
 	virtual void Draw(void) override;		// 描画処理
 
 	virtual void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 情報の設定処理
-	virtual void Hit(const D3DXVECTOR3& pos);		// ヒット処理
+	virtual void Hit(const int nDamage) = 0;	// ヒット処理
+	void Death(void);						// 死亡時の処理
 
 	// セット・ゲット関係
 	CMotion* GetMotion(void) const;			// モーションの取得処理
@@ -57,6 +58,9 @@ public:					// 誰でもアクセスできる
 
 	void SetCollSize(const D3DXVECTOR3& size);		// 当たり判定のサイズの設定処理
 	D3DXVECTOR3 GetCollSize(void) const;			// 当たり判定のサイズの取得処理
+
+	void SetLife(const int nLife);			// 体力の設定処理
+	int GetLife(void) const;				// 体力の取得処理
 
 	// 静的メンバ関数
 	static CEnemy* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
@@ -75,6 +79,7 @@ private:				// 自分だけアクセスできる
 
 	TYPE m_type;			// 種類
 	D3DXVECTOR3 m_collSize;	// 当たり判定のサイズ
+	int m_nLife;			// 体力
 
 	// 静的メンバ変数
 	static CListManager<CEnemy*> m_list;		// リスト

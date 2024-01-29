@@ -201,20 +201,46 @@ void CIwakari::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYP
 //===========================================
 // ƒqƒbƒgˆ—
 //===========================================
-void CIwakari::Hit(const D3DXVECTOR3& pos)
+void CIwakari::Hit(const int nDamage)
 {
-	// ƒqƒbƒgˆ—
-	CEnemy::Hit(pos);
+	// ‘Ì—Í‚Ì•Ï”‚ğéŒ¾‚·‚é
+	int nLife;
 
 	if (m_pShell != nullptr)
-	{ // Šk‚ª NULL ‚¶‚á‚È‚¢ê‡
+	{ // Šk‚ª‘¶İ‚·‚éê‡
 
-		// Šk‚Ìí—Ş‚ğ•Ï‚¦‚é
-		m_pShell->SetType(TYPE_SHELL);
+		// Šk‚Ì‘Ì—Í‚ğæ“¾‚·‚é
+		nLife = m_pShell->GetLife();
 
-		// Šk‚ğ NULL ‚É‚·‚é
-		m_pShell = nullptr;
+		// Šk‚Ì‘Ì—Í‚ğŒ¸‚ç‚·
+		nLife -= nDamage;
+
+		// Šk‚Ì‘Ì—Í‚ğ“K—p‚·‚é
+		m_pShell->SetLife(nLife);
+
+		if (nLife <= 0)
+		{ // Šk‚Ì‘Ì—Í‚ª‚È‚­‚È‚Á‚½ê‡
+
+			// Šk‚ğÁ‹‚·‚é
+			m_pShell->Uninit();
+			m_pShell = nullptr;
+		}
 	}
+	else
+	{ // ã‹LˆÈŠO
+
+		// ‘Ì—Í‚ğæ“¾‚·‚é
+		nLife = GetLife();
+
+		// ‘Ì—Í‚ğŒ¸‚ç‚·
+		nLife -= nDamage;
+
+		// ‘Ì—Í‚ğ“K—p‚·‚é
+		SetLife(nLife);
+	}
+
+	// €–Sˆ—
+	Death();
 }
 
 //===========================================

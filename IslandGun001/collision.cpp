@@ -20,6 +20,7 @@
 #include "player_action.h"
 #include "gold_bone_UI.h"
 #include "palm_fruit.h"
+#include "bullet.h"
 #include "rock.h"
 
 //===============================
@@ -172,11 +173,14 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 //===============================
 // 敵と銃の当たり判定
 //===============================
-bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& size)
+bool collision::EnemyHitToGun(const CBullet& bullet)
 {
 	// ローカル変数宣言
-	D3DXVECTOR3 bulletMax = D3DXVECTOR3(size.x, size.y, size.x);	// 弾の最大値
-	D3DXVECTOR3 bulletMin = D3DXVECTOR3(-size.x, -size.y, -size.x);	// 弾の最小値
+	D3DXVECTOR3 posBullet = bullet.GetPos();		// 弾の位置
+	D3DXVECTOR3 posOldBullet = bullet.GetPosOld();	// 前回の弾の位置
+	D3DXVECTOR3 bulletMax = D3DXVECTOR3(bullet.GetSize().x, bullet.GetSize().y, bullet.GetSize().x);	// 弾の最大値
+	D3DXVECTOR3 bulletMin = D3DXVECTOR3(-bullet.GetSize().x, -bullet.GetSize().y, -bullet.GetSize().x);	// 弾の最小値
+	int nDamage = bullet.GetDamage();				// ダメージ
 	D3DXVECTOR3 enemyMax;		// 敵の最大値
 	D3DXVECTOR3 enemyMin;		// 敵の最小値
 	CListManager<CEnemy*> list = CEnemy::GetList();
@@ -208,9 +212,9 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 
 			if (HexahedronHit
 			(
-				pos,
+				posBullet,
 				pEnemy->GetPos(),
-				posOld,
+				posOldBullet,
 				pEnemy->GetPosOld(),
 				bulletMin,
 				enemyMin,
@@ -219,7 +223,7 @@ bool collision::EnemyHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 			{ // 敵と重なった場合
 
 				// ヒット処理
-				pEnemy->Hit(pos);
+				pEnemy->Hit(nDamage);
 
 				// true を返す
 				return true;
@@ -280,7 +284,7 @@ bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, co
 			{ // 敵と重なった場合
 
 				// ヒット処理
-				pEnemy->Hit(pos);
+				pEnemy->Hit(80);
 
 				// true を返す
 				return true;

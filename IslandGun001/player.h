@@ -51,7 +51,16 @@ public:			// 誰でもアクセスできる
 		STATE_NONE = 0,				// 通常状態
 		STATE_DAMAGE,				// ダメージ状態
 		STATE_INVINSIBLE,			// 無敵状態
-		STATE_MAX
+		STATE_DEATH,				// 死亡状態
+		STATE_MAX					// この列挙型の総数
+	};
+
+	// 構造体定義(状態関連)
+	struct SState
+	{
+		D3DXCOLOR col;		// 体の色(状態によって変わる)
+		STATE state;		// 状態
+		int nCount;			// 状態カウント
 	};
 
 	CPlayer();				// コンストラクタ
@@ -63,6 +72,7 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
+	void Hit(const int nDamage);	// ヒット処理
 	void SetData(const D3DXVECTOR3& pos);		// 情報の設定処理
 
 	// セット・ゲット関係
@@ -77,6 +87,7 @@ public:			// 誰でもアクセスできる
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
 	void SetMove(const D3DXVECTOR3& move);		// 移動量の設定処理
 	D3DXVECTOR3 GetMove(void) const;			// 移動量の取得処理
+	SState GetState(void) const;				// 状態の取得処理
 	void SetEnableJump(const bool bJump);		// ジャンプ状況の設定処理
 	bool IsJump(void) const;					// ジャンプ状況の取得処理
 
@@ -86,6 +97,7 @@ public:			// 誰でもアクセスできる
 private:		// 自分だけアクセスできる
 
 	// メンバ関数
+	void StateManager(void);		// 状態管理処理
 	void Move(void);				// 移動処理
 	void ElevationCollision(void);	// 起伏地面の当たり判定処理
 	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
@@ -93,7 +105,7 @@ private:		// 自分だけアクセスできる
 	void BlockCollision(void);		// ブロックとの当たり判定
 	void RockCollision(void);		// 岩との当たり判定
 
-	// 操作感系
+	// 操作系
 	void CameraControl(void);		// カメラの操作処理
 	void CameraMouse(void);			// マウスでのカメラの操作処理
 	void Control(void);				// 操作処理
@@ -117,11 +129,10 @@ private:		// 自分だけアクセスできる
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 	D3DXVECTOR3 m_move;			// 移動量
-	STATE m_state;				// 状態
-	int m_nStateCount;			// 状態カウント
+	SState m_stateInfo;			// 状態関連の構造体
+	int m_nLife;				// 体力
 	int m_nShotCount;			// 射撃カウント
 	float m_fSpeed;				// 速度
-	float m_fAlpha;				// 体の透明度
 	float m_fStickRot;			// スティックの向き
 	bool m_bMove;				// 移動状況
 	bool m_bJump;				// ジャンプ状況

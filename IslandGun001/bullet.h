@@ -39,6 +39,9 @@ public:
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);				// 情報の設定処理
 
+	// セット・ゲット関係
+	int GetDamage(void) const;		// ダメージの取得処理
+
 	// 静的メンバ関数
 	static CBullet* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
 
@@ -50,6 +53,7 @@ private:
 	D3DXVECTOR3 m_move;		// 移動量
 	TYPE m_type;			// 種類
 	int m_nLife;			// 寿命
+	int m_nDamage;			// ダメージ
 
 	// 静的メンバ変数
 	static CListManager<CBullet*> m_list;		// リスト

@@ -151,10 +151,19 @@ void CTordle::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE
 //===========================================
 // ヒット処理
 //===========================================
-void CTordle::Hit(const D3DXVECTOR3& pos)
+void CTordle::Hit(const int nDamage)
 {
-	// ヒット処理
-	CEnemy::Hit(pos);
+	// 体力を取得する
+	int nLife = GetLife();
+
+	// 体力を減らす
+	nLife -= nDamage;
+
+	// 体力を適用する
+	SetLife(nLife);
+
+	// 死亡処理
+	Death();
 }
 
 //===========================================

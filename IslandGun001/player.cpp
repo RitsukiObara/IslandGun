@@ -78,6 +78,11 @@ namespace
 	const int INIT_GUN_IDX = 9;						// 銃の初期値のインデックス
 	const int INIT_DAGGER_IDX = 9;					// ダガーのインデックス
 	const int LAST_SHOTCOUNT = 2;					// ラストファイアの猶予フレーム
+	const int MAX_LIFE = 100;						// 体力の最大値
+	const int DAMAGE_COUNT = 7;						// ダメージ状態のカウント数
+	const D3DXCOLOR DAMAGE_COLOR = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);		// ダメージ状態の色
+	const int INVINCIBLE_COUNT = 90;				// 無敵状態のカウント数
+	const int INVINCIBLE_FLUSH_COUNT = 10;			// 無敵状態の点滅のカウント
 }
 
 //=========================================
@@ -97,13 +102,14 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_pBulletUI = nullptr;					// 弾丸UIの情報
 	m_pGoldBoneUI = nullptr;				// 金の骨のUIの情報
 
+	m_stateInfo.state = STATE_NONE;			// 状態
+	m_stateInfo.nCount = 0;					// 状態カウント
+	m_stateInfo.col = NONE_D3DXCOLOR;		// 体の色
 	m_rotDest = NONE_D3DXVECTOR3;			// 目標の向き
 	m_move = NONE_D3DXVECTOR3;				// 移動量
-	m_state = STATE_NONE;					// 状態
-	m_nStateCount = 0;						// 状態カウント
+	m_nLife = MAX_LIFE;						// 体力
 	m_nShotCount = 0;						// 射撃カウント
 	m_fSpeed = SPEED;						// 速度
-	m_fAlpha = 1.0f;						// 体の透明度
 	m_fStickRot = 0.0f;						// スティックの向き
 	m_bMove = false;						// 移動状況
 	m_bJump = false;						// ジャンプ状況
@@ -211,20 +217,21 @@ HRESULT CPlayer::Init(void)
 	{
 		m_apHandGun[nCntGun] = nullptr;	// 拳銃の情報
 	}
-	m_pAim = nullptr;				// エイムの情報
-	m_pDagger = nullptr;			// ダガーの情報
-
-	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
-	m_move = NONE_D3DXVECTOR3;		// 移動量
-	m_state = STATE_NONE;			// 状態
-	m_nStateCount = 0;				// 状態カウント
-	m_nShotCount = 0;				// 射撃カウント
-	m_fSpeed = SPEED;				// 速度
-	m_fAlpha = 1.0f;				// 体の透明度
-	m_fStickRot = 0.0f;				// スティックの向き
-	m_bMove = false;				// 移動状況
-	m_bJump = false;				// ジャンプ状況
-	m_bRightShot = true;			// 右で撃つかどうか
+	m_pAim = nullptr;					// エイムの情報
+	m_pDagger = nullptr;				// ダガーの情報
+		
+	m_stateInfo.state = STATE_NONE;		// 状態
+	m_stateInfo.nCount = 0;				// 状態カウント
+	m_stateInfo.col = NONE_D3DXCOLOR;	// 体の色
+	m_rotDest = NONE_D3DXVECTOR3;		// 目標の向き
+	m_move = NONE_D3DXVECTOR3;			// 移動量
+	m_nLife = MAX_LIFE;					// 体力
+	m_nShotCount = 0;					// 射撃カウント
+	m_fSpeed = SPEED;					// 速度
+	m_fStickRot = 0.0f;					// スティックの向き
+	m_bMove = false;					// 移動状況
+	m_bJump = false;					// ジャンプ状況
+	m_bRightShot = true;				// 右で撃つかどうか
 
 	// 値を返す
 	return S_OK;
@@ -304,6 +311,9 @@ void CPlayer::Update(void)
 	// 前回の位置の設定処理
 	SetPosOld(GetPos());
 
+	// 状態管理処理
+	StateManager();
+
 	// 操作処理
 	Control();
 
@@ -359,6 +369,12 @@ void CPlayer::Update(void)
 	// 金の骨との当たり判定
 	collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
+	if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_0) == true)
+	{
+		// ヒット処理
+		Hit(5);
+	}
+
 	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
 
@@ -367,8 +383,37 @@ void CPlayer::Update(void)
 //===========================================
 void CPlayer::Draw(void)
 {
-	// 描画処理
-	CCharacter::Draw();
+	switch (m_stateInfo.state)
+	{
+	case STATE_NONE:		// 通常状態
+	case STATE_DEATH:		// 死亡状態
+
+		// 描画処理
+		CCharacter::Draw();
+
+		break;
+
+	case STATE_DAMAGE:		// ダメージ状態
+
+		// 描画処理
+		CCharacter::Draw(m_stateInfo.col);
+
+		break;
+
+	case STATE_INVINSIBLE:	// 無敵状態
+
+		// 描画処理
+		CCharacter::Draw(m_stateInfo.col.a);
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
+	}
 
 	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
 	{
@@ -392,6 +437,34 @@ void CPlayer::Draw(void)
 
 		// エイムの描画処理
 		m_pAim->Draw();
+	}
+}
+
+//===========================================
+// ヒット処理
+//===========================================
+void CPlayer::Hit(const int nDamage)
+{
+	// 体力を減らす
+	m_nLife -= nDamage;
+
+	if (m_nLife <= 0)
+	{ // 体力が0以下になった場合
+
+		// 体力を0にする
+		m_nLife = 0;
+
+		// 死亡状態にする
+		m_stateInfo.state = STATE_DEATH;
+	}
+	else
+	{ // 上記以外
+
+		// ダメージ状態にする
+		m_stateInfo.state = STATE_DAMAGE;
+
+		// カウントを0にする
+		m_stateInfo.nCount = 0;
 	}
 }
 
@@ -492,16 +565,17 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	m_pAim = CAim::Create(CManager::Get()->GetCamera()->GetPosR());
 	
 	// 全ての値を設定する
-	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
-	m_move = NONE_D3DXVECTOR3;		// 移動量
-	m_state = STATE_NONE;			// 状態
-	m_nStateCount = 0;				// 状態カウント
-	m_nShotCount = 0;				// 射撃カウント
-	m_fSpeed = SPEED;				// 速度
-	m_fAlpha = 1.0f;				// 体の透明度
-	m_fStickRot = 0.0f;				// スティックの向き
-	m_bMove = false;				// 移動状況
-	m_bJump = false;				// ジャンプ状況
+	m_stateInfo.state = STATE_NONE;		// 状態
+	m_stateInfo.nCount = 0;				// 状態カウント
+	m_stateInfo.col = NONE_D3DXCOLOR;	// 体の色
+	m_rotDest = NONE_D3DXVECTOR3;		// 目標の向き
+	m_move = NONE_D3DXVECTOR3;			// 移動量
+	m_nLife = MAX_LIFE;					// 体力
+	m_nShotCount = 0;					// 射撃カウント
+	m_fSpeed = SPEED;					// 速度
+	m_fStickRot = 0.0f;					// スティックの向き
+	m_bMove = false;					// 移動状況
+	m_bJump = false;					// ジャンプ状況
 }
 
 //===========================================
@@ -587,6 +661,15 @@ D3DXVECTOR3 CPlayer::GetMove(void) const
 {
 	// 移動量を返す
 	return m_move;
+}
+
+//=======================================
+// 状態の取得処理
+//=======================================
+CPlayer::SState CPlayer::GetState(void) const
+{
+	// 状態関連の情報を返す
+	return m_stateInfo;
 }
 
 //=======================================
@@ -714,11 +797,11 @@ void CPlayer::Control(void)
 			m_pAction->GetAction() != CPlayerAction::ACTION_RELOAD)
 		{ // リロード状態以外
 
-			// 攻撃処理
-			Shot();
-
 			// ジャンプ処理
 			Jump();
+
+			// 攻撃処理
+			Shot();
 
 			// ダガー処理
 			Dagger();
@@ -726,6 +809,79 @@ void CPlayer::Control(void)
 			// 回避処理
 			Avoid();
 		}
+	}
+}
+
+//=======================================
+// 状態管理処理
+//=======================================
+void CPlayer::StateManager(void)
+{
+	switch (m_stateInfo.state)
+	{
+	case CPlayer::STATE_NONE:
+
+
+		break;
+
+	case CPlayer::STATE_DAMAGE:
+
+		// 状態カウントを加算する
+		m_stateInfo.nCount++;
+
+		// 体の色を変える
+		m_stateInfo.col = DAMAGE_COLOR;
+
+		if (m_stateInfo.nCount >= DAMAGE_COUNT)
+		{ // 状態カウントが一定数以上になった場合
+
+			// 状態カウントを0にする
+			m_stateInfo.nCount = 0;
+
+			// 体の色を元に戻す
+			m_stateInfo.col = NONE_D3DXCOLOR;
+
+			// 無敵状態にする
+			m_stateInfo.state = STATE_INVINSIBLE;
+		}
+
+		break;
+
+	case CPlayer::STATE_INVINSIBLE:
+
+		// 状態カウントを加算する
+		m_stateInfo.nCount++;
+
+		if (m_stateInfo.nCount % INVINCIBLE_FLUSH_COUNT == 0)
+		{ // カウントが一定数以上になった場合
+
+			// 色を変える
+			m_stateInfo.col.a = (m_stateInfo.col.a >= 1.0f) ? 0.0f : 1.0f;
+		}
+
+		if (m_stateInfo.nCount >= INVINCIBLE_COUNT)
+		{ // 状態カウントが一定数以上になった場合
+
+			// 状態カウントを0にする
+			m_stateInfo.nCount = 0;
+
+			// 通常状態にする
+			m_stateInfo.state = STATE_NONE;
+		}
+
+		break;
+
+	case CPlayer::STATE_DEATH:
+
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
 	}
 }
 
@@ -741,9 +897,13 @@ void CPlayer::Move(void)
 	// 向きの補正処理
 	useful::RotCorrect(m_rotDest.y, &rot.y, ROT_CORRECT);
 
-	// 位置を移動させる
-	pos.x += m_move.x;
-	pos.z += m_move.z;
+	if (m_pAction->IsRecoil() == false)
+	{ // 反動状況が false の場合
+
+		// 位置を移動させる
+		pos.x += m_move.x;
+		pos.z += m_move.z;
+	}
 
 	// 重力をかける
 	useful::Gravity(&m_move.y, &pos.y, GRAVITY);
@@ -1309,9 +1469,6 @@ void CPlayer::HandGun(int* nNumBullet)
 //=======================================
 void CPlayer::ShotGun(int* nNumBullet)
 {
-	// 散弾状態にする
-	m_pAction->SetAction(CPlayerAction::ACTION_SHOTGUN);
-
 	// 反動の移動量を宣言
 	D3DXVECTOR3 move;
 
@@ -1388,11 +1545,20 @@ void CPlayer::ShotGun(int* nNumBullet)
 			if (m_apHandGun[nCnt] != nullptr)
 			{ // 拳銃が NULL じゃない場合
 
-				// リロード状態に設定する
+				// 拳銃をリロード状態に設定する
 				m_apHandGun[nCnt]->SetState(CHandgun::STATE_RELOAD);
 			}
 		}
 	}
+	else
+	{ // 上記以外
+
+		// 散弾状態にする
+		m_pAction->SetAction(CPlayerAction::ACTION_SHOTGUN);
+	}
+
+	// 反動状況を true にする
+	m_pAction->SetEnableRecoil(true);
 }
 
 //=======================================

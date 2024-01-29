@@ -378,6 +378,9 @@
     <ClCompile Include="iwakari_shell.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
+    <ClCompile Include="bang_flower.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -685,6 +688,9 @@
     </ClInclude>
     <ClInclude Include="iwakari_shell.h">
       <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="bang_flower.h">
+      <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

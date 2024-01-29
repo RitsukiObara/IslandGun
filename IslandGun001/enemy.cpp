@@ -30,15 +30,12 @@ namespace
 		D3DXVECTOR3(85.0f,85.0f,85.0f),
 		D3DXVECTOR3(80.0f,0.0f,80.0f),
 	};
-	const char* MODEL[6] =
+	const int LIFE[CEnemy::TYPE_MAX] =					// 体力
 	{
-		"data/MODEL/TordleBody.x",
-		"data/MODEL/TordleHead.x",
-		"data/MODEL/TordleRFLeg.x",
-		"data/MODEL/TordleLFLeg.x",
-		"data/MODEL/TordleRBLeg.x",
-		"data/MODEL/TordleLBLeg.x",
+		30,
+		5,
 	};
+	const D3DXVECTOR3 DEATH_EXPLOSION = D3DXVECTOR3(200.0f, 200.0f, 0.0f);		// 死亡時の爆発
 }
 
 // 静的メンバ変数
@@ -54,6 +51,7 @@ CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 
 	m_type = TYPE_TORDLE;			// 種類
 	m_collSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
+	m_nLife = 0;					// 体力
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -136,18 +134,29 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 	// 全ての値を設定する
 	m_type = type;					// 種類
 	m_collSize = COLLSIZE[m_type];	// 当たり判定のサイズ
+	m_nLife = LIFE[m_type];			// 体力
 }
 
 //===========================================
-// ヒット処理
+// 死亡時の処理
 //===========================================
-void CEnemy::Hit(const D3DXVECTOR3& pos)
+void CEnemy::Death(void)
 {
-	// アニメーションリアクションを生成
-	CAnimReaction::Create(pos, D3DXVECTOR3(180.0f, 180.0f, 0.0f), NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
+	if (m_nLife <= 0)
+	{ // 体力が0以下になった場合
 
-	// 終了処理
-	Uninit();
+		// 位置を取得する
+		D3DXVECTOR3 pos = GetPos();
+
+		// 位置を真ん中にする
+		pos.y += (m_collSize.y * 0.5f);
+
+		// アニメーションリアクションを生成
+		CAnimReaction::Create(pos, DEATH_EXPLOSION, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
+
+		// 終了処理
+		Uninit();
+	}
 }
 
 //===========================================
@@ -258,6 +267,24 @@ D3DXVECTOR3 CEnemy::GetCollSize(void) const
 {
 	// 当たり判定のサイズを取得する
 	return m_collSize;
+}
+
+//===========================================
+// 体力の設定処理
+//===========================================
+void CEnemy::SetLife(const int nLife)
+{
+	// 体力を設定する
+	m_nLife = nLife;
+}
+
+//===========================================
+// 体力の取得処理
+//===========================================
+int CEnemy::GetLife(void) const
+{
+	// 体力を返す
+	return m_nLife;
 }
 
 //===========================================

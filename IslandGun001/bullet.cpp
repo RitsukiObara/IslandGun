@@ -26,6 +26,11 @@ namespace
 	};
 	const float SPEED = 45.0f;		// 速度
 	const int LIFE = 90;			// 寿命
+	const int DAMAGE[CBullet::TYPE_MAX] =	// ダメージ
+	{
+		8,
+		1,
+	};
 }
 
 //-------------------------------------------
@@ -42,6 +47,7 @@ CBullet::CBullet() : CBillboard(CObject::TYPE_BULLET, CObject::PRIORITY_SHADOW)
 	m_move = NONE_D3DXVECTOR3;	// 移動量
 	m_type = TYPE_HANDGUN;		// 種類
 	m_nLife = LIFE;				// 寿命
+	m_nDamage = 0;				// ダメージ
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -71,6 +77,7 @@ HRESULT CBullet::Init(void)
 	m_move = NONE_D3DXVECTOR3;	// 移動量
 	m_type = TYPE_HANDGUN;		// 種類
 	m_nLife = LIFE;				// 寿命
+	m_nDamage = 0;				// ダメージ
 
 	// 成功を返す
 	return S_OK;
@@ -126,7 +133,7 @@ void CBullet::Update(void)
 	}
 
 	// 敵と銃の当たり判定
-	if (collision::EnemyHitToGun(GetPos(), GetPosOld(), GetSize()) == true)
+	if (collision::EnemyHitToGun(*this) == true)
 	{ // 敵に当たった場合
 
 		// 終了処理
@@ -164,8 +171,9 @@ void CBullet::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE
 	SetEnableLookY(true);	// Y軸状況
 
 	// 全ての値を設定する
-	m_type = type;			// 種類
-	m_nLife = LIFE;			// 寿命
+	m_type = type;				// 種類
+	m_nLife = LIFE;				// 寿命
+	m_nDamage = DAMAGE[m_type];	// ダメージ
 
 	// 移動量を設定する
 	m_move.x = sinf(rot.y) * SPEED;	// X軸
@@ -232,6 +240,15 @@ CBullet* CBullet::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const T
 
 	// 弾のポインタを返す
 	return pBullet;
+}
+
+//=========================
+// ダメージの取得処理
+//=========================
+int CBullet::GetDamage(void) const
+{
+	// ダメージを返す
+	return m_nDamage;
 }
 
 //=========================

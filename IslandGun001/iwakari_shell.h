@@ -30,11 +30,17 @@ public:			// 誰でもアクセスできる
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);					// 情報の設定処理
 
+	// セット・ゲット関係
+	void SetLife(const int nLife);	// 体力の設定処理
+	int GetLife(void) const;		// 体力の取得処理
+
 	// 静的メンバ関数
 	static CIwakariShell* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);	// 生成処理
 
 private:		// 自分だけアクセスできる
 
+	// メンバ変数
+	int m_nLife;		// 体力
 };
 
 #endif

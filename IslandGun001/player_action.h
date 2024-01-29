@@ -60,6 +60,9 @@ public:			// 誰でもアクセスできる
 	void SetEnableDodgeUse(const bool bUse);		// 回避使用可能状態の設定処理
 	bool IsDodgeUse(void) const;					// 回避使用可能状況の取得処理
 
+	void SetEnableRecoil(const bool bRecoil);		// 反動状況の設定処理
+	bool IsRecoil(void) const;						// 反動状況の取得処理
+
 	// 静的メンバ関数
 	static CPlayerAction* Create(void);		// 生成処理
 
@@ -81,6 +84,7 @@ private:		// 誰でもアクセスできる
 	int m_nDodgeInterval;		// 回避のインターバルカウント
 	float m_fDodgeRot;			// 回避する向き
 	bool m_bDodgeUse;			// 回避使用可能状況
+	bool m_bRecoil;				// 反動状況
 };
 
 #endif

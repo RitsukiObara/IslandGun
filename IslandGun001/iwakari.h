@@ -42,7 +42,7 @@ public:					// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type) override;		// 情報の設定処理
-	void Hit(const D3DXVECTOR3& pos) override;		// ヒット処理
+	void Hit(const int nDamage) override;		// ヒット処理
 
 private:				// 自分だけアクセスできる
 
