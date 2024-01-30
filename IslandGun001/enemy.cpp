@@ -29,7 +29,7 @@ namespace
 	const D3DXVECTOR3 COLLSIZE[CEnemy::TYPE_MAX] =		// “–‚½‚è”»’è‚ÌƒTƒCƒY
 	{
 		D3DXVECTOR3(85.0f,85.0f,85.0f),
-		D3DXVECTOR3(80.0f,0.0f,80.0f),
+		D3DXVECTOR3(80.0f,50.0f,80.0f),
 	};
 	const int LIFE[CEnemy::TYPE_MAX] =					// ‘Ì—Í
 	{

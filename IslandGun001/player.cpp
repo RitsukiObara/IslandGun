@@ -43,7 +43,7 @@ namespace
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
 	const float CAMERA_ROT_CORRECT = 0.000003f;		// カメラの向きの補正倍率
-	const float CAMERA_HEIGHT = 0.0005f;			// カメラの高さの倍率
+	const float CAMERA_HEIGHT = 0.000002f;			// カメラの高さの倍率
 	const float CAMERA_MAX_HEIGHT = 500.0f;			// カメラの高さの最大値
 	const float CAMERA_MIN_HEIGHT = 0.0f;			// カメラの高さの最小値
 	const float CAMERA_ELEVATION_HEIGHT = 30.0f;	// カメラの起伏地面の高さ
@@ -554,15 +554,15 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	// ダガーを生成する
 	m_pDagger = CDagger::Create(GetHierarchy(INIT_DAGGER_IDX)->GetMatrixP());
 
-	D3DXVECTOR3 posCamera;
+	D3DXVECTOR3 posAim;
 
 	// 位置を設定する
-	posCamera.x = GetPos().x + sinf(CManager::Get()->GetCamera()->GetRot().y) * SHOT_SHIFT_LENGTH;
-	posCamera.y = GetPos().y + cosf(CManager::Get()->GetCamera()->GetRot().x) * SHOT_SHIFT_LENGTH;
-	posCamera.z = GetPos().z + cosf(CManager::Get()->GetCamera()->GetRot().y) * SHOT_SHIFT_LENGTH;
+	posAim.x = GetPos().x + sinf(CManager::Get()->GetCamera()->GetRot().y) * sinf(CManager::Get()->GetCamera()->GetRot().x) * AIM_SHIFT;
+	posAim.y = GetPos().y + cosf(CManager::Get()->GetCamera()->GetRot().x) * AIM_SHIFT + SHOT_ADD_HEIGHT;
+	posAim.z = GetPos().z + cosf(CManager::Get()->GetCamera()->GetRot().y) * sinf(CManager::Get()->GetCamera()->GetRot().x) * AIM_SHIFT;
 
 	// エイムを生成する
-	m_pAim = CAim::Create(CManager::Get()->GetCamera()->GetPosR());
+	m_pAim = CAim::Create(posAim);
 	
 	// 全ての値を設定する
 	m_stateInfo.state = STATE_NONE;		// 状態
@@ -1102,17 +1102,17 @@ void CPlayer::CameraControl(void)
 	useful::RotNormalize(&CameraRot.y);
 
 	// カメラの向きを加算する
-	CameraRot.x -= (fStickRotY * CAMERA_ROT_CORRECT);
+	CameraRot.x -= (fStickRotY * CAMERA_HEIGHT);
 
-	if (CameraRot.x >= D3DX_PI - 0.01f)
+	if (CameraRot.x >= D3DX_PI - 0.02f)
 	{ // 向きが一定を超えた場合
 
-		CameraRot.x = D3DX_PI - 0.01f;
+		CameraRot.x = D3DX_PI - 0.02f;
 	}
-	else if (CameraRot.x <= 0.0f + 0.01f)
+	else if (CameraRot.x <= 0.02f)
 	{ // 向きが一定を超えた場合
 
-		CameraRot.x = 0.0f + 0.01f;
+		CameraRot.x = 0.02f;
 	}
 
 	if (m_pAim != nullptr)
@@ -1127,16 +1127,18 @@ void CPlayer::CameraControl(void)
 		posShot.z = GetPos().z;
 
 		// 目的の視点を設定する
-		posAim.x = posShot.x + sinf(CameraRot.y) * AIM_SHIFT;
+		posAim.x = posShot.x + sinf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
 		posAim.y = posShot.y + cosf(CameraRot.x) * AIM_SHIFT;
-		posAim.z = posShot.z + cosf(CameraRot.y) * AIM_SHIFT;
+		posAim.z = posShot.z + cosf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
 
 		// エイムの設置処理
-		m_pAim->SetAim(posAim);
+		m_pAim->SetPos(posAim);
 	}
 
 	//// 起伏地面とカメラの当たり判定
 	//ElevationCamera();
+
+	CManager::Get()->GetDebugProc()->Print("カメラの向き：%f %f %f\n", CameraRot.x, CameraRot.y, CameraRot.z);
 
 	// 向きを適用する
 	CManager::Get()->GetCamera()->SetRot(CameraRot);
@@ -1161,7 +1163,7 @@ void CPlayer::CameraMouse(void)
 	useful::RotNormalize(&CameraRot.y);
 
 	// カメラの向きを加算する
-	CameraRot.x -= (fMoveZ * CAMERA_ROT_CORRECT);
+	CameraRot.x -= (fMoveZ * CAMERA_HEIGHT);
 
 	if (CameraRot.x >= D3DX_PI - 0.01f)
 	{ // 向きが一定を超えた場合
@@ -1186,12 +1188,12 @@ void CPlayer::CameraMouse(void)
 		posShot.z = GetPos().z;
 
 		// 目的の視点を設定する
-		posAim.x = posShot.x + sinf(CameraRot.y) * AIM_SHIFT;
+		posAim.x = posShot.x + sinf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
 		posAim.y = posShot.y + cosf(CameraRot.x) * AIM_SHIFT;
-		posAim.z = posShot.z + cosf(CameraRot.y) * AIM_SHIFT;
+		posAim.z = posShot.z + cosf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
 
 		// エイムの設置処理
-		m_pAim->SetAim(posAim);
+		m_pAim->SetPos(posAim);
 	}
 
 	//// 起伏地面とカメラの当たり判定

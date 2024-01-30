@@ -851,9 +851,9 @@ void CCamera::Chase(void)
 		m_posRDest.z = pos.z + cosf(m_rot.y) * POSR_SHIFT;
 
 		// ñ⁄ìIÇÃéãì_Çê›íËÇ∑ÇÈ
-		m_posVDest.x = m_posRDest.x + sinf(m_rot.y) * -m_Dis;
+		m_posVDest.x = m_posRDest.x + sinf(m_rot.y) * sinf(m_rot.x) * -m_Dis;
 		m_posVDest.y = m_posRDest.y + cosf(m_rot.x) * -m_Dis;
-		m_posVDest.z = m_posRDest.z + cosf(m_rot.y) * -m_Dis;
+		m_posVDest.z = m_posRDest.z + cosf(m_rot.y) * sinf(m_rot.x) * -m_Dis;
 
 		// íçéãì_Çï‚ê≥
 		m_posR.x += (m_posRDest.x - m_posR.x) * CORRECT_POSR;
