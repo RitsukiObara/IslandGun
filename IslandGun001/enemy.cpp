@@ -16,6 +16,7 @@
 #include "block.h"
 #include "collision.h"
 #include "anim_reaction.h"
+#include "objectElevation.h"
 
 #include "tordle.h"
 #include "iwakari.h"
@@ -36,6 +37,10 @@ namespace
 		5,
 	};
 	const D3DXVECTOR3 DEATH_EXPLOSION = D3DXVECTOR3(200.0f, 200.0f, 0.0f);		// 死亡時の爆発
+	const int DAMAGE_HITSTOP = 5;						// ダメージ時のヒットストップ
+	const int DEATH_HITSTOP = 10;						// 死亡時のヒットストップ
+	const int DAMAGE_COUNT = 8;							// ダメージ状態のカウント
+	const float LAND_GRAVITY = -50.0f;					// 起伏地面に着地している時の重力
 }
 
 // 静的メンバ変数
@@ -50,8 +55,11 @@ CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 	m_pMotion = nullptr;			// モーション
 
 	m_type = TYPE_TORDLE;			// 種類
+	m_state = STATE_NONE;			// 状態
 	m_collSize = NONE_D3DXVECTOR3;	// 当たり判定のサイズ
 	m_nLife = 0;					// 体力
+	m_nStateCount = 0;				// 状態カウント
+	m_fGravity = 0.0f;				// 重力
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -89,6 +97,9 @@ void CEnemy::Update(void)
 	// モーションの更新処理
 	m_pMotion->Update();
 
+	// 起伏地面との当たり判定
+	ElevationCollision();
+
 	// 木との当たり判定
 	TreeCollision();
 
@@ -97,6 +108,23 @@ void CEnemy::Update(void)
 
 	// ブロックとの当たり判定
 	BlockCollision();
+
+	if (m_state == STATE_DAMAGE)
+	{ // ダメージ状態の場合
+
+		// 状態カウントを加算する
+		m_nStateCount++;
+
+		if (m_nStateCount % DAMAGE_COUNT == 0)
+		{ // カウントが一定数に達した場合
+
+			// 状態カウントを0にする
+			m_nStateCount = 0;
+
+			// 通常カウントにする
+			m_state = STATE_NONE;
+		}
+	}
 }
 
 //================================
@@ -133,8 +161,11 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 
 	// 全ての値を設定する
 	m_type = type;					// 種類
+	m_state = STATE_NONE;			// 状態
 	m_collSize = COLLSIZE[m_type];	// 当たり判定のサイズ
 	m_nLife = LIFE[m_type];			// 体力
+	m_nStateCount = 0;				// 状態カウント
+	m_fGravity = 0.0f;				// 重力
 }
 
 //===========================================
@@ -154,8 +185,17 @@ void CEnemy::Death(void)
 		// アニメーションリアクションを生成
 		CAnimReaction::Create(pos, DEATH_EXPLOSION, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
 
+		// ヒットストップ
+		Sleep(DEATH_HITSTOP);
+
 		// 終了処理
 		Uninit();
+	}
+	else
+	{ // 上記以外
+
+		// ヒットストップ
+		Sleep(DAMAGE_HITSTOP);
 	}
 }
 
@@ -252,6 +292,24 @@ void CEnemy::CreateMotion(void)
 }
 
 //===========================================
+// 状態の設定処理
+//===========================================
+void CEnemy::SetState(const STATE state)
+{
+	// 状態を設定する
+	m_state = state;
+}
+
+//===========================================
+// 状態の取得処理
+//===========================================
+CEnemy::STATE CEnemy::GetState(void) const
+{
+	// 状態を返す
+	return m_state;
+}
+
+//===========================================
 // 当たり判定のサイズの設定処理
 //===========================================
 void CEnemy::SetCollSize(const D3DXVECTOR3& size)
@@ -288,12 +346,88 @@ int CEnemy::GetLife(void) const
 }
 
 //===========================================
+// 重力の設定処理
+//===========================================
+void CEnemy::SetGravity(const float fGravity)
+{
+	// 重力を設定する
+	m_fGravity = fGravity;
+}
+
+//===========================================
+// 重力の取得処理
+//===========================================
+float CEnemy::GetGravity(void) const
+{
+	// 重力を返す
+	return m_fGravity;
+}
+
+//===========================================
 // リストの取得処理
 //===========================================
 CListManager<CEnemy*> CEnemy::GetList(void)
 {
 	// リストの情報を返す
 	return m_list;
+}
+
+//===========================================
+// 起伏地面との当たり判定
+//===========================================
+void CEnemy::ElevationCollision(void)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 pos = GetPos();		// 位置を取得する
+	float fHeight = 0.0f;			// 高さ
+	CListManager<CElevation*> list = CElevation::GetList();
+	CElevation* pElev = nullptr;	// 先頭の小判
+	CElevation* pElevEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
+
+	// while文処理
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pElev = list.GetTop();
+
+		// 末尾の値を取得する
+		pElevEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 当たり判定を取る
+			fHeight = pElev->ElevationCollision(pos);
+
+			if (pos.y < fHeight)
+			{ // 当たり判定の位置が高かった場合
+
+				// 高さを設定する
+				pos.y = fHeight;
+
+				// 重力を設定する
+				m_fGravity = LAND_GRAVITY;
+			}
+
+			if (pElev == pElevEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pElev = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// 位置を更新する
+	SetPos(pos);
 }
 
 //===========================================

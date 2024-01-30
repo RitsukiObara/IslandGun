@@ -25,11 +25,11 @@ class CIwakari : public CEnemy
 public:					// 誰でもアクセスできる
 
 	// 列挙型定義(状態)
-	enum STATE
+	enum ACTION
 	{
-		STATE_NONE = 0,	// 通常状態
-		STATE_MOVE,		// 移動状態
-		STATE_MAX		// この列挙型の総数
+		ACTION_NONE = 0,	// 通常状態
+		ACTION_MOVE,		// 移動状態
+		ACTION_MAX			// この列挙型の総数
 	};
 
 	CIwakari();			// コンストラクタ
@@ -42,7 +42,7 @@ public:					// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type) override;		// 情報の設定処理
-	void Hit(const int nDamage) override;		// ヒット処理
+	void Hit(const int nDamage, const float fKnockback) override;		// ヒット処理
 
 private:				// 自分だけアクセスできる
 
@@ -53,9 +53,10 @@ private:				// 自分だけアクセスできる
 
 	// メンバ変数
 	CIwakariShell* m_pShell;	// 殻の情報
-	D3DXVECTOR3 m_move;			// 移動量
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
-	STATE m_state;				// 状態
+	ACTION m_action;			// 状態
+	float m_fMoveX;				// 移動量(X軸)
+	float m_fMoveZ;				// 移動量(Z軸)
 };
 
 #endif

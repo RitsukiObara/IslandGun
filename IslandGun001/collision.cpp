@@ -181,6 +181,7 @@ bool collision::EnemyHitToGun(const CBullet& bullet)
 	D3DXVECTOR3 bulletMax = D3DXVECTOR3(bullet.GetSize().x, bullet.GetSize().y, bullet.GetSize().x);	// 弾の最大値
 	D3DXVECTOR3 bulletMin = D3DXVECTOR3(-bullet.GetSize().x, -bullet.GetSize().y, -bullet.GetSize().x);	// 弾の最小値
 	int nDamage = bullet.GetDamage();				// ダメージ
+	float fKnockback = bullet.GetKnockBack();		// ノックバック値
 	D3DXVECTOR3 enemyMax;		// 敵の最大値
 	D3DXVECTOR3 enemyMin;		// 敵の最小値
 	CListManager<CEnemy*> list = CEnemy::GetList();
@@ -223,7 +224,7 @@ bool collision::EnemyHitToGun(const CBullet& bullet)
 			{ // 敵と重なった場合
 
 				// ヒット処理
-				pEnemy->Hit(nDamage);
+				pEnemy->Hit(nDamage, fKnockback);
 
 				// true を返す
 				return true;
@@ -284,7 +285,7 @@ bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, co
 			{ // 敵と重なった場合
 
 				// ヒット処理
-				pEnemy->Hit(80);
+				pEnemy->Hit(80, 10.0f);
 
 				// true を返す
 				return true;

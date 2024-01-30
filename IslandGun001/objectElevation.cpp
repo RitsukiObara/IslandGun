@@ -807,7 +807,7 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 //================================
 // 起伏の当たり判定(範囲判定付き)
 //================================
-float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
+float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool* bRange)
 {
 	// ローカル変数宣言
 	float fHeight = pos.y;			// 対象の高さ
@@ -878,7 +878,7 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
 						fHeight = ElevationPoint(pos, vtxLeftDown, vtxRightDown, vtxLeftUp);
 
 						// 範囲内にいる
-						bRange = true;
+						*bRange = true;
 
 						// 高さを返す
 						return fHeight;
@@ -892,7 +892,7 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
 						fHeight = ElevationPoint(pos, vtxRightUp, vtxLeftUp, vtxRightDown);
 
 						// 範囲内にいる
-						bRange = true;
+						*bRange = true;
 
 						// 高さを返す
 						return fHeight;
@@ -905,7 +905,7 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool& bRange)
 		m_pVtxBuff->Unlock();
 
 		// 範囲内にいる
-		bRange = true;
+		*bRange = true;
 
 		// 高さを返す
 		return fHeight;

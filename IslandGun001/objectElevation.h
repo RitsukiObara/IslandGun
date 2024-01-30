@@ -32,7 +32,7 @@ public:			// 誰でもアクセスできる
 	void SetNormalize(void);	// 法線の設定処理
 	void SetIndex(void);		// インデックスの設定処理
 	float ElevationCollision(const D3DXVECTOR3& pos);					// 起伏の当たり判定
-	float ElevationCollision(const D3DXVECTOR3& pos, bool& bRange);		// 起伏の当たり判定(範囲判定付き)
+	float ElevationCollision(const D3DXVECTOR3& pos, bool* bRange);		// 起伏の当たり判定(範囲判定付き)
 
 	float ElevationPoint(const D3DXVECTOR3& posTarget, const D3DXVECTOR3& posCenter, const D3DXVECTOR3& posRight, const D3DXVECTOR3& posLeft);		// 一つ一つの地点の起伏の当たり判定
 

@@ -41,6 +41,7 @@ public:
 
 	// セット・ゲット関係
 	int GetDamage(void) const;		// ダメージの取得処理
+	float GetKnockBack(void) const;	// ノックバック値の取得処理
 
 	// 静的メンバ関数
 	static CBullet* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
@@ -54,6 +55,7 @@ private:
 	TYPE m_type;			// 種類
 	int m_nLife;			// 寿命
 	int m_nDamage;			// ダメージ
+	float m_fKnockBack;		// ノックバック値
 
 	// 静的メンバ変数
 	static CListManager<CBullet*> m_list;		// リスト

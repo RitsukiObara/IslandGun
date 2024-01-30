@@ -23,8 +23,9 @@
 //------------------------------------------------------------
 namespace
 {
-	const float SPEED = 3.0f;			// 移動量
-	const float MOVE_LENGTH = 900.0f;	// 追跡する距離
+	const float SPEED = 3.0f;				// 移動量
+	const float MOVE_LENGTH = 900.0f;		// 追跡する距離
+	const float KNOCKBACK_HEIGHT = 10.0f;	// ノックバック値の高さ
 }
 
 //================================
@@ -34,9 +35,10 @@ CIwakari::CIwakari() : CEnemy()
 {
 	// 全ての値をクリアする
 	m_pShell = nullptr;				// 殻の情報
-	m_move = NONE_D3DXVECTOR3;		// 移動量
 	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
-	m_state = STATE_NONE;			// 状態
+	m_action = ACTION_NONE;			// 状態
+	m_fMoveX = 0.0f;				// 移動量(X軸)
+	m_fMoveZ = 0.0f;				// 移動量(Z軸)
 }
 
 //================================
@@ -126,18 +128,22 @@ void CIwakari::Update(void)
 	// 追跡処理
 	Chase();
 
-	switch (m_state)
+	switch (m_action)
 	{
-	case CIwakari::STATE_NONE:		// 通常状態
+	case CIwakari::ACTION_NONE:		// 通常状態
 
 
 
 		break;
 
-	case CIwakari::STATE_MOVE:		// 移動状態
+	case CIwakari::ACTION_MOVE:		// 移動状態
 
-		// 向きの移動処理
-		RotMove();
+		if (GetState() == STATE_NONE)
+		{ // 通常状態の場合
+
+			// 向きの移動処理
+			RotMove();
+		}
 
 		// 移動処理
 		Move();
@@ -190,9 +196,10 @@ void CIwakari::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYP
 
 	// 全ての値を設定する
 	m_pShell = CIwakariShell::Create(pos, rot);		// 殻の情報
-	m_move = NONE_D3DXVECTOR3;		// 移動量
 	m_rotDest = NONE_D3DXVECTOR3;	// 目標の向き
-	m_state = STATE_NONE;			// 状態
+	m_action = ACTION_NONE;			// 状態
+	m_fMoveX = 0.0f;				// 移動量(X軸)
+	m_fMoveZ = 0.0f;				// 移動量(Z軸)
 
 	// モーションのリセット処理
 	GetMotion()->ResetMotion(MOTIONTYPE_NEUTRAL);
@@ -201,7 +208,7 @@ void CIwakari::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYP
 //===========================================
 // ヒット処理
 //===========================================
-void CIwakari::Hit(const int nDamage)
+void CIwakari::Hit(const int nDamage, const float fKnockback)
 {
 	// 体力の変数を宣言する
 	int nLife;
@@ -229,6 +236,11 @@ void CIwakari::Hit(const int nDamage)
 	else
 	{ // 上記以外
 
+		// ノックバックさせる
+		m_fMoveX = sinf(GetRot().y + (D3DX_PI)) * fKnockback;
+		SetGravity(KNOCKBACK_HEIGHT);
+		m_fMoveZ = cosf(GetRot().y + (D3DX_PI)) * fKnockback;
+
 		// 体力を取得する
 		nLife = GetLife();
 
@@ -237,6 +249,9 @@ void CIwakari::Hit(const int nDamage)
 
 		// 体力を適用する
 		SetLife(nLife);
+
+		// ダメージ状態にする
+		SetState(STATE_DAMAGE);
 	}
 
 	// 死亡処理
@@ -270,14 +285,14 @@ void CIwakari::Chase(void)
 			fRot = atan2f((posPlayer.x - pos.x), (posPlayer.z - pos.z));
 
 			// 移動量を設定する
-			m_move.x = sinf(fRot) * SPEED;
-			m_move.z = cosf(fRot) * SPEED;
+			m_fMoveX = sinf(fRot) * SPEED;
+			m_fMoveZ = cosf(fRot) * SPEED;
 
 			// 目標の向きを設定する
 			m_rotDest.y = fRot;
 
 			// 移動状態にする
-			m_state = STATE_MOVE;
+			m_action = ACTION_MOVE;
 
 			if (motiontype != MOTIONTYPE_MOVE)
 			{ // 移動モーション以外の場合
@@ -290,7 +305,7 @@ void CIwakari::Chase(void)
 		{ // 上記以外
 
 			// 通常状態にする
-			m_state = STATE_NONE;
+			m_action = ACTION_NONE;
 
 			if (motiontype != MOTIONTYPE_NEUTRAL)
 			{ // 待機モーション以外の場合
@@ -304,7 +319,7 @@ void CIwakari::Chase(void)
 	{ // 上記以外
 
 		// 通常状態にする
-		m_state = STATE_NONE;
+		m_action = ACTION_NONE;
 
 		if (motiontype != MOTIONTYPE_NEUTRAL)
 		{ // 待機モーション以外の場合
@@ -320,15 +335,20 @@ void CIwakari::Chase(void)
 //===========================================
 void CIwakari::Move(void)
 {
-	// 位置を取得する
+	// 位置と重力を取得する
 	D3DXVECTOR3 pos = GetPos();
+	float fGravity = GetGravity();
 
 	// 移動する
-	pos.x += m_move.x;
-	pos.z += m_move.z;
+	pos.x += m_fMoveX;
+	pos.z += m_fMoveZ;
 
-	// 位置を適用する
+	// 重力処理
+	useful::Gravity(&fGravity, &pos.y, 0.5f);
+
+	// 位置と重力を適用する
 	SetPos(pos);
+	SetGravity(fGravity);
 }
 
 //===========================================

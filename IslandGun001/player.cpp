@@ -719,7 +719,7 @@ void CPlayer::ElevationCollision(void)
 		{ // 無限ループ
 
 			// 当たり判定を取る
-			fHeight = pElev->ElevationCollision(pos, bRange);
+			fHeight = pElev->ElevationCollision(pos, &bRange);
 
 			if (pos.y < fHeight)
 			{ // 当たり判定の位置が高かった場合
@@ -1469,13 +1469,14 @@ void CPlayer::HandGun(int* nNumBullet)
 //=======================================
 void CPlayer::ShotGun(int* nNumBullet)
 {
-	// 反動の移動量を宣言
+	// 反動の移動量とカメラの向きを宣言
 	D3DXVECTOR3 move;
+	D3DXVECTOR3 rotCamera = CManager::Get()->GetCamera()->GetRot();
 
 	// 移動量を設定する
-	move.x = sinf(GetRot().y) * -SHOTGUN_RECOIL;
+	move.x = sinf(rotCamera.y) * -SHOTGUN_RECOIL;
 	move.y = SHOTGUN_GRAVITY;
-	move.z = cosf(GetRot().y) * -SHOTGUN_RECOIL;
+	move.z = cosf(rotCamera.y) * -SHOTGUN_RECOIL;
 
 	// 反動の移動量を設定する
 	m_pAction->SetMoveRecoil(move);

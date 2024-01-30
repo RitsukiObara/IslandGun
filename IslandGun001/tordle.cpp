@@ -21,7 +21,8 @@
 //------------------------------------------------------------
 namespace
 {
-	const float SPEED = 5.0f;			// 移動量
+	const float SPEED = 5.0f;				// 移動量
+	const float KNOCKBACK_HEIGHT = 10.0f;	// ノックバック値の高さ
 }
 
 //================================
@@ -30,8 +31,9 @@ namespace
 CTordle::CTordle() : CEnemy()
 {
 	// 全ての値をクリアする
-	m_move = NONE_D3DXVECTOR3;			// 移動量
 	m_rotDest = NONE_D3DXVECTOR3;		// 目標の向き
+	m_fMoveX = 0.0f;					// 移動量(X軸)
+	m_fMoveZ = 0.0f;					// 移動量(Z軸)
 }
 
 //================================
@@ -110,11 +112,15 @@ void CTordle::Update(void)
 	// 前回の位置を設定する
 	SetPosOld(GetPos());
 
-	// 追跡処理
-	Chase();
+	if (GetState() == STATE_NONE)
+	{ // 通常状態の場合
 
-	// 向きの移動処理
-	RotMove();
+		// 追跡処理
+		Chase();
+
+		// 向きの移動処理
+		RotMove();
+	}
 
 	// 移動処理
 	Move();
@@ -144,15 +150,21 @@ void CTordle::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE
 	GetMotion()->ResetMotion(MOTIONTYPE_MOVE);
 
 	// 全ての値を設定する
-	m_move = NONE_D3DXVECTOR3;			// 移動量
 	m_rotDest = NONE_D3DXVECTOR3;		// 目標の向き
+	m_fMoveX = 0.0f;					// 移動量(X軸)
+	m_fMoveZ = 0.0f;					// 移動量(Z軸)
 }
 
 //===========================================
 // ヒット処理
 //===========================================
-void CTordle::Hit(const int nDamage)
+void CTordle::Hit(const int nDamage, const float fKnockback)
 {
+	// ノックバックさせる
+	m_fMoveX = sinf(GetRot().y + D3DX_PI) * fKnockback;
+	SetGravity(KNOCKBACK_HEIGHT);
+	m_fMoveZ = cosf(GetRot().y + D3DX_PI) * fKnockback;
+
 	// 体力を取得する
 	int nLife = GetLife();
 
@@ -161,6 +173,9 @@ void CTordle::Hit(const int nDamage)
 
 	// 体力を適用する
 	SetLife(nLife);
+
+	// ダメージ状態にする
+	SetState(STATE_DAMAGE);
 
 	// 死亡処理
 	Death();
@@ -185,8 +200,8 @@ void CTordle::Chase(void)
 		fRot = atan2f((posPlayer.x - pos.x), (posPlayer.z - pos.z));
 
 		// 移動量を設定する
-		m_move.x = sinf(fRot) * SPEED;
-		m_move.z = cosf(fRot) * SPEED;
+		m_fMoveX = sinf(fRot) * SPEED;
+		m_fMoveZ = cosf(fRot) * SPEED;
 
 		// 目標の向きを設定する
 		m_rotDest.y = fRot;
@@ -198,15 +213,20 @@ void CTordle::Chase(void)
 //===========================================
 void CTordle::Move(void)
 {
-	// 位置を取得する
+	// 位置と重力を取得する
 	D3DXVECTOR3 pos = GetPos();
+	float fGravity = GetGravity();
 
 	// 移動する
-	pos.x += m_move.x;
-	pos.z += m_move.z;
+	pos.x += m_fMoveX;
+	pos.z += m_fMoveZ;
 
-	// 位置を適用する
+	// 重力処理
+	useful::Gravity(&fGravity, &pos.y, 0.5f);
+
+	// 位置と重力を適用する
 	SetPos(pos);
+	SetGravity(fGravity);
 }
 
 //===========================================

@@ -29,7 +29,7 @@ public:					// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type) override;		// 情報の設定処理
-	void Hit(const int nDamage) override;		// ヒット処理
+	void Hit(const int nDamage, const float fKnockback) override;		// ヒット処理
 
 private:				// 自分だけアクセスできる
 
@@ -39,7 +39,8 @@ private:				// 自分だけアクセスできる
 	void RotMove(void);			// 向きの移動処理
 
 	// メンバ変数
-	D3DXVECTOR3 m_move;			// 移動量
+	float m_fMoveX;				// 移動量(X軸)
+	float m_fMoveZ;				// 移動量(Z軸)
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 };
 

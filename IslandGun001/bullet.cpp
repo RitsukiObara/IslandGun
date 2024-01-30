@@ -31,6 +31,11 @@ namespace
 		8,
 		1,
 	};
+	const float KNOCKBACK[CBullet::TYPE_MAX] =	// ノックバックの値
+	{
+		2.0f,
+		15.0f,
+	};
 }
 
 //-------------------------------------------
@@ -48,6 +53,7 @@ CBullet::CBullet() : CBillboard(CObject::TYPE_BULLET, CObject::PRIORITY_SHADOW)
 	m_type = TYPE_HANDGUN;		// 種類
 	m_nLife = LIFE;				// 寿命
 	m_nDamage = 0;				// ダメージ
+	m_fKnockBack = 0.0f;		// ノックバック値
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -78,6 +84,7 @@ HRESULT CBullet::Init(void)
 	m_type = TYPE_HANDGUN;		// 種類
 	m_nLife = LIFE;				// 寿命
 	m_nDamage = 0;				// ダメージ
+	m_fKnockBack = 0.0f;		// ノックバック値
 
 	// 成功を返す
 	return S_OK;
@@ -174,6 +181,7 @@ void CBullet::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE
 	m_type = type;				// 種類
 	m_nLife = LIFE;				// 寿命
 	m_nDamage = DAMAGE[m_type];	// ダメージ
+	m_fKnockBack = KNOCKBACK[m_type];		// ノックバック値
 
 	// 移動量を設定する
 	m_move.x = sinf(rot.y) * SPEED;	// X軸
@@ -249,6 +257,15 @@ int CBullet::GetDamage(void) const
 {
 	// ダメージを返す
 	return m_nDamage;
+}
+
+//=========================
+// ノックバック値の取得処理
+//=========================
+float CBullet::GetKnockBack(void) const
+{
+	// ノックバック値を返す
+	return m_fKnockBack;
 }
 
 //=========================
