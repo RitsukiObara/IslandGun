@@ -381,6 +381,9 @@
     <ClCompile Include="bang_flower.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
+    <ClCompile Include="player_controller.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -691,6 +694,9 @@
     </ClInclude>
     <ClInclude Include="bang_flower.h">
       <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="player_controller.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

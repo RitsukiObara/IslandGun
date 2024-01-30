@@ -27,6 +27,7 @@ class CDagger;				// ダガー
 class CAim;					// エイム
 class CBulletUI;			// 弾丸UI
 class CGoldBoneUI;			// 金の骨UI
+class CPlayerController;	// プレイヤーコントローラー
 
 //--------------------------------------------
 // クラス(プレイヤークラス)
@@ -80,6 +81,7 @@ public:			// 誰でもアクセスできる
 	CPlayerAction* GetAction(void) const;			// 行動の情報の取得処理
 	CHandgun* GetHandGun(const int nCount) const;	// 拳銃の情報の取得処理
 	CDagger* GetDagger(void) const;					// ダガーの情報の取得処理
+	CAim* GetAim(void) const;						// エイムの取得処理
 	CBulletUI* GetBulletUI(void) const;				// 残弾UIの情報の取得処理
 	CGoldBoneUI* GetGoldBoneUI(void) const;			// 金の骨UIの情報の取得処理
 
@@ -100,23 +102,9 @@ private:		// 自分だけアクセスできる
 	void StateManager(void);		// 状態管理処理
 	void Move(void);				// 移動処理
 	void ElevationCollision(void);	// 起伏地面の当たり判定処理
-	void ElevationCamera(void);		// 起伏地面とカメラの当たり判定
 	void TreeCollision(void);		// 木との当たり判定
 	void BlockCollision(void);		// ブロックとの当たり判定
 	void RockCollision(void);		// 岩との当たり判定
-
-	// 操作系
-	void CameraControl(void);		// カメラの操作処理
-	void CameraMouse(void);			// マウスでのカメラの操作処理
-	void Control(void);				// 操作処理
-	void RotMove(void);				// 向きの設定処理
-	void KeyboardMove(void);		// キーボードでの設定処理
-	void Jump(void);				// ジャンプ処理
-	void Shot(void);				// 射撃処理
-	void HandGun(int* nNumBullet);	// 拳銃処理
-	void ShotGun(int* nNumBullet);	// 散弾処理
-	void Avoid(void);				// 回避処理
-	void Dagger(void);				// ダガー処理
 
 	// メンバ変数
 	CMotion* m_pMotion;					// モーションの情報
@@ -126,17 +114,14 @@ private:		// 自分だけアクセスできる
 	CAim* m_pAim;						// エイムの情報
 	CBulletUI* m_pBulletUI;				// 弾丸の情報
 	CGoldBoneUI* m_pGoldBoneUI;			// 金の骨UIの情報
+	CPlayerController* m_pController;	// プレイヤーのコントローラーの情報
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 	D3DXVECTOR3 m_move;			// 移動量
 	SState m_stateInfo;			// 状態関連の構造体
 	int m_nLife;				// 体力
-	int m_nShotCount;			// 射撃カウント
-	float m_fSpeed;				// 速度
-	float m_fStickRot;			// スティックの向き
 	bool m_bMove;				// 移動状況
 	bool m_bJump;				// ジャンプ状況
-	bool m_bRightShot;			// 右で撃つかどうか
 
 };
 
