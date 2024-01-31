@@ -10,7 +10,7 @@
 #include "main.h"
 #include "enemy.h"
 #include "manager.h"
-#include "model.h"
+#include "useful.h"
 
 #include "motion.h"
 #include "block.h"
@@ -37,6 +37,7 @@ namespace
 		5,
 	};
 	const D3DXVECTOR3 DEATH_EXPLOSION = D3DXVECTOR3(200.0f, 200.0f, 0.0f);		// 死亡時の爆発
+	const D3DXCOLOR DAMAGE_COL = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);				// ダメージ状態の色
 	const int DAMAGE_HITSTOP = 5;						// ダメージ時のヒットストップ
 	const int DEATH_HITSTOP = 10;						// 死亡時のヒットストップ
 	const int DAMAGE_COUNT = 8;							// ダメージ状態のカウント
@@ -94,6 +95,15 @@ void CEnemy::Uninit(void)
 //================================
 void CEnemy::Update(void)
 {
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
+
+	// 重力処理
+	useful::Gravity(&m_fGravity, &pos.y, 0.5f);
+
+	// 位置を適用する
+	SetPos(pos);
+
 	// モーションの更新処理
 	m_pMotion->Update();
 
@@ -132,8 +142,29 @@ void CEnemy::Update(void)
 //================================
 void CEnemy::Draw(void)
 {
-	// 描画処理
-	CCharacter::Draw();
+	switch (m_state)
+	{
+	case CEnemy::STATE_NONE:
+
+		// 描画処理
+		CCharacter::Draw();
+
+		break;
+
+	case CEnemy::STATE_DAMAGE:
+
+		// 描画処理
+		CCharacter::Draw(DAMAGE_COL);
+		
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
+	}
 }
 
 //================================

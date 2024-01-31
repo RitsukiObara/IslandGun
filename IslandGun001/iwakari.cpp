@@ -337,18 +337,13 @@ void CIwakari::Move(void)
 {
 	// 位置と重力を取得する
 	D3DXVECTOR3 pos = GetPos();
-	float fGravity = GetGravity();
 
 	// 移動する
 	pos.x += m_fMoveX;
 	pos.z += m_fMoveZ;
 
-	// 重力処理
-	useful::Gravity(&fGravity, &pos.y, 0.5f);
-
 	// 位置と重力を適用する
 	SetPos(pos);
-	SetGravity(fGravity);
 }
 
 //===========================================

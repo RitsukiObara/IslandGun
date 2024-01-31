@@ -480,7 +480,6 @@ void CPlayerController::CameraControl(CPlayer* pPlayer)
 	if (pPlayer->GetAim() != nullptr)
 	{ // エイムが NULL じゃない場合
 
-		D3DXVECTOR3 posAim;			// レティクルを表示する場所
 		D3DXVECTOR3 posShot;		// 弾を出す位置
 
 		// 位置を設定する
@@ -488,13 +487,8 @@ void CPlayerController::CameraControl(CPlayer* pPlayer)
 		posShot.y = pPlayer->GetPos().y + SHOT_ADD_HEIGHT;
 		posShot.z = pPlayer->GetPos().z;
 
-		// 目的の視点を設定する
-		posAim.x = posShot.x + sinf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
-		posAim.y = posShot.y + cosf(CameraRot.x) * AIM_SHIFT;
-		posAim.z = posShot.z + cosf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
-
-		// エイムの設置処理
-		pPlayer->GetAim()->SetPos(posAim);
+		// 射撃の位置を設定する
+		pPlayer->GetAim()->SetPosPlayer(posShot);
 	}
 
 	//// 起伏地面とカメラの当たり判定
@@ -539,7 +533,6 @@ void CPlayerController::CameraMouse(CPlayer* pPlayer)
 	if (pPlayer->GetAim() != nullptr)
 	{ // エイムが NULL じゃない場合
 
-		D3DXVECTOR3 posAim;			// レティクルを表示する場所
 		D3DXVECTOR3 posShot;		// 弾を出す位置
 
 		// 位置を設定する
@@ -547,13 +540,8 @@ void CPlayerController::CameraMouse(CPlayer* pPlayer)
 		posShot.y = pPlayer->GetPos().y + SHOT_ADD_HEIGHT;
 		posShot.z = pPlayer->GetPos().z;
 
-		// 目的の視点を設定する
-		posAim.x = posShot.x + sinf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
-		posAim.y = posShot.y + cosf(CameraRot.x) * AIM_SHIFT;
-		posAim.z = posShot.z + cosf(CameraRot.y) * sinf(CameraRot.x) * AIM_SHIFT;
-
-		// エイムの設置処理
-		pPlayer->GetAim()->SetPos(posAim);
+		// 射撃の位置を設定する
+		pPlayer->GetAim()->SetPosPlayer(posShot);
 	}
 
 	//// 起伏地面とカメラの当たり判定

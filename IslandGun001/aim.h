@@ -30,7 +30,8 @@ public:
 
 	void SetData(const D3DXVECTOR3& pos);			// 情報の設定処理
 
-	void SetAim(const D3DXVECTOR3& pos);			// エイムの設置処理
+	// セット・ゲット関係
+	void SetPosPlayer(const D3DXVECTOR3& pos);		// プレイヤーの位置の設定処理
 
 	// 静的メンバ関数
 	static CAim* Create(const D3DXVECTOR3& pos);	// 生成処理
@@ -41,6 +42,8 @@ private:
 	void EnemyCollision(void);		// 敵との当たり判定
 
 	// メンバ変数
+	D3DXVECTOR3 m_posPlayer;		// プレイヤーの位置
+	float m_fLength;				// 長さ
 };
 
 #endif
