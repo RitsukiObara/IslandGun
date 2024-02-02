@@ -174,7 +174,6 @@
     <ClCompile Include="danger_mark.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="destruction.cpp" />
-    <ClCompile Include="edit.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="effect2D.cpp" />
     <ClCompile Include="effect_model.cpp" />
@@ -190,6 +189,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="iwakari.cpp" />
     <ClCompile Include="iwakari_shell.cpp" />
+    <ClCompile Include="Kari_ResultLogo.cpp" />
     <ClCompile Include="lake.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="locus2D.cpp" />
@@ -256,6 +256,7 @@
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="title_logo.cpp" />
     <ClCompile Include="tordle.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="tutorial.cpp" />
@@ -282,7 +283,6 @@
     <ClInclude Include="danger_mark.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="destruction.h" />
-    <ClInclude Include="edit.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="effect2D.h" />
     <ClInclude Include="effect_model.h" />
@@ -298,6 +298,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="iwakari.h" />
     <ClInclude Include="iwakari_shell.h" />
+    <ClInclude Include="Kari_ResultLogo.h" />
     <ClInclude Include="lake.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="list_manager.h" />
@@ -362,6 +363,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="title_logo.h" />
     <ClInclude Include="tordle.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="tutorial.h" />

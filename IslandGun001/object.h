@@ -62,6 +62,8 @@ public:			// 誰でもアクセスできる
 		TYPE_GRASS,				// 草
 		TYPE_LAKE,				// 水場
 		TYPE_SLASHRIPPLE,		// 斬撃の波紋
+		TYPE_BANGFLOWER,		// 爆弾花
+		TYPE_TITLELOGO,			// タイトルロゴ
 		TYPE_MAX				// この列挙型の総数
 	};
 

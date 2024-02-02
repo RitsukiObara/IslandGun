@@ -37,6 +37,7 @@ namespace
 {
 	const float GRAVITY = 1.0f;						// 重力
 	const float LAND_GRAVITY = -50.0f;				// 着地時の重力
+	const D3DXVECTOR3 INIT_CAMERA_ROT = D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f);		// カメラの初期向き
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
 	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 190.0f, 40.0f);		// 当たり判定時のサイズ
@@ -196,6 +197,9 @@ HRESULT CPlayer::Init(void)
 		// 停止
 		assert(false);
 	}
+
+	// カメラの向きを設定
+	CManager::Get()->GetCamera()->SetRot(INIT_CAMERA_ROT);
 
 	// 全ての値を初期化する
 	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)

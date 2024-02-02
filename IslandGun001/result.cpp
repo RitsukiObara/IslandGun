@@ -17,6 +17,7 @@
 #include "file.h"
 #include "camera.h"
 #include "skybox.h"
+#include "Kari_ResultLogo.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -52,6 +53,9 @@ HRESULT CResult::Init(void)
 	// テキスト読み込み処理
 	CMesh::TxtSet();
 
+	// リザルトロゴを生成
+	CResultLogo::Create();
+
 	// 成功を返す
 	return S_OK;
 }
@@ -61,7 +65,8 @@ HRESULT CResult::Init(void)
 //=============================================
 void CResult::Uninit(void)
 {
-
+	// 終了処理
+	CScene::Uninit();
 }
 
 //======================================
@@ -75,7 +80,7 @@ void CResult::Update(void)
 	{ // ENTERキーを押した場合
 
 		// ランキングに遷移する
-		CManager::Get()->GetFade()->SetFade(CScene::MODE_RANKING);
+		CManager::Get()->GetFade()->SetFade(CScene::MODE_TITLE);
 
 		// この先の処理を行わない
 		return;

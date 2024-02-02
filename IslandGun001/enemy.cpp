@@ -13,6 +13,7 @@
 #include "useful.h"
 
 #include "motion.h"
+#include "rock.h"
 #include "block.h"
 #include "collision.h"
 #include "anim_reaction.h"
@@ -29,7 +30,7 @@ namespace
 	const D3DXVECTOR3 COLLSIZE[CEnemy::TYPE_MAX] =		// 当たり判定のサイズ
 	{
 		D3DXVECTOR3(85.0f,85.0f,85.0f),
-		D3DXVECTOR3(80.0f,50.0f,80.0f),
+		D3DXVECTOR3(120.0f,230.0f,120.0f),
 	};
 	const int LIFE[CEnemy::TYPE_MAX] =					// 体力
 	{
@@ -482,7 +483,14 @@ void CEnemy::TreeCollision(void)
 //===========================================
 void CEnemy::RockCollision(void)
 {
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
 
+	// 岩との当たり判定
+	collision::RockCollision(&pos, m_collSize.x, m_collSize.y);
+
+	// 位置の設定処理
+	SetPos(pos);
 }
 
 //===========================================

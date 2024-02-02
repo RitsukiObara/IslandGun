@@ -1,26 +1,26 @@
 //===================================
 //
-// 爆弾花ヘッダー[bang_flower.h]
+// タイトルロゴヘッダー[title_logo.h]
 // Author 小原立暉
 //
 //===================================
-#ifndef _BANG_FLOWER_H_
-#define _BANG_FLOWER_H_
+#ifndef _TITLE_LOGO_H_
+#define _TITLE_LOGO_H_
 
 //***********************************
 // インクルードファイル
 //***********************************
-#include "model.h"
+#include "object2D.h"
 
 //-----------------------------------
-// クラス定義(爆弾花)
+// クラス定義(CTitleLogo)
 //-----------------------------------
-class CBangFlower : public CModel
+class CTitleLogo : public CObject2D
 {
 public:			// 誰でもアクセスできる
 
-	CBangFlower();			// コンストラクタ
-	~CBangFlower();			// デストラクタ
+	CTitleLogo();			// コンストラクタ
+	~CTitleLogo();			// デストラクタ
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -28,10 +28,10 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& scale);				// 情報の設定処理
+	void SetData(void);				// 情報の設定処理
 
 	// 静的メンバ関数
-	static CBangFlower* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& scale);	// 生成処理
+	static CTitleLogo* Create(void);	// 生成処理
 
 private:		// 自分だけアクセスできる
 

@@ -22,7 +22,8 @@ namespace
 	const float RADIUS = 80.0f;		// 半径
 	const D3DXCOLOR HIT_COL = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);		// 敵に照準が合っている時の色
 	const float NONE_LENGTH = 1500.0f;					// 何にも当たっていない長さ
-	const float AIM_VECTOR_PERMISSION = 0.06f;			// エイムを合わせるときのベクトルの許容範囲
+	const float HIT_COLLSIZE = 50.0f;					// エイムを合わせるときの当たり判定のサイズ
+	const float HIT_VECTOR_PERMISSION = 0.06f;			// エイムを合わせるときのベクトルの許容範囲
 }
 
 //=========================
@@ -197,7 +198,6 @@ void CAim::EnemyCollision(void)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 pos = GetPos();					// 位置
-	D3DXVECTOR3 size = GetSize();				// サイズ
 	D3DXVECTOR3 posEnemy = NONE_D3DXVECTOR3;	// 敵の位置
 	D3DXVECTOR3 sizeEnemy = NONE_D3DXVECTOR3;	// 敵のサイズ
 	D3DXVECTOR3 vecBullet = NONE_D3DXVECTOR3;	// 弾道のベクトル
@@ -240,12 +240,12 @@ void CAim::EnemyCollision(void)
 			// 長さを設定する
 			fLength = sqrtf((posEnemy.x - m_posPlayer.x) * (posEnemy.x - m_posPlayer.x) + (posEnemy.z - m_posPlayer.z) * (posEnemy.z - m_posPlayer.z));
 
-			if (pos.y + size.y >= posEnemy.y &&
-				pos.y - size.y <= posEnemy.y + sizeEnemy.y &&
-				vecBullet.x + AIM_VECTOR_PERMISSION >= vecEnemy.x &&
-				vecBullet.x - AIM_VECTOR_PERMISSION <= vecEnemy.x &&
-				vecBullet.z + AIM_VECTOR_PERMISSION >= vecEnemy.z &&
-				vecBullet.z - AIM_VECTOR_PERMISSION <= vecEnemy.z &&
+			if (pos.y + HIT_COLLSIZE >= posEnemy.y &&
+				pos.y - HIT_COLLSIZE <= posEnemy.y + sizeEnemy.y &&
+				vecBullet.x + HIT_VECTOR_PERMISSION >= vecEnemy.x &&
+				vecBullet.x - HIT_VECTOR_PERMISSION <= vecEnemy.x &&
+				vecBullet.z + HIT_VECTOR_PERMISSION >= vecEnemy.z &&
+				vecBullet.z - HIT_VECTOR_PERMISSION <= vecEnemy.z &&
 				fLength <= NONE_LENGTH)
 			{ // 敵が射線上にいる場合
 

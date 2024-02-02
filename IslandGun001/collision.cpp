@@ -33,7 +33,7 @@ namespace
 	{
 		50.5f,		// ñÿÇÃîºåa
 	};
-	const float DAGGER_RADIUS = 100.0f;						// É_ÉKÅ[ÇÃîºåa
+	const float DAGGER_RADIUS = 180.0f;						// É_ÉKÅ[ÇÃîºåa
 }
 
 //===============================

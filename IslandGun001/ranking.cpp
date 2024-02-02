@@ -62,7 +62,8 @@ HRESULT CRanking::Init(void)
 //========================================
 void CRanking::Uninit(void)
 {
-
+	// I—¹ˆ—
+	CScene::Uninit();
 }
 
 //======================================

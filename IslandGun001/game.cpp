@@ -32,6 +32,8 @@
 #include "gold_bone.h"
 #include "grass.h"
 #include "lake.h"
+#include "bang_flower.h"
+#include "list_manager.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -100,24 +102,50 @@ HRESULT CGame::Init(void)
 	// プレイヤーの生成処理
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 300.0f));
 
-	CCoin::Create(D3DXVECTOR3(400.0f, 50.0f, 400.0f));
+	CCoin::Create(D3DXVECTOR3(400.0f, 100.0f, 400.0f));
+	CCoin::Create(D3DXVECTOR3(400.0f, 100.0f, 300.0f));
+	CCoin::Create(D3DXVECTOR3(300.0f, 100.0f, 400.0f));
+	CCoin::Create(D3DXVECTOR3(400.0f, 100.0f, 500.0f));
+	CCoin::Create(D3DXVECTOR3(500.0f, 100.0f, 400.0f));
+	CCoin::Create(D3DXVECTOR3(300.0f, 100.0f, 300.0f));
+	CCoin::Create(D3DXVECTOR3(500.0f, 100.0f, 500.0f));
+	CCoin::Create(D3DXVECTOR3(300.0f, 100.0f, 500.0f));
+	CCoin::Create(D3DXVECTOR3(500.0f, 100.0f, 300.0f));
+
+	CCoin::Create(D3DXVECTOR3(600.0f, 100.0f, -400.0f));
+	CCoin::Create(D3DXVECTOR3(650.0f, 100.0f, -400.0f));
+	CCoin::Create(D3DXVECTOR3(700.0f, 100.0f, -400.0f));
+
+	CCoin::Create(D3DXVECTOR3(-800.0f, 100.0f, 1300.0f));
+	CCoin::Create(D3DXVECTOR3(-850.0f, 100.0f, 1300.0f));
+	CCoin::Create(D3DXVECTOR3(-900.0f, 100.0f, 1300.0f));
+
+	CCoin::Create(D3DXVECTOR3(-400.0f, 100.0f, -600.0f));
+	CCoin::Create(D3DXVECTOR3(-450.0f, 100.0f, -650.0f));
+	CCoin::Create(D3DXVECTOR3(-500.0f, 100.0f, -700.0f));
+	CCoin::Create(D3DXVECTOR3(-400.0f, 100.0f, -700.0f));
+	CCoin::Create(D3DXVECTOR3(-500.0f, 100.0f, -600.0f));
 
 	CEnemy::Create(D3DXVECTOR3(400.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	CEnemy::Create(D3DXVECTOR3(700.0f, 100.0f, 300.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	CEnemy::Create(D3DXVECTOR3(-500.0f, 100.0f, -400.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	CEnemy::Create(D3DXVECTOR3(800.0f, 100.0f, 700.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
+	CEnemy::Create(D3DXVECTOR3(700.0f, 100.0f, 700.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+	CEnemy::Create(D3DXVECTOR3(-500.0f, 100.0f, -1400.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+	CEnemy::Create(D3DXVECTOR3(800.0f, 100.0f, 1300.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
+	CEnemy::Create(D3DXVECTOR3(-1300.0f, 100.0f, 800.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
+	CEnemy::Create(D3DXVECTOR3(2000.0f, 100.0f, 1800.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
+	CEnemy::Create(D3DXVECTOR3(1000.0f, 100.0f, 900.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
+	CEnemy::Create(D3DXVECTOR3(300.0f, 100.0f, 1800.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
 
 	CTree::Create(D3DXVECTOR3(200.0f, 0.0f, -700.0f), NONE_D3DXVECTOR3, CTree::TYPE_PALM);
+	CTree::Create(D3DXVECTOR3(-300.0f, 0.0f, 500.0f), D3DXVECTOR3(0.0f,0.3f,0.0f), CTree::TYPE_PALM);
+	CTree::Create(D3DXVECTOR3(600.0f, 0.0f, -300.0f), NONE_D3DXVECTOR3, CTree::TYPE_PALM);
+	CTree::Create(D3DXVECTOR3(100.0f, 0.0f, 600.0f), D3DXVECTOR3(0.0f, 0.3f, 0.0f), CTree::TYPE_PALM);
 
 	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), NONE_D3DXVECTOR3, NONE_SCALE, CRock::TYPE_HARD);
+	CRock::Create(D3DXVECTOR3(700.0f, 0.0f, -800.0f), D3DXVECTOR3(0.0f,-0.2f,0.0f), NONE_SCALE, CRock::TYPE_SOFT);
+	CRock::Create(D3DXVECTOR3(200.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, -0.7f, 0.0f), NONE_SCALE, CRock::TYPE_SOFT);
+	CRock::Create(D3DXVECTOR3(-500.0f, 0.0f, 1000.0f), D3DXVECTOR3(0.0f, 1.7f, 0.0f), NONE_SCALE, CRock::TYPE_HARD);
 
 	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f), NONE_SCALE);
-
-	CGoldBone::Create(D3DXVECTOR3(-400.0f, 0.0f, 400.0f));
-
-	CGrass::Create(D3DXVECTOR3(300.0f, 0.0f, 50.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(20.0f, 60.0f, 0.0f));
-
-	//CLake::Create(D3DXVECTOR3(0.0f, 100.0f, -400.0f), D3DXVECTOR3(200.0f, 0.0f, 200.0f));
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント
@@ -133,6 +161,13 @@ HRESULT CGame::Init(void)
 //=============================================
 void CGame::Uninit(void)
 {
+	if (m_pPause != nullptr)
+	{ // ポーズが NULL じゃない場合
+
+		// 終了処理
+		m_pPause->Uninit();
+	}
+
 	// ポインタを NULL にする
 	m_pPause = nullptr;			// ポーズ
 	m_pPlayer = nullptr;		// プレイヤー
@@ -196,13 +231,6 @@ void CGame::Update(void)
 	//	return;
 	//}
 
-	if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_0) == true)
-	{ // 0キーを押した場合
-
-		// 敵の生成処理
-		CEnemy::Create(D3DXVECTOR3(400.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	}
-
 	if (m_bPause == true)
 	{ // ポーズ状況が true の場合
 
@@ -217,6 +245,14 @@ void CGame::Update(void)
 
 			// レンダラーの更新
 			CManager::Get()->GetRenderer()->Update();
+		}
+
+		if (CEnemy::GetList().IsEmpty() == true &&
+			m_GameState != STATE_GOAL)
+		{ // 敵を全て倒した場合
+
+			// ゴール状態にする
+			m_GameState = STATE_GOAL;
 		}
 	}
 
