@@ -39,9 +39,7 @@ namespace
 	};
 	const D3DXVECTOR3 DEATH_EXPLOSION = D3DXVECTOR3(200.0f, 200.0f, 0.0f);		// 死亡時の爆発
 	const D3DXCOLOR DAMAGE_COL = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);				// ダメージ状態の色
-	const int DAMAGE_HITSTOP = 5;						// ダメージ時のヒットストップ
-	const int DEATH_HITSTOP = 10;						// 死亡時のヒットストップ
-	const int DAMAGE_COUNT = 8;							// ダメージ状態のカウント
+	const int DAMAGE_COUNT = 12;						// ダメージ状態のカウント
 	const float LAND_GRAVITY = -50.0f;					// 起伏地面に着地している時の重力
 }
 
@@ -217,17 +215,8 @@ void CEnemy::Death(void)
 		// アニメーションリアクションを生成
 		CAnimReaction::Create(pos, DEATH_EXPLOSION, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
 
-		// ヒットストップ
-		Sleep(DEATH_HITSTOP);
-
 		// 終了処理
 		Uninit();
-	}
-	else
-	{ // 上記以外
-
-		// ヒットストップ
-		Sleep(DAMAGE_HITSTOP);
 	}
 }
 

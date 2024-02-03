@@ -1,6 +1,6 @@
 //===========================================
 //
-// 爆弾花のメイン処理[bang_flower.cpp]
+// 爆弾のメイン処理[bomb.cpp]
 // Author 小原立暉
 //
 //===========================================
@@ -9,43 +9,49 @@
 //*******************************************
 #include "main.h"
 #include "manager.h"
-#include "bang_flower.h"
+#include "bomb.h"
 #include "texture.h"
 #include "useful.h"
 
-#include "bomb.h"
+#include "bomb_fuse.h"
 
 //-------------------------------------------
 // 無名名前空間
 //-------------------------------------------
 namespace
 {
-	const char* MODEL = "data\\MODEL\\BombFlower.x";		// モデルの名前
-	const float BOMB_POS_SHIFT = 185.0f;					// 爆弾の位置のずらす幅
-	const float BOMB_ADD_HEIGHT = 199.0f;					// 爆弾の高さの追加量
+	const char* MODEL = "data\\MODEL\\BombBody.x";		// モデルの名前
 }
+
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CBomb*> CBomb::m_list = {};			// リスト
 
 //==============================
 // コンストラクタ
 //==============================
-CBangFlower::CBangFlower() : CModel(TYPE_BANGFLOWER, PRIORITY_ENTITY)
+CBomb::CBomb() : CModel(TYPE_NONE, PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
-	m_pBomb = nullptr;		// 爆弾の情報
+	m_pFuse = nullptr;			// 導火線の情報
+
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
 // デストラクタ
 //==============================
-CBangFlower::~CBangFlower()
+CBomb::~CBomb()
 {
 
 }
 
 //==============================
-//爆弾花の初期化処理
+//ブロックの初期化処理
 //==============================
-HRESULT CBangFlower::Init(void)
+HRESULT CBomb::Init(void)
 {
 	if (FAILED(CModel::Init()))
 	{ // 初期化処理に失敗した場合
@@ -54,58 +60,58 @@ HRESULT CBangFlower::Init(void)
 		return E_FAIL;
 	}
 
-	// 全ての値を初期化する
-	m_pBomb = nullptr;		// 爆弾の情報
-
 	// 値を返す
 	return S_OK;
 }
 
 //========================================
-//爆弾花の終了処理
+//ブロックの終了処理
 //========================================
-void CBangFlower::Uninit(void)
+void CBomb::Uninit(void)
 {
-	if (m_pBomb != nullptr)
-	{ // 爆弾が NULL じゃない場合
+	if (m_pFuse != nullptr)
+	{ // 導火線が NULL じゃない場合
 
 		// 終了処理
-		m_pBomb->Uninit();
-		m_pBomb = nullptr;
+		m_pFuse->Uninit();
+		m_pFuse = nullptr;
 	}
 
 	// 終了処理
 	CModel::Uninit();
+
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
-//爆弾花の更新処理
+//ブロックの更新処理
 //========================================
-void CBangFlower::Update(void)
+void CBomb::Update(void)
 {
 
 }
 
 //=====================================
-//爆弾花の描画処理
+//ブロックの描画処理
 //=====================================
-void CBangFlower::Draw(void)
+void CBomb::Draw(void)
 {
 	// 描画処理
 	CModel::Draw();
 
-	if (m_pBomb != nullptr)
-	{ // 爆弾が NULL じゃない場合
+	if (m_pFuse != nullptr)
+	{ // 導火線が NULL じゃない場合
 
-		// 描画処理
-		m_pBomb->Draw();
+		// 導火線の描画処理
+		m_pFuse->Draw();
 	}
 }
 
 //=====================================
 // 情報の設定処理
 //=====================================
-void CBangFlower::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
+void CBomb::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 {
 	// 情報の設定処理
 	SetPos(pos);					// 位置
@@ -114,30 +120,23 @@ void CBangFlower::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	SetScale(NONE_SCALE);			// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
 
-	D3DXVECTOR3 posBomb;			// 爆弾の位置
-
-	// 爆弾の位置を設定する
-	posBomb.x = pos.x + sinf(rot.y + D3DX_PI) * BOMB_POS_SHIFT;
-	posBomb.y = pos.y + BOMB_ADD_HEIGHT;
-	posBomb.z = pos.z + cosf(rot.y + D3DX_PI) * BOMB_POS_SHIFT;
-
 	// 全ての値を設定する
-	m_pBomb = CBomb::Create(posBomb, D3DXVECTOR3(D3DX_PI, 0.0f, 0.0f));		// 爆弾の生成
+	m_pFuse = CBombFuse::Create(GetMatrixPoint());		// 導火線の情報
 }
 
 //=======================================
 // 生成処理
 //=======================================
-CBangFlower* CBangFlower::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
+CBomb* CBomb::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 {
 	// ローカルオブジェクトを生成
-	CBangFlower* pBangFlower = nullptr;		// インスタンスを生成
+	CBomb* pBomb = nullptr;			// 爆弾を生成
 
-	if (pBangFlower == nullptr)
+	if (pBomb == nullptr)
 	{ // オブジェクトが NULL の場合
 
-		// 爆弾花を生成する
-		pBangFlower = new CBangFlower;
+		// ブロックを生成する
+		pBomb = new CBomb;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -149,11 +148,11 @@ CBangFlower* CBangFlower::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 		return nullptr;
 	}
 
-	if (pBangFlower != nullptr)
+	if (pBomb != nullptr)
 	{ // オブジェクトが NULL じゃない場合
 
 		// 初期化処理
-		if (FAILED(pBangFlower->Init()))
+		if (FAILED(pBomb->Init()))
 		{ // 初期化に失敗した場合
 
 			// 停止
@@ -164,7 +163,7 @@ CBangFlower* CBangFlower::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 		}
 
 		// 情報の設定処理
-		pBangFlower->SetData(pos, rot);
+		pBomb->SetData(pos, rot);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -176,6 +175,15 @@ CBangFlower* CBangFlower::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 		return nullptr;
 	}
 
-	// 爆弾花のポインタを返す
-	return pBangFlower;
+	// 爆弾のポインタを返す
+	return pBomb;
+}
+
+//=======================================
+// リストの取得処理
+//=======================================
+CListManager<CBomb*> CBomb::GetList(void)
+{
+	// リストマネージャーを返す
+	return m_list;
 }

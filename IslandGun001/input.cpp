@@ -91,11 +91,7 @@ void CInput::Uninit(void)
 CInputKeyboard::CInputKeyboard()
 {
 	// 全ての値をクリアする
-	for (int nCnt = 0; nCnt < NUM_KEY_MAX; nCnt++)
-	{
-		// キー情報
-		ZeroMemory(&m_aKeyState[nCnt], sizeof(BYTE));
-	}
+	ZeroMemory(m_aKeyState, sizeof(m_aKeyState));		// キー情報
 }
 
 //==================================
@@ -326,12 +322,12 @@ CInputKeyboard* CInputKeyboard::Create(HINSTANCE hInstance, HWND hWnd)
 CInputGamePad::CInputGamePad()
 {
 	// 全ての値をクリアする
-	ZeroMemory(&m_aPadState[0], sizeof(m_aPadState));					// プレス情報
-	ZeroMemory(&m_aPadStateTrigger[0], sizeof(m_aPadStateTrigger));		// トリガー情報
-	ZeroMemory(&m_aPadStateRelease[0], sizeof(m_aPadStateRelease));		// リリース情報
-	ZeroMemory(&m_nRepeatCount[0][0], sizeof(m_nRepeatCount));			// リピートカウント
-	ZeroMemory(&m_aVibration[0], sizeof(m_aVibration));					// バイブレーション情報
-	m_bConnect = false;													// 接続判定
+	ZeroMemory(m_aPadState, sizeof(m_aPadState));					// プレス情報
+	ZeroMemory(m_aPadStateTrigger, sizeof(m_aPadStateTrigger));		// トリガー情報
+	ZeroMemory(m_aPadStateRelease, sizeof(m_aPadStateRelease));		// リリース情報
+	ZeroMemory(m_nRepeatCount, sizeof(m_nRepeatCount));				// リピートカウント
+	ZeroMemory(m_aVibration, sizeof(m_aVibration));					// バイブレーション情報
+	m_bConnect = false;												// 接続判定
 }
 
 //==================================
@@ -363,7 +359,7 @@ HRESULT CInputGamePad::Init(HINSTANCE hInstance)
 	memset(&m_aPadStateRelease[0], 0, sizeof(m_aPadStateRelease));
 
 	// リピートカウントを用意する
-	memset(&m_nRepeatCount[0][0], 0, sizeof(m_nRepeatCount));
+	memset(m_nRepeatCount, 0, sizeof(m_nRepeatCount));
 
 	// バイブレーション情報を用意する
 	memset(&m_aVibration[0], 0, sizeof(m_aVibration));

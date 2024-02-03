@@ -64,6 +64,8 @@ public:			// 誰でもアクセスできる
 		TYPE_SLASHRIPPLE,		// 斬撃の波紋
 		TYPE_BANGFLOWER,		// 爆弾花
 		TYPE_TITLELOGO,			// タイトルロゴ
+		TYPE_OCEAN,				// 海
+		TYPE_BOMB,				// 爆弾
 		TYPE_MAX				// この列挙型の総数
 	};
 

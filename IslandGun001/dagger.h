@@ -38,6 +38,8 @@ public:			// 誰でもアクセスできる
 	// セット・ゲット関係
 	void SetEnableDisp(const bool bDisp);		// 描画状況の設定処理
 	bool IsDisp(void) const;					// 描画状況の取得処理
+	void SetEnableDispOrbit(const bool bDisp);	// 軌跡の描画状況の設定処理
+	bool IsDispOrbit(void) const;				// 軌跡の描画状況の取得処理
 
 	// 静的メンバ関数
 	static CDagger* Create(D3DXMATRIX* mtx);	// 生成処理
@@ -48,7 +50,8 @@ private:		// 自分だけアクセスできる
 	COrbit* m_pOrbit;				// 軌跡の情報
 	D3DXMATRIX* m_pMtxParent;		// 親のマトリックス
 	bool m_bDisp;					// 描画状況
-	bool m_bDispOld;				// 前回の描画状況
+	bool m_bDispOrbit;				// 軌跡の描画状況
+	bool m_bDispOrbitOld;			// 軌跡の前回の描画状況
 };
 
 #endif

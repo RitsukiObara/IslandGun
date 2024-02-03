@@ -161,6 +161,8 @@
     <ClCompile Include="blur.cpp" />
     <ClCompile Include="blur_col.cpp" />
     <ClCompile Include="blur_org.cpp" />
+    <ClCompile Include="bomb.cpp" />
+    <ClCompile Include="bomb_fuse.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="bulletUI.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -224,6 +226,7 @@
     <ClCompile Include="objectTri2D.cpp" />
     <ClCompile Include="objectTri3D.cpp" />
     <ClCompile Include="objectX.cpp" />
+    <ClCompile Include="ocean.cpp" />
     <ClCompile Include="orbit.cpp" />
     <ClCompile Include="palm_fruit.cpp" />
     <ClCompile Include="palm_tree.cpp" />
@@ -270,6 +273,8 @@
     <ClInclude Include="blur.h" />
     <ClInclude Include="blur_col.h" />
     <ClInclude Include="blur_org.h" />
+    <ClInclude Include="bomb.h" />
+    <ClInclude Include="bomb_fuse.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="bulletUI.h" />
     <ClInclude Include="camera.h" />
@@ -334,6 +339,7 @@
     <ClInclude Include="objectTri2D.h" />
     <ClInclude Include="objectTri3D.h" />
     <ClInclude Include="objectX.h" />
+    <ClInclude Include="ocean.h" />
     <ClInclude Include="orbit.h" />
     <ClInclude Include="palm_fruit.h" />
     <ClInclude Include="palm_tree.h" />

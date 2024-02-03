@@ -29,7 +29,26 @@ CManager* CManager::m_pManager = nullptr;			// マネージャーの情報
 //=========================================
 CManager::CManager()
 {
+	// 全ての値をクリアする
+	m_pRenderer = nullptr;			// レンダラーの情報
+	m_pInputKeyboard = nullptr;		// キーボードの情報
+	m_pInputGamePad = nullptr;		// ゲームパッドの情報
+	m_pInputMouse = nullptr;		// マウスの情報
+	m_pSound = nullptr;				// サウンドの情報
+	m_pFile = nullptr;				// ファイルの情報
+	m_pDebugProc = nullptr;			// デバッグ表示の情報
+	m_pCamera = nullptr;			// カメラの情報
+	m_pLight = nullptr;				// ライトの情報
+	m_pTexture = nullptr;			// テクスチャの情報
+	m_pScene = nullptr;				// シーンの情報
+	m_pFade = nullptr;				// フェードの情報
+	m_pXFile = nullptr;				// Xファイルの情報
 
+#ifdef _DEBUG		// デバッグ時のみ
+
+	m_bWire = false;				// ワイヤーフレーム状況
+
+#endif
 }
 
 //=========================================

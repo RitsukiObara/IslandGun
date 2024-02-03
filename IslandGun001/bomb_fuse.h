@@ -1,11 +1,11 @@
 //===================================
 //
-// 爆弾花ヘッダー[bang_flower.h]
+// 爆弾の導火線ヘッダー[bomb_fuse.h]
 // Author 小原立暉
 //
 //===================================
-#ifndef _BANG_FLOWER_H_
-#define _BANG_FLOWER_H_
+#ifndef _BOMB_FUSE_H_
+#define _BOMB_FUSE_H_
 
 //***********************************
 // インクルードファイル
@@ -13,19 +13,14 @@
 #include "model.h"
 
 //-----------------------------------
-// 前方宣言
+// クラス定義(爆弾の導火線)
 //-----------------------------------
-class CBomb;		// 爆弾
-
-//-----------------------------------
-// クラス定義(爆弾花)
-//-----------------------------------
-class CBangFlower : public CModel
+class CBombFuse : public CModel
 {
 public:			// 誰でもアクセスできる
 
-	CBangFlower();			// コンストラクタ
-	~CBangFlower();			// デストラクタ
+	CBombFuse();			// コンストラクタ
+	~CBombFuse();			// デストラクタ
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -33,15 +28,15 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);				// 情報の設定処理
+	void SetData(D3DXMATRIX* pMtx);					// 情報の設定処理
 
 	// 静的メンバ関数
-	static CBangFlower* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);	// 生成処理
+	static CBombFuse* Create(D3DXMATRIX* pMtx);		// 生成処理
 
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
-	CBomb* m_pBomb;		// 爆弾の情報
+	D3DXMATRIX* m_pMtxParent;		// 親のマトリックス
 };
 
 #endif

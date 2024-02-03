@@ -33,6 +33,7 @@
 #include "grass.h"
 #include "lake.h"
 #include "bang_flower.h"
+#include "ocean.h"
 #include "list_manager.h"
 
 //--------------------------------------------
@@ -99,6 +100,9 @@ HRESULT CGame::Init(void)
 	// シーンの初期化
 	CScene::Init();
 
+	// 海の生成
+	COcean::Create();
+
 	// プレイヤーの生成処理
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 300.0f));
 
@@ -146,6 +150,9 @@ HRESULT CGame::Init(void)
 	CRock::Create(D3DXVECTOR3(-500.0f, 0.0f, 1000.0f), D3DXVECTOR3(0.0f, 1.7f, 0.0f), NONE_SCALE, CRock::TYPE_HARD);
 
 	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f), NONE_SCALE);
+
+	// 爆弾花の生成処理
+	CBangFlower::Create(D3DXVECTOR3(0.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

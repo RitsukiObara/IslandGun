@@ -1,31 +1,32 @@
 //===================================
 //
-// 爆弾花ヘッダー[bang_flower.h]
+// 爆弾ヘッダー[bomb.h]
 // Author 小原立暉
 //
 //===================================
-#ifndef _BANG_FLOWER_H_
-#define _BANG_FLOWER_H_
+#ifndef _BOMB_H_
+#define _BOMB_H_
 
 //***********************************
 // インクルードファイル
 //***********************************
 #include "model.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // 前方宣言
 //-----------------------------------
-class CBomb;		// 爆弾
+class CBombFuse;		// 導火線
 
 //-----------------------------------
-// クラス定義(爆弾花)
+// クラス定義(爆弾)
 //-----------------------------------
-class CBangFlower : public CModel
+class CBomb : public CModel
 {
 public:			// 誰でもアクセスできる
 
-	CBangFlower();			// コンストラクタ
-	~CBangFlower();			// デストラクタ
+	CBomb();			// コンストラクタ
+	~CBomb();			// デストラクタ
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -36,12 +37,17 @@ public:			// 誰でもアクセスできる
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);				// 情報の設定処理
 
 	// 静的メンバ関数
-	static CBangFlower* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);	// 生成処理
+	static CBomb* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 生成処理
+
+	static CListManager<CBomb*> GetList(void);			// リストの取得処理
 
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
-	CBomb* m_pBomb;		// 爆弾の情報
+	CBombFuse* m_pFuse;			// 導火線の情報
+
+	// 静的メンバ変数
+	static CListManager<CBomb*> m_list;		// リスト
 };
 
 #endif

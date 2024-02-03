@@ -34,6 +34,8 @@ namespace
 	const float DAGGER_HEIGHT = 80.0f;	// ƒ_ƒK[‚Ì‚‚³
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì‚‚³
 	const float ATTACK_DAGGER_RADIUS = 60.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì”¼Œa
+	const int DAGGER_ATTACK_START = 8;	// ƒ_ƒK[‚ÌUŒ‚”»’è‚ªŽn‚Ü‚éƒJƒEƒ“ƒg”
+	const int DAGGER_ATTACK_END = 28;	// ƒ_ƒK[‚ÌUŒ‚”»’è‚ªI‚í‚éƒJƒEƒ“ƒg”
 }
 
 //=========================
@@ -361,17 +363,25 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 	// ˆÚ“®—Ê‚ð“K—p‚·‚é
 	pPlayer->SetMove(move);
 
-	// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
-	collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
-
-	// ƒ„ƒV‚ÌŽÀ‚Æ‚Ì“–‚½‚è”»’è
-	collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
-
-	// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
-	collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
-
 	// s“®ƒJƒEƒ“ƒg‚ð‰ÁŽZ‚·‚é
 	m_nActionCount++;
+
+	if (m_nActionCount >= DAGGER_ATTACK_START &&
+		m_nActionCount <= DAGGER_ATTACK_END)
+	{ // s“®ƒJƒEƒ“ƒg‚ªˆê’èˆÈã‚Ìê‡
+
+		// ‹OÕ‚Ì•`‰æó‹µ‚ð true ‚É‚·‚é
+		pPlayer->GetDagger()->SetEnableDispOrbit(true);
+
+		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
+		collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
+
+		// ƒ„ƒV‚ÌŽÀ‚Æ‚Ì“–‚½‚è”»’è
+		collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
+
+		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
+		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
+	}
 
 	if (m_nActionCount % DAGGER_COUNT == 0)
 	{ // s“®ƒJƒEƒ“ƒg‚ªˆê’è”‚É’B‚µ‚½ê‡
@@ -384,6 +394,7 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 
 		// ƒ_ƒK[‚ð•\Ž¦‚µ‚È‚¢
 		pPlayer->GetDagger()->SetEnableDisp(false);
+		pPlayer->GetDagger()->SetEnableDispOrbit(false);
 
 		// Œe‚ð•`‰æ‚·‚é
 		pPlayer->GetHandGun(0)->SetEnableDisp(true);
@@ -510,17 +521,25 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 	// ˆÚ“®—Ê‚ð“K—p‚·‚é
 	pPlayer->SetMove(move);
 
-	// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
-	collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
-
-	// ƒ„ƒV‚ÌŽÀ‚Æ‚Ì“–‚½‚è”»’è
-	collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
-
-	// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
-	collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
-
 	// s“®ƒJƒEƒ“ƒg‚ð‰ÁŽZ‚·‚é
 	m_nActionCount++;
+
+	if (m_nActionCount >= DAGGER_ATTACK_START &&
+		m_nActionCount <= DAGGER_ATTACK_END)
+	{ // s“®ƒJƒEƒ“ƒg‚ªˆê’èˆÈã‚Ìê‡
+
+		// ‹OÕ‚Ì•`‰æó‹µ‚ð true ‚É‚·‚é
+		pPlayer->GetDagger()->SetEnableDispOrbit(true);
+
+		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
+		collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
+
+		// ƒ„ƒV‚ÌŽÀ‚Æ‚Ì“–‚½‚è”»’è
+		collision::PalmFruitHit(pPlayer, DAGGER_HEIGHT);
+
+		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
+		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
+	}
 
 	if (m_nActionCount % SWOOP_COUNT == 0)
 	{ // s“®ƒJƒEƒ“ƒg‚ªˆê’è”‚É’B‚µ‚½ê‡
@@ -533,6 +552,7 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 
 		// ƒ_ƒK[‚ð•\Ž¦‚µ‚È‚¢
 		pPlayer->GetDagger()->SetEnableDisp(false);
+		pPlayer->GetDagger()->SetEnableDispOrbit(false);
 
 		// Œe‚ð•`‰æ‚·‚é
 		pPlayer->GetHandGun(0)->SetEnableDisp(true);

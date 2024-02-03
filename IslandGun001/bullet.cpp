@@ -46,7 +46,7 @@ CListManager<CBullet*> CBullet::m_list = {};		// リスト
 //=========================
 // コンストラクタ
 //=========================
-CBullet::CBullet() : CBillboard(CObject::TYPE_BULLET, CObject::PRIORITY_SHADOW)
+CBullet::CBullet() : CBillboard(CObject::TYPE_BULLET, CObject::PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
 	m_move = NONE_D3DXVECTOR3;	// 移動量

@@ -372,9 +372,6 @@
     <ClCompile Include="iwakari_shell.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
-    <ClCompile Include="bang_flower.cpp">
-      <Filter>gimmick\Map</Filter>
-    </ClCompile>
     <ClCompile Include="player_controller.cpp">
       <Filter>Player</Filter>
     </ClCompile>
@@ -383,6 +380,18 @@
     </ClCompile>
     <ClCompile Include="Kari_ResultLogo.cpp">
       <Filter>scene\result</Filter>
+    </ClCompile>
+    <ClCompile Include="ocean.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="bang_flower.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="bomb.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="bomb_fuse.cpp">
+      <Filter>gimmick\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -689,9 +698,6 @@
     <ClInclude Include="iwakari_shell.h">
       <Filter>enemy</Filter>
     </ClInclude>
-    <ClInclude Include="bang_flower.h">
-      <Filter>gimmick\Map</Filter>
-    </ClInclude>
     <ClInclude Include="player_controller.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -700,6 +706,18 @@
     </ClInclude>
     <ClInclude Include="Kari_ResultLogo.h">
       <Filter>scene\result</Filter>
+    </ClInclude>
+    <ClInclude Include="ocean.h">
+      <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="bang_flower.h">
+      <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="bomb.h">
+      <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="bomb_fuse.h">
+      <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

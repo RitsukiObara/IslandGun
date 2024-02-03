@@ -36,6 +36,7 @@ CHandgun::CHandgun() : CModel(CObject::TYPE_NONE, CObject::PRIORITY_PLAYER)
 	m_rotInit = NONE_D3DXVECTOR3;	// 初期向き
 	m_pMtxParent = nullptr;			// 親のマトリックス
 	m_state = STATE_NONE;			// 状態
+	m_nReloadCount = 0;				// リロードカウント
 	m_fRotMove = 0.0f;				// 向きの移動量
 	m_bDisp = true;					// 描画状況
 }

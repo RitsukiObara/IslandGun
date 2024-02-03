@@ -1100,17 +1100,21 @@ void CElevation::TxtSet(void)
 
 						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
 
-						//頂点バッファをロックし、頂点情報へのポインタを取得
-						pElevation->m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+						if (pElevation != nullptr)
+						{ // 起伏地面が NULL じゃない場合
 
-						for (int nCnt = 0; nCnt < nVtxX * nVtxZ; nCnt++)
-						{
-							// 座標を読み込む
-							fscanf(pFile, "%f %f %f", &pVtx[nCnt].pos.x, &pVtx[nCnt].pos.y, &pVtx[nCnt].pos.z);
+							//　頂点バッファをロックし、頂点情報へのポインタを取得
+							pElevation->m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+							for (int nCnt = 0; nCnt < nVtxX * nVtxZ; nCnt++)
+							{
+								// 座標を読み込む
+								fscanf(pFile, "%f %f %f", &pVtx[nCnt].pos.x, &pVtx[nCnt].pos.y, &pVtx[nCnt].pos.z);
+							}
+
+							//　頂点バッファをアンロックする
+							pElevation->m_pVtxBuff->Unlock();
 						}
-
-						//頂点バッファをアンロックする
-						pElevation->m_pVtxBuff->Unlock();
 					}
 				} while (strcmp(&aString[0], "END_SET_ELEVATION") != 0);	// 読み込んだ文字列が END_SET_ELEVATION ではない場合ループ
 			}

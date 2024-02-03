@@ -21,8 +21,14 @@
 namespace
 {
 	const char* MODEL = "data\\MODEL\\Dagger.x";		// モデルの名前
+	const char* ORBIT_TEXTURE = "data\\TEXTURE\\DaggerOrbit.png";		// 軌跡のテクスチャ
 	const D3DXVECTOR3 DAGGER_POS = D3DXVECTOR3(-10.0f, 0.0f, 0.0f);		// ダガーの位置
 	const D3DXVECTOR3 DAGGER_ROT = D3DXVECTOR3(0.0f, D3DX_PI, 0.0f);	// ダガーの向き
+	const D3DXVECTOR3 ORBIT_OFFSET[2] =					// 軌跡のオフセット
+	{
+		D3DXVECTOR3(0.0f, 0.0f, -10.0f),
+		D3DXVECTOR3(0.0f, 0.0f, -50.0f)
+	};
 }
 
 //==============================
@@ -31,10 +37,11 @@ namespace
 CDagger::CDagger() : CModel(CObject::TYPE_NONE, CObject::PRIORITY_PLAYER)
 {
 	// 全ての値をクリアする
-	m_pOrbit = nullptr;			// 軌跡の情報
-	m_pMtxParent = nullptr;		// 親のマトリックス
-	m_bDisp = false;			// 描画状況
-	m_bDispOld = m_bDisp;		// 前回の描画状況
+	m_pOrbit = nullptr;				// 軌跡の情報
+	m_pMtxParent = nullptr;			// 親のマトリックス
+	m_bDisp = false;				// 描画状況
+	m_bDispOrbit = false;			// 軌跡の描画状況
+	m_bDispOrbitOld = m_bDispOrbit;	// 軌跡の前回の描画状況
 }
 
 //==============================
@@ -96,25 +103,26 @@ void CDagger::Draw(void)
 
 		// 描画処理
 		CModel::DrawMatrix(*m_pMtxParent);
+	}
 
-		if (m_bDisp == true &&
-			m_bDispOld == false)
+	if (m_bDispOrbit == true &&
+		m_pOrbit != nullptr)
+	{ // 軌跡が NULL じゃない場合
+
+		if (m_bDispOrbit == true &&
+			m_bDispOrbitOld == false)
 		{ // 描画状況が true になった瞬間
 
 			// 位置のリセット処理
 			m_pOrbit->PosReset();
 		}
 
-		if (m_pOrbit != nullptr)
-		{ // 軌跡が NULL じゃない場合
-
-			// 描画処理
-			m_pOrbit->Draw();
-		}
+		// 描画処理
+		m_pOrbit->Draw();
 	}
 
 	// 前回の描画状況を代入する
-	m_bDispOld = m_bDisp;
+	m_bDispOrbitOld = m_bDispOrbit;
 }
 
 //=====================================
@@ -130,17 +138,13 @@ void CDagger::SetData(D3DXMATRIX* mtx)
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデル情報
 
 	// 全ての値をクリアする
-	m_pMtxParent = mtx;		// 親のマトリックス
-	m_bDisp = false;		// 描画状況
-	m_bDispOld = m_bDisp;		// 前回の描画状況
-
-	D3DXVECTOR3 OffSet[2] = {};
-
-	OffSet[0] = D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-	OffSet[1] = D3DXVECTOR3(0.0f, 0.0f, -50.0f);
+	m_pMtxParent = mtx;				// 親のマトリックス
+	m_bDisp = false;				// 描画状況
+	m_bDispOrbit = false;			// 軌跡の描画状況
+	m_bDispOrbitOld = m_bDispOrbit;	// 軌跡の前回の描画状況
 
 	// 軌跡を生成する
-	m_pOrbit = COrbit::Create(GetMatrixPoint(), GetPos(), OffSet[0], OffSet[1], "data\\TEXTURE\\SilverGloss.png", TYPE_NONE);
+	m_pOrbit = COrbit::Create(GetMatrixPoint(), GetPos(), ORBIT_OFFSET[0], ORBIT_OFFSET[1], ORBIT_TEXTURE, TYPE_NONE);
 }
 
 //=======================================
@@ -214,4 +218,22 @@ bool CDagger::IsDisp(void) const
 {
 	// 描画状況を返す
 	return m_bDisp;
+}
+
+//=======================================
+// 軌跡の描画状況の設定処理
+//=======================================
+void CDagger::SetEnableDispOrbit(const bool bDisp)
+{
+	// 軌跡の描画状況を設定する
+	m_bDispOrbit = bDisp;
+}
+
+//=======================================
+// 軌跡の描画状況の取得処理
+//=======================================
+bool CDagger::IsDispOrbit(void) const
+{
+	// 軌跡の描画状況を返す
+	return m_bDispOrbit;
 }
