@@ -22,6 +22,8 @@
 #include "palm_fruit.h"
 #include "bullet.h"
 #include "rock.h"
+#include "bang_flower.h"
+#include "bomb.h"
 
 //===============================
 // マクロ定義
@@ -48,7 +50,6 @@ bool collision::ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posO
 	CElevation* pElevEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
 
-	// while文処理
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -123,7 +124,6 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 	CCoin* pCoinEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
 
-	// while文処理
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -189,7 +189,6 @@ bool collision::EnemyHitToGun(const CBullet& bullet)
 	CEnemy* pEnemyEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
 
-	// while文処理
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -261,8 +260,7 @@ bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, co
 	CEnemy* pEnemy = nullptr;		// 先頭の敵
 	CEnemy* pEnemyEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
-
-	// while文処理
+	
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -326,8 +324,7 @@ void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& siz
 	CGoldBone* pBone = nullptr;		// 先頭の値
 	CGoldBone* pBoneEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
-
-	// while文処理
+	
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -391,7 +388,6 @@ bool collision::TreeCollision(D3DXVECTOR3* pos, const float fRadius)
 	CTree* pTreeEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
 
-	// while文処理
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -445,8 +441,7 @@ void collision::TreeAttack(const CPlayer& pPlayer, const float fHeight)
 	CTree* pTree = nullptr;		// 先頭の値
 	CTree* pTreeEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
-
-	// while文処理
+	
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -500,8 +495,7 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fHeight)
 	CPalmFruit* pFruit = nullptr;		// 先頭の値
 	CPalmFruit* pFruitEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
-
-	// while文処理
+	
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -554,8 +548,7 @@ void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 	CRock* pRock = nullptr;			// 先頭の値
 	CRock* pRockEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
-
-	// while文処理
+	
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -596,6 +589,90 @@ void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 			nIdx++;
 		}
 	}
+}
+
+//===============================
+// 爆弾のヒット判定
+//===============================
+bool collision::BangFlowerHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMin, const D3DXVECTOR3& vtxMax)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posBomb = NONE_D3DXVECTOR3;		// 爆弾の位置
+	D3DXVECTOR3 posOldBomb = NONE_D3DXVECTOR3;	// 爆弾の前回の位置
+	D3DXVECTOR3 BombMax = NONE_D3DXVECTOR3;		// 爆弾の最大値
+	D3DXVECTOR3 BombMin = NONE_D3DXVECTOR3;		// 爆弾の最小値
+	CListManager<CBangFlower*> list = CBangFlower::GetList();
+	CBangFlower* pBomb = nullptr;			// 先頭の値
+	CBangFlower* pBombEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+	bool bHit = false;		// ヒット判定
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pBomb = list.GetTop();
+
+		// 末尾の値を取得する
+		pBombEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pBomb->GetBomb() != nullptr &&
+				pBomb->GetBomb()->GetState() == CBomb::STATE_RIPEN)
+			{ // 爆弾が実り状態の場合
+
+				// 爆弾の位置を取得する
+				posBomb = pBomb->GetPos();
+
+				// 爆弾の前回の位置を取得する
+				posOldBomb = pBomb->GetPosOld();
+
+				// 爆弾の最大値を取得する
+				BombMax = pBomb->GetFileData().vtxMax;
+
+				// 爆弾の最小値を取得する
+				BombMin = pBomb->GetFileData().vtxMin;
+
+				if (HexahedronHit
+				(
+					pos,
+					posBomb,
+					posOld,
+					posOldBomb,
+					vtxMin,
+					BombMin,
+					vtxMax,
+					BombMax
+				) == true)
+				{ // 範囲内にいた場合
+
+					// ヒット処理
+					pBomb->Hit();
+
+					// ヒットした
+					bHit = true;
+				}
+			}
+
+			if (pBomb == pBombEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBomb = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// ヒット判定を返す
+	return bHit;
 }
 
 /*

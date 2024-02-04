@@ -25,6 +25,11 @@ namespace
 	const float BOMB_ADD_HEIGHT = 199.0f;					// 爆弾の高さの追加量
 }
 
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CBangFlower*> CBangFlower::m_list = {};			// リスト
+
 //==============================
 // コンストラクタ
 //==============================
@@ -32,6 +37,9 @@ CBangFlower::CBangFlower() : CModel(TYPE_BANGFLOWER, PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
 	m_pBomb = nullptr;		// 爆弾の情報
+
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -76,6 +84,9 @@ void CBangFlower::Uninit(void)
 
 	// 終了処理
 	CModel::Uninit();
+
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
@@ -83,7 +94,12 @@ void CBangFlower::Uninit(void)
 //========================================
 void CBangFlower::Update(void)
 {
+	if (m_pBomb != nullptr)
+	{ // 爆弾が NULL じゃない場合
 
+		// 更新処理
+		m_pBomb->Update();
+	}
 }
 
 //=====================================
@@ -123,6 +139,21 @@ void CBangFlower::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 
 	// 全ての値を設定する
 	m_pBomb = CBomb::Create(posBomb, D3DXVECTOR3(D3DX_PI, 0.0f, 0.0f));		// 爆弾の生成
+}
+
+//=======================================
+// ヒット処理
+//=======================================
+void CBangFlower::Hit(void)
+{
+	// バウンド状態にする
+	m_pBomb->SetState(CBomb::STATE_BOUND);
+
+	// 種類を 爆弾 に変える
+	m_pBomb->SetType(CObject::TYPE_BOMB);
+
+	// 爆弾を管轄から外す
+	m_pBomb = nullptr;
 }
 
 //=======================================
@@ -178,4 +209,22 @@ CBangFlower* CBangFlower::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 
 	// 爆弾花のポインタを返す
 	return pBangFlower;
+}
+
+//=======================================
+// 爆弾の取得処理
+//=======================================
+CBomb* CBangFlower::GetBomb(void) const
+{
+	// 爆弾の情報を返す
+	return m_pBomb;
+}
+
+//=======================================
+// リストの取得処理
+//=======================================
+CListManager<CBangFlower*> CBangFlower::GetList(void)
+{
+	// リスト構造を返す
+	return m_list;
 }

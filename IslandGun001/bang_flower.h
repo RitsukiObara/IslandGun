@@ -11,6 +11,7 @@
 // インクルードファイル
 //***********************************
 #include "model.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // 前方宣言
@@ -34,14 +35,22 @@ public:			// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);				// 情報の設定処理
+	void Hit(void);					// ヒット処理
+
+	CBomb* GetBomb(void) const;		// 爆弾の取得処理
 
 	// 静的メンバ関数
 	static CBangFlower* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);	// 生成処理
+
+	static CListManager<CBangFlower*> GetList(void);		// リストの取得処理
 
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
 	CBomb* m_pBomb;		// 爆弾の情報
+
+	// 静的メンバ変数
+	static CListManager<CBangFlower*> m_list;		// リスト
 };
 
 #endif

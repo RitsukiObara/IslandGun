@@ -20,6 +20,7 @@ namespace
 {
 	const char* MODEL = "data\\MODEL\\BombFuse.x";		// モデルの名前
 	const D3DXVECTOR3 FUSE_POS = D3DXVECTOR3(0.0f, 94.0f, 0.0f);	// 位置の設定処理
+	const float SUB_POS_Y = 0.03f;						// 位置の減算量
 }
 
 //==============================
@@ -72,7 +73,14 @@ void CBombFuse::Uninit(void)
 //========================================
 void CBombFuse::Update(void)
 {
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
 
+	// 位置を下げる
+	pos.y -= SUB_POS_Y;
+
+	// 位置を適用する
+	SetPos(pos);
 }
 
 //=====================================

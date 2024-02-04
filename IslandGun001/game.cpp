@@ -152,7 +152,7 @@ HRESULT CGame::Init(void)
 	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f), NONE_SCALE);
 
 	// 爆弾花の生成処理
-	CBangFlower::Create(D3DXVECTOR3(0.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3);
+	CBangFlower::Create(D3DXVECTOR3(0.0f, 200.0f, 0.0f), NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

@@ -50,6 +50,9 @@ public:
 
 private:
 
+	// メンバ関数
+	void Hit(void);			// ヒット処理
+
 	// メンバ変数
 	D3DXVECTOR3 m_move;		// 移動量
 	TYPE m_type;			// 種類
