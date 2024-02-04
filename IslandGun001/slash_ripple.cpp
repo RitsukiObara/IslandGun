@@ -75,7 +75,7 @@ void CSlashRipple::Draw(void)
 void CSlashRipple::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 {
 	// î•ñ‚Ìİ’èˆ—
-	CRipple::SetData(pos, rot);
+	CRipple::SetData(pos, rot, NONE_SCALE);
 }
 
 //===========================================

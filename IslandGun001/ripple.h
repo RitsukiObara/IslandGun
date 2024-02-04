@@ -28,10 +28,10 @@ public:		// 誰でもアクセスできる
 	virtual void Update(void) override;		// 更新処理
 	virtual void Draw(void) override;		// 描画処理
 
-	virtual void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);			// 情報の設定処理
+	virtual void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale);			// 情報の設定処理
 
 	// 静的メンバ関数
-	static CRipple* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 生成処理
+	static CRipple* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale);		// 生成処理
 
 private:	// 自分だけアクセスできる
 

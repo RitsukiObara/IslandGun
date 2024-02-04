@@ -27,6 +27,7 @@ public:			// 誰でもアクセスできる
 		STYLE_PLAYER = 0,		// プレイヤー
 		STYLE_TORDLE,			// タードル
 		STYLE_IWAKARI,			// イワカリ
+		STYLE_BOSS,				// ボス
 		STYLE_MAX				// この列挙型の総数
 	};
 

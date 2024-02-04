@@ -32,6 +32,8 @@ namespace
 		D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f),
 		D3DXCOLOR(0.65f, 0.65f, 0.65f, 1.0f)
 	};
+
+	const D3DXCOLOR CAMERALIGHT_DIFFUSE = D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f);	// カメラ追従ライトの色
 }
 
 //=========================
@@ -39,12 +41,9 @@ namespace
 //=========================
 CLight::CLight()
 {
-	// 全ての値をクリアする
-	for (int nCntSet = 0; nCntSet < NUM_LIGHT; nCntSet++)
-	{
-		// ライトの情報
-		ZeroMemory(&m_aLight[nCntSet], sizeof(D3DLIGHT9));
-	}
+	// ライトの情報
+	ZeroMemory(m_aLight, sizeof(m_aLight));
+	ZeroMemory(&m_lightCamera, sizeof(m_lightCamera));
 }
 
 //=========================
@@ -67,9 +66,6 @@ HRESULT CLight::Init(void)
 
 	for (int nCntSet = 0; nCntSet < NUM_LIGHT; nCntSet++)
 	{
-		// ライトの情報をクリアする
-		ZeroMemory(&m_aLight[nCntSet], sizeof(D3DLIGHT9));
-
 		// ライトの種類を設定
 		m_aLight[nCntSet].Type = D3DLIGHT_DIRECTIONAL;
 
@@ -89,6 +85,25 @@ HRESULT CLight::Init(void)
 		// ライトを有効にする
 		pDevice->LightEnable(nCntSet, TRUE);
 	}
+
+	// ライトの種類を設定
+	m_lightCamera.Type = D3DLIGHT_DIRECTIONAL;
+
+	// ライトの拡散光を設定
+	m_lightCamera.Diffuse = CAMERALIGHT_DIFFUSE;
+
+	// ライトの方向を設定
+	vecDir = NONE_D3DXVECTOR3;
+
+	D3DXVec3Normalize(&vecDir, &vecDir);				// ベクトルを正規化する
+
+	m_lightCamera.Direction = vecDir;
+
+	// ライトを設定する
+	pDevice->SetLight(3, &m_lightCamera);
+
+	// ライトを有効にする
+	pDevice->LightEnable(3, TRUE);
 
 	// 成功を返す
 	return S_OK;
@@ -118,6 +133,9 @@ void CLight::Update(void)
 		// ライトを設定する
 		pDevice->SetLight(nCntSet, &m_aLight[nCntSet]);
 	}
+
+	// カメラ追従ライトを設定する
+	pDevice->SetLight(3, &m_lightCamera);
 }
 
 //=========================
@@ -137,6 +155,24 @@ D3DLIGHT9 CLight::GetLightInfo(const int nIdx) const
 
 	// ライトの情報を返す
 	return m_aLight[nIdx];
+}
+
+//=========================
+// カメラ追従ライトの設定処理
+//=========================
+void CLight::SetLightCamera(const D3DLIGHT9& light)
+{
+	// カメラ追従ライトを設定する
+	m_lightCamera = light;
+}
+
+//=========================
+// カメラ追従ライトの取得処理
+//=========================
+D3DLIGHT9 CLight::GetLightCamera(void) const
+{
+	// カメラ追従ライトを返す
+	return m_lightCamera;
 }
 
 //=========================

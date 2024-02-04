@@ -121,13 +121,13 @@ void CRipple::Draw(void)
 //===========================================
 // 情報の設定処理
 //===========================================
-void CRipple::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
+void CRipple::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
 {
 	// スクロールの設定処理
 	SetPos(pos);								// 位置設定
 	SetPosOld(pos);								// 前回の位置設定
 	SetRot(rot);								// 向き設定
-	SetScale(RIPPLE_INIT_SCALE);				// 拡大率
+	SetScale(scale);							// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));			// サイズ設定
 
 	// 全ての値を初期化する
@@ -137,7 +137,7 @@ void CRipple::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 //===========================================
 // 生成処理
 //===========================================
-CRipple* CRipple::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
+CRipple* CRipple::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
 {
 	// ローカルオブジェクトを生成
 	CRipple* pRipple = nullptr;	// フィールドのインスタンスを生成
@@ -162,15 +162,15 @@ CRipple* CRipple::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 		if (FAILED(pRipple->Init()))
 		{ // 初期化に失敗した場合
 
-			// 警告文
-			MessageBox(NULL, "波紋の初期化に失敗！", "警告！", MB_ICONWARNING);
+			// 停止
+			assert(false);
 
 			// NULL を返す
 			return nullptr;
 		}
 
 		// 情報の設定処理
-		pRipple->SetData(pos, rot);
+		pRipple->SetData(pos, rot, scale);
 	}
 	else
 	{ // オブジェクトが NULL の場合

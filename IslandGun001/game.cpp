@@ -34,6 +34,7 @@
 #include "lake.h"
 #include "bang_flower.h"
 #include "ocean.h"
+#include "boss.h"
 #include "list_manager.h"
 
 //--------------------------------------------
@@ -93,6 +94,7 @@ HRESULT CGame::Init(void)
 	CMotion::Load(CMotion::STYLE_PLAYER);		// プレイヤー
 	CMotion::Load(CMotion::STYLE_TORDLE);		// タードル
 	CMotion::Load(CMotion::STYLE_IWAKARI);		// イワカリ
+	CMotion::Load(CMotion::STYLE_BOSS);			// ボス
 
 	// スカイボックスの生成処理
 	CSkyBox::Create();
@@ -153,6 +155,9 @@ HRESULT CGame::Init(void)
 
 	// 爆弾花の生成処理
 	CBangFlower::Create(D3DXVECTOR3(0.0f, 200.0f, 0.0f), NONE_D3DXVECTOR3);
+
+	// ボスの生成処理
+	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

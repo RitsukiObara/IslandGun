@@ -25,6 +25,7 @@ namespace
 		"data\\TXT\\PlayerMotion.txt",
 		"data\\TXT\\TordleMotion.txt",
 		"data\\TXT\\IwakariMotion.txt",
+		"data\\TXT\\BossMotion.txt",
 	};
 	const int MOTION_SET_FRAME = 7;						// モーション設定時のフレーム数
 }

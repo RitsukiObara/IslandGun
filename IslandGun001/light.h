@@ -34,6 +34,9 @@ public:			// 誰でもアクセスできる
 
 	D3DLIGHT9 GetLightInfo(const int nIdx) const;		// ライトの取得処理
 
+	void SetLightCamera(const D3DLIGHT9& light);		// カメラ追従ライトの設定処理
+	D3DLIGHT9 GetLightCamera(void) const;				// カメラ追従ライトの取得処理
+
 	// 静的メンバ関数
 	static CLight* Create(void);		// 生成処理
 
@@ -41,6 +44,7 @@ private:		// 誰でもアクセスできる
 
 	// メンバ変数
 	D3DLIGHT9 m_aLight[NUM_LIGHT];		// ライトの情報
+	D3DLIGHT9 m_lightCamera;			// カメラに追従するライト
 };
 
 #endif

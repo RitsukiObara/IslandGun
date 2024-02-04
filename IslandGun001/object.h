@@ -66,6 +66,7 @@ public:			// 誰でもアクセスできる
 		TYPE_TITLELOGO,			// タイトルロゴ
 		TYPE_OCEAN,				// 海
 		TYPE_BOMB,				// 爆弾
+		TYPE_BOSS,				// ボス
 		TYPE_MAX				// この列挙型の総数
 	};
 

@@ -17,6 +17,7 @@
 #include "useful.h"
 
 #include "player.h"
+#include "light.h"
 
 //-------------------------------------------
 // マクロ定義
@@ -104,6 +105,21 @@ void CCamera::Uninit(void)
 //=======================
 void CCamera::Update(void)
 {
+	D3DLIGHT9 light = CManager::Get()->GetLight()->GetLightCamera();
+	D3DXVECTOR3 vecDir = NONE_D3DXVECTOR3;
+
+	// ライトの方向を設定
+	vecDir = m_posR - m_posV;
+
+	// ベクトルを正規化する
+	D3DXVec3Normalize(&vecDir, &vecDir);
+
+	// ライトの方向を適用する
+	light.Direction = vecDir;
+
+	// ライトの情報を適用する
+	CManager::Get()->GetLight()->SetLightCamera(light);
+
 	switch (CManager::Get()->GetMode())
 	{
 	case CScene::MODE_GAME:		// ゲームモード
