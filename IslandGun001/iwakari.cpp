@@ -226,6 +226,13 @@ void CIwakari::Hit(const int nDamage, const float fKnockback)
 		// 殻の体力を適用する
 		m_pShell->SetLife(nLife);
 
+		// ノックバックさせる
+		m_fMoveX = sinf(GetRot().y + (D3DX_PI)) * fKnockback;
+		m_fMoveZ = cosf(GetRot().y + (D3DX_PI)) * fKnockback;
+
+		// ダメージ状態にする
+		SetState(STATE_DAMAGE);
+
 		if (nLife <= 0)
 		{ // 殻の体力がなくなった場合
 

@@ -29,7 +29,7 @@ namespace
 	const int DAMAGE[CBullet::TYPE_MAX] =	// ダメージ
 	{
 		8,
-		1,
+		2,
 	};
 	const float KNOCKBACK[CBullet::TYPE_MAX] =	// ノックバックの値
 	{

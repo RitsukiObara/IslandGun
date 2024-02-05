@@ -34,7 +34,7 @@ namespace
 	};
 	const int LIFE[CEnemy::TYPE_MAX] =					// ‘Ì—Í
 	{
-		30,
+		50,
 		5,
 	};
 	const D3DXVECTOR3 DEATH_EXPLOSION = D3DXVECTOR3(200.0f, 200.0f, 0.0f);		// Ž€–SŽž‚Ì”š”­

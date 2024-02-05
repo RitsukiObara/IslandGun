@@ -195,6 +195,7 @@
     <ClCompile Include="iwakari_shell.cpp" />
     <ClCompile Include="Kari_ResultLogo.cpp" />
     <ClCompile Include="lake.cpp" />
+    <ClCompile Include="lifeUI.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="locus2D.cpp" />
     <ClCompile Include="locus3D.cpp" />
@@ -309,6 +310,7 @@
     <ClInclude Include="iwakari_shell.h" />
     <ClInclude Include="Kari_ResultLogo.h" />
     <ClInclude Include="lake.h" />
+    <ClInclude Include="lifeUI.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="list_manager.h" />
     <ClInclude Include="locus2D.h" />

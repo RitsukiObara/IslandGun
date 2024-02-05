@@ -22,7 +22,7 @@
 namespace
 {
 	const float SPEED = 5.0f;				// 移動量
-	const float KNOCKBACK_HEIGHT = 10.0f;	// ノックバック値の高さ
+	const float KNOCKBACK_HEIGHT = 15.0f;	// ノックバック値の高さ
 }
 
 //================================

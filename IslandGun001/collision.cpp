@@ -36,6 +36,8 @@ namespace
 		50.5f,		// –Ø‚Ì”¼Œa
 	};
 	const float DAGGER_RADIUS = 180.0f;						// ƒ_ƒK[‚Ì”¼Œa
+	const int DAGGER_DAMAGE = 40;							// ƒ_ƒK[‚Ìƒ_ƒ[ƒW
+	const float DAGGER_KNOCKBACK = 100.0f;					// ƒ_ƒK[‚ÌƒmƒbƒNƒoƒbƒN
 }
 
 //===============================
@@ -278,7 +280,7 @@ bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, co
 			{ // “G‚Æd‚È‚Á‚½ê‡
 
 				// ƒqƒbƒgˆ—
-				pEnemy->Hit(80, 10.0f);
+				pEnemy->Hit(DAGGER_DAMAGE, DAGGER_KNOCKBACK);
 
 				// true ‚ð•Ô‚·
 				return true;

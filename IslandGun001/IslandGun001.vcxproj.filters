@@ -399,6 +399,9 @@
     <ClCompile Include="boss_state.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
+    <ClCompile Include="lifeUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -730,6 +733,9 @@
     </ClInclude>
     <ClInclude Include="boss_state.h">
       <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="lifeUI.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
