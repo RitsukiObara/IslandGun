@@ -327,9 +327,9 @@ void CObject2D::SetVtxWidthGage(void)
 
 	//頂点座標の設定
 	pVtx[0].pos = D3DXVECTOR3(m_pos.x, m_pos.y - m_size.y, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y - m_size.y, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(m_pos.x + (m_size.x * 2.0f), m_pos.y - m_size.y, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(m_pos.x, m_pos.y + m_size.y, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y + m_size.y, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(m_pos.x + (m_size.x * 2.0f), m_pos.y + m_size.y, 0.0f);
 
 	//頂点バッファをアンロックする
 	m_pVtxBuff->Unlock();

@@ -742,7 +742,7 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 				nNum = (m_nVtxX * nCntDep) + nCntWid;
 
 				if (nNum < 0 ||
-					nNum >= m_nNumVtx)
+					nNum >= m_nNumVtx - m_nVtxX - 1)
 				{
 					continue;
 				}
@@ -752,6 +752,14 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos)
 				nVtxLeftDown = nNum + m_nVtxX;		// 左下
 				nVtxRightUp = nNum + 1;				// 右上
 				nVtxRightDown = nNum + m_nVtxX + 1;	// 右下
+
+				if (nVtxLeftUp >= m_nNumVtx ||
+					nVtxLeftDown >= m_nNumVtx ||
+					nVtxRightUp >= m_nNumVtx ||
+					nVtxRightDown >= m_nNumVtx)
+				{
+					assert(false);
+				}
 
 				// 頂点の位置を設定する
 				vtxLeftUp = m_pos + pVtx[nVtxLeftUp].pos;
@@ -846,7 +854,7 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool* bRange)
 				nNum = (m_nVtxX * nCntDep) + nCntWid;
 
 				if (nNum < 0 ||
-					nNum >= m_nNumVtx)
+					nNum >= m_nNumVtx - m_nVtxX - 1)
 				{
 					continue;
 				}
@@ -856,6 +864,14 @@ float CElevation::ElevationCollision(const D3DXVECTOR3& pos, bool* bRange)
 				nVtxLeftDown = nNum + m_nVtxX;		// 左下
 				nVtxRightUp = nNum + 1;				// 右上
 				nVtxRightDown = nNum + m_nVtxX + 1;	// 右下
+
+				if (nVtxLeftUp >= m_nNumVtx ||
+					nVtxLeftDown >= m_nNumVtx ||
+					nVtxRightUp >= m_nNumVtx ||
+					nVtxRightDown >= m_nNumVtx)
+				{
+					assert(false);
+				}
 
 				// 頂点の位置を設定する
 				vtxLeftUp = m_pos + pVtx[nVtxLeftUp].pos;

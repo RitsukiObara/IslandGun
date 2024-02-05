@@ -27,6 +27,7 @@ class CDagger;				// ダガー
 class CAim;					// エイム
 class CBulletUI;			// 弾丸UI
 class CGoldBoneUI;			// 金の骨UI
+class CLifeUI;				// 寿命UI
 class CPlayerController;	// プレイヤーコントローラー
 
 //--------------------------------------------
@@ -84,6 +85,7 @@ public:			// 誰でもアクセスできる
 	CAim* GetAim(void) const;						// エイムの取得処理
 	CBulletUI* GetBulletUI(void) const;				// 残弾UIの情報の取得処理
 	CGoldBoneUI* GetGoldBoneUI(void) const;			// 金の骨UIの情報の取得処理
+	CLifeUI* GetLifeUI(void) const;					// 寿命UIの情報の取得処理
 
 	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
@@ -118,6 +120,7 @@ private:		// 自分だけアクセスできる
 	CAim* m_pAim;						// エイムの情報
 	CBulletUI* m_pBulletUI;				// 弾丸の情報
 	CGoldBoneUI* m_pGoldBoneUI;			// 金の骨UIの情報
+	CLifeUI* m_pLifeUI;					// 寿命UIの情報
 	CPlayerController* m_pController;	// プレイヤーのコントローラーの情報
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き

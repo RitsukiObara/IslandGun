@@ -67,6 +67,7 @@ public:			// 誰でもアクセスできる
 		TYPE_OCEAN,				// 海
 		TYPE_BOMB,				// 爆弾
 		TYPE_BOSS,				// ボス
+		TYPE_LIFEUI,			// 寿命UI
 		TYPE_MAX				// この列挙型の総数
 	};
 

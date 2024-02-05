@@ -779,12 +779,6 @@ void CInputMouse::Update(void)
 
 		//// カーソルを表示しない
 		//ShowCursor(FALSE);
-
-		// 画面サイズの構造体を生成する
-		RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
-
-		// カーソルを画面にとどめる
-		ClipCursor(&rect);
 	}
 	else
 	{ // 上記以外

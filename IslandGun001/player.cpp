@@ -21,6 +21,7 @@
 #include "aim.h"
 #include "bulletUI.h"
 #include "gold_bone_UI.h"
+#include "lifeUI.h"
 #include "player_controller.h"
 
 #include "collision.h"
@@ -78,6 +79,7 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_pDagger = nullptr;					// ダガーの情報
 	m_pBulletUI = nullptr;					// 弾丸UIの情報
 	m_pGoldBoneUI = nullptr;				// 金の骨のUIの情報
+	m_pLifeUI = nullptr;					// 寿命UIの情報
 	m_pController = nullptr;				// プレイヤーのコントローラーの情報
 
 	m_stateInfo.state = STATE_NONE;			// 状態
@@ -187,6 +189,19 @@ HRESULT CPlayer::Init(void)
 		assert(false);
 	}
 
+	if (m_pLifeUI == nullptr)
+	{ // 金の骨UIが NULL の場合
+
+		// 金の骨のUIの生成
+		m_pLifeUI = CLifeUI::Create(MAX_LIFE);
+	}
+	else
+	{ // ポインタが NULL じゃない場合
+
+		// 停止
+		assert(false);
+	}
+
 	if (m_pController == nullptr)
 	{ // プレイヤーのコントローラーの情報が NULL の場合
 
@@ -286,6 +301,13 @@ void CPlayer::Uninit(void)
 		m_pGoldBoneUI = nullptr;
 	}
 
+	if (m_pLifeUI != nullptr)
+	{ // 寿命UIの情報が NULL じゃない場合
+
+		// 寿命UIを NULL にする
+		m_pLifeUI = nullptr;
+	}
+
 	if (m_pController != nullptr)
 	{ // コントローラーの情報が NULL じゃない場合
 
@@ -349,6 +371,13 @@ void CPlayer::Update(void)
 
 		// エイムの更新処理
 		m_pAim->Update();
+	}
+
+	if (m_pLifeUI != nullptr)
+	{ // 寿命が NULL じゃない場合
+
+		// 寿命を設定する
+		m_pLifeUI->SetLife(m_nLife);
 	}
 
 	// 小判との当たり判定
@@ -546,6 +575,15 @@ CGoldBoneUI* CPlayer::GetGoldBoneUI(void) const
 {
 	// 金の骨UIの情報を返す
 	return m_pGoldBoneUI;
+}
+
+//=======================================
+// 寿命UIの情報の取得処理
+//=======================================
+CLifeUI* CPlayer::GetLifeUI(void) const
+{
+	// 寿命UIの情報を返す
+	return m_pLifeUI;
 }
 
 //=======================================
