@@ -463,6 +463,14 @@ void CPlayer::Hit(const int nDamage, const float fRotSmash)
 		if (m_pAction->GetAction() != CPlayerAction::ACTION_RELOAD)
 		{ // リロード状態以外
 
+			// ダガーを表示しない
+			m_pDagger->SetEnableDisp(false);
+			m_pDagger->SetEnableDispOrbit(false);
+
+			// 拳銃を描画する
+			m_apHandGun[0]->SetEnableDisp(true);
+			m_apHandGun[1]->SetEnableDisp(true);
+
 			// 通常行動にする
 			m_pAction->SetAction(CPlayerAction::ACTION_NONE);
 		}

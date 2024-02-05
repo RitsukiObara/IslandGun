@@ -282,7 +282,8 @@ void CIwakari::Chase(void)
 		// í∑Ç≥Çê›íËÇ∑ÇÈ
 		fLength = sqrtf((posPlayer.x - pos.x) * (posPlayer.x - pos.x) + (posPlayer.z - pos.z) * (posPlayer.z - pos.z));
 
-		if (fLength <= MOVE_LENGTH)
+		if (m_pShell == nullptr ||
+			fLength <= MOVE_LENGTH)
 		{ // í∑Ç≥Ç™àÍíËà»â∫Ç…Ç»Ç¡ÇΩèÍçá
 
 			// å¸Ç´ÇéZèoÇ∑ÇÈ

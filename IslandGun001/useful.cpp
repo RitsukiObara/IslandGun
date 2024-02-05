@@ -607,3 +607,21 @@ void useful::Parabola(const float fVelo, const float fAdd, const int nCount, flo
 	// 高さを設定する
 	*pHeight = (fVelo * nCount) + (0.5f * fAdd * (nCount * nCount));
 }
+
+/*
+* @brief キャラクターの頂点の最小値変換処理
+* @param size [in] 最小値
+* @return D3DXVECTOR3 最小値
+*/
+D3DXVECTOR3 useful::VtxMinConv(const D3DXVECTOR3& size)
+{
+	D3DXVECTOR3 vtxMin;
+
+	// 設定
+	vtxMin.x = -size.x;
+	vtxMin.y = 0.0f;
+	vtxMin.z = -size.z;
+
+	// 最小値を返す
+	return vtxMin;
+}

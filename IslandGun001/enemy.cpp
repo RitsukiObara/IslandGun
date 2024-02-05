@@ -118,6 +118,9 @@ void CEnemy::Update(void)
 	// ブロックとの当たり判定
 	BlockCollision();
 
+	// 敵同士の当たり判定
+	collision::EnemyHitToEnemy(this);
+
 	if (m_state == STATE_DAMAGE)
 	{ // ダメージ状態の場合
 

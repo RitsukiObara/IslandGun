@@ -118,7 +118,7 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 	D3DXVECTOR3 vtxMaxCoin = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMinCoin = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMax = size;		// 最大値
-	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, 0.0f, -size.z);	// 最小値
+	D3DXVECTOR3 vtxMin = useful::VtxMinConv(size);	// 最小値
 	CListManager<CCoin*> list = CCoin::GetList();
 	CCoin* pCoin = nullptr;			// 先頭の小判
 	CCoin* pCoinEnd = nullptr;		// 末尾の値
@@ -203,12 +203,7 @@ bool collision::EnemyHitToGun(const CBullet& bullet)
 
 			// 敵関係の変数を設定
 			enemyMax = pEnemy->GetCollSize();
-			enemyMin = D3DXVECTOR3
-			(
-				-pEnemy->GetCollSize().x,
-				0.0f,
-				-pEnemy->GetCollSize().z
-			);
+			enemyMin = useful::VtxMinConv(enemyMax);
 
 			if (HexahedronHit
 			(
@@ -372,6 +367,70 @@ bool collision::EnemyHitToPlayer(CPlayer* pPlayer, const float fRadius, const fl
 }
 
 //===============================
+// 敵同士の当たり判定
+//===============================
+void collision::EnemyHitToEnemy(CEnemy* pTarget)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posTarget = pTarget->GetPos();
+	D3DXVECTOR3 posOldTarget = pTarget->GetPosOld();
+	D3DXVECTOR3 vtxMaxTarget = pTarget->GetCollSize();
+	D3DXVECTOR3 vtxMinTarget = useful::VtxMinConv(vtxMaxTarget);
+
+	D3DXVECTOR3 posEnemy = NONE_D3DXVECTOR3;		// 敵の位置
+	D3DXVECTOR3 posOldEnemy = NONE_D3DXVECTOR3;		// 敵の前回の位置
+	D3DXVECTOR3 vtxMaxEnemy = NONE_D3DXVECTOR3;		// 敵の頂点の最大値
+	D3DXVECTOR3 vtxMinEnemy = NONE_D3DXVECTOR3;		// 敵の頂点の最小値
+	CListManager<CEnemy*> list = CEnemy::GetList();
+	CEnemy* pEnemy = nullptr;		// 先頭の敵
+	CEnemy* pEnemyEnd = nullptr;	// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pEnemy = list.GetTop();
+
+		// 末尾の値を取得する
+		pEnemyEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pEnemy != pTarget)
+			{ // 敵が違った場合
+
+				// 敵関係の変数を設定する
+				posEnemy = pEnemy->GetPos();					// 敵の位置
+				posOldEnemy = pEnemy->GetPosOld();				// 敵の前回の位置
+				vtxMaxEnemy = pEnemy->GetCollSize();			// 敵の頂点の最大値
+				vtxMinEnemy = useful::VtxMinConv(vtxMaxEnemy);	// 敵の頂点の最小値
+
+				// 六面体の当たり判定
+				HexahedronCollision(&posTarget, posEnemy, posOldTarget, posOldEnemy, vtxMinTarget, vtxMinEnemy, vtxMaxTarget, vtxMaxEnemy);
+			}
+
+			if (pEnemy == pEnemyEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pEnemy = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// 位置を適用する
+	pTarget->SetPos(posTarget);
+}
+
+//===============================
 // 金の骨との当たり判定
 //===============================
 void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& size)
@@ -382,7 +441,7 @@ void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& siz
 	D3DXVECTOR3 vtxMaxBone = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMinBone = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMax = size;		// 最大値
-	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, 0.0f, -size.z);	// 最小値
+	D3DXVECTOR3 vtxMin = useful::VtxMinConv(size);	// 最小値
 	CListManager<CGoldBone*> list = CGoldBone::GetList();
 	CGoldBone* pBone = nullptr;		// 先頭の値
 	CGoldBone* pBoneEnd = nullptr;	// 末尾の値

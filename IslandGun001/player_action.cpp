@@ -386,9 +386,6 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 	if (m_nActionCount % DAGGER_COUNT == 0)
 	{ // 行動カウントが一定数に達した場合
 
-		// 行動カウントを0にする
-		m_nActionCount = 0;
-
 		// 行動を設定する
 		SetAction(ACTION_NONE);
 
@@ -543,9 +540,6 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 
 	if (m_nActionCount % SWOOP_COUNT == 0)
 	{ // 行動カウントが一定数に達した場合
-
-		// 行動カウントを0にする
-		m_nActionCount = 0;
 
 		// 行動を設定する
 		SetAction(ACTION_NONE);

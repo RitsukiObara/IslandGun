@@ -16,6 +16,7 @@
 // ‘O•ûéŒ¾
 //-----------------------------------
 class CPlayer;			// ƒvƒŒƒCƒ„[
+class CEnemy;			// “G
 class CBullet;			// ’eŠÛ
 
 //-----------------------------------
@@ -44,6 +45,7 @@ namespace collision
 	bool EnemyHitToGun(const CBullet& bullet);			// “G‚Æe‚Ì“–‚½‚è”»’è
 	bool EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, const float fRadius);		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
 	bool EnemyHitToPlayer(CPlayer* pPlayer, const float fRadius, const float fHeight);				// “G‚ÆƒvƒŒƒCƒ„[‚Æ‚Ì“–‚½‚è”»’è
+	void EnemyHitToEnemy(CEnemy* pTarget);		// “G“¯m‚Ì“–‚½‚è”»’è
 
 	// ‹à‚Ìœ‚Æ‚Ì“–‚½‚è”»’è
 	void GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& size);		// ‹à‚Ìœ‚Æ‚Ì“–‚½‚è”»’è
