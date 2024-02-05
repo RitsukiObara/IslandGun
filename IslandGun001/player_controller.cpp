@@ -311,9 +311,9 @@ void CPlayerController::RotMove(CPlayer* pPlayer)
 	else
 	{ // 上記以外
 
-		// 移動量を設定する
-		move.x = 0.0f;
-		move.z = 0.0f;
+		// 移動量を減衰させる
+		useful::Correct(0.0f, &move.x, 0.1f);
+		useful::Correct(0.0f, &move.z, 0.1f);
 
 		if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)
 		{ // 移動モーションじゃなかった場合
@@ -404,9 +404,9 @@ void CPlayerController::KeyboardMove(CPlayer* pPlayer)
 	else
 	{ // 上記以外
 
-		// 移動量を設定する
-		move.x = 0.0f;
-		move.z = 0.0f;
+		// 移動量を減衰させる
+		useful::Correct(0.0f, &move.x, 0.5f);
+		useful::Correct(0.0f, &move.z, 0.5f);
 
 		if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)
 		{ // 移動モーションじゃなかった場合

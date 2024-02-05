@@ -54,10 +54,12 @@ namespace
 	const int INIT_GUN_IDX = 9;						// 銃の初期値のインデックス
 	const int INIT_DAGGER_IDX = 9;					// ダガーのインデックス
 	const int MAX_LIFE = 100;						// 体力の最大値
-	const int DAMAGE_COUNT = 7;						// ダメージ状態のカウント数
+	const int DAMAGE_COUNT = 30;					// ダメージ状態のカウント数
 	const D3DXCOLOR DAMAGE_COLOR = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);		// ダメージ状態の色
 	const int INVINCIBLE_COUNT = 90;				// 無敵状態のカウント数
 	const int INVINCIBLE_FLUSH_COUNT = 10;			// 無敵状態の点滅のカウント
+	const float KNOCKBACK_MOVE = 23.0f;				// 吹き飛ぶ移動量
+	const float KNOCKBACK_JUMP = 15.0f;				// 吹き飛ぶ高さ
 }
 
 //=========================================
@@ -307,8 +309,13 @@ void CPlayer::Update(void)
 	// 状態管理処理
 	StateManager();
 
-	// 操作処理
-	m_pController->Control(this);
+	if (m_stateInfo.state == STATE_NONE ||
+		m_stateInfo.state == STATE_INVINSIBLE)
+	{ // 通常状態・無敵状態の場合
+
+		// 操作処理
+		m_pController->Control(this);
+	}
 
 	// 移動処理
 	Move();
@@ -430,7 +437,7 @@ void CPlayer::Draw(void)
 //===========================================
 // ヒット処理
 //===========================================
-void CPlayer::Hit(const int nDamage)
+void CPlayer::Hit(const int nDamage, const float fRotSmash)
 {
 	// 体力を減らす
 	m_nLife -= nDamage;
@@ -443,6 +450,9 @@ void CPlayer::Hit(const int nDamage)
 
 		// 死亡状態にする
 		m_stateInfo.state = STATE_DEATH;
+
+		// 移動量を0にする
+		m_move = NONE_D3DXVECTOR3;
 	}
 	else
 	{ // 上記以外
@@ -450,8 +460,20 @@ void CPlayer::Hit(const int nDamage)
 		// ダメージ状態にする
 		m_stateInfo.state = STATE_DAMAGE;
 
+		if (m_pAction->GetAction() != CPlayerAction::ACTION_RELOAD)
+		{ // リロード状態以外
+
+			// 通常行動にする
+			m_pAction->SetAction(CPlayerAction::ACTION_NONE);
+		}
+
 		// カウントを0にする
 		m_stateInfo.nCount = 0;
+
+		// 移動量を設定する
+		m_move.x = sinf(fRotSmash) * KNOCKBACK_MOVE;
+		m_move.y = KNOCKBACK_JUMP;
+		m_move.z = cosf(fRotSmash) * KNOCKBACK_MOVE;
 	}
 }
 
@@ -751,53 +773,27 @@ void CPlayer::StateManager(void)
 	{
 	case CPlayer::STATE_NONE:
 
+		if (m_pAction->GetAction() != CPlayerAction::ACTION_DODGE)
+		{ // 回避状態以外
+
+			// 敵との当たり判定
+			collision::EnemyHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
+		}
 
 		break;
 
 	case CPlayer::STATE_DAMAGE:
 
-		// 状態カウントを加算する
-		m_stateInfo.nCount++;
+		// ダメージ状態処理
+		DamageState();
 
-		// 体の色を変える
-		m_stateInfo.col = DAMAGE_COLOR;
-
-		if (m_stateInfo.nCount >= DAMAGE_COUNT)
-		{ // 状態カウントが一定数以上になった場合
-
-			// 状態カウントを0にする
-			m_stateInfo.nCount = 0;
-
-			// 体の色を元に戻す
-			m_stateInfo.col = NONE_D3DXCOLOR;
-
-			// 無敵状態にする
-			m_stateInfo.state = STATE_INVINSIBLE;
-		}
 
 		break;
 
 	case CPlayer::STATE_INVINSIBLE:
 
-		// 状態カウントを加算する
-		m_stateInfo.nCount++;
-
-		if (m_stateInfo.nCount % INVINCIBLE_FLUSH_COUNT == 0)
-		{ // カウントが一定数以上になった場合
-
-			// 色を変える
-			m_stateInfo.col.a = (m_stateInfo.col.a >= 1.0f) ? 0.0f : 1.0f;
-		}
-
-		if (m_stateInfo.nCount >= INVINCIBLE_COUNT)
-		{ // 状態カウントが一定数以上になった場合
-
-			// 状態カウントを0にする
-			m_stateInfo.nCount = 0;
-
-			// 通常状態にする
-			m_stateInfo.state = STATE_NONE;
-		}
+		// 無敵状態処理
+		InvisibleState();
 
 		break;
 
@@ -812,6 +808,57 @@ void CPlayer::StateManager(void)
 		assert(false);
 
 		break;
+	}
+}
+
+//=======================================
+// ダメージ状態処理
+//=======================================
+void CPlayer::DamageState()
+{
+	// 状態カウントを加算する
+	m_stateInfo.nCount++;
+
+	// 体の色を変える
+	m_stateInfo.col = DAMAGE_COLOR;
+
+	if (m_stateInfo.nCount >= DAMAGE_COUNT)
+	{ // 状態カウントが一定数以上になった場合
+
+		// 状態カウントを0にする
+		m_stateInfo.nCount = 0;
+
+		// 体の色を元に戻す
+		m_stateInfo.col = NONE_D3DXCOLOR;
+
+		// 無敵状態にする
+		m_stateInfo.state = STATE_INVINSIBLE;
+	}
+}
+
+//=======================================
+// 無敵状態処理
+//=======================================
+void CPlayer::InvisibleState()
+{
+	// 状態カウントを加算する
+	m_stateInfo.nCount++;
+
+	if (m_stateInfo.nCount % INVINCIBLE_FLUSH_COUNT == 0)
+	{ // カウントが一定数以上になった場合
+
+		// 色を変える
+		m_stateInfo.col.a = (m_stateInfo.col.a >= 1.0f) ? 0.0f : 1.0f;
+	}
+
+	if (m_stateInfo.nCount >= INVINCIBLE_COUNT)
+	{ // 状態カウントが一定数以上になった場合
+
+		// 状態カウントを0にする
+		m_stateInfo.nCount = 0;
+
+		// 通常状態にする
+		m_stateInfo.state = STATE_NONE;
 	}
 }
 

@@ -73,7 +73,7 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void Hit(const int nDamage);	// ヒット処理
+	void Hit(const int nDamage, const float fRotSmash);	// ヒット処理
 	void SetData(const D3DXVECTOR3& pos);		// 情報の設定処理
 
 	// セット・ゲット関係
@@ -105,6 +105,10 @@ private:		// 自分だけアクセスできる
 	void TreeCollision(void);		// 木との当たり判定
 	void BlockCollision(void);		// ブロックとの当たり判定
 	void RockCollision(void);		// 岩との当たり判定
+
+	// 状態ごとの処理
+	void DamageState();				// ダメージ状態処理
+	void InvisibleState();			// 無敵状態処理
 
 	// メンバ変数
 	CMotion* m_pMotion;					// モーションの情報

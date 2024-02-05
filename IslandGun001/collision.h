@@ -42,7 +42,8 @@ namespace collision
 
 	// 敵との当たり判定
 	bool EnemyHitToGun(const CBullet& bullet);			// 敵と銃の当たり判定
-	bool EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, const float fRadius);				// 敵とダガーの当たり判定
+	bool EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, const float fRadius);		// 敵とダガーの当たり判定
+	bool EnemyHitToPlayer(CPlayer* pPlayer, const float fRadius, const float fHeight);				// 敵とプレイヤーとの当たり判定
 
 	// 金の骨との当たり判定
 	void GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& size);		// 金の骨との当たり判定
@@ -63,6 +64,7 @@ namespace collision
 	// 汎用的な当たり判定
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定
 	bool HexahedronHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体のヒット判定
+	bool HexahedronHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);																	// 六面体のヒット判定(Old無し)
 	SCollision HexahedronClush(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定(どの面に乗ったかの判定付き)
 }
 
