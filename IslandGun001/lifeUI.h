@@ -33,6 +33,13 @@ public:				// 誰でもアクセスできる
 		POLY_MAX			// この列挙型の総数
 	};
 
+	// 構造体定義(アイコンの点滅)
+	struct SIconFlash
+	{
+		D3DXCOLOR col;		// アイコンの色
+		bool bAdd;			// 加算状況
+	};
+
 	CLifeUI();				// コンストラクタ
 	~CLifeUI();				// デストラクタ
 
@@ -53,11 +60,15 @@ public:				// 誰でもアクセスできる
 
 private:			// 自分だけアクセスできる
 
+	// メンバ関数
+	void IconFlash(void);		// アイコンの点滅処理
+
 	// メンバ変数
 	CObject2D* m_apObject2D[POLY_MAX];		// ポリゴンの情報
-	int m_nLife;			// 寿命
-	float m_fMeterDest;		// 目的のメーター
-	float m_fMeter;			// メーター
+	SIconFlash m_iconflash;		// アイコンの点滅関係
+	int m_nLife;				// 寿命
+	float m_fMeterDest;			// 目的のメーター
+	float m_fMeter;				// メーター
 };
 
 #endif

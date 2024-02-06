@@ -47,6 +47,9 @@ namespace
 	};
 	const float METER_MEMORY = METER_WIDTH * 0.01f;		// メーターの1メモリのサイズ
 	const float METER_ADD = 0.2f;						// メーターの加算数
+	const int ICON_FLASH_LIFE = 30;						// アイコンが明滅しだす体力
+	const D3DXCOLOR ICON_FLASH_COL = D3DXCOLOR(1.0f, 0.2f, 0.2f, 1.0f);		// アイコンの点滅時の色
+	const float ICON_CALC_COL = 0.05f;					// アイコンの色の移動量
 }
 
 //========================
@@ -59,9 +62,11 @@ CLifeUI::CLifeUI() : CObject(TYPE_LIFEUI, DIM_2D, PRIORITY_UI)
 	{
 		m_apObject2D[nCnt] = nullptr;		// 影の情報
 	}
-	m_nLife = 0;			// 寿命
-	m_fMeterDest = 0.0f;	// 目的のメーター
-	m_fMeter = 0.0f;		// メーター
+	m_iconflash.col = NONE_D3DXCOLOR;		// アイコンの色
+	m_iconflash.bAdd = false;				// アイコンの加算状況
+	m_nLife = 0;							// 寿命
+	m_fMeterDest = 0.0f;					// 目的のメーター
+	m_fMeter = 0.0f;						// メーター
 }
 
 //========================
@@ -134,6 +139,9 @@ void CLifeUI::Update(void)
 		// サイズを適用する
 		m_apObject2D[POLY_METER]->SetSize(size);
 	}
+
+	// アイコンの点滅処理
+	IconFlash();
 
 	// 頂点座標の設定処理
 	m_apObject2D[POLY_METER]->SetVtxWidthGage();
@@ -218,6 +226,8 @@ void CLifeUI::SetData(const int nLife)
 			}
 		}
 	}
+	m_iconflash.col = NONE_D3DXCOLOR;		// アイコンの色
+	m_iconflash.bAdd = false;				// アイコンの加算状況
 	m_nLife = nLife;						// 寿命
 	m_fMeterDest = nLife * METER_MEMORY;	// 目的のメーター
 	m_fMeter = m_fMeterDest;				// メーター
@@ -294,4 +304,60 @@ int CLifeUI::GetLife(void) const
 {
 	// 寿命を返す
 	return m_nLife;
+}
+
+//========================
+// アイコンの点滅処理
+//========================
+void CLifeUI::IconFlash(void)
+{
+	if (m_nLife <= ICON_FLASH_LIFE)
+	{ // 体力が一定以下の場合
+
+		if (m_iconflash.bAdd == true)
+		{ // 加算状況が true の場合
+
+			// 色を白に近づける
+			m_iconflash.col.g += ICON_CALC_COL;
+			m_iconflash.col.b += ICON_CALC_COL;
+
+			if (m_iconflash.col.g >= NONE_D3DXCOLOR.g &&
+				m_iconflash.col.b >= NONE_D3DXCOLOR.b)
+			{ // 白になった場合
+
+				// 色を設定する
+				m_iconflash.col = NONE_D3DXCOLOR;
+
+				// 加算状況を false にする
+				m_iconflash.bAdd = false;
+			}
+		}
+		else
+		{ // 上記以外
+
+			// 色を赤に近づける
+			m_iconflash.col.g -= ICON_CALC_COL;
+			m_iconflash.col.b -= ICON_CALC_COL;
+
+			if (m_iconflash.col.g <= ICON_FLASH_COL.g &&
+				m_iconflash.col.b <= ICON_FLASH_COL.b)
+			{ // 赤になった場合
+
+				// 色を設定する
+				m_iconflash.col = ICON_FLASH_COL;
+
+				// 加算状況を true にする
+				m_iconflash.bAdd = true;
+			}
+		}
+	}
+	else
+	{ // 上記以外
+
+		// アイコンの色を設定する
+		m_iconflash.col = NONE_D3DXCOLOR;
+	}
+
+	// 頂点カラーの設定処理
+	m_apObject2D[POLY_WIPE]->SetVtxColor(m_iconflash.col);
 }

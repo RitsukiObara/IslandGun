@@ -21,7 +21,7 @@ namespace
 	const D3DXVECTOR3 MARK_SIZE = D3DXVECTOR3(30.0f, 20.0f, 0.0f);			// マークのサイズ
 	const D3DXVECTOR3 INIT_MARK_POS = D3DXVECTOR3(40.0f, 80.0f, 0.0f);		// マークの初期位置
 	const D3DXVECTOR3 EXTEND_MARK_SIZE = D3DXVECTOR3(45.0f, 30.0f, 0.0f);	// マークの拡大時のサイズ
-	const float MARK_SHIFT = 70.0f;			// マークのずらす幅
+	const float MARK_SHIFT = 70.0f;											// マークのずらす幅
 	const D3DXCOLOR SHADOW_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);			// 影の色
 	const D3DXVECTOR3 STATE_CORRECT = D3DXVECTOR3(1.5f, 1.0f, 0.0f);		// 状態による補正の倍率
 }

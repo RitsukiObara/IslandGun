@@ -20,10 +20,11 @@
 //--------------------------------------------
 namespace
 {
-	const D3DXVECTOR3 INIT_BULLET_POS = D3DXVECTOR3(1250.0f, 670.0f, 0.0f);		// 最初の弾丸の位置
-	const D3DXVECTOR3 BULLET_SIZE = D3DXVECTOR3(20.0f, 40.0f, 0.0f);			// 弾丸のサイズ
-	const float BULLET_SHIFT_X = 40.0f;											// 弾丸のずらす幅(X座標)
-	const char* BULLET_TEXTURE = "data\\TEXTURE\\RestBullet.png";				// 弾丸のテクスチャ
+	const D3DXVECTOR3 INIT_BULLET_POS = D3DXVECTOR3(1250.0f, 690.0f, 0.0f);		// 最初の弾丸の位置
+	const D3DXVECTOR3 BULLET_SIZE = D3DXVECTOR3(15.0f, 15.0f, 0.0f);			// 弾丸のサイズ
+	const float BULLET_SHIFT_X = 30.0f;											// 弾丸のずらす幅(X座標)
+	const float BULLET_SHIFT_Y = 30.0f;											// 弾丸のずらす幅(Y座標)
+	const char* BULLET_TEXTURE = "data\\TEXTURE\\Bullet.png";					// 弾丸のテクスチャ
 }
 
 //========================
@@ -141,27 +142,36 @@ void CBulletUI::Draw(void)
 void CBulletUI::SetData(void)
 {
 	D3DXVECTOR3 posBullet;			// 弾丸の位置
+	int nNum = 0;
+	int nCntWidth = MAX_REMAINING_BULLET / 2;
+	int nCntDepth = MAX_REMAINING_BULLET / nCntWidth;
 
-	for (int nCnt = 0; nCnt < MAX_REMAINING_BULLET; nCnt++)
+	for (int nCntDep = 0; nCntDep < nCntDepth; nCntDep++)
 	{
-		if (m_aBullet[nCnt].pBullet != nullptr)
+		for (int nCntWid = 0; nCntWid < nCntWidth; nCntWid++)
 		{
-			// 弾丸の位置を設定する
-			posBullet = D3DXVECTOR3(INIT_BULLET_POS.x - (BULLET_SHIFT_X * nCnt), INIT_BULLET_POS.y, 0.0f);
+			// 現在のインデックスを設定
+			nNum = (nCntDep * nCntWidth) + nCntWid;
 
-			// 設定処理
-			m_aBullet[nCnt].pBullet->SetPos(posBullet);			// 位置
-			m_aBullet[nCnt].pBullet->SetPosOld(posBullet);		// 前回の位置
-			m_aBullet[nCnt].pBullet->SetRot(NONE_D3DXVECTOR3);	// 向き
-			m_aBullet[nCnt].pBullet->SetSize(BULLET_SIZE);		// サイズ
-			m_aBullet[nCnt].pBullet->SetAngle();				// 方向
-			m_aBullet[nCnt].pBullet->SetLength();				// 長さ
+			if (m_aBullet[nNum].pBullet != nullptr)
+			{
+				// 弾丸の位置を設定する
+				posBullet = D3DXVECTOR3(INIT_BULLET_POS.x - (BULLET_SHIFT_X * nCntWid), INIT_BULLET_POS.y - (BULLET_SHIFT_Y * nCntDep), 0.0f);
 
-			// テクスチャの割り当て処理
-			m_aBullet[nCnt].pBullet->BindTexture(CManager::Get()->GetTexture()->Regist(BULLET_TEXTURE));
+				// 設定処理
+				m_aBullet[nNum].pBullet->SetPos(posBullet);			// 位置
+				m_aBullet[nNum].pBullet->SetPosOld(posBullet);		// 前回の位置
+				m_aBullet[nNum].pBullet->SetRot(NONE_D3DXVECTOR3);	// 向き
+				m_aBullet[nNum].pBullet->SetSize(BULLET_SIZE);		// サイズ
+				m_aBullet[nNum].pBullet->SetAngle();				// 方向
+				m_aBullet[nNum].pBullet->SetLength();				// 長さ
 
-			// 頂点座標の設定処理
-			m_aBullet[nCnt].pBullet->SetVertex();
+				// テクスチャの割り当て処理
+				m_aBullet[nNum].pBullet->BindTexture(CManager::Get()->GetTexture()->Regist(BULLET_TEXTURE));
+
+				// 頂点座標の設定処理
+				m_aBullet[nNum].pBullet->SetVertex();
+			}
 		}
 	}
 }
