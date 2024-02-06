@@ -20,12 +20,12 @@
 //--------------------------------------------
 namespace
 {
-	const float METER_WIDTH = 240.0f;		// メーターの横幅
+	const float METER_WIDTH = 160.0f;		// メーターの横幅
 	const D3DXVECTOR3 POLY_POS[CLifeUI::POLY_MAX] =			// ポリゴンの位置
 	{
-		D3DXVECTOR3(47.0f, 662.0f, 0.0f),
-		D3DXVECTOR3(47.0f, 662.0f, 0.0f),
-		D3DXVECTOR3(50.0f, 630.0f, 0.0f),
+		D3DXVECTOR3(47.0f, 40.0f, 0.0f),
+		D3DXVECTOR3(47.0f, 40.0f, 0.0f),
+		D3DXVECTOR3(50.0f, 30.0f, 0.0f),
 	};
 	const D3DXVECTOR3 POLY_ROT[CLifeUI::POLY_MAX] =			// ポリゴンの向き
 	{
@@ -35,9 +35,9 @@ namespace
 	};
 	const D3DXVECTOR3 POLY_SIZE[CLifeUI::POLY_MAX] =		// ポリゴンのサイズ
 	{
-		D3DXVECTOR3(METER_WIDTH, 30.0f, 0.0f),
-		D3DXVECTOR3(METER_WIDTH, 30.0f, 0.0f),
-		D3DXVECTOR3(40.0f, 40.0f, 0.0f),
+		D3DXVECTOR3(METER_WIDTH, 10.0f, 0.0f),
+		D3DXVECTOR3(METER_WIDTH, 10.0f, 0.0f),
+		D3DXVECTOR3(20.0f, 20.0f, 0.0f),
 	};
 	const char* TEXTURE[CLifeUI::POLY_MAX] =		// テクスチャ
 	{
