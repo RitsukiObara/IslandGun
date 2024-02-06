@@ -20,10 +20,9 @@ namespace
 {
 	const char* TEXTURE = "data\\TEXTURE\\Aim.png";		// テクスチャ
 	const float RADIUS = 80.0f;		// 半径
-	const D3DXCOLOR HIT_COL = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);		// 敵に照準が合っている時の色
+	const D3DXCOLOR HIT_COL = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);		// 敵に照準が合っている時の色
 	const float NONE_LENGTH = 1500.0f;					// 何にも当たっていない長さ
-	const float HIT_COLLSIZE = 50.0f;					// エイムを合わせるときの当たり判定のサイズ
-	const float HIT_VECTOR_PERMISSION = 0.06f;			// エイムを合わせるときのベクトルの許容範囲
+	const float HIT_VECTOR_PERMISSION = 0.05f;			// エイムを合わせるときのベクトルの許容範囲
 }
 
 //=========================
@@ -227,6 +226,9 @@ void CAim::EnemyCollision(void)
 			// 敵のサイズを取得する
 			sizeEnemy = pEnemy->GetCollSize();
 
+			// 位置を中心にする
+			posEnemy.y += sizeEnemy.y * 0.5f;
+
 			// 弾道のベクトルを算出する
 			vecBullet = pos - m_posPlayer;
 
@@ -240,10 +242,10 @@ void CAim::EnemyCollision(void)
 			// 長さを設定する
 			fLength = sqrtf((posEnemy.x - m_posPlayer.x) * (posEnemy.x - m_posPlayer.x) + (posEnemy.z - m_posPlayer.z) * (posEnemy.z - m_posPlayer.z));
 
-			if (pos.y + HIT_COLLSIZE >= posEnemy.y &&
-				pos.y - HIT_COLLSIZE <= posEnemy.y + sizeEnemy.y &&
-				vecBullet.x + HIT_VECTOR_PERMISSION >= vecEnemy.x &&
+			if (vecBullet.x + HIT_VECTOR_PERMISSION >= vecEnemy.x &&
 				vecBullet.x - HIT_VECTOR_PERMISSION <= vecEnemy.x &&
+				vecBullet.y + HIT_VECTOR_PERMISSION >= vecEnemy.y &&
+				vecBullet.y - HIT_VECTOR_PERMISSION <= vecEnemy.y &&
 				vecBullet.z + HIT_VECTOR_PERMISSION >= vecEnemy.z &&
 				vecBullet.z - HIT_VECTOR_PERMISSION <= vecEnemy.z &&
 				fLength <= NONE_LENGTH)

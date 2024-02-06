@@ -70,6 +70,9 @@
     <Filter Include="useful\ListManager">
       <UniqueIdentifier>{bcaa9909-52fa-48c4-931a-c66d1ab20624}</UniqueIdentifier>
     </Filter>
+    <Filter Include="enemy\boss">
+      <UniqueIdentifier>{98155ea7-f1cc-420e-baf5-1b65c5b53dec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -393,14 +396,29 @@
     <ClCompile Include="bomb_fuse.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
-    <ClCompile Include="boss.cpp">
-      <Filter>enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="boss_state.cpp">
-      <Filter>enemy</Filter>
-    </ClCompile>
     <ClCompile Include="lifeUI.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="boss.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_state.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_appearstate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_turnstate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_howlingstate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_nonestate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_flystate.cpp">
+      <Filter>enemy\boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -728,14 +746,29 @@
     <ClInclude Include="bomb_fuse.h">
       <Filter>gimmick\Map</Filter>
     </ClInclude>
-    <ClInclude Include="boss.h">
-      <Filter>enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="boss_state.h">
-      <Filter>enemy</Filter>
-    </ClInclude>
     <ClInclude Include="lifeUI.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="boss.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_state.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_appearstate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_turnstate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_howlingstate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_nonestate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_flystate.h">
+      <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

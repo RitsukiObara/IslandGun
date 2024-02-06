@@ -14,7 +14,7 @@
 #include "useful.h"
 
 #include "motion.h"
-#include "boss_state.h"
+#include "boss_appearstate.h"
 #include "objectElevation.h"
 
 //------------------------------------------------------------
@@ -36,8 +36,6 @@ CBoss::CBoss() : CCharacter(CObject::TYPE_BOSS, CObject::PRIORITY_ENTITY)
 	// 全ての値をクリアする
 	m_pMotion = nullptr;			// モーション
 	m_pState = nullptr;				// 状態の情報
-
-	m_move = NONE_D3DXVECTOR3;		// 移動量
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -148,9 +146,6 @@ void CBoss::Update(void)
 
 	// モーションの更新処理
 	m_pMotion->Update();
-
-	// 起伏地面との当たり判定
-	ElevationCollision();
 }
 
 //================================
@@ -184,9 +179,6 @@ void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 
 	// モーションのリセット処理
 	m_pMotion->ResetMotion(MOTIONTYPE_FLY);
-
-	// 全ての値を設定する
-	m_move = NONE_D3DXVECTOR3;		// 移動量
 
 	// 状態の切り替え処理
 	ChangeState(new CBossAppearState);
@@ -253,7 +245,7 @@ CListManager<CBoss*> CBoss::GetList(void)
 //===========================================
 // 起伏地面との当たり判定
 //===========================================
-void CBoss::ElevationCollision(void)
+bool CBoss::ElevationCollision(void)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 pos = GetPos();		// 位置を取得する
@@ -285,8 +277,8 @@ void CBoss::ElevationCollision(void)
 				// 高さを設定する
 				pos.y = fHeight;
 
-				// 重力を設定する
-				m_move.y = LAND_GRAVITY;
+				// true を返す
+				return true;
 			}
 
 			if (pElev == pElevEnd)
@@ -306,6 +298,9 @@ void CBoss::ElevationCollision(void)
 
 	// 位置を更新する
 	SetPos(pos);
+
+	// false を返す
+	return false;
 }
 
 //===========================================

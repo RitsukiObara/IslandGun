@@ -32,6 +32,9 @@ public:					// 誰でもアクセスできる
 		MOTIONTYPE_NEUTRAL = 0,		// 通常モーション
 		MOTIONTYPE_FLY,				// 飛行モーション
 		MOTIONTYPE_HOVERING,		// ホバリングモーション
+		MOTIONTYPE_LANDING,			// 着地モーション
+		MOTIONTYPE_HOWLING,			// 雄たけびモーション
+		MOTIONTYPE_FLYING,			// 飛行モーション
 		MOTIONTYPE_MAX				// この列挙型の総数
 	};
 
@@ -45,7 +48,7 @@ public:					// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 情報の設定処理
-
+	bool ElevationCollision(void);			// 起伏地面との当たり判定
 	void ChangeState(CBossState* pNext);	// 状態の遷移処理
 
 	// セット・ゲット関係
@@ -58,14 +61,9 @@ public:					// 誰でもアクセスできる
 
 private:				// 自分だけアクセスできる
 
-	// メンバ関数
-	void ElevationCollision(void);			// 起伏地面との当たり判定
-
 	// メンバ変数
 	CMotion* m_pMotion;		// モーションの情報
 	CBossState* m_pState;	// 状態の情報
-
-	D3DXVECTOR3 m_move;		// 移動量
 
 	// 静的メンバ変数
 	static CListManager<CBoss*> m_list;		// リスト

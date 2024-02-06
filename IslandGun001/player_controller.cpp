@@ -33,7 +33,7 @@ namespace
 	const float JUMP = 24.0f;						// ジャンプ力
 	const float CAMERA_ROT_CORRECT = 0.000003f;		// カメラの向きの補正倍率
 	const float CAMERA_HEIGHT = 0.000002f;			// カメラの高さの倍率
-	const float SHOT_ADD_HEIGHT = 160.0f;			// 射撃時の高さの追加量
+	const float SHOT_ADD_HEIGHT = 180.0f;			// 射撃時の高さの追加量
 	const float AIM_SHIFT = 1000.0f;				// エイムを表示する幅
 	const float CAMERA_MOUSE_MAGNI = 5000.0f;		// マウスでのカメラ操作の倍率
 	const float SHOT_SHIFT_ROT[NUM_HANDGUN] =		// 射撃時のずらす向き
