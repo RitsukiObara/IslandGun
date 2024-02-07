@@ -12,6 +12,7 @@
 #include "boss_flystate.h"
 #include "motion.h"
 
+#include "ripple.h"
 #include "game.h"
 #include "player.h"
 #include "boss_nonestate.h"
@@ -28,6 +29,9 @@ namespace
 	const float STANDBY_MOVE_Y = 1.0f;	// スタンバイ時のY軸の移動量
 	const float MOVE_CORRECT = 0.1f;	// 移動の補正係数
 	const float MOVE_SPEED = 350.0f;	// 移動速度
+	const int RIPPLE_COUNT = 4;			// 波紋のカウント
+	const float RIPPLE_HEIGHT = 600.0f;	// 波紋の高度
+	const D3DXVECTOR3 RIPPLE_SCALE = D3DXVECTOR3(100.0f, 100.0f, 100.0f);	// 波紋の拡大率
 }
 
 //==========================
@@ -71,6 +75,9 @@ void CBossFlyState::Process(CBoss* pBoss)
 
 		// 飛行処理
 		Fly(pBoss);
+
+		// 波紋の生成処理
+		Ripple(pBoss);
 	}
 	else if (m_nCount >= FLYMOTION_COUNT)
 	{ // 一定時間経過した場合
@@ -168,4 +175,31 @@ void CBossFlyState::Fly(CBoss* pBoss)
 
 	// 位置を適用する
 	pBoss->SetPos(pos);
+}
+
+//==========================
+// 波紋の生成処理
+//==========================
+void CBossFlyState::Ripple(CBoss* pBoss)
+{
+	if (m_nCount % RIPPLE_COUNT == 0)
+	{ // 一定周期で
+
+		// 波紋の出る位置を定める
+		D3DXVECTOR3 pos = pBoss->GetPos();
+		pos.y += RIPPLE_HEIGHT;
+
+		// 波紋の出る向きを定める
+		D3DXVECTOR3 rot = pBoss->GetRot();
+		rot.x = D3DX_PI * 0.5f;
+		rot.z = D3DX_PI;
+
+		// 波紋を生成する
+		CRipple::Create
+		(
+			pos,
+			rot,
+			RIPPLE_SCALE
+		);
+	}
 }

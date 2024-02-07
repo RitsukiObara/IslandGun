@@ -20,29 +20,32 @@
 #include "light.h"
 
 //-------------------------------------------
-// マクロ定義
+// 定数定義
 //-------------------------------------------
-// カメラ全体
-#define ASPECT_RATIO		(80.0f)				// 視野角
-#define MIN_DISTANCE		(50.0f)				// 距離の最小値
-#define MAX_DISTANCE		(8000.0f)			// 距離の最大値
-#define DRAW_MIN_Z			(10.0f)				// Z軸の最小値
-#define DRAW_MAX_Z			(50000.0f)			// Z軸の最大値
+namespace
+{
+	// カメラ全体
+	const float ASPECT_RATIO = 80.0f;			// 視野角
+	const float MIN_DISTANCE = 50.0f;			// 距離の最小値
+	const float MAX_DISTANCE = 8000.0f;			// 距離の最大値
+	const float DRAW_MIN_Z = 10.0f;				// Z軸の最小値
+	const float DRAW_MAX_Z = 80000.0f;			// Z軸の最大値
 
-// 向き関係
-#define ROT_Y_SPEED			(0.04f)				// Y軸の回転の速度
-#define ROTATION_SPEED		(0.05f)				// 回り込み処理を行う基準のモデルの速度
-#define ROTATION_ROT		(0.02f)				// カメラの角度の補正倍率
+	// 向き関係
+	const float ROT_Y_SPEED = 0.04f;			// Y軸の回転の速度
+	const float ROTATION_SPEED = 0.05f;			// 回り込み処理を行う基準のモデルの速度
+	const float ROTATION_ROT = 0.02f;			// カメラの角度の補正倍率
 
-// 位置・距離関係
-#define POS_SPEED			(30.0f)				// 移動速度
-#define DIS_SPEED			(16.0f)				// 距離の移動量
-#define CAMERA_DISTANCE		(600.0f)			// カメラの距離
-#define CORRECT_POSR		(0.22f)				// 注視点の補正倍率
-#define CORRECT_POSV		(0.20f)				// 視点の補正倍率
+	// 位置・距離関係
+	const float POS_SPEED = 30.0f;				// 移動速度
+	const float DIS_SPEED = 16.0f;				// 距離の移動量
+	const float CAMERA_DISTANCE = 600.0f;		// カメラの距離
+	const float CORRECT_POSR = 0.22f;			// 注視点の補正倍率
+	const float CORRECT_POSV = 0.20f;			// 視点の補正倍率
 
-#define POSR_SHIFT_Y		(320.0f)			// 注視点のずらす幅(Y軸)
-#define POSR_SHIFT			(100.0f)			// 注視点のずらす幅
+	const float POSR_SHIFT_Y = 320.0f;			// 注視点のずらす幅(Y軸)
+	const float POSR_SHIFT = 100.0f;			// 注視点のずらす幅
+}
 
 //=======================
 // コンストラクタ

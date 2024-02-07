@@ -45,6 +45,7 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
+	void Hit(const D3DXVECTOR3& pos);		// ヒット処理
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);				// 情報の設定処理
 
 	// セット・ゲット関係
@@ -60,6 +61,7 @@ private:		// 自分だけアクセスできる
 
 	// メンバ関数
 	void RotMove(void);				// 向きの移動処理
+	void Move(void);				// 移動処理
 	void Gravity(void);				// 重力処理
 	bool ElevationCollision(void);	// 起伏地面の当たり判定処理
 

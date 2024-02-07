@@ -718,13 +718,12 @@ void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 //===============================
 // 爆弾のヒット判定
 //===============================
-bool collision::BangFlowerHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMin, const D3DXVECTOR3& vtxMax)
+bool collision::BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posBomb = NONE_D3DXVECTOR3;		// 爆弾の位置
-	D3DXVECTOR3 posOldBomb = NONE_D3DXVECTOR3;	// 爆弾の前回の位置
-	D3DXVECTOR3 BombMax = NONE_D3DXVECTOR3;		// 爆弾の最大値
-	D3DXVECTOR3 BombMin = NONE_D3DXVECTOR3;		// 爆弾の最小値
+	float fRadiusBomb = 0.0f;					// 爆弾の
+	float fHeightBomb = 0.0f;					// 
 	CListManager<CBangFlower*> list = CBangFlower::GetList();
 	CBangFlower* pBomb = nullptr;			// 先頭の値
 	CBangFlower* pBombEnd = nullptr;		// 末尾の値
@@ -750,30 +749,88 @@ bool collision::BangFlowerHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld,
 				// 爆弾の位置を取得する
 				posBomb = pBomb->GetPos();
 
-				// 爆弾の前回の位置を取得する
-				posOldBomb = pBomb->GetPosOld();
+				// 爆弾の半径を取得する
+				fRadiusBomb = pBomb->GetFileData().fRadius;
 
-				// 爆弾の最大値を取得する
-				BombMax = pBomb->GetFileData().vtxMax;
+				// 爆弾の高さを取得する
+				fHeightBomb = pBomb->GetFileData().vtxMax.y;
 
-				// 爆弾の最小値を取得する
-				BombMin = pBomb->GetFileData().vtxMin;
-
-				if (HexahedronHit
-				(
-					pos,
-					posBomb,
-					posOld,
-					posOldBomb,
-					vtxMin,
-					BombMin,
-					vtxMax,
-					BombMax
-				) == true)
+				if (pos.y + fHeight >= posBomb.y &&
+					pos.y <= posBomb.y + fHeightBomb &&
+					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
 				{ // 範囲内にいた場合
 
 					// ヒット処理
 					pBomb->Hit();
+
+					// ヒットした
+					bHit = true;
+				}
+			}
+
+			if (pBomb == pBombEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBomb = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// ヒット判定を返す
+	return bHit;
+}
+
+//===============================
+// 爆弾のヒット判定
+//===============================
+bool collision::BombHit(const D3DXVECTOR3& pos, float fRadius)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posBomb = NONE_D3DXVECTOR3;		// 爆弾の位置
+	float fRadiusBomb = 0.0f;					// 爆弾の半径
+
+	CListManager<CBomb*> list = CBomb::GetList();
+	CBomb* pBomb = nullptr;			// 先頭の値
+	CBomb* pBombEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+	bool bHit = false;		// ヒット判定
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pBomb = list.GetTop();
+
+		// 末尾の値を取得する
+		pBombEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pBomb->GetState() == CBomb::STATE_DETONATION)
+			{ // 爆弾が起爆状態だった場合
+
+				// 爆弾の位置を取得する
+				posBomb = pBomb->GetPos();
+				posBomb.y += (pBomb->GetFileData().vtxMax.y * 0.5f);
+
+				// 爆弾の最大値を取得する
+				fRadiusBomb = pBomb->GetFileData().fRadius;
+
+				if (useful::CircleCollisionXY(pos,posBomb,fRadius,fRadiusBomb) == true &&
+					useful::CircleCollisionYZ(pos, posBomb, fRadius, fRadiusBomb) == true &&
+					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
+				{ // 範囲内にいた場合
+
+					// ヒット処理
+					pBomb->Hit(pos);
 
 					// ヒットした
 					bHit = true;

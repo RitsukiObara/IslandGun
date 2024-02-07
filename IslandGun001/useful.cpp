@@ -139,6 +139,36 @@ bool useful::CircleCollisionXY(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2,
 }
 
 /*
+* @brief 円の当たり判定(YZ平面)
+* @param pos1 [in] 対象1の位置
+* @param pos2 [in] 対象2の位置
+* @param fRadius1 [in] 対象1の半径
+* @param fRadius2 [in] 対象2の半径
+* @return bool 円に当たったかどうか
+*/
+bool useful::CircleCollisionYZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const float fRadius1, const float fRadius2)
+{
+	// ローカル変数宣言
+	float fLength;
+
+	// 円の範囲を算出
+	fLength = (pos2.y - pos1.y) * (pos2.y - pos1.y) + (pos2.z - pos1.z) * (pos2.z - pos1.z);
+
+	if (fLength <= (fRadius1 + fRadius2) * (fRadius1 + fRadius2))
+	{ // オブジェクトが当たった場合
+
+		// true を返す
+		return true;
+	}
+	else
+	{ // オブジェクトが当たっていない場合
+
+		// false を返す
+		return false;
+	}
+}
+
+/*
 * @brief 円の当たり判定(XZ平面)
 * @param pos1 [in] 対象1の位置
 * @param pos2 [in] 対象2の位置
@@ -157,13 +187,13 @@ bool useful::CircleCollisionXZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2,
 	if (fLength <= (fRadius1 + fRadius2) * (fRadius1 + fRadius2))
 	{ // オブジェクトが当たった場合
 
-	  // true を返す
+		// true を返す
 		return true;
 	}
 	else
 	{ // オブジェクトが当たっていない場合
 
-	  // false を返す
+		// false を返す
 		return false;
 	}
 }

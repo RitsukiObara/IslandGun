@@ -60,8 +60,9 @@ namespace collision
 	// Šâ‚Æ‚Ì“–‚½‚è”»’è
 	void RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight);		// Šâ‚Æ‚Ì“–‚½‚è”»’è
 
-	// ”š’e‚Æ‚Ì“–‚½‚è”»’è
-	bool BangFlowerHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMin, const D3DXVECTOR3& vtxMax);		// ”š’e‚Ìƒqƒbƒg”»’è
+	// ”š’e‰Ô‚Æ‚Ì“–‚½‚è”»’è
+	bool BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);	// ”š’e‰Ô‚Ìƒqƒbƒg”»’è
+	bool BombHit(const D3DXVECTOR3& pos, float fRadius);				// ”š’e‚Ìƒqƒbƒg”»’è
 	
 	// ”Ä—p“I‚È“–‚½‚è”»’è
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// ˜Z–Ê‘Ì‚Ì“–‚½‚è”»’è

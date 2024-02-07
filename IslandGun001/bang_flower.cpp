@@ -21,8 +21,9 @@
 namespace
 {
 	const char* MODEL = "data\\MODEL\\BombFlower.x";		// モデルの名前
-	const float BOMB_POS_SHIFT = 185.0f;					// 爆弾の位置のずらす幅
-	const float BOMB_ADD_HEIGHT = 199.0f;					// 爆弾の高さの追加量
+	const float BOMB_POS_SHIFT = 298.0f;					// 爆弾の位置のずらす幅
+	const float BOMB_ADD_HEIGHT = 328.0f;					// 爆弾の高さの追加量
+	const int BOMB_RIPEN_INTERVAL = 400;					// 爆弾が再び生るまでのインターバル
 }
 
 //-------------------------------------------
@@ -37,6 +38,7 @@ CBangFlower::CBangFlower() : CModel(TYPE_BANGFLOWER, PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
 	m_pBomb = nullptr;		// 爆弾の情報
+	m_nInterval = 0;		// 爆弾のインターバル
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -64,6 +66,7 @@ HRESULT CBangFlower::Init(void)
 
 	// 全ての値を初期化する
 	m_pBomb = nullptr;		// 爆弾の情報
+	m_nInterval = 0;		// 爆弾のインターバル
 
 	// 値を返す
 	return S_OK;
@@ -99,6 +102,31 @@ void CBangFlower::Update(void)
 
 		// 更新処理
 		m_pBomb->Update();
+	}
+	else
+	{ // 上記以外
+
+		// インターバルを加算する
+		m_nInterval++;
+
+		if (m_nInterval >= BOMB_RIPEN_INTERVAL)
+		{ // 一定時間経過した場合
+
+			D3DXVECTOR3 posBomb;			// 爆弾の位置
+			D3DXVECTOR3 pos = GetPos();		// 位置
+			D3DXVECTOR3 rot = GetRot();		// 向き
+
+			// 爆弾の位置を設定する
+			posBomb.x = pos.x + sinf(rot.y + D3DX_PI) * BOMB_POS_SHIFT;
+			posBomb.y = pos.y + BOMB_ADD_HEIGHT;
+			posBomb.z = pos.z + cosf(rot.y + D3DX_PI) * BOMB_POS_SHIFT;
+
+			// 全ての値を設定する
+			m_pBomb = CBomb::Create(posBomb, D3DXVECTOR3(D3DX_PI, 0.0f, 0.0f));		// 爆弾の生成
+
+			// インターバルをリセット
+			m_nInterval = 0;
+		}
 	}
 }
 

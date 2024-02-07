@@ -24,17 +24,9 @@
 #include "motion.h"
 
 #include "player.h"
-#include "coin.h"
-#include "enemy.h"
-#include "tree.h"
-#include "rock.h"
-#include "block.h"
-#include "gold_bone.h"
-#include "grass.h"
-#include "lake.h"
-#include "bang_flower.h"
 #include "ocean.h"
 #include "boss.h"
+#include "enemy.h"
 #include "list_manager.h"
 
 //--------------------------------------------
@@ -96,6 +88,24 @@ HRESULT CGame::Init(void)
 	CMotion::Load(CMotion::STYLE_IWAKARI);		// イワカリ
 	CMotion::Load(CMotion::STYLE_BOSS);			// ボス
 
+	// マップをロード
+	CManager::Get()->GetFile()->Load(CFile::TYPE_ENEMY);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_COIN);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_GOLDBONE);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_TREE);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_ROCK);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_BLOCK);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_BANGFLOWER);
+
+	// マップの生成
+	//CManager::Get()->GetFile()->SetEnemy();
+	CManager::Get()->GetFile()->SetCoin();
+	CManager::Get()->GetFile()->SetGoldBone();
+	CManager::Get()->GetFile()->SetTree();
+	CManager::Get()->GetFile()->SetRock();
+	CManager::Get()->GetFile()->SetBlock ();
+	CManager::Get()->GetFile()->SetBangFlower();
+
 	// スカイボックスの生成処理
 	CSkyBox::Create();
 
@@ -108,53 +118,8 @@ HRESULT CGame::Init(void)
 	// プレイヤーの生成処理
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 300.0f));
 
-	CCoin::Create(D3DXVECTOR3(400.0f, 100.0f, 400.0f));
-	CCoin::Create(D3DXVECTOR3(400.0f, 100.0f, 300.0f));
-	CCoin::Create(D3DXVECTOR3(300.0f, 100.0f, 400.0f));
-	CCoin::Create(D3DXVECTOR3(400.0f, 100.0f, 500.0f));
-	CCoin::Create(D3DXVECTOR3(500.0f, 100.0f, 400.0f));
-	CCoin::Create(D3DXVECTOR3(300.0f, 100.0f, 300.0f));
-	CCoin::Create(D3DXVECTOR3(500.0f, 100.0f, 500.0f));
-	CCoin::Create(D3DXVECTOR3(300.0f, 100.0f, 500.0f));
-	CCoin::Create(D3DXVECTOR3(500.0f, 100.0f, 300.0f));
-
-	CCoin::Create(D3DXVECTOR3(600.0f, 100.0f, -400.0f));
-	CCoin::Create(D3DXVECTOR3(650.0f, 100.0f, -400.0f));
-	CCoin::Create(D3DXVECTOR3(700.0f, 100.0f, -400.0f));
-
-	CCoin::Create(D3DXVECTOR3(-800.0f, 100.0f, 1300.0f));
-	CCoin::Create(D3DXVECTOR3(-850.0f, 100.0f, 1300.0f));
-	CCoin::Create(D3DXVECTOR3(-900.0f, 100.0f, 1300.0f));
-
-	CCoin::Create(D3DXVECTOR3(-400.0f, 100.0f, -600.0f));
-	CCoin::Create(D3DXVECTOR3(-450.0f, 100.0f, -650.0f));
-	CCoin::Create(D3DXVECTOR3(-500.0f, 100.0f, -700.0f));
-	CCoin::Create(D3DXVECTOR3(-400.0f, 100.0f, -700.0f));
-	CCoin::Create(D3DXVECTOR3(-500.0f, 100.0f, -600.0f));
-
-	CEnemy::Create(D3DXVECTOR3(400.0f, 100.0f, 0.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	CEnemy::Create(D3DXVECTOR3(700.0f, 100.0f, 700.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	CEnemy::Create(D3DXVECTOR3(-500.0f, 100.0f, -1400.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	CEnemy::Create(D3DXVECTOR3(800.0f, 100.0f, 1300.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
-	CEnemy::Create(D3DXVECTOR3(-1300.0f, 100.0f, 800.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
-	CEnemy::Create(D3DXVECTOR3(2000.0f, 100.0f, 1800.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-	CEnemy::Create(D3DXVECTOR3(1000.0f, 100.0f, 900.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_IWAKARI);
-	CEnemy::Create(D3DXVECTOR3(300.0f, 100.0f, 1800.0f), NONE_D3DXVECTOR3, CEnemy::TYPE::TYPE_TORDLE);
-
-	CTree::Create(D3DXVECTOR3(200.0f, 0.0f, -700.0f), NONE_D3DXVECTOR3, CTree::TYPE_PALM);
-	CTree::Create(D3DXVECTOR3(-300.0f, 0.0f, 500.0f), D3DXVECTOR3(0.0f,0.3f,0.0f), CTree::TYPE_PALM);
-	CTree::Create(D3DXVECTOR3(600.0f, 0.0f, -300.0f), NONE_D3DXVECTOR3, CTree::TYPE_PALM);
-	CTree::Create(D3DXVECTOR3(100.0f, 0.0f, 600.0f), D3DXVECTOR3(0.0f, 0.3f, 0.0f), CTree::TYPE_PALM);
-
-	CRock::Create(D3DXVECTOR3(-700.0f, 0.0f, 0.0f), NONE_D3DXVECTOR3, NONE_SCALE, CRock::TYPE_HARD);
-	CRock::Create(D3DXVECTOR3(700.0f, 0.0f, -800.0f), D3DXVECTOR3(0.0f,-0.2f,0.0f), NONE_SCALE, CRock::TYPE_SOFT);
-	CRock::Create(D3DXVECTOR3(200.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, -0.7f, 0.0f), NONE_SCALE, CRock::TYPE_SOFT);
-	CRock::Create(D3DXVECTOR3(-500.0f, 0.0f, 1000.0f), D3DXVECTOR3(0.0f, 1.7f, 0.0f), NONE_SCALE, CRock::TYPE_HARD);
-
-	CBlock::Create(D3DXVECTOR3(700.0f, 0.0f, -200.0f), NONE_SCALE);
-
-	// 爆弾花の生成処理
-	CBangFlower::Create(D3DXVECTOR3(0.0f, 200.0f, 0.0f), NONE_D3DXVECTOR3);
+	// 敵の生成処理
+	CEnemy::Create(D3DXVECTOR3(-4000.0f, 0.0f, 4000.0f), NONE_D3DXVECTOR3, CEnemy::TYPE_IWAKARI);
 
 	// ボスの生成処理
 	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);

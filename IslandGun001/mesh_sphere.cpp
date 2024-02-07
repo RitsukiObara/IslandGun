@@ -43,7 +43,7 @@ HRESULT CMeshSphere::Init(void)
 	}
 
 	// 頂点情報の設定処理
-	SetVertex();
+	SetVertexAll();
 
 	// インデックスの設定処理
 	SetIndex(GetVtx().nHeight, GetVtx().nWidth);
@@ -107,10 +107,10 @@ void CMeshSphere::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const 
 //================================
 // 頂点の設定処理
 //================================
-void CMeshSphere::SetVertex(void)
+void CMeshSphere::SetVertexAll(void)
 {
 	// ローカル変数宣言
-	VERTEX_3D *pVtx;		// 頂点情報へのポインタ
+	VERTEX_3D* pVtx;		// 頂点情報へのポインタ
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuff = GetVtxBuff();	// 頂点バッファ
 	SGrid Divi = GetDivi();	// 分割数
 	SGrid vtx = GetVtx();	// 頂点数
@@ -155,6 +155,58 @@ void CMeshSphere::SetVertex(void)
 
 				//テクスチャ座標の設定
 				pVtx[0].tex = D3DXVECTOR2((float)((1.0f / Divi.nWidth) * nCntCircum), (float)((1.0f / Divi.nHeight) * nCntHeight));
+
+				pVtx++;			// 頂点データを進める
+			}
+		}
+
+		// 頂点バッファをアンロックする
+		pVtxBuff->Unlock();
+	}
+}
+
+//================================
+// 頂点の設定処理
+//================================
+void CMeshSphere::SetVertex(void)
+{
+	// ローカル変数宣言
+	VERTEX_3D *pVtx;		// 頂点情報へのポインタ
+	LPDIRECT3DVERTEXBUFFER9 pVtxBuff = GetVtxBuff();	// 頂点バッファ
+	SGrid Divi = GetDivi();	// 分割数
+	SGrid vtx = GetVtx();	// 頂点数
+	float fAngle;			// 方向
+	float fHeiAngle;		// 高さの方向
+	float fLength;			// 長さ
+
+	if (pVtxBuff != nullptr)
+	{ // 頂点バッファが NULL じゃない場合
+
+		// 頂点バッファをロック
+		pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+		for (int nCntHeight = 0; nCntHeight < vtx.nHeight; nCntHeight++)
+		{
+			for (int nCntCircum = 0; nCntCircum < vtx.nWidth; nCntCircum++)
+			{
+				// 角度を算出する
+				fAngle = (((D3DX_PI * 2) / Divi.nWidth) * nCntCircum) - D3DX_PI;
+				fHeiAngle = ((D3DX_PI / Divi.nHeight) * nCntHeight);
+
+				// 角度の正規化
+				useful::RotNormalize(&fAngle);
+				useful::RotNormalize(&fHeiAngle);
+
+				// 長さを設定する
+				fLength = cosf(fHeiAngle - (D3DX_PI * 0.5f)) * m_fCircumSize;
+
+				//頂点座標の設定
+				pVtx[0].pos = D3DXVECTOR3
+				(
+					sinf(fAngle) * fLength,
+					cosf(fHeiAngle) * m_fHeightSize,
+					cosf(fAngle) * fLength
+				);
 
 				pVtx++;			// 頂点データを進める
 			}

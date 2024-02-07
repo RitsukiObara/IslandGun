@@ -73,6 +73,9 @@
     <Filter Include="enemy\boss">
       <UniqueIdentifier>{98155ea7-f1cc-420e-baf5-1b65c5b53dec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gimmick\Map\BangFlower">
+      <UniqueIdentifier>{dc6fa207-aece-4428-ae6f-7048a3559fe5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -387,15 +390,6 @@
     <ClCompile Include="ocean.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
-    <ClCompile Include="bang_flower.cpp">
-      <Filter>gimmick\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="bomb.cpp">
-      <Filter>gimmick\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="bomb_fuse.cpp">
-      <Filter>gimmick\Map</Filter>
-    </ClCompile>
     <ClCompile Include="lifeUI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
@@ -422,6 +416,18 @@
     </ClCompile>
     <ClCompile Include="boss_windstate.cpp">
       <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="bang_flower.cpp">
+      <Filter>gimmick\Map\BangFlower</Filter>
+    </ClCompile>
+    <ClCompile Include="bomb.cpp">
+      <Filter>gimmick\Map\BangFlower</Filter>
+    </ClCompile>
+    <ClCompile Include="bomb_fuse.cpp">
+      <Filter>gimmick\Map\BangFlower</Filter>
+    </ClCompile>
+    <ClCompile Include="bomb_explosion.cpp">
+      <Filter>gimmick\Map\BangFlower</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -740,15 +746,6 @@
     <ClInclude Include="ocean.h">
       <Filter>gimmick\Map</Filter>
     </ClInclude>
-    <ClInclude Include="bang_flower.h">
-      <Filter>gimmick\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="bomb.h">
-      <Filter>gimmick\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="bomb_fuse.h">
-      <Filter>gimmick\Map</Filter>
-    </ClInclude>
     <ClInclude Include="lifeUI.h">
       <Filter>UI</Filter>
     </ClInclude>
@@ -775,6 +772,18 @@
     </ClInclude>
     <ClInclude Include="boss_windstate.h">
       <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="bang_flower.h">
+      <Filter>gimmick\Map\BangFlower</Filter>
+    </ClInclude>
+    <ClInclude Include="bomb.h">
+      <Filter>gimmick\Map\BangFlower</Filter>
+    </ClInclude>
+    <ClInclude Include="bomb_fuse.h">
+      <Filter>gimmick\Map\BangFlower</Filter>
+    </ClInclude>
+    <ClInclude Include="bomb_explosion.h">
+      <Filter>gimmick\Map\BangFlower</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

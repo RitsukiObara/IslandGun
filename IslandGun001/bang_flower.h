@@ -49,6 +49,8 @@ private:		// 自分だけアクセスできる
 	// メンバ変数
 	CBomb* m_pBomb;		// 爆弾の情報
 
+	int m_nInterval;	// 爆弾のインターバル
+
 	// 静的メンバ変数
 	static CListManager<CBangFlower*> m_list;		// リスト
 };

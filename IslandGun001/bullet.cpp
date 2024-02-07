@@ -141,7 +141,8 @@ void CBullet::Update(void)
 
 	// “G‚Æe‚Ì“–‚½‚è”»’è
 	if (collision::EnemyHitToGun(*this) == true ||
-		collision::BangFlowerHit(GetPos(), GetPosOld(), -GetSize(), GetSize()) == true)
+		collision::BangFlowerHit(GetPos(), GetSize().x, GetSize().y) == true ||
+		collision::BombHit(GetPos(), GetSize().x) == true)
 	{ // “G‚É“–‚½‚Á‚½ê‡
 
 		// I—¹ˆ—

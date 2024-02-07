@@ -19,8 +19,8 @@
 namespace
 {
 	const char* MODEL = "data\\MODEL\\BombFuse.x";		// モデルの名前
-	const D3DXVECTOR3 FUSE_POS = D3DXVECTOR3(0.0f, 94.0f, 0.0f);	// 位置の設定処理
-	const float SUB_POS_Y = 0.03f;						// 位置の減算量
+	const D3DXVECTOR3 FUSE_POS = D3DXVECTOR3(0.0f, 150.0f, 0.0f);	// 位置の設定処理
+	const float SUB_POS_Y = 0.06f;						// 位置の減算量
 }
 
 //==============================

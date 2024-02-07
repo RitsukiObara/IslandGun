@@ -21,14 +21,14 @@
 //----------------------------------------------------------------------------------------------------------------
 namespace
 {
-	const float APPEAR_LENGTH = 8000.0f;		// 距離
-	const float APPEAR_HEIGHT = 2000.0f;		// 初期高度
-	const float APPEAR_SLOPE = -0.9f;			// 傾き
-	const float APPEAR_ADD_ROT = 0.05f;			// 向きの追加量
-	const float APPEAR_SUB_LENGTH = 20.0f;		// 距離の減算量
-	const float APPEAR_SUB_SLOPE = 0.00225f;	// 傾きの減算量
-	const int APPEAR_RIPPLE_FREQ = 6;			// 波紋の出る頻度
-	const float APPEAR_RIPPLE_HEIGHT = 600.0f;	// 波紋の高度
+	const float LENGTH = 8000.0f;		// 距離
+	const float HEIGHT = 2000.0f;		// 初期高度
+	const float SLOPE = -0.9f;			// 傾き
+	const float ADD_ROT = 0.05f;		// 向きの追加量
+	const float SUB_LENGTH = 20.0f;		// 距離の減算量
+	const float SUB_SLOPE = 0.00225f;	// 傾きの減算量
+	const int RIPPLE_FREQ = 6;			// 波紋の出る頻度
+	const float RIPPLE_HEIGHT = 600.0f;	// 波紋の高度
 	const D3DXVECTOR3 RIPPLE_SCALE = D3DXVECTOR3(100.0f, 100.0f, 100.0f);	// 波紋の拡大率
 }
 
@@ -38,8 +38,8 @@ namespace
 CBossAppearState::CBossAppearState()
 {
 	// 全ての値をクリアする
-	m_fLangeRot = 0.0f;			// 離れる向き
-	m_fLength = APPEAR_LENGTH;	// 距離
+	m_fLangeRot = 0.0f;		// 離れる向き
+	m_fLength = LENGTH;		// 距離
 }
 
 //==========================
@@ -69,7 +69,7 @@ void CBossAppearState::Process(CBoss* pBoss)
 
 		// 位置を設定する
 		pos.x = 0.0f;
-		pos.y = APPEAR_HEIGHT;
+		pos.y = HEIGHT;
 		pos.z = 0.0f;
 
 		// 位置を適用する
@@ -95,8 +95,8 @@ void CBossAppearState::Process(CBoss* pBoss)
 void CBossAppearState::SetData(CBoss* pBoss)
 {
 	// 全ての値を設定する
-	m_fLangeRot = 0.0f;			// 離れる向き
-	m_fLength = APPEAR_LENGTH;	// 距離
+	m_fLangeRot = 0.0f;		// 離れる向き
+	m_fLength = LENGTH;		// 距離
 
 	// 位置と向きを取得する
 	D3DXVECTOR3 pos = pBoss->GetPos();
@@ -104,12 +104,12 @@ void CBossAppearState::SetData(CBoss* pBoss)
 
 	// 位置を設定する
 	pos.x = sinf(m_fLangeRot) * m_fLength;
-	pos.y = APPEAR_HEIGHT;
+	pos.y = HEIGHT;
 	pos.z = cosf(m_fLangeRot) * m_fLength;
 
 	// 向きを設定する
 	rot.y = m_fLangeRot + (D3DX_PI * 0.5f);
-	rot.z = APPEAR_SLOPE;
+	rot.z = SLOPE;
 
 	// 位置と向きを適用する
 	pBoss->SetPos(pos);
@@ -122,13 +122,13 @@ void CBossAppearState::SetData(CBoss* pBoss)
 void CBossAppearState::Length(void)
 {
 	// 向きを加算する
-	m_fLangeRot += APPEAR_ADD_ROT;
+	m_fLangeRot += ADD_ROT;
 
 	// 向きの正規化
 	useful::RotNormalize(&m_fLangeRot);
 
 	// 距離を減算する
-	m_fLength -= APPEAR_SUB_LENGTH;
+	m_fLength -= SUB_LENGTH;
 }
 
 //==========================
@@ -142,12 +142,12 @@ void CBossAppearState::PosRot(CBoss* pBoss)
 
 	// 位置を設定する
 	pos.x = sinf(m_fLangeRot) * m_fLength;
-	pos.y = APPEAR_HEIGHT;
+	pos.y = HEIGHT;
 	pos.z = cosf(m_fLangeRot) * m_fLength;
 
 	// 向きを設定する
 	rot.y = m_fLangeRot + (D3DX_PI * 0.5f);
-	rot.z += APPEAR_SUB_SLOPE;
+	rot.z += SUB_SLOPE;
 
 	// 向きの正規化
 	useful::RotNormalize(&rot.y);
@@ -162,7 +162,7 @@ void CBossAppearState::PosRot(CBoss* pBoss)
 //==========================
 void CBossAppearState::Ripple(CBoss* pBoss)
 {
-	if (m_nCount % APPEAR_RIPPLE_FREQ == 0)
+	if (m_nCount % RIPPLE_FREQ == 0)
 	{ // 一定カウントごとに
 
 		// 位置と向きを取得する
@@ -172,7 +172,7 @@ void CBossAppearState::Ripple(CBoss* pBoss)
 		// 波紋の生成処理
 		CRipple::Create
 		(
-			D3DXVECTOR3(pos.x, pos.y + APPEAR_RIPPLE_HEIGHT, pos.z),
+			D3DXVECTOR3(pos.x, pos.y + RIPPLE_HEIGHT, pos.z),
 			D3DXVECTOR3(D3DX_PI * 0.5f, rot.y, D3DX_PI),
 			RIPPLE_SCALE
 		);

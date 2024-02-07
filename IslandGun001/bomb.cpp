@@ -15,6 +15,7 @@
 
 #include "bomb_fuse.h"
 #include "objectElevation.h"
+#include "bomb_explosion.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -29,9 +30,11 @@ namespace
 	const int BOUND_COUNT = 3;					// バウンドの回数
 	const float ROT_DEST = 0.0f;				// 目的の向き
 	const float ROT_CORRECT = 0.1f;				// 向きの補正倍率
-	const float FUSE_EXPLOSION_POS_Y = 49.7f;	// 導火線の爆発する位置
-	const float EXPLO_SCALE_MAGNI = 0.0008f;	// 爆発時の拡大率の倍率
+	const float FUSE_EXPLOSION_POS_Y = 81.0f;	// 導火線の爆発する位置
+	const float EXPLO_SCALE_MAGNI = 0.003f;		// 爆発時の拡大率の倍率
 	const int EXPLO_COUNT = 240;				// 爆発状態のカウント
+	const float EXPLO_SCALE_MAX = 3.0f;			// 爆発時の拡大率の最大値
+	const float EXPLO_SCALE_MIN = 0.1f;			// 爆発時の拡大率の最小値
 	const D3DXCOLOR COL_ADD =					// 色の加算数
 	{
 		0.834f / EXPLO_COUNT,
@@ -39,6 +42,8 @@ namespace
 		-0.166f / EXPLO_COUNT,
 		0.0f
 	};
+	const float SMASH_SPEED = 7.0f;				// 吹き飛ぶ速度
+	const float SMASH_HEIGHT = 8.0f;			// 吹き飛ぶ高さ
 }
 
 //-------------------------------------------
@@ -138,6 +143,15 @@ void CBomb::Update(void)
 		// 起爆状態処理
 		Detonation();
 
+		// 移動処理
+		Move();
+
+		// 重力処理
+		Gravity();
+
+		// 起伏地面との当たり判定
+		ElevationCollision();
+
 		break;
 
 	case CBomb::STATE_EXPLOSION:	// 爆発状態
@@ -145,6 +159,9 @@ void CBomb::Update(void)
 		// 爆発状態処理
 		if (Explosion() == true)
 		{
+			// 爆発の生成
+			CBombExplosion::Create(GetPos());
+				
 			// 終了処理
 			Uninit();
 
@@ -191,6 +208,20 @@ void CBomb::Draw(void)
 		// 導火線の描画処理
 		m_pFuse->Draw();
 	}
+}
+
+//=====================================
+// ヒット処理
+//=====================================
+void CBomb::Hit(const D3DXVECTOR3& pos)
+{
+	D3DXVECTOR3 posBomb = GetPos();		// 位置を取得
+	float fRot = atan2f(posBomb.x - pos.x, posBomb.z - pos.z);		// 向き
+
+	// 移動量を設定する
+	m_move.x = sinf(fRot) * SMASH_SPEED;
+	m_move.y = SMASH_HEIGHT;
+	m_move.z = cosf(fRot) * SMASH_SPEED;
 }
 
 //=====================================
@@ -316,6 +347,22 @@ void CBomb::RotMove(void)
 }
 
 //=======================================
+// 移動処理
+//=======================================
+void CBomb::Move(void)
+{
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
+
+	// 移動させる
+	pos.x += m_move.x;
+	pos.z += m_move.z;
+
+	// 位置を適用する
+	SetPos(pos);
+}
+
+//=======================================
 // 重力処理
 //=======================================
 void CBomb::Gravity(void)
@@ -368,6 +415,9 @@ bool CBomb::ElevationCollision(void)
 
 				// 位置を更新する
 				SetPos(pos);
+
+				// 移動量を0にする
+				m_move = NONE_D3DXVECTOR3;
 
 				// true を返す
 				return true;
@@ -495,15 +545,15 @@ bool CBomb::Explosion(void)
 
 	if (m_bAdd == true)
 	{ // 加算状況が true の場合
-
+		
 		// 拡大する
 		scale.x += EXPLO_SCALE_MAGNI * m_nExplosionCount;
 		scale.y += EXPLO_SCALE_MAGNI * m_nExplosionCount;
 		scale.z += EXPLO_SCALE_MAGNI * m_nExplosionCount;
 
-		if (scale.x >= 1.0f ||
-			scale.y >= 1.0f ||
-			scale.z >= 1.0f)
+		if (scale.x >= EXPLO_SCALE_MAX ||
+			scale.y >= EXPLO_SCALE_MAX ||
+			scale.z >= EXPLO_SCALE_MAX)
 		{ // 拡大率が超えた場合
 
 			// 減算状況にする
@@ -521,9 +571,9 @@ bool CBomb::Explosion(void)
 		scale.y -= EXPLO_SCALE_MAGNI * m_nExplosionCount;
 		scale.z -= EXPLO_SCALE_MAGNI * m_nExplosionCount;
 
-		if (scale.x <= 0.0f ||
-			scale.y <= 0.0f ||
-			scale.z <= 0.0f)
+		if (scale.x <= EXPLO_SCALE_MIN ||
+			scale.y <= EXPLO_SCALE_MIN ||
+			scale.z <= EXPLO_SCALE_MIN)
 		{ // 拡大率が超えた場合
 
 			// 加算状況にする

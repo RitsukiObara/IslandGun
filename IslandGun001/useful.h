@@ -23,6 +23,7 @@ namespace useful
 	void Correct(const float fDest, float *pValue, const float fCorrect);			// ’l‚Ì•â³ˆ—
 	void ColReverse(float *pData);													// 1.0f‚Æ0.0f‚ğ”½“]‚·‚éˆ—
 	bool CircleCollisionXY(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const float fRadius1, const float fRadius2);		// ‰~‚Ì“–‚½‚è”»’è(XY•½–Ê)
+	bool CircleCollisionYZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const float fRadius1, const float fRadius2);		// ‰~‚Ì“–‚½‚è”»’è(YZ•½–Ê)
 	bool CircleCollisionXZ(const D3DXVECTOR3& pos1, const D3DXVECTOR3& pos2, const float fRadius1, const float fRadius2);		// ‰~‚Ì“–‚½‚è”»’è(XZ•½–Ê)
 	float LineOuterProductXZ(const D3DXVECTOR3& posLeft, const D3DXVECTOR3& posRight, const D3DXVECTOR3& pos);										// ŠOÏ‚Ì¶‰E”»’fˆ—(XZ•½–Ê)
 	float LineOuterProductXY(const D3DXVECTOR3& posUp, const D3DXVECTOR3& posDown, const D3DXVECTOR3& pos);											// ŠOÏ‚Ì¶‰E”»’fˆ—(XY•½–Ê)

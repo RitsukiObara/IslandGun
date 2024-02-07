@@ -68,6 +68,7 @@ public:			// 誰でもアクセスできる
 		TYPE_BOMB,				// 爆弾
 		TYPE_BOSS,				// ボス
 		TYPE_LIFEUI,			// 寿命UI
+		TYPE_BOMBEXPLOSION,		// 爆発
 		TYPE_MAX				// この列挙型の総数
 	};
 

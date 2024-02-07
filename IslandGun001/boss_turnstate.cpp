@@ -21,9 +21,9 @@
 //----------------------------------------------------------------------------------------------------------------
 namespace
 {
-	const float TURN_ROT_CORRECT = 0.08f;		// 向きの補正倍率
-	const int TURN_COUNT = 100;					// 向き直り状態のカウント数
-	const float TURN_SUB_HEIGHT = 10.0f;		// 高度の減算量
+	const float ROT_CORRECT = 0.08f;		// 向きの補正倍率
+	const int COUNT = 100;					// 向き直り状態のカウント数
+	const float SUB_HEIGHT = 10.0f;			// 高度の減算量
 }
 //==========================
 // コンストラクタ
@@ -63,7 +63,7 @@ void CBossTurnState::Process(CBoss* pBoss)
 		float fRotDest = atan2f(posPlayer.x - pos.x, posPlayer.z - pos.z);
 
 		// 向きの補正処理
-		useful::RotCorrect(fRotDest, &rot.y, TURN_ROT_CORRECT);
+		useful::RotCorrect(fRotDest, &rot.y, ROT_CORRECT);
 
 		// 向きの正規化
 		useful::RotNormalize(&rot.y);
@@ -71,11 +71,11 @@ void CBossTurnState::Process(CBoss* pBoss)
 		// 向きを適用する
 		pBoss->SetRot(rot);
 
-		if (m_nCount >= TURN_COUNT)
+		if (m_nCount >= COUNT)
 		{ // 一定数経過した場合
 
 			// 高度を減算する
-			pos.y -= TURN_SUB_HEIGHT;
+			pos.y -= SUB_HEIGHT;
 
 			// 位置の設定処理
 			pBoss->SetPos(pos);
