@@ -170,6 +170,7 @@
     <ClCompile Include="boss_nonestate.cpp" />
     <ClCompile Include="boss_state.cpp" />
     <ClCompile Include="boss_turnstate.cpp" />
+    <ClCompile Include="boss_windstate.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="bulletUI.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -290,6 +291,7 @@
     <ClInclude Include="boss_nonestate.h" />
     <ClInclude Include="boss_state.h" />
     <ClInclude Include="boss_turnstate.h" />
+    <ClInclude Include="boss_windstate.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="bulletUI.h" />
     <ClInclude Include="camera.h" />

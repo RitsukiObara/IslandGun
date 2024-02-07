@@ -23,6 +23,7 @@
 namespace
 {
 	const int STATECHANGE_COUNT = 90;		// 状態が変化するカウント数
+	const float GRAVITY = 0.1f;				// 重力
 }
 
 //==========================
@@ -31,6 +32,7 @@ namespace
 CBossNoneState::CBossNoneState()
 {
 	// 全ての値をクリアする
+	m_fGravity = 0.0f;		// 重力
 	m_nCount = 0;			// 経過カウント
 }
 
@@ -47,6 +49,18 @@ CBossNoneState::~CBossNoneState()
 //==========================
 void CBossNoneState::Process(CBoss* pBoss)
 {
+	{ // 重力処理
+
+		// 位置を取得する
+		D3DXVECTOR3 pos = pBoss->GetPos();
+
+		// 重力処理
+		useful::Gravity(&m_fGravity, &pos.y, GRAVITY);
+
+		// 位置を適用する
+		pBoss->SetPos(pos);
+	}
+
 	// 経過カウントを加算する
 	m_nCount++;
 
@@ -70,6 +84,7 @@ void CBossNoneState::Process(CBoss* pBoss)
 void CBossNoneState::SetData(CBoss* pBoss)
 {
 	// 全ての値を設定する
+	m_fGravity = 0.0f;		// 重力
 	m_nCount = 0;			// 経過カウント
 
 	// 待機モーションを設定する

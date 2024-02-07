@@ -277,6 +277,9 @@ bool CBoss::ElevationCollision(void)
 				// ‚‚³‚ğİ’è‚·‚é
 				pos.y = fHeight;
 
+				// ˆÊ’u‚ğXV‚·‚é
+				SetPos(pos);
+
 				// true ‚ğ•Ô‚·
 				return true;
 			}

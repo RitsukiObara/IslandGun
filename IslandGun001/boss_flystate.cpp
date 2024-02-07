@@ -25,7 +25,7 @@ namespace
 	const int MOVE_COUNT = 100;			// 動くカウント数
 	const int NONESTATE_COUNT = 130;	// 通常状態に戻るカウント数
 	const float ROT_CORRECT = 0.08f;	// 向きの補正係数
-	const float STANDBY_MOVE_Y = 0.1f;	// スタンバイ時のY軸の移動量
+	const float STANDBY_MOVE_Y = 1.0f;	// スタンバイ時のY軸の移動量
 	const float MOVE_CORRECT = 0.1f;	// 移動の補正係数
 	const float MOVE_SPEED = 350.0f;	// 移動速度
 }

@@ -420,6 +420,9 @@
     <ClCompile Include="boss_flystate.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
+    <ClCompile Include="boss_windstate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -768,6 +771,9 @@
       <Filter>enemy\boss</Filter>
     </ClInclude>
     <ClInclude Include="boss_flystate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_windstate.h">
       <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>
