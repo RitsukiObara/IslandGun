@@ -40,6 +40,11 @@ public:			// 誰でもアクセスできる
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const TYPE type);			// 情報の設定処理
 	void Break(void);				// 破壊処理
 
+	// セット・ゲット関係
+	float GetRadius(void) const;		// 半径の取得処理
+	float GetTopHeight(void) const;		// 上の高さの取得処理
+	float GetBottomHeight(void) const;	// 下の高さの取得処理
+
 	// 静的メンバ関数
 	static CRock* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale, const TYPE type);	// 生成処理
 
@@ -50,6 +55,9 @@ private:		// 自分だけアクセスできる
 	// メンバ変数
 	TYPE m_type;		// 種類
 	int m_nBreakLevel;	// 破壊レベル
+	float m_fRadius;	// 半径
+	float m_fTop;		// 上の高さ
+	float m_fBottom;	// 下の高さ
 
 	// 静的メンバ変数
 	static CListManager<CRock*> m_list;		// リスト

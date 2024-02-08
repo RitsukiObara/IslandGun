@@ -23,6 +23,7 @@
 #include "gold_bone_UI.h"
 #include "lifeUI.h"
 #include "player_controller.h"
+#include "game_score.h"
 
 #include "collision.h"
 #include "camera.h"
@@ -81,6 +82,7 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_pGoldBoneUI = nullptr;				// 金の骨のUIの情報
 	m_pLifeUI = nullptr;					// 寿命UIの情報
 	m_pController = nullptr;				// プレイヤーのコントローラーの情報
+	m_pGameScore = nullptr;					// ゲームスコアの情報
 
 	m_stateInfo.state = STATE_NONE;			// 状態
 	m_stateInfo.nCount = 0;					// 状態カウント
@@ -210,6 +212,19 @@ HRESULT CPlayer::Init(void)
 	}
 	else
 	{ // ポインタが NULL じゃない場合
+
+		// 停止
+		assert(false);
+	}
+
+	if (m_pGameScore == nullptr)
+	{ // ゲームスコアの情報が NULL の場合
+
+		// ゲームスコアの生成
+		m_pGameScore = CGameScore::Create();
+	}
+	else
+	{ // 上記以外
 
 		// 停止
 		assert(false);
@@ -381,7 +396,7 @@ void CPlayer::Update(void)
 	}
 
 	// 小判との当たり判定
-	collision::CoinCollision(GetPos(), COLLISION_SIZE);
+	collision::CoinCollision(this, COLLISION_SIZE);
 
 	// 木との当たり判定
 	TreeCollision();
@@ -394,6 +409,9 @@ void CPlayer::Update(void)
 
 	// 岩との当たり判定
 	RockCollision();
+
+	// 壁との当たり判定
+	WallCollision();
 
 	// 金の骨との当たり判定
 	collision::GoldBoneCollision(*this, COLLISION_SIZE);
@@ -584,6 +602,15 @@ CLifeUI* CPlayer::GetLifeUI(void) const
 {
 	// 寿命UIの情報を返す
 	return m_pLifeUI;
+}
+
+//=======================================
+// ゲームスコアの情報の取得処理
+//=======================================
+CGameScore* CPlayer::GetGameScore(void) const
+{
+	// ゲームスコアの情報を返す
+	return m_pGameScore;
 }
 
 //=======================================
@@ -1031,6 +1058,27 @@ void CPlayer::RockCollision(void)
 
 	// 岩との当たり判定
 	collision::RockCollision(&pos, COLLISION_SIZE.x, COLLISION_SIZE.y);
+
+	// 位置の設定処理
+	SetPos(pos);
+}
+
+//=======================================
+// 壁との当たり判定
+//=======================================
+void CPlayer::WallCollision(void)
+{
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
+
+	// 岩との当たり判定
+	collision::WallCollision
+	(
+		&pos,
+		GetPosOld(),
+		COLLISION_SIZE,
+		D3DXVECTOR3(-COLLISION_SIZE.x, 0.0f, -COLLISION_SIZE.z)
+	);
 
 	// 位置の設定処理
 	SetPos(pos);

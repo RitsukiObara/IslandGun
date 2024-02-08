@@ -27,6 +27,7 @@
 #include "ocean.h"
 #include "boss.h"
 #include "enemy.h"
+#include "wall.h"
 #include "list_manager.h"
 
 //--------------------------------------------
@@ -123,6 +124,11 @@ HRESULT CGame::Init(void)
 
 	// ボスの生成処理
 	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
+
+	CWall::Create(D3DXVECTOR3(0.0f, 0.0f, -2000.0f), NONE_SCALE, CWall::TYPE::TYPE_NARROW, CWall::ROTTYPE_FRONT);
+	CWall::Create(D3DXVECTOR3(0.0f, 0.0f, 2000.0f), NONE_SCALE, CWall::TYPE::TYPE_NORMAL, CWall::ROTTYPE_RIGHT);
+	CWall::Create(D3DXVECTOR3(-2000.0f, 0.0f, 0.0f), NONE_SCALE, CWall::TYPE::TYPE_NORMAL, CWall::ROTTYPE_BACK);
+	CWall::Create(D3DXVECTOR3(2000.0f, 0.0f, 0.0f), NONE_SCALE, CWall::TYPE::TYPE_NARROW, CWall::ROTTYPE_LEFT);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

@@ -39,7 +39,7 @@ namespace collision
 	bool ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posOld, const float fWidth);			// 起伏地面の範囲外の当たり判定
 
 	// 小判との当たり判定
-	void CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size);			// 小判との当たり判定
+	void CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size);				// 小判との当たり判定
 
 	// 敵との当たり判定
 	bool EnemyHitToGun(const CBullet& bullet);			// 敵と銃の当たり判定
@@ -63,6 +63,9 @@ namespace collision
 	// 爆弾花との当たり判定
 	bool BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);	// 爆弾花のヒット判定
 	bool BombHit(const D3DXVECTOR3& pos, float fRadius);				// 爆弾のヒット判定
+
+	// 壁との当たり判定
+	bool WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// 壁との当たり判定
 	
 	// 汎用的な当たり判定
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定

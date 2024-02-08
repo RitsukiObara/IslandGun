@@ -46,6 +46,9 @@ CRock::CRock() : CModel(TYPE_ROCK, PRIORITY_BLOCK)
 	// 全ての値をクリアする
 	m_type = TYPE_SOFT;			// 種類
 	m_nBreakLevel = 0;			// 破壊レベル
+	m_fRadius = 0.0f;			// 半径
+	m_fTop = 0.0f;				// 上の高さ
+	m_fBottom = 0.0f;			// 下の高さ
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -126,6 +129,13 @@ void CRock::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVE
 		// テクスチャの割り当て処理
 		BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE[m_nBreakLevel]), TEXTURE_IDX);
 	}
+
+	// 半径を設定する
+	m_fRadius = GetFileData().fRadius * ((scale.x + scale.z) * 0.5f);
+
+	// 高さを設定する
+	m_fTop = GetFileData().vtxMax.y * scale.y;
+	m_fBottom = GetFileData().vtxMin.y * scale.y;
 }
 
 //=====================================
@@ -211,4 +221,31 @@ CListManager<CRock*> CRock::GetList(void)
 {
 	// リストマネージャーを返す
 	return m_list;
+}
+
+//=======================================
+// 半径の取得処理
+//=======================================
+float CRock::GetRadius(void) const
+{
+	// 半径を返す
+	return m_fRadius;
+}
+
+//=======================================
+// 上の高さの取得処理
+//=======================================
+float CRock::GetTopHeight(void) const
+{
+	// 上の高さを返す
+	return m_fTop;
+}
+
+//=======================================
+// 下の高さの取得処理
+//=======================================
+float CRock::GetBottomHeight(void) const
+{
+	// 下の高さを返す
+	return m_fBottom;
 }

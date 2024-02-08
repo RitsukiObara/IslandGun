@@ -429,6 +429,12 @@
     <ClCompile Include="bomb_explosion.cpp">
       <Filter>gimmick\Map\BangFlower</Filter>
     </ClCompile>
+    <ClCompile Include="game_score.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="wall.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -784,6 +790,12 @@
     </ClInclude>
     <ClInclude Include="bomb_explosion.h">
       <Filter>gimmick\Map\BangFlower</Filter>
+    </ClInclude>
+    <ClInclude Include="game_score.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="wall.h">
+      <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

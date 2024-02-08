@@ -13,6 +13,7 @@
 #include "shadowCircle.h"
 #include "objectElevation.h"
 #include "coin.h"
+#include "game_score.h"
 #include "enemy.h"
 #include "tree.h"
 #include "gold_bone.h"
@@ -24,6 +25,7 @@
 #include "rock.h"
 #include "bang_flower.h"
 #include "bomb.h"
+#include "wall.h"
 
 //===============================
 // マクロ定義
@@ -38,6 +40,8 @@ namespace
 	const float DAGGER_RADIUS = 180.0f;						// ダガーの半径
 	const int DAGGER_DAMAGE = 40;							// ダガーのダメージ
 	const float DAGGER_KNOCKBACK = 100.0f;					// ダガーのノックバック
+
+	const int COIN_SCORE = 100;								// コインのスコア
 }
 
 //===============================
@@ -113,12 +117,13 @@ bool collision::ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posO
 //===============================
 // 小判との当たり判定
 //===============================
-void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
+void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posCoin = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMaxCoin = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 vtxMinCoin = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 posPlayer = pPlayer->GetPos();
 	D3DXVECTOR3 vtxMax = size;		// 最大値
 	D3DXVECTOR3 vtxMin = useful::VtxMinConv(size);	// 最小値
 	CListManager<CCoin*> list = CCoin::GetList();
@@ -143,9 +148,9 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 			vtxMaxCoin = pCoin->GetFileData().vtxMax;
 			vtxMinCoin = pCoin->GetFileData().vtxMin;
 
-			if (useful::RectangleCollisionXY(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
-				useful::RectangleCollisionXZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
-				useful::RectangleCollisionYZ(pos, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
+			if (useful::RectangleCollisionXY(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+				useful::RectangleCollisionXZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+				useful::RectangleCollisionYZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
 			{ // 小判と重なった場合
 
 				if (pCoin->GetState() == CCoin::STATE_NONE)
@@ -153,6 +158,13 @@ void collision::CoinCollision(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 
 					// 取得処理
 					pCoin->Hit();
+
+					if (pPlayer->GetGameScore() != nullptr)
+					{ // ゲームスコアが NULL じゃない場合
+
+						// コイン分のスコアを加算する
+						pPlayer->GetGameScore()->SetScore(pPlayer->GetGameScore()->GetScore() + COIN_SCORE);
+					}
 				}
 			}
 
@@ -667,7 +679,9 @@ void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
-	CXFile::SXFile filedata;					// 岩のモデル情報
+	float fRadiusRock = 0.0f;					// 岩の半径
+	float fTopRock = 0.0f;						// 岩の上の高さ
+	float fBottomRock = 0.0f;					// 岩の下の高さ
 	CListManager<CRock*> list = CRock::GetList();
 	CRock* pRock = nullptr;			// 先頭の値
 	CRock* pRockEnd = nullptr;		// 末尾の値
@@ -688,15 +702,21 @@ void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 			// 岩の位置を取得する
 			posRock = pRock->GetPos();
 
-			// モデルの情報を取得する
-			filedata = pRock->GetFileData();
+			// 岩の半径を取得する
+			fRadiusRock = pRock->GetRadius();
 
-			if (pos->y <= posRock.y + filedata.vtxMax.y &&
-				pos->y + fHeight >= posRock.y + filedata.vtxMin.y)
+			// 岩の上の高さを取得する
+			fTopRock = pRock->GetTopHeight();
+
+			// 岩の下の高さを取得する
+			fBottomRock = pRock->GetBottomHeight();
+
+			if (pos->y <= posRock.y + fTopRock &&
+				pos->y + fHeight >= posRock.y + fBottomRock)
 			{ // 範囲内にいた場合
 
 				// 円柱の当たり判定
-				useful::CylinderCollision(pos, posRock, filedata.fRadius + fRadius);
+				useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius);
 			}
 
 			if (pRock == pRockEnd)
@@ -846,6 +866,79 @@ bool collision::BombHit(const D3DXVECTOR3& pos, float fRadius)
 
 			// 次のオブジェクトを代入する
 			pBomb = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// ヒット判定を返す
+	return bHit;
+}
+
+//===============================
+// 壁との当たり判定
+//===============================
+bool collision::WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posWall = NONE_D3DXVECTOR3;			// 壁の位置
+	D3DXVECTOR3 posOldWall = NONE_D3DXVECTOR3;		// 壁の前回の位置
+	D3DXVECTOR3 vtxMaxWall = NONE_D3DXVECTOR3;		// 壁の最大値
+	D3DXVECTOR3 vtxMinWall = NONE_D3DXVECTOR3;		// 壁の最小値
+
+	CListManager<CWall*> list = CWall::GetList();
+	CWall* pWall = nullptr;			// 先頭の値
+	CWall* pWallEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+	bool bHit = false;		// ヒット判定
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pWall = list.GetTop();
+
+		// 末尾の値を取得する
+		pWallEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 壁の頂点を取得する
+			vtxMaxWall = pWall->GetVtxMax();
+			vtxMinWall = pWall->GetVtxMin();
+
+			// 壁の位置を取得する
+			posWall = pWall->GetPos();
+			posOldWall = pWall->GetPosOld();
+
+			if (HexahedronCollision
+			(
+				pos,
+				posWall,
+				posOld,
+				posOldWall,
+				vtxMin,
+				vtxMinWall,
+				vtxMax,
+				vtxMaxWall
+			) == true)
+			{ // 壁に当たった場合
+
+				// ヒットした
+				bHit = true;
+			}
+
+			if (pWall == pWallEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pWall = list.GetData(nIdx + 1);
 
 			// インデックスを加算する
 			nIdx++;

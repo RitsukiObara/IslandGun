@@ -69,6 +69,8 @@ public:			// 誰でもアクセスできる
 		TYPE_BOSS,				// ボス
 		TYPE_LIFEUI,			// 寿命UI
 		TYPE_BOMBEXPLOSION,		// 爆発
+		TYPE_GAMESCORE,			// ゲームスコア
+		TYPE_WALL,				// 壁
 		TYPE_MAX				// この列挙型の総数
 	};
 
