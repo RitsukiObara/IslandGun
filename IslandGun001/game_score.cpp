@@ -13,27 +13,33 @@
 #include "texture.h"
 #include "useful.h"
 
+#include "object2D.h"
+
 //--------------------------------------------
 // 定数定義
 //--------------------------------------------
 namespace
 {
-	const D3DXVECTOR3 SCORE_POS = D3DXVECTOR3(1050.0f, 25.0f, 0.0f);		// 位置
+	// 数字関係
+	const char* NUMBER_TEXTURE = "data\\TEXTURE\\Number.png";			// 数字のテクスチャ
+	const D3DXVECTOR3 SCORE_POS = D3DXVECTOR3(1050.0f, 25.0f, 0.0f);	// 位置
 	const D3DXVECTOR3 SCORE_SIZE = D3DXVECTOR3(15.0f, 20.0f, 0.0f);		// サイズ
 	const float NUMBER_SHIFT = 30.0f;		// 数字のずらす幅
-}
+	const int ADD_DISP = 20;				// 表示スコアの加算数
 
-//--------------------------------------------
-// 静的メンバ変数宣言
-//--------------------------------------------
-CGameScore* CGameScore::m_pGameScore = nullptr;						// スコアの情報
+	// 文字関係
+	const char* WORD_TEXTURE = "data\\TEXTURE\\ScoreWord.png";			// 文字のテクスチャ
+	const D3DXVECTOR3 WORD_POS = D3DXVECTOR3(950.0f, 25.0f, 0.0f);		// 文字の位置
+	const D3DXVECTOR3 WORD_SIZE = D3DXVECTOR3(80.0f, 20.0f, 0.0f);		// 文字のサイズ
+}
 
 //========================
 // コンストラクタ
 //========================
 CGameScore::CGameScore() : CScore()
 {
-
+	// 全ての値をクリアする
+	m_pScoreWord = nullptr;		// 文字の情報
 }
 
 //========================
@@ -65,11 +71,16 @@ HRESULT CGameScore::Init(void)
 //========================
 void CGameScore::Uninit(void)
 {
+	if (m_pScoreWord != nullptr)
+	{ // 文字の情報が NULL じゃない場合
+
+		// スコアの終了処理
+		m_pScoreWord->Uninit();
+		m_pScoreWord = nullptr;
+	}
+
 	// 終了処理
 	CScore::Uninit();
-
-	// ゲームのスコアを NULL にする
-	m_pGameScore = nullptr;
 }
 
 //========================
@@ -86,6 +97,13 @@ void CGameScore::Update(void)
 //========================
 void CGameScore::Draw(void)
 {
+	if (m_pScoreWord != nullptr)
+	{ // 文字が NULL じゃない場合
+
+		// 文字の描画処理
+		m_pScoreWord->Draw();
+	}
+
 	// 描画処理
 	CScore::Draw();
 }
@@ -96,29 +114,28 @@ void CGameScore::Draw(void)
 void CGameScore::SetData(void)
 {
 	// 情報を設定処理
-	CScore::SetData(SCORE_POS, NONE_D3DXVECTOR3, SCORE_SIZE, NUMBER_SHIFT);
-}
+	CScore::SetData(SCORE_POS, NONE_D3DXVECTOR3, SCORE_SIZE, NUMBER_SHIFT, NUMBER_TEXTURE, ADD_DISP);
 
-//========================
-// スコアの取得処理
-//========================
-CGameScore* CGameScore::Get(void)
-{
-	if (m_pGameScore != nullptr)
-	{ // ゲームのスコアの情報がある場合
+	// 全ての値を設定する
+	if (m_pScoreWord == nullptr)
+	{ // 文字が NULL の場合
 
-		// ゲームのスコアのポインタを返す
-		return m_pGameScore;
+		// 文字を生成
+		m_pScoreWord = CObject2D::Create(CObject2D::TYPE_NONE, TYPE_NONE, PRIORITY_UI);
+		
+		// 情報の設定
+		m_pScoreWord->SetPos(WORD_POS);				// 位置
+		m_pScoreWord->SetPosOld(WORD_POS);			// 前回の位置
+		m_pScoreWord->SetRot(NONE_D3DXVECTOR3);		// 向き
+		m_pScoreWord->SetSize(WORD_SIZE);			// サイズ
+	
+		// テクスチャの割り当て処理
+		m_pScoreWord->BindTexture(CManager::Get()->GetTexture()->Regist(WORD_TEXTURE));
+
+		// サイズの設定処理
+		m_pScoreWord->SetVertex();
 	}
-	else
-	{ // 上記以外
 
-		// 停止
-		assert(false);
-
-		// ゲームのスコアのポインタを返す
-		return m_pGameScore;
-	}
 }
 
 //========================
@@ -126,11 +143,14 @@ CGameScore* CGameScore::Get(void)
 //========================
 CGameScore* CGameScore::Create(void)
 {
-	if (m_pGameScore == nullptr)
+	// スコアのポインタを宣言
+	CGameScore* pScore = nullptr;
+
+	if (pScore == nullptr)
 	{ // オブジェクトが NULL の場合
 
 		// メモリを確保する
-		m_pGameScore = new CGameScore;
+		pScore = new CGameScore;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -142,11 +162,11 @@ CGameScore* CGameScore::Create(void)
 		return nullptr;
 	}
 
-	if (m_pGameScore != nullptr)
+	if (pScore != nullptr)
 	{ // オブジェクトが NULL じゃない場合
 
 		// 初期化処理
-		if (FAILED(m_pGameScore->Init()))
+		if (FAILED(pScore->Init()))
 		{ // 初期化に失敗した場合
 
 			// 停止
@@ -157,7 +177,7 @@ CGameScore* CGameScore::Create(void)
 		}
 
 		// 情報の設定処理
-		m_pGameScore->SetData();
+		pScore->SetData();
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -169,6 +189,6 @@ CGameScore* CGameScore::Create(void)
 		return nullptr;
 	}
 
-	// オブジェクト2Dのポインタを返す
-	return m_pGameScore;
+	// スコアのポインタを返す
+	return pScore;
 }

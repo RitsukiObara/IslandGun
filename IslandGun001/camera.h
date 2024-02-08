@@ -24,6 +24,8 @@ public:			// 誰でもアクセス出来る
 	{
 		TYPE_NONE = 0,		// 通常状態
 		TYPE_VIBRATE,		// 振動状態
+		TYPE_BOSSCLOSER,	// ボス寄り状態
+		TYPE_BOSSHOWLING,	// ボス雄たけび状態
 		TYPE_MAX			// この列挙型の総数
 	};
 
@@ -55,6 +57,7 @@ public:			// 誰でもアクセス出来る
 	D3DVIEWPORT9 GetViewport(void) const;				// ビューポートの設定処理
 
 	void SetType(const TYPE type);				// 種類の設定処理
+	TYPE GetType(void) const;					// 種類の取得処理
 
 	void ChangeControl(void);					// カメラの操作状況の切り替え処理
 
@@ -79,6 +82,8 @@ private:		// 自分だけアクセス出来る
 
 	void Chase(void);				// 追跡処理
 	void Vibrate(void);				// 振動処理
+	void BossCloser(void);			// ボス寄り処理
+	void BossHowling(void);			// ボス雄たけび処理
 	void PosSet(void);				// 位置の設定処理
 	void TypeProcess(void);			// カメラの種類ごとの処理
 

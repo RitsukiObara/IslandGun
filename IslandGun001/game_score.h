@@ -12,6 +12,11 @@
 #include "score.h"
 
 //--------------------------------------------
+// 前方宣言
+//--------------------------------------------
+class CObject2D;		// オブジェクト2D
+
+//--------------------------------------------
 // クラス定義(スコア)
 //--------------------------------------------
 class CGameScore : public CScore
@@ -30,13 +35,12 @@ public:				// 誰でもアクセスできる
 	void SetData(void);		// 情報の設定処理
 
 	// 静的メンバ関数
-	static CGameScore* Get(void);		// スコアの取得処理
 	static CGameScore* Create(void);		// 生成処理
 
 private:			// 自分だけアクセスできる
 
-	// 静的メンバ変数
-	static CGameScore* m_pGameScore;	// スコアの情報
+	// メンバ変数
+	CObject2D* m_pScoreWord;		// 文字の情報
 };
 
 #endif

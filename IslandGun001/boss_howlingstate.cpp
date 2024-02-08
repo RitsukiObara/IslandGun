@@ -12,6 +12,9 @@
 #include "boss_howlingstate.h"
 #include "motion.h"
 
+#include "manager.h"
+#include "camera.h"
+
 #include "boss_nonestate.h"
 
 //----------------------------------------------------------------------------------------------------------------
@@ -20,6 +23,7 @@
 namespace
 {
 	const int HOWLING_COUNT = 50;				// 雄たけびまでのカウント
+	const int HOWLING_CAMERA_COUNT = 63;		// 雄たけびカメラまでのカウント
 	const int NONESTATE_COUNT = 240;			// 通常状態までのカウント
 }
 
@@ -59,6 +63,17 @@ void CBossHowlingState::Process(CBoss* pBoss)
 		}
 	}
 
+	if (m_nCount >= HOWLING_CAMERA_COUNT)
+	{ // 一定時間経過した場合
+
+		if (CManager::Get()->GetCamera()->GetType() != CCamera::TYPE_BOSSHOWLING)
+		{ // 雄たけび状態以外の場合
+
+			// 雄たけびカメラにする
+			CManager::Get()->GetCamera()->SetType(CCamera::TYPE_BOSSHOWLING);
+		}
+	}
+
 	if (m_nCount >= NONESTATE_COUNT)
 	{ // 一定時間経過した場合
 
@@ -80,4 +95,7 @@ void CBossHowlingState::SetData(CBoss* pBoss)
 
 	// ホバリングモーションを設定する
 	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_LANDING);
+
+	// 振動カメラにする
+	CManager::Get()->GetCamera()->SetType(CCamera::TYPE_VIBRATE);
 }

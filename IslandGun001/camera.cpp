@@ -18,6 +18,7 @@
 
 #include "player.h"
 #include "light.h"
+#include "boss.h"
 
 //-------------------------------------------
 // 定数定義
@@ -43,8 +44,17 @@ namespace
 	const float CORRECT_POSR = 0.22f;			// 注視点の補正倍率
 	const float CORRECT_POSV = 0.20f;			// 視点の補正倍率
 
+	// 特殊カメラ関係
 	const float POSR_SHIFT_Y = 320.0f;			// 注視点のずらす幅(Y軸)
 	const float POSR_SHIFT = 100.0f;			// 注視点のずらす幅
+	const float BOSS_CLOSER_RANGE = 3000.0f;	// ボス寄りカメラの距離
+	const float BOSS_CLOSER_HEIGHT = 2200.0f;	// ボス寄りカメラの高さ
+	const float BOSS_CLOSER_CORRECT = 0.08f;	// ボス寄りカメラの補正係数
+
+	const float BOSS_HOWLING_HEIGHT_POSR = 1700.0f;	// ボス雄たけびカメラの注視点の高さ
+	const float BOSS_HOWLING_RANGE_POSV = 3000.0f;	// ボス雄たけびカメラの視点の距離
+	const float BOSS_HOWLING_ROT_SHIFT = 0.45f;		// ボス雄たけびカメラの向きのずらす量
+	const float BOSS_HOWLING_CORRECT = 0.1f;		// ボス雄たけびカメラの補正係数
 }
 
 //=======================
@@ -358,6 +368,15 @@ void CCamera::SetType(const TYPE type)
 {
 	// 種類を設定する
 	m_type = type;
+}
+
+//=======================
+// 種類の取得処理
+//=======================
+CCamera::TYPE CCamera::GetType(void) const
+{
+	// 種類を返す
+	return m_type;
 }
 
 //=======================
@@ -840,6 +859,20 @@ void CCamera::TypeProcess(void)
 
 		break;
 
+	case CCamera::TYPE_BOSSCLOSER:	// ボス寄り
+
+		// ボス近づき処理
+		BossCloser();
+
+		break;
+
+	case CCamera::TYPE_BOSSHOWLING:	// ボス雄たけび状態
+
+		// ボス雄たけび処理
+		BossHowling();
+
+		break;
+
 	default:
 
 		// 停止
@@ -891,67 +924,127 @@ void CCamera::Chase(void)
 //=======================
 void CCamera::Vibrate(void)
 {
-	// ローカル変数宣言
-	D3DXVECTOR3 pos;			// 位置
-	D3DXVECTOR3 rot;			// 向き
-	//CPlayer* pPlayer = CPlayer::Get();	// プレイヤーのポインタ
+	if (m_nSwingCount % 5 == 0)
+	{ // 揺れカウントが一定数ごとに
 
-	//if (pPlayer != nullptr)
-	//{ // プレイヤーが NULL じゃない場合
+		float fVib = (float)(rand() % 50 + 25);
 
-	//	// プレイヤーの情報を取得する
-	//	pos = pPlayer->GetPos();		// 位置
-	//	rot = pPlayer->GetRot();		// 向き
+		if (m_nSwingCount % 2 == 0)
+		{ // カウントが偶数の場合
 
-	//	if (m_nSwingCount % 5 == 0)
-	//	{ // 揺れカウントが一定数ごとに
+			// 目的の注視点を設定する
+			m_posRDest.y -= fVib;
+		}
+		else
+		{ // カウントが奇数の場合
 
-	//		float f = (float)(rand() % 8 + 6);
+			// 目的の注視点を設定する
+			m_posRDest.y += fVib;
+		}
+	}
 
-	//		if (m_nSwingCount % 2 == 0)
-	//		{ // カウントが偶数の場合
+	// 注視点を補正
+	m_posR.x += (m_posRDest.x - m_posR.x) * 0.3f;
+	m_posR.y += (m_posRDest.y - m_posR.y) * 0.3f;
+	m_posR.z += (m_posRDest.z - m_posR.z) * 0.3f;
 
-	//			// 目的の注視点を設定する
-	//			m_posRDest.y = pos.y + POSR_SHIFT_Y - f;
-	//		}
-	//		else
-	//		{ // カウントが奇数の場合
-
-	//			// 目的の注視点を設定する
-	//			m_posRDest.y = pos.y + POSR_SHIFT_Y + f;
-	//		}
-
-	//		// 目的の注視点を設定する
-	//		m_posRDest.x = pos.x + CHASE_SHIFT_X;
-	//		m_posRDest.z = pos.z;
-
-	//		// 目的の視点を設定する
-	//		m_posVDest.x = m_posRDest.x + sinf(m_rot.y) * -m_Dis;
-	//		m_posVDest.y = pos.y + POSV_SHIFT_Y;
-	//		m_posVDest.z = m_posRDest.z + cosf(m_rot.y) * -m_Dis;
-	//	}
-
-	//	// 注視点を補正
-	//	m_posR.x += (m_posRDest.x - m_posR.x) * 0.3f;
-	//	m_posR.y += (m_posRDest.y - m_posR.y) * 0.3f;
-	//	m_posR.z += (m_posRDest.z - m_posR.z) * 0.3f;
-
-	//	// 視点を補正
-	//	m_posV.x += (m_posVDest.x - m_posV.x) * 0.3f;
-	//	m_posV.y += (m_posVDest.y - m_posV.y) * 0.3f;
-	//	m_posV.z += (m_posVDest.z - m_posV.z) * 0.3f;
-
-	//	if (pPlayer->GetAbility()->GetAbility() != CAbility::ABILITY_GROUNDQUAKE)
-	//	{ // カウント数が一定以上になった場合
-
-	//		// 種類を設定する
-	//		SetType(TYPE_NONE);
-
-	//		// 揺れカウントを初期化する
-	//		m_nSwingCount = 0;
-	//	}
-	//}
+	// 視点を補正
+	m_posV.x += (m_posVDest.x - m_posV.x) * 0.3f;
+	m_posV.y += (m_posVDest.y - m_posV.y) * 0.3f;
+	m_posV.z += (m_posVDest.z - m_posV.z) * 0.3f;
 
 	// 揺れカウントを加算する
 	m_nSwingCount++;
+}
+
+//=======================
+// ボス寄り処理
+//=======================
+void CCamera::BossCloser(void)
+{
+	// ローカル変数宣言
+	CBoss* pBoss = nullptr;		// ボスの情報
+	D3DXVECTOR3 pos;			// 位置
+	D3DXVECTOR3 rot;			// 向き
+
+	if (CBoss::GetList().IsEmpty() == false)
+	{ // リストが 空欄じゃない場合
+
+		// ボスの情報を取得する
+		pBoss = CBoss::GetList().GetTop();
+	}
+
+	if (pBoss != nullptr)
+	{ // ボスが NULL じゃない場合
+
+		// 位置と向きを取得する
+		pos = pBoss->GetPos();
+		rot = pBoss->GetRot();
+
+		// 目的の注視点を設定する
+		m_posRDest.x = pos.x;
+		m_posRDest.y = pos.y + BOSS_CLOSER_HEIGHT;
+		m_posRDest.z = pos.z;
+
+		// 目的の視点を設定する
+		m_posVDest.x = m_posRDest.x + sinf(rot.y) * BOSS_CLOSER_RANGE;
+		m_posVDest.y = m_posRDest.y;
+		m_posVDest.z = m_posRDest.z + cosf(rot.y) * BOSS_CLOSER_RANGE;
+
+		// 注視点を補正
+		m_posR.x += (m_posRDest.x - m_posR.x) * BOSS_CLOSER_CORRECT;
+		m_posR.y += (m_posRDest.y - m_posR.y) * BOSS_CLOSER_CORRECT;
+		m_posR.z += (m_posRDest.z - m_posR.z) * BOSS_CLOSER_CORRECT;
+
+		// 視点を補正
+		m_posV.x += (m_posVDest.x - m_posV.x) * BOSS_CLOSER_CORRECT;
+		m_posV.y += (m_posVDest.y - m_posV.y) * BOSS_CLOSER_CORRECT;
+		m_posV.z += (m_posVDest.z - m_posV.z) * BOSS_CLOSER_CORRECT;
+	}
+}
+
+//=======================
+// ボス雄たけび処理
+//=======================
+void CCamera::BossHowling(void)
+{
+	// ローカル変数宣言
+	CBoss* pBoss = nullptr;		// ボスの情報
+	D3DXVECTOR3 pos;			// 位置
+	D3DXVECTOR3 rot;			// 向き
+
+	if (CBoss::GetList().IsEmpty() == false)
+	{ // リストが 空欄じゃない場合
+
+		// ボスの情報を取得する
+		pBoss = CBoss::GetList().GetTop();
+	}
+
+	if (pBoss != nullptr)
+	{ // ボスが NULL じゃない場合
+
+		// 位置と向きを取得する
+		pos = pBoss->GetPos();
+		rot = pBoss->GetRot();
+
+		// 目的の注視点を設定する
+		m_posRDest.x = pos.x;
+		m_posRDest.y = pos.y + BOSS_HOWLING_HEIGHT_POSR;
+		m_posRDest.z = pos.z;
+
+		// 目的の視点を設定する
+		m_posVDest.x = m_posRDest.x + sinf(rot.y + BOSS_HOWLING_ROT_SHIFT) * BOSS_HOWLING_RANGE_POSV;
+		m_posVDest.y = pos.y;
+		m_posVDest.z = m_posRDest.z + cosf(rot.y + BOSS_HOWLING_ROT_SHIFT) * BOSS_HOWLING_RANGE_POSV;
+
+		// 注視点を補正
+		m_posR.x += (m_posRDest.x - m_posR.x) * BOSS_HOWLING_CORRECT;
+		m_posR.y += (m_posRDest.y - m_posR.y) * BOSS_HOWLING_CORRECT;
+		m_posR.z += (m_posRDest.z - m_posR.z) * BOSS_HOWLING_CORRECT;
+
+		// 視点を補正
+		m_posV.x += (m_posVDest.x - m_posV.x) * BOSS_HOWLING_CORRECT;
+		m_posV.y += (m_posVDest.y - m_posV.y) * BOSS_HOWLING_CORRECT;
+		m_posV.z += (m_posVDest.z - m_posV.z) * BOSS_HOWLING_CORRECT;
+	}
 }

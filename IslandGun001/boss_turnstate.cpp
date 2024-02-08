@@ -14,6 +14,9 @@
 
 #include "game.h"
 #include "player.h"
+#include "manager.h"
+#include "camera.h"
+
 #include "boss_howlingstate.h"
 
 //----------------------------------------------------------------------------------------------------------------
@@ -73,6 +76,13 @@ void CBossTurnState::Process(CBoss* pBoss)
 
 		if (m_nCount >= COUNT)
 		{ // 一定数経過した場合
+
+			if (CManager::Get()->GetCamera()->GetType() != CCamera::TYPE_BOSSCLOSER)
+			{ // ボス近づき状態以外の場合
+
+				// ボス近づきカメラ状態にする
+				CManager::Get()->GetCamera()->SetType(CCamera::TYPE_BOSSCLOSER);
+			}
 
 			// 高度を減算する
 			pos.y -= SUB_HEIGHT;

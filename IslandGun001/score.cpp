@@ -14,10 +14,6 @@
 #include "texture.h"
 #include "useful.h"
 
-// マクロ定義
-#define SCORE_TEXTURE		"data\\TEXTURE\\Number.png"		// スコアのテクスチャ
-#define DISP_ADD_SCORE		(50)							// 描画用スコアの加算数
-
 //========================
 // コンストラクタ
 //========================
@@ -32,6 +28,7 @@ CScore::CScore() : CObject(TYPE_SCORE, DIM_2D, PRIORITY_UI)
 
 	m_nScore = 0;		// スコア
 	m_nDispScore = 0;	// 表示用スコア
+	m_nAddDisp = 0;		// 表示用スコアの加算数
 }
 
 //========================
@@ -50,12 +47,10 @@ HRESULT CScore::Init(void)
 	//ローカル変数宣言
 	int nTexIdx = NONE_TEXIDX;		// テクスチャのインデックス
 
-	// テクスチャの読み込み処理
-	nTexIdx = CManager::Get()->GetTexture()->Regist(SCORE_TEXTURE);
-
 	// 全ての値を初期化する
 	m_nScore = 0;		// スコア
 	m_nDispScore = 0;	// 表示用スコア
+	m_nAddDisp = 0;		// 表示用スコアの加算数
 
 	// メモリを確保する
 	for (int nCnt = 0; nCnt < MAX_SCORE_DIGIT; nCnt++)
@@ -139,7 +134,7 @@ void CScore::Update(void)
 	{ // 上記以外
 
 		// 描画用スコアを加算する
-		m_nDispScore += DISP_ADD_SCORE;
+		m_nDispScore += m_nAddDisp;
 	}
 
 	// 計算処理
@@ -169,7 +164,7 @@ void CScore::Draw(void)
 //========================
 // 情報の設定処理
 //========================
-void CScore::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& size, const float fShift)
+void CScore::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& size, const float fShift, const char* pTextureName, const int nAddDisp)
 {
 	for (int nCnt = 0; nCnt < MAX_SCORE_DIGIT; nCnt++)
 	{
@@ -186,9 +181,15 @@ void CScore::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXV
 		// 頂点情報の設定処理
 		m_apNumber[nCnt]->SetVertex();
 
+		// テクスチャの割り当て処理
+		m_apNumber[nCnt]->BindTexture(CManager::Get()->GetTexture()->Regist(pTextureName));
+
 		// テクスチャの設定処理(アニメーションバージョン)
 		m_apNumber[nCnt]->SetVtxTextureAnim(NUMBER_TEXTURE_PATTERN, 0);
 	}
+
+	// 表示用スコアの加算数を設定する
+	m_nAddDisp = nAddDisp;			// 表示用スコアの加算数
 }
 
 //========================

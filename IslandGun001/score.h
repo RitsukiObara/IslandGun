@@ -32,7 +32,7 @@ public:				// 誰でもアクセスできる
 	virtual void Update(void) override;		// 更新処理
 	virtual void Draw(void) override;		// 描画処理
 
-	virtual void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& size, const float fShift);		// 情報の設定処理
+	virtual void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& size, const float fShift, const char* pTextureName, const int nAddDisp);		// 情報の設定処理
 
 	void Calculate(void);			// 計算処理
 
@@ -50,6 +50,7 @@ private:			// 自分だけアクセスできる
 	CNumber *m_apNumber[MAX_SCORE_DIGIT];		// 番号の情報
 	int m_nScore;			// スコア
 	int m_nDispScore;		// 表示用スコア
+	int m_nAddDisp;			// 表示用スコアの加算数
 };
 
 #endif
