@@ -29,6 +29,17 @@ public:			// 誰でもアクセス出来る
 		TYPE_MAX			// この列挙型の総数
 	};
 
+	// 構造体定義(振動)
+	struct SVibrate
+	{
+		TYPE nextType;		// 次の種類
+		int nElapseCount;	// 経過カウント
+		int nSwingCount;	// 揺れのカウント
+		int nSwingRange;	// 揺れの範囲
+		int nFinishCount;	// 終了カウント
+		bool bDown;			// 下状況
+	};
+
 	CCamera();		// コンストラクタ
 	~CCamera();		// デストラクタ
 
@@ -55,6 +66,9 @@ public:			// 誰でもアクセス出来る
 
 	void SetViewport(const D3DVIEWPORT9& viewport);		// ビューポートの設定処理
 	D3DVIEWPORT9 GetViewport(void) const;				// ビューポートの設定処理
+
+	void SetVibrate(const SVibrate vib);		// 振動関係の設定処理
+	SVibrate GetVibrate(void) const;			// 振動関係の取得処理
 
 	void SetType(const TYPE type);				// 種類の設定処理
 	TYPE GetType(void) const;					// 種類の取得処理
@@ -97,9 +111,9 @@ private:		// 自分だけアクセス出来る
 	D3DXVECTOR3 m_VecU;				// 上方向ベクトル
 	D3DXVECTOR3 m_rot;				// 向き
 	D3DVIEWPORT9 m_viewport;		// ビューポート
+	SVibrate m_vibrate;				// 振動関係
 	TYPE m_type;					// 種類
 	float m_Dis;					// 距離
-	int m_nSwingCount;				// 揺れのカウント
 	bool m_bControl;				// 操作状況
 };
 

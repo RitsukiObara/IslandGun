@@ -72,8 +72,14 @@ CCamera::CCamera()
 	ZeroMemory(&m_viewport, sizeof(D3DVIEWPORT9));	// ビューポート
 	m_type = TYPE_NONE;								// 種類
 	m_Dis = 0.0f;									// 距離
-	m_nSwingCount = 0;								// 揺れカメラのカウント
 	m_bControl = false;								// 操作状況
+
+	m_vibrate.nextType = TYPE_NONE;	// 次のタイプ
+	m_vibrate.nElapseCount = 0;		// 経過カウント
+	m_vibrate.nSwingCount = 0;		// 揺れのカウント
+	m_vibrate.nSwingRange = 0;		// 揺れの範囲
+	m_vibrate.nFinishCount = 0;		// 終了カウント
+	m_vibrate.bDown = false;		// 下状況
 }
 
 //=======================
@@ -362,6 +368,24 @@ D3DVIEWPORT9 CCamera::GetViewport(void) const
 }
 
 //=======================
+// 振動関係の設定処理
+//=======================
+void CCamera::SetVibrate(const SVibrate vib)
+{
+	// 振動関係の情報を設定する
+	m_vibrate = vib;
+}
+
+//=======================
+// 振動関係の取得処理
+//=======================
+CCamera::SVibrate CCamera::GetVibrate(void) const
+{
+	// 振動関係の情報を返す
+	return m_vibrate;
+}
+
+//=======================
 // 種類の設定処理
 //=======================
 void CCamera::SetType(const TYPE type)
@@ -454,8 +478,14 @@ void CCamera::Reset(void)
 	m_VecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 向き
 	m_type = TYPE_NONE;							// 種類
-	m_nSwingCount = 0;							// 揺れカメラのカウント
 	m_bControl = false;							// 操作状況
+
+	m_vibrate.nextType = TYPE_NONE;	// 次のタイプ
+	m_vibrate.nElapseCount = 0;		// 経過カウント
+	m_vibrate.nSwingCount = 0;		// 揺れのカウント
+	m_vibrate.nSwingRange = 0;		// 揺れの範囲
+	m_vibrate.nFinishCount = 0;		// 終了カウント
+	m_vibrate.bDown = false;		// 下状況
 }
 
 //=======================
@@ -924,37 +954,50 @@ void CCamera::Chase(void)
 //=======================
 void CCamera::Vibrate(void)
 {
-	if (m_nSwingCount % 5 == 0)
+	if (m_vibrate.nElapseCount % m_vibrate.nSwingCount == 0)
 	{ // 揺れカウントが一定数ごとに
 
-		float fVib = (float)(rand() % 50 + 25);
+		float fVib = (float)(rand() % m_vibrate.nSwingRange + (m_vibrate.nSwingRange * 0.5f));
 
-		if (m_nSwingCount % 2 == 0)
-		{ // カウントが偶数の場合
+		if (m_vibrate.bDown == true)
+		{ // 下状況が true の場合
 
 			// 目的の注視点を設定する
 			m_posRDest.y -= fVib;
 		}
 		else
-		{ // カウントが奇数の場合
+		{ // 上記以外
 
 			// 目的の注視点を設定する
 			m_posRDest.y += fVib;
 		}
+
+		// 下状況を切り替える
+		m_vibrate.bDown = !m_vibrate.bDown;
 	}
 
 	// 注視点を補正
-	m_posR.x += (m_posRDest.x - m_posR.x) * 0.3f;
-	m_posR.y += (m_posRDest.y - m_posR.y) * 0.3f;
-	m_posR.z += (m_posRDest.z - m_posR.z) * 0.3f;
+	m_posR.x += (m_posRDest.x - m_posR.x) * 0.5f;
+	m_posR.y += (m_posRDest.y - m_posR.y) * 0.5f;
+	m_posR.z += (m_posRDest.z - m_posR.z) * 0.5f;
 
 	// 視点を補正
-	m_posV.x += (m_posVDest.x - m_posV.x) * 0.3f;
-	m_posV.y += (m_posVDest.y - m_posV.y) * 0.3f;
-	m_posV.z += (m_posVDest.z - m_posV.z) * 0.3f;
+	m_posV.x += (m_posVDest.x - m_posV.x) * 0.5f;
+	m_posV.y += (m_posVDest.y - m_posV.y) * 0.5f;
+	m_posV.z += (m_posVDest.z - m_posV.z) * 0.5f;
 
-	// 揺れカウントを加算する
-	m_nSwingCount++;
+	// 経過カウントを加算する
+	m_vibrate.nElapseCount++;
+
+	if (m_vibrate.nElapseCount >= m_vibrate.nFinishCount)
+	{ // 終了カウントになった場合
+
+		// 経過カウントを0にする
+		m_vibrate.nElapseCount = 0;
+
+		// 次の状態に設定する
+		SetType(m_vibrate.nextType);
+	}
 }
 
 //=======================
