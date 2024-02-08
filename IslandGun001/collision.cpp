@@ -723,10 +723,12 @@ bool collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 			{ // ”ÍˆÍ“à‚É‚¢‚½ê‡
 
 				// ‰~’Œ‚Ì“–‚½‚è”»’è
-				useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius);
+				if (useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius) == true)
+				{ // “–‚½‚Á‚½ê‡
 
-				// “–‚½‚è”»’èó‹µ‚ğ true ‚É‚·‚é
-				bCollision = true;
+					// “–‚½‚è”»’èó‹µ‚ğ true ‚É‚·‚é
+					bCollision = true;
+				}
 			}
 
 			if (pRock == pRockEnd)
