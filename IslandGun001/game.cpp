@@ -27,7 +27,6 @@
 #include "ocean.h"
 #include "boss.h"
 #include "enemy.h"
-#include "wall.h"
 #include "list_manager.h"
 
 //--------------------------------------------
@@ -97,6 +96,7 @@ HRESULT CGame::Init(void)
 	CManager::Get()->GetFile()->Load(CFile::TYPE_ROCK);
 	CManager::Get()->GetFile()->Load(CFile::TYPE_BLOCK);
 	CManager::Get()->GetFile()->Load(CFile::TYPE_BANGFLOWER);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_WALL);
 
 	// マップの生成
 	//CManager::Get()->GetFile()->SetEnemy();
@@ -106,6 +106,7 @@ HRESULT CGame::Init(void)
 	CManager::Get()->GetFile()->SetRock();
 	CManager::Get()->GetFile()->SetBlock ();
 	CManager::Get()->GetFile()->SetBangFlower();
+	CManager::Get()->GetFile()->SetWall();
 
 	// スカイボックスの生成処理
 	CSkyBox::Create();
@@ -124,11 +125,6 @@ HRESULT CGame::Init(void)
 
 	// ボスの生成処理
 	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
-
-	CWall::Create(D3DXVECTOR3(0.0f, 0.0f, -2000.0f), NONE_SCALE, CWall::TYPE::TYPE_NARROW, CWall::ROTTYPE_FRONT);
-	CWall::Create(D3DXVECTOR3(0.0f, 0.0f, 2000.0f), NONE_SCALE, CWall::TYPE::TYPE_NORMAL, CWall::ROTTYPE_RIGHT);
-	CWall::Create(D3DXVECTOR3(-2000.0f, 0.0f, 0.0f), NONE_SCALE, CWall::TYPE::TYPE_NORMAL, CWall::ROTTYPE_BACK);
-	CWall::Create(D3DXVECTOR3(2000.0f, 0.0f, 0.0f), NONE_SCALE, CWall::TYPE::TYPE_NARROW, CWall::ROTTYPE_LEFT);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

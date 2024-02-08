@@ -19,6 +19,7 @@
 #include "rock.h"
 #include "block.h"
 #include "bang_flower.h"
+#include "wall.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -31,6 +32,7 @@
 #define ROCK_TXT			"data\\TXT\\Rock.txt"			// 岩のテキスト
 #define BLOCK_TXT			"data\\TXT\\Block.txt"			// ブロックのテキスト
 #define BANGFLOWER_TXT		"data\\TXT\\BangFlower.txt"		// 爆弾花のテキスト
+#define WALL_TXT			"data\\TXT\\Wall.txt"			// 壁のテキスト
 
 #define GOLDBONE_NUM		(3)		// 金の骨の数
 
@@ -76,6 +78,11 @@ CFile::CFile()
 
 		m_BangFlowerFile.aFile[nCntFile].pos = NONE_D3DXVECTOR3;
 		m_BangFlowerFile.aFile[nCntFile].rot = NONE_D3DXVECTOR3;
+
+		m_WallFile.aFile[nCntFile].pos = NONE_D3DXVECTOR3;
+		m_WallFile.aFile[nCntFile].scale = NONE_D3DXVECTOR3;
+		m_WallFile.aFile[nCntFile].nType = 0;
+		m_WallFile.aFile[nCntFile].nRotType = 0;
 	}
 
 	for (int nCntBone = 0; nCntBone < GOLDBONE_NUM; nCntBone++)
@@ -91,6 +98,7 @@ CFile::CFile()
 	m_RockFile.nNumData = 0;			// 岩の情報
 	m_BlockFile.nNumData = 0;			// ブロックの情報
 	m_BangFlowerFile.nNumData = 0;		// 爆弾花の情報
+	m_WallFile.nNumData = 0;			// 壁の情報
 
 	// 成功状況をクリアする
 	m_RankingInfo.bSuccess = false;		// ランキング
@@ -101,6 +109,7 @@ CFile::CFile()
 	m_RockFile.bSuccess = false;		// 岩の情報
 	m_BlockFile.bSuccess = false;		// ブロックの情報
 	m_BangFlowerFile.bSuccess = false;	// 爆弾花の情報
+	m_WallFile.bSuccess = false;		// 壁の情報
 }
 
 //===========================================
@@ -236,7 +245,19 @@ HRESULT CFile::Load(const TYPE type)
 	case CFile::TYPE_BANGFLOWER:
 
 		// 爆弾花のロード処理
-		if (FAILED(LoadBangFloawer()))
+		if (FAILED(LoadBangFlower()))
+		{ // 失敗した場合
+
+			// 失敗を返す
+			return E_FAIL;
+		}
+
+		break;
+
+	case CFile::TYPE_WALL:
+
+		// 壁のロード処理
+		if (FAILED(LoadWall()))
 		{ // 失敗した場合
 
 			// 失敗を返す
@@ -388,11 +409,11 @@ void CFile::SetTree(void)
 void CFile::SetRock(void)
 {
 	if (m_RockFile.bSuccess == true)
-	{ // 木が読み込めた場合
+	{ // 岩が読み込めた場合
 
 		for (int nCnt = 0; nCnt < m_RockFile.nNumData; nCnt++)
 		{
-			// 木を生成する
+			// 岩を生成する
 			CRock::Create
 			(
 				m_RockFile.aFile[nCnt].pos,
@@ -416,11 +437,11 @@ void CFile::SetRock(void)
 void CFile::SetBlock(void)
 {
 	if (m_BlockFile.bSuccess == true)
-	{ // 木が読み込めた場合
+	{ // ブロックが読み込めた場合
 
 		for (int nCnt = 0; nCnt < m_BlockFile.nNumData; nCnt++)
 		{
-			// 木を生成する
+			// ブロックを生成する
 			CBlock::Create
 			(
 				m_BlockFile.aFile[nCnt].pos,
@@ -442,15 +463,43 @@ void CFile::SetBlock(void)
 void CFile::SetBangFlower(void)
 {
 	if (m_BangFlowerFile.bSuccess == true)
-	{ // 木が読み込めた場合
+	{ // 爆弾花が読み込めた場合
 
 		for (int nCnt = 0; nCnt < m_BangFlowerFile.nNumData; nCnt++)
 		{
-			// 木を生成する
+			// 爆弾花を生成する
 			CBangFlower::Create
 			(
 				m_BangFlowerFile.aFile[nCnt].pos,
 				m_BangFlowerFile.aFile[nCnt].rot
+			);
+		}
+	}
+	else
+	{ // 上記以外
+
+		// 停止
+		assert(false);
+	}
+}
+
+//===========================================
+// 壁の設定処理
+//===========================================
+void CFile::SetWall(void)
+{
+	if (m_WallFile.bSuccess == true)
+	{ // 壁が読み込めた場合
+
+		for (int nCnt = 0; nCnt < m_WallFile.nNumData; nCnt++)
+		{
+			// 壁を生成する
+			CWall::Create
+			(
+				m_WallFile.aFile[nCnt].pos,
+				m_WallFile.aFile[nCnt].scale,
+				(CWall::TYPE)(m_WallFile.aFile[nCnt].nType),
+				(CWall::ROTTYPE)(m_WallFile.aFile[nCnt].nRotType)
 			);
 		}
 	}
@@ -1174,7 +1223,7 @@ HRESULT CFile::LoadBlock(void)
 //===========================================
 // 爆弾花のロード処理
 //===========================================
-HRESULT CFile::LoadBangFloawer(void)
+HRESULT CFile::LoadBangFlower(void)
 {
 	// 変数を宣言
 	int nEnd;							// テキスト読み込み終了の確認用
@@ -1238,6 +1287,102 @@ HRESULT CFile::LoadBangFloawer(void)
 
 		// 成功状況を true にする
 		m_BangFlowerFile.bSuccess = true;
+	}
+	else
+	{ // ファイルが開けなかった場合
+
+		// 停止
+		assert(false);
+
+		// 失敗を返す
+		return E_FAIL;
+	}
+
+	// 成功を返す
+	return S_OK;
+}
+
+//===========================================
+// 壁のロード処理
+//===========================================
+HRESULT CFile::LoadWall(void)
+{
+	// 変数を宣言
+	int nEnd;							// テキスト読み込み終了の確認用
+	char aString[MAX_STRING];			// テキストの文字列の代入用
+	m_WallFile.nNumData = 0;			// 総数
+	m_WallFile.bSuccess = false;		// 成功状況
+
+	// ポインタを宣言
+	FILE* pFile;						// ファイルポインタ
+
+	// ファイルを読み込み形式で開く
+	pFile = fopen(WALL_TXT, "r");
+
+	if (pFile != nullptr)
+	{ // ファイルが開けた場合
+
+		do
+		{ // 読み込んだ文字列が EOF ではない場合ループ
+
+			// ファイルから文字列を読み込む
+			nEnd = fscanf(pFile, "%s", &aString[0]);	// テキストを読み込みきったら EOF を返す
+
+			if (strcmp(&aString[0], "SET_WALL") == 0)
+			{ // 読み込んだ文字列が SET_WALL の場合
+
+				do
+				{ // 読み込んだ文字列が END_SET_WALL ではない場合ループ
+
+				  // ファイルから文字列を読み込む
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(&aString[0], "POS") == 0)
+					{ // 読み込んだ文字列が POS の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%f%f%f",
+							&m_WallFile.aFile[m_WallFile.nNumData].pos.x,
+							&m_WallFile.aFile[m_WallFile.nNumData].pos.y,
+							&m_WallFile.aFile[m_WallFile.nNumData].pos.z);		// 位置を読み込む
+					}
+
+					if (strcmp(&aString[0], "SCALE") == 0)
+					{ // 読み込んだ文字列が SCALE の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%f%f%f",
+							&m_WallFile.aFile[m_WallFile.nNumData].scale.x,
+							&m_WallFile.aFile[m_WallFile.nNumData].scale.y,
+							&m_WallFile.aFile[m_WallFile.nNumData].scale.z);	// 拡大率を読み込む
+					}
+
+					if (strcmp(&aString[0], "TYPE") == 0)
+					{ // 読み込んだ文字列が TYPE の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%d", &m_WallFile.aFile[m_WallFile.nNumData].nType);		// 種類を読み込む
+					}
+
+					if (strcmp(&aString[0], "ROTTYPE") == 0)
+					{ // 読み込んだ文字列が ROTTYPE の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%d", &m_WallFile.aFile[m_WallFile.nNumData].nRotType);	// 向きの種類を読み込む
+					}
+
+				} while (strcmp(&aString[0], "END_SET_WALL") != 0);		// 読み込んだ文字列が END_SET_WALL ではない場合ループ
+
+				// データの総数を増やす
+				m_WallFile.nNumData++;
+			}
+		} while (nEnd != EOF);				// 読み込んだ文字列が EOF ではない場合ループ
+
+		// ファイルを閉じる
+		fclose(pFile);
+
+		// 成功状況を true にする
+		m_WallFile.bSuccess = true;
 	}
 	else
 	{ // ファイルが開けなかった場合

@@ -39,6 +39,7 @@ CWall::CWall() : CModel(TYPE_WALL, PRIORITY_BLOCK)
 	m_vtxMax = NONE_D3DXVECTOR3;		// 頂点の最大値
 	m_vtxMin = NONE_D3DXVECTOR3;		// 頂点の最小値
 	m_type = TYPE_NORMAL;				// 種類
+	m_rottype = ROTTYPE_FRONT;			// 向きの種類
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -110,9 +111,10 @@ void CWall::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& scale, const TYPE
 
 	// 種類を設定する
 	m_type = type;				// 種類
+	m_rottype = rottype;		// 向きの種類
 
 	// 頂点の設定処理
-	SetVertex(rottype);
+	SetVertex();
 }
 
 //=======================================
@@ -189,6 +191,24 @@ D3DXVECTOR3 CWall::GetVtxMin(void) const
 }
 
 //=======================================
+// 種類の取得処理
+//=======================================
+CWall::TYPE CWall::GetType(void) const
+{
+	// 種類を返す
+	return m_type;
+}
+
+//=======================================
+// 向きの種類の取得処理
+//=======================================
+CWall::ROTTYPE CWall::GetRotType(void) const
+{
+	// 向きの種類を返す
+	return m_rottype;
+}
+
+//=======================================
 // リストの取得処理
 //=======================================
 CListManager<CWall*> CWall::GetList(void)
@@ -200,7 +220,7 @@ CListManager<CWall*> CWall::GetList(void)
 //=======================================
 // 頂点の設定処理
 //=======================================
-void CWall::SetVertex(const ROTTYPE rottype)
+void CWall::SetVertex(void)
 {
 	CXFile::SXFile filedata = GetFileData();	// Xファイルデータ
 	D3DXVECTOR3 scale = GetScale();				// 拡大率
@@ -215,7 +235,7 @@ void CWall::SetVertex(const ROTTYPE rottype)
 	vtxMin.y = filedata.vtxMin.y * scale.y;
 	vtxMin.z = filedata.vtxMin.z * scale.z;
 
-	switch (rottype)
+	switch (m_rottype)
 	{
 	case CWall::ROTTYPE_FRONT:		// 前向き
 

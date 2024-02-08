@@ -36,6 +36,7 @@ public:			// 誰でもアクセスできる
 		TYPE_ROCK,			// 岩
 		TYPE_BLOCK,			// ブロック
 		TYPE_BANGFLOWER,	// 爆弾花
+		TYPE_WALL,			// 壁
 		TYPE_MAX			// この列挙型の総数
 	};
 
@@ -97,6 +98,15 @@ public:			// 誰でもアクセスできる
 		D3DXVECTOR3 rot;		// 向き
 	};
 
+	// 壁の情報
+	struct SWallInfo
+	{
+		D3DXVECTOR3 pos;		// 位置
+		D3DXVECTOR3 scale;		// 拡大率
+		int nType;				// 種類
+		int nRotType;			// 向きの種類
+	};
+
 	//************************************************************************************************************************************************
 	// 情報構造体
 	//************************************************************************************************************************************************
@@ -156,6 +166,14 @@ public:			// 誰でもアクセスできる
 		bool bSuccess;							// 成功状況
 	};
 
+	// 壁のファイル
+	struct SWallFile
+	{
+		SWallInfo aFile[MAX_FILE_DATA];			// 情報
+		int nNumData;							// 総数
+		bool bSuccess;							// 成功状況
+	};
+
 	CFile();					// コンストラクタ
 	~CFile();					// デストラクタ
 
@@ -176,6 +194,7 @@ public:			// 誰でもアクセスできる
 	void SetRock(void);			// 岩の設定処理
 	void SetBlock(void);		// ブロックの設定処理
 	void SetBangFlower(void);	// 爆弾花の設定処理
+	void SetWall(void);			// 壁の設定処理
 
 	// 静的メンバ関数
 	static CFile* Create(void);		// 生成処理
@@ -193,7 +212,8 @@ private:		// 自分のみアクセスできる
 	HRESULT LoadTree(void);			// 木のロード処理
 	HRESULT LoadRock(void);			// 岩のロード処理
 	HRESULT LoadBlock(void);		// ブロックのロード処理
-	HRESULT LoadBangFloawer(void);	// 爆弾花のロード処理
+	HRESULT LoadBangFlower(void);	// 爆弾花のロード処理
+	HRESULT LoadWall(void);			// 壁のロード処理
 
 	// メンバ変数
 	SRankingInfo m_RankingInfo;			// ランキングの情報
@@ -204,6 +224,7 @@ private:		// 自分のみアクセスできる
 	SRockFile m_RockFile;				// 岩の情報
 	SBlockFile m_BlockFile;				// ブロックの情報
 	SBangFlowerFile m_BangFlowerFile;	// 爆弾花の情報
+	SWallFile m_WallFile;				// 壁の情報
 
 	// 静的メンバ変数
 	static const char* c_apBooleanDisp[2];			// bool型の表示
