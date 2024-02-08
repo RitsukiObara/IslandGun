@@ -79,6 +79,7 @@ CCamera::CCamera()
 	m_vibrate.nSwingCount = 0;		// 揺れのカウント
 	m_vibrate.nSwingRange = 0;		// 揺れの範囲
 	m_vibrate.nFinishCount = 0;		// 終了カウント
+	m_vibrate.fCorrect = 0.0f;		// 補正係数
 	m_vibrate.bDown = false;		// 下状況
 }
 
@@ -485,6 +486,7 @@ void CCamera::Reset(void)
 	m_vibrate.nSwingCount = 0;		// 揺れのカウント
 	m_vibrate.nSwingRange = 0;		// 揺れの範囲
 	m_vibrate.nFinishCount = 0;		// 終了カウント
+	m_vibrate.fCorrect = 0.0f;		// 補正係数
 	m_vibrate.bDown = false;		// 下状況
 }
 
@@ -977,14 +979,14 @@ void CCamera::Vibrate(void)
 	}
 
 	// 注視点を補正
-	m_posR.x += (m_posRDest.x - m_posR.x) * 0.5f;
-	m_posR.y += (m_posRDest.y - m_posR.y) * 0.5f;
-	m_posR.z += (m_posRDest.z - m_posR.z) * 0.5f;
+	m_posR.x += (m_posRDest.x - m_posR.x) * m_vibrate.fCorrect;
+	m_posR.y += (m_posRDest.y - m_posR.y) * m_vibrate.fCorrect;
+	m_posR.z += (m_posRDest.z - m_posR.z) * m_vibrate.fCorrect;
 
 	// 視点を補正
-	m_posV.x += (m_posVDest.x - m_posV.x) * 0.5f;
-	m_posV.y += (m_posVDest.y - m_posV.y) * 0.5f;
-	m_posV.z += (m_posVDest.z - m_posV.z) * 0.5f;
+	m_posV.x += (m_posVDest.x - m_posV.x) * m_vibrate.fCorrect;
+	m_posV.y += (m_posVDest.y - m_posV.y) * m_vibrate.fCorrect;
+	m_posV.z += (m_posVDest.z - m_posV.z) * m_vibrate.fCorrect;
 
 	// 経過カウントを加算する
 	m_vibrate.nElapseCount++;

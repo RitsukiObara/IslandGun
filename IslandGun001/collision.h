@@ -58,7 +58,7 @@ namespace collision
 	void PalmFruitHit(CPlayer* pPlayer, const float fHeight);			// ヤシの木との当たり判定
 
 	// 岩との当たり判定
-	void RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight);		// 岩との当たり判定
+	bool RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight);		// 岩との当たり判定
 
 	// 爆弾花との当たり判定
 	bool BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);	// 爆弾花のヒット判定
@@ -66,6 +66,12 @@ namespace collision
 
 	// 壁との当たり判定
 	bool WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// 壁との当たり判定
+
+	// ブロックとの当たり判定
+	bool BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// ブロックとのヒット判定
+
+	// ボスとの当たり判定
+	void BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size);		// ボスの当たり判定
 	
 	// 汎用的な当たり判定
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定

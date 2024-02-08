@@ -118,6 +118,9 @@ void CEnemy::Update(void)
 	// ブロックとの当たり判定
 	BlockCollision();
 
+	// 壁との当たり判定
+	WallCollision();
+
 	// 敵同士の当たり判定
 	collision::EnemyHitToEnemy(this);
 
@@ -540,6 +543,23 @@ void CEnemy::BlockCollision(void)
 			nIdx++;
 		}
 	}
+
+	// 位置を適用する
+	SetPos(pos);
+}
+
+//===========================================
+// 壁との当たり判定
+//===========================================
+void CEnemy::WallCollision(void)
+{
+	D3DXVECTOR3 pos = GetPos();			// 位置
+	D3DXVECTOR3 posOld = GetPosOld();	// 前回の位置
+	D3DXVECTOR3 vtxMax = m_collSize;	// 最大値
+	D3DXVECTOR3 vtxMin = useful::VtxMinConv(m_collSize);	// 最小値
+
+	// 壁との当たり判定
+	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
 
 	// 位置を適用する
 	SetPos(pos);

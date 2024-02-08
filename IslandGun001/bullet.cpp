@@ -139,11 +139,8 @@ void CBullet::Update(void)
 		return;
 	}
 
-	// 敵と銃の当たり判定
-	if (collision::EnemyHitToGun(*this) == true ||
-		collision::BangFlowerHit(GetPos(), GetSize().x, GetSize().y) == true ||
-		collision::BombHit(GetPos(), GetSize().x) == true)
-	{ // 敵に当たった場合
+	if (Hit() == true)
+	{ // 何かに当たった場合
 
 		// 終了処理
 		Uninit();
@@ -277,4 +274,33 @@ CListManager<CBullet*> CBullet::GetList(void)
 {
 	// リストマネージャーを返す
 	return m_list;
+}
+
+//=========================
+// ヒット処理
+//=========================
+bool CBullet::Hit(void)
+{
+	D3DXVECTOR3 pos = GetPos();			// 位置
+	D3DXVECTOR3 posOld = GetPosOld();	// 前回の位置
+	D3DXVECTOR3 size = GetSize();		// サイズ
+	D3DXVECTOR3 vtxMax = D3DXVECTOR3(size.x, size.y, size.x);		// 頂点の最大値
+	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, -size.y, -size.x);	// 頂点の最小値
+
+	// 敵と銃の当たり判定
+	if (collision::EnemyHitToGun(*this) == true ||
+		collision::BangFlowerHit(pos, size.x, size.y) == true ||
+		collision::BombHit(pos, size.x) == true ||
+		collision::BlockHit(&pos, posOld, vtxMax, vtxMin) == true ||
+		collision::RockCollision(&pos, vtxMax.x, vtxMax.y) == true ||
+		collision::TreeCollision(&pos, vtxMax.x) == true ||
+		collision::WallCollision(&pos, posOld, vtxMax, vtxMin) == true)
+	{ // 敵に当たった場合
+
+		// true を返す
+		return true;
+	}
+
+	// false を返す
+	return false;
 }

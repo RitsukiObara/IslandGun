@@ -64,6 +64,7 @@ private:		// 自分だけアクセスできる
 	void Move(void);				// 移動処理
 	void Gravity(void);				// 重力処理
 	bool ElevationCollision(void);	// 起伏地面の当たり判定処理
+	void Collision(void);			// 当たり判定処理
 
 	// 各状態処理
 	void Growth(void);				// 成長状態処理

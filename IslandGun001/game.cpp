@@ -99,7 +99,7 @@ HRESULT CGame::Init(void)
 	CManager::Get()->GetFile()->Load(CFile::TYPE_WALL);
 
 	// マップの生成
-	//CManager::Get()->GetFile()->SetEnemy();
+	CManager::Get()->GetFile()->SetEnemy();
 	CManager::Get()->GetFile()->SetCoin();
 	CManager::Get()->GetFile()->SetGoldBone();
 	CManager::Get()->GetFile()->SetTree();
@@ -119,12 +119,6 @@ HRESULT CGame::Init(void)
 
 	// プレイヤーの生成処理
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 300.0f));
-
-	// 敵の生成処理
-	CEnemy::Create(D3DXVECTOR3(-4000.0f, 0.0f, 4000.0f), NONE_D3DXVECTOR3, CEnemy::TYPE_IWAKARI);
-
-	// ボスの生成処理
-	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント
@@ -209,6 +203,13 @@ void CGame::Update(void)
 	//	// この先の処理を行わない
 	//	return;
 	//}
+
+	if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_0) == true)
+	{ // 0キーを押した
+
+		// ボスの生成処理
+		CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
+	}
 
 	if (m_bPause == true)
 	{ // ポーズ状況が true の場合

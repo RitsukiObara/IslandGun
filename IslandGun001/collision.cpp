@@ -9,6 +9,8 @@
 //*******************************************
 #include "collision.h"
 #include "useful.h"
+#include "manager.h"
+#include "renderer.h"
 
 #include "shadowCircle.h"
 #include "objectElevation.h"
@@ -26,6 +28,9 @@
 #include "bang_flower.h"
 #include "bomb.h"
 #include "wall.h"
+#include "block.h"
+#include "boss.h"
+#include "Effect.h"
 
 //===============================
 // マクロ定義
@@ -675,13 +680,15 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fHeight)
 //===============================
 // 岩との当たり判定
 //===============================
-void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight)
+bool collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
 	float fRadiusRock = 0.0f;					// 岩の半径
 	float fTopRock = 0.0f;						// 岩の上の高さ
 	float fBottomRock = 0.0f;					// 岩の下の高さ
+	bool bCollision = false;					// 当たり判定状況
+
 	CListManager<CRock*> list = CRock::GetList();
 	CRock* pRock = nullptr;			// 先頭の値
 	CRock* pRockEnd = nullptr;		// 末尾の値
@@ -717,6 +724,9 @@ void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 
 				// 円柱の当たり判定
 				useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius);
+
+				// 当たり判定状況を true にする
+				bCollision = true;
 			}
 
 			if (pRock == pRockEnd)
@@ -733,6 +743,9 @@ void collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 			nIdx++;
 		}
 	}
+
+	// 当たり判定状況を返す
+	return bCollision;
 }
 
 //===============================
@@ -947,6 +960,173 @@ bool collision::WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const
 
 	// ヒット判定を返す
 	return bHit;
+}
+
+//===============================
+// ブロックとのヒット判定
+//===============================
+bool collision::BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posBlock = NONE_D3DXVECTOR3;		// 壁の位置
+	D3DXVECTOR3 posOldBlock = NONE_D3DXVECTOR3;		// 壁の前回の位置
+	D3DXVECTOR3 vtxMaxBlock = NONE_D3DXVECTOR3;		// 壁の最大値
+	D3DXVECTOR3 vtxMinBlock = NONE_D3DXVECTOR3;		// 壁の最小値
+
+	CListManager<CBlock*> list = CBlock::GetList();
+	CBlock* pBlock = nullptr;			// 先頭の値
+	CBlock* pBlockEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+	bool bHit = false;		// ヒット判定
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pBlock = list.GetTop();
+
+		// 末尾の値を取得する
+		pBlockEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 壁の頂点を取得する
+			vtxMaxBlock = pBlock->GetVtxMax();
+			vtxMinBlock = pBlock->GetVtxMin();
+
+			// 壁の位置を取得する
+			posBlock = pBlock->GetPos();
+			posOldBlock = pBlock->GetPosOld();
+
+			if (HexahedronCollision
+			(
+				pos,
+				posBlock,
+				posOld,
+				posOldBlock,
+				vtxMin,
+				vtxMinBlock,
+				vtxMax,
+				vtxMaxBlock
+			) == true)
+			{ // 壁に当たった場合
+
+				// ヒットした
+				bHit = true;
+			}
+
+			if (pBlock == pBlockEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBlock = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// ヒット判定を返す
+	return bHit;
+}
+
+//===============================
+// ボスの当たり判定
+//===============================
+void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posBoss = NONE_D3DXVECTOR3;
+	D3DXVECTOR3 posPart = NONE_D3DXVECTOR3;
+
+	CListManager<CBoss*> list = CBoss::GetList();
+	CBoss* pBoss = nullptr;			// 先頭の値
+	CBoss* pBossEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	//if (list.IsEmpty() == false)
+	//{ // 空白じゃない場合
+
+	//	// 先頭の値を取得する
+	//	pBoss = list.GetTop();
+
+	//	// 末尾の値を取得する
+	//	pBossEnd = list.GetEnd();
+
+	//	while (true)
+	//	{ // 無限ループ
+
+	//		// 変数を宣言
+	//		D3DXMATRIX   mtxScale, mtxRot, mtxTrans, mtx, mtxParent;	// 計算用マトリックス
+	//		LPDIRECT3DDEVICE9 pDevice = CManager::Get()->GetRenderer()->GetDevice();	// デバイスへのポインタ
+
+	//		// 壁の位置を取得する
+	//		posBoss = pBoss->GetPos();
+
+	//		for (int nCnt = 0; nCnt < pBoss->GetNumModel(); nCnt++)
+	//		{
+	//			// ワールドマトリックスの初期化
+	//			D3DXMatrixIdentity(&mtx);
+
+	//			// 拡大率を反映
+	//			D3DXMatrixScaling(&mtxScale, pBoss->GetHierarchy(nCnt)->GetScale().x, pBoss->GetHierarchy(nCnt)->GetScale().y, pBoss->GetHierarchy(nCnt)->GetScale().z);
+	//			D3DXMatrixMultiply(&mtx, &mtx, &mtxScale);
+
+	//			// 向きを反映
+	//			D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->GetHierarchy(nCnt)->GetRot().y, pBoss->GetHierarchy(nCnt)->GetRot().x, pBoss->GetHierarchy(nCnt)->GetRot().z);
+	//			D3DXMatrixMultiply(&mtx, &mtx, &mtxRot);
+
+	//			// 位置を反映
+	//			D3DXMatrixTranslation(&mtxTrans, pBoss->GetHierarchy(nCnt)->GetPos().x, pBoss->GetHierarchy(nCnt)->GetPos().y, pBoss->GetHierarchy(nCnt)->GetPos().z);
+	//			D3DXMatrixMultiply(&mtx, &mtx, &mtxTrans);
+
+	//			// パーツの「親のマトリックス」を設定
+	//			if (pBoss->GetHierarchy(nCnt)->GetParent() != nullptr)
+	//			{ // 親モデルがある場合
+
+	//				// 親モデルのインデックスを指定する
+	//				mtxParent = pBoss->GetHierarchy(nCnt)->GetParent()->GetMatrix();
+	//			}
+	//			else
+	//			{ // 親モデルがない場合
+
+	//				mtxParent = pBoss->GetMatrix();
+	//			}
+
+	//			// 算出した「パーツのワールドマトリックス」と「親のマトリックス」を掛け合わせる
+	//			D3DXMatrixMultiply
+	//			(
+	//				&mtx,
+	//				&mtx,
+	//				&mtxParent
+	//			);
+
+	//			posPart.x = mtx._41;
+	//			posPart.y = mtx._42;
+	//			posPart.z = mtx._43;
+
+	//			CEffect::Create(posPart, NONE_D3DXVECTOR3, 3, 80.0f, CEffect::TYPE_NONE, NONE_D3DXCOLOR, true, false);
+	//		}
+
+	//		if (pBoss == pBossEnd)
+	//		{ // 末尾に達した場合
+
+	//			// while文を抜け出す
+	//			break;
+	//		}
+
+	//		// 次のオブジェクトを代入する
+	//		pBoss = list.GetData(nIdx + 1);
+
+	//		// インデックスを加算する
+	//		nIdx++;
+	//	}
+	//}
 }
 
 /*

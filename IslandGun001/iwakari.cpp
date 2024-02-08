@@ -25,7 +25,7 @@ namespace
 {
 	const float SPEED = 3.0f;				// 移動量
 	const float MOVE_LENGTH = 900.0f;		// 追跡する距離
-	const float KNOCKBACK_HEIGHT = 6.0f;	// ノックバック値の高さ
+	const float KNOCKBACK_HEIGHT = 5.0f;	// ノックバック値の高さ
 	const D3DXVECTOR3 NONE_SHELL_COLLSIZE = D3DXVECTOR3(100.0f, 50.0f, 100.0f);		// 殻を剥がされた後の当たり判定のサイズ
 }
 

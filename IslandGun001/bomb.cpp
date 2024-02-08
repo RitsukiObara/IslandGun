@@ -11,6 +11,7 @@
 #include "manager.h"
 #include "bomb.h"
 #include "texture.h"
+#include "collision.h"
 #include "useful.h"
 
 #include "bomb_fuse.h"
@@ -148,6 +149,9 @@ void CBomb::Update(void)
 
 		// 重力処理
 		Gravity();
+
+		// 当たり判定
+		Collision();
 
 		// 起伏地面との当たり判定
 		ElevationCollision();
@@ -443,6 +447,26 @@ bool CBomb::ElevationCollision(void)
 
 	// false を返す
 	return false;
+}
+
+//=======================================
+// 当たり判定処理
+//=======================================
+void CBomb::Collision(void)
+{
+	D3DXVECTOR3 pos = GetPos();					// 位置
+	D3DXVECTOR3 posOld = GetPosOld();			// 前回の位置
+	D3DXVECTOR3 vtxMax = GetFileData().vtxMax;	// 最大値
+	D3DXVECTOR3 vtxMin = GetFileData().vtxMin;	// 最小値
+
+	// 当たり判定
+	collision::RockCollision(&pos, vtxMax.x, vtxMax.y);
+	collision::TreeCollision(&pos, vtxMax.x);
+	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
+	collision::BlockHit(&pos, posOld, vtxMax, vtxMin);
+
+	// 位置を適用する
+	SetPos(pos);
 }
 
 //=======================================

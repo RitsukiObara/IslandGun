@@ -853,6 +853,9 @@ void CPlayer::StateManager(void)
 			collision::EnemyHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
 		}
 
+		// ƒ{ƒX‚Æ‚Ì“–‚½‚è”»’è
+		collision::BossHit(GetPos(), COLLISION_SIZE);
+
 		break;
 
 	case CPlayer::STATE_DAMAGE:

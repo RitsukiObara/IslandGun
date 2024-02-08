@@ -26,6 +26,26 @@ namespace
 	const int HOWLING_CAMERA_COUNT = 63;		// —Y‚½‚¯‚ÑƒJƒƒ‰‚Ü‚Å‚ÌƒJƒEƒ“ƒg
 	const int VIBRATE_CAMERA_COUNT = 120;		// U“®ƒJƒƒ‰‚Ü‚Å‚ÌƒJƒEƒ“ƒg
 	const int NONESTATE_COUNT = 240;			// ’Êíó‘Ô‚Ü‚Å‚ÌƒJƒEƒ“ƒg
+	const CCamera::SVibrate LAND_VIB_INFO =		// ’…’nŽž‚ÌU“®î•ñ
+	{
+		CCamera::TYPE_BOSSCLOSER,	// ŽŸ‚ÌŽí—Þ
+		0,							// Œo‰ßƒJƒEƒ“ƒg
+		5,							// —h‚ê‚ÌƒJƒEƒ“ƒg
+		90,							// —h‚ê‚Ì”ÍˆÍ
+		50,							// I—¹ƒJƒEƒ“ƒg
+		0.3f,						// •â³ŒW”
+		false						// ‰ºó‹µ
+	};
+	const CCamera::SVibrate HOWLING_VIB_INFO =	// —Y‚½‚¯‚ÑŽž‚ÌU“®î•ñ
+	{
+		CCamera::TYPE_NONE,		// ŽŸ‚ÌŽí—Þ
+		0,						// Œo‰ßƒJƒEƒ“ƒg
+		3,						// —h‚ê‚ÌƒJƒEƒ“ƒg
+		400,					// —h‚ê‚Ì”ÍˆÍ
+		90,						// I—¹ƒJƒEƒ“ƒg
+		0.4f,					// •â³ŒW”
+		false					// ‰ºó‹µ
+	};
 }
 
 //==========================
@@ -87,17 +107,8 @@ void CBossHowlingState::Process(CBoss* pBoss)
 
 			{// U“®‚Ìî•ñ‚ðÝ’è‚·‚é
 
-				CCamera::SVibrate vib;
-
-				// U“®‚Ì—v‘f‚ðÝ’è
-				vib.nextType = CCamera::TYPE_NONE;
-				vib.nElapseCount = 0;
-				vib.nFinishCount = 90;
-				vib.nSwingCount = 3;
-				vib.nSwingRange = 400;
-
 				// U“®î•ñ‚ð“K—p‚·‚é
-				CManager::Get()->GetCamera()->SetVibrate(vib);
+				CManager::Get()->GetCamera()->SetVibrate(HOWLING_VIB_INFO);
 			}
 		}
 
@@ -131,16 +142,7 @@ void CBossHowlingState::SetData(CBoss* pBoss)
 
 	{// U“®‚Ìî•ñ‚ðÝ’è‚·‚é
 
-		CCamera::SVibrate vib;
-
-		// U“®‚Ì—v‘f‚ðÝ’è
-		vib.nextType = CCamera::TYPE_BOSSCLOSER;
-		vib.nElapseCount = 0;
-		vib.nFinishCount = 50;
-		vib.nSwingCount = 5;
-		vib.nSwingRange = 90;
-
 		// U“®î•ñ‚ð“K—p‚·‚é
-		CManager::Get()->GetCamera()->SetVibrate(vib);
+		CManager::Get()->GetCamera()->SetVibrate(LAND_VIB_INFO);
 	}
 }

@@ -37,6 +37,7 @@ public:			// 誰でもアクセス出来る
 		int nSwingCount;	// 揺れのカウント
 		int nSwingRange;	// 揺れの範囲
 		int nFinishCount;	// 終了カウント
+		float fCorrect;		// 補正係数
 		bool bDown;			// 下状況
 	};
 
