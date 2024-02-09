@@ -67,15 +67,15 @@ void CBossNoneState::Process(CBoss* pBoss)
 	// 起伏地面の当たり判定
 	pBoss->ElevationCollision();
 
-	//if (m_nCount >= STATECHANGE_COUNT)
-	//{ // 一定時間経過した場合
+	if (m_nCount >= STATECHANGE_COUNT)
+	{ // 一定時間経過した場合
 
-	//	// 飛行状態にする
-	//	pBoss->ChangeState(new CBossFlyState);
+		// 飛行状態にする
+		pBoss->ChangeState(new CBossFlyState);
 
-	//	// この先の処理を行わない
-	//	return;
-	//}
+		// この先の処理を行わない
+		return;
+	}
 }
 
 //==========================

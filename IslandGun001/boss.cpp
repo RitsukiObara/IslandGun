@@ -189,6 +189,13 @@ void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 //===========================================
 CBoss* CBoss::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 {
+	if (m_list.IsEmpty() == false)
+	{ // 空白状態の場合
+
+		// 生成しない(応急処置)
+		return nullptr;
+	}
+
 	// ボスのインスタンス
 	CBoss* pBoss = nullptr;
 
