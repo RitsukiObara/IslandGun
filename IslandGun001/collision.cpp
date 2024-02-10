@@ -825,11 +825,12 @@ bool collision::BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const
 //===============================
 // 爆弾のヒット判定
 //===============================
-bool collision::BombHit(const D3DXVECTOR3& pos, float fRadius)
+bool collision::BombHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const float fRadius)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posBomb = NONE_D3DXVECTOR3;		// 爆弾の位置
 	float fRadiusBomb = 0.0f;					// 爆弾の半径
+	float fRot = atan2f(pos.x - posOld.x, pos.z - posOld.z);	// 吹き飛ぶ向き
 
 	CListManager<CBomb*> list = CBomb::GetList();
 	CBomb* pBomb = nullptr;			// 先頭の値
@@ -859,13 +860,85 @@ bool collision::BombHit(const D3DXVECTOR3& pos, float fRadius)
 				// 爆弾の最大値を取得する
 				fRadiusBomb = pBomb->GetFileData().fRadius;
 
-				if (useful::CircleCollisionXY(pos,posBomb,fRadius,fRadiusBomb) == true &&
+				if (useful::CircleCollisionXY(pos, posBomb, fRadius, fRadiusBomb) == true &&
 					useful::CircleCollisionYZ(pos, posBomb, fRadius, fRadiusBomb) == true &&
 					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
 				{ // 範囲内にいた場合
 
 					// ヒット処理
-					pBomb->Hit(pos);
+					pBomb->Hit(fRot);
+
+					// ヒットした
+					bHit = true;
+				}
+			}
+
+			if (pBomb == pBombEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBomb = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// ヒット判定を返す
+	return bHit;
+}
+
+//===============================
+// 爆弾のヒット判定(ダガー)
+//===============================
+bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posBomb = NONE_D3DXVECTOR3;		// 爆弾の位置
+	float fRadiusBomb = 0.0f;	// 爆弾の半径
+	float fHeightBomb = 0.0f;	// 爆弾の高さ
+	float fRot = 0.0f;			// 吹き飛ぶ向き
+
+	CListManager<CBomb*> list = CBomb::GetList();
+	CBomb* pBomb = nullptr;			// 先頭の値
+	CBomb* pBombEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+	bool bHit = false;		// ヒット判定
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pBomb = list.GetTop();
+
+		// 末尾の値を取得する
+		pBombEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pBomb->GetState() == CBomb::STATE_DETONATION)
+			{ // 爆弾が起爆状態だった場合
+
+				// 爆弾関係の情報を取得する
+				posBomb = pBomb->GetPos();
+				fRadiusBomb = pBomb->GetFileData().fRadius;
+				fHeightBomb = pBomb->GetFileData().vtxMax.y;
+
+				if (pos.y + fHeight >= posBomb.y &&
+					pos.y <= posBomb.y + fHeightBomb &&
+					useful::CircleCollisionXZ(pos, posBomb, DAGGER_RADIUS, fRadiusBomb) == true)
+				{ // 範囲内にいた場合
+
+					// 向きを算出する
+					fRot = atan2f(posBomb.x - pos.x, posBomb.z - pos.z);
+
+					// ヒット処理
+					pBomb->Hit(fRot);
 
 					// ヒットした
 					bHit = true;

@@ -381,6 +381,9 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 
 		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
 		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
+
+		// ”š’e‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
+		collision::BombHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT);
 	}
 
 	if (m_nActionCount % DAGGER_COUNT == 0)

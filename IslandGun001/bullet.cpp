@@ -290,7 +290,7 @@ bool CBullet::Hit(void)
 	// ìGÇ∆èeÇÃìñÇΩÇËîªíË
 	if (collision::EnemyHitToGun(*this) == true ||
 		collision::BangFlowerHit(pos, size.x, size.y) == true ||
-		collision::BombHit(pos, size.x) == true ||
+		collision::BombHitToGun(pos, posOld, size.x) == true ||
 		collision::BlockHit(&pos, posOld, vtxMax, vtxMin) == true ||
 		collision::RockCollision(&pos, vtxMax.x, vtxMax.y) == true ||
 		collision::TreeCollision(&pos, vtxMax.x) == true ||

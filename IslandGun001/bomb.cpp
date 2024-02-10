@@ -220,15 +220,12 @@ void CBomb::Draw(void)
 //=====================================
 // ƒqƒbƒgˆ—
 //=====================================
-void CBomb::Hit(const D3DXVECTOR3& pos)
+void CBomb::Hit(const float rot)
 {
-	D3DXVECTOR3 posBomb = GetPos();		// ˆÊ’u‚ğæ“¾
-	float fRot = atan2f(posBomb.x - pos.x, posBomb.z - pos.z);		// Œü‚«
-
 	// ˆÚ“®—Ê‚ğİ’è‚·‚é
-	m_move.x = sinf(fRot) * SMASH_SPEED;
+	m_move.x = sinf(rot) * SMASH_SPEED;
 	m_move.y = SMASH_HEIGHT;
-	m_move.z = cosf(fRot) * SMASH_SPEED;
+	m_move.z = cosf(rot) * SMASH_SPEED;
 }
 
 //=====================================
