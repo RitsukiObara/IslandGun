@@ -26,24 +26,24 @@ namespace
 	const char* MODEL = "data\\MODEL\\BombBody.x";		// モデルの名前
 	const float GROWTH_SCALE_DEST = 1.0f;				// 成長時の目標の拡大率
 	const float GROWTH_SCALE_ADD = 0.01f;				// 成長時の追加の拡大率
-	const float GRAVITY = 0.5f;					// 重力
-	const float BOUND_GRAVITY_MAGNI = -0.7f;	// バウンドの重力の倍率
-	const int BOUND_COUNT = 3;					// バウンドの回数
-	const float ROT_DEST = 0.0f;				// 目的の向き
-	const float ROT_CORRECT = 0.1f;				// 向きの補正倍率
-	const float FUSE_EXPLOSION_POS_Y = 81.0f;	// 導火線の爆発する位置
-	const float EXPLO_SCALE_MAGNI = 0.003f;		// 爆発時の拡大率の倍率
-	const int EXPLO_COUNT = 240;				// 爆発状態のカウント
-	const float EXPLO_SCALE_MAX = 3.0f;			// 爆発時の拡大率の最大値
-	const float EXPLO_SCALE_MIN = 0.1f;			// 爆発時の拡大率の最小値
-	const D3DXCOLOR COL_ADD =					// 色の加算数
+	const float GRAVITY = 0.5f;							// 重力
+	const float BOUND_GRAVITY_MAGNI = -0.7f;			// バウンドの重力の倍率
+	const int BOUND_COUNT = 3;							// バウンドの回数
+	const float ROT_DEST = 0.0f;						// 目的の向き
+	const float ROT_CORRECT = 0.1f;						// 向きの補正倍率
+	const float FUSE_EXPLOSION_POS_Y = 81.0f;			// 導火線の爆発する位置
+	const float EXPLO_SCALE_MAGNI = 0.003f;				// 爆発時の拡大率の倍率
+	const int EXPLO_COUNT = 240;						// 爆発状態のカウント
+	const float EXPLO_SCALE_MAX = 3.0f;					// 爆発時の拡大率の最大値
+	const float EXPLO_SCALE_MIN = 0.1f;					// 爆発時の拡大率の最小値
+	const D3DXCOLOR COL_ADD =							// 色の加算数
 	{
 		0.834f / EXPLO_COUNT,
 		-0.166f / EXPLO_COUNT,
 		-0.166f / EXPLO_COUNT,
 		0.0f
 	};
-	const float SMASH_SPEED = 7.0f;				// 吹き飛ぶ速度
+	const float SMASH_SPEED = 13.0f;			// 吹き飛ぶ速度
 	const float SMASH_HEIGHT = 8.0f;			// 吹き飛ぶ高さ
 }
 
@@ -119,6 +119,9 @@ void CBomb::Uninit(void)
 //========================================
 void CBomb::Update(void)
 {
+	// 前回の位置を設定する
+	SetPosOld(GetPos());
+
 	switch (m_state)
 	{
 	case CBomb::STATE_GROWTH:		// 成長状態

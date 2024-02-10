@@ -14,6 +14,7 @@
 #include "useful.h"
 
 #include "mesh_tornado.h"
+#include "rock.h"
 
 //-------------------------------------------
 // 定数定義
@@ -142,6 +143,9 @@ void CBombExplosion::Update(void)
 		if (m_nStateCount >= DEATH_COUNT)
 		{ // 状態カウントが一定以上になった場合
 
+			// 岩の当たり判定
+			RockHit();
+
 			// 終了処理
 			Uninit();
 
@@ -205,6 +209,9 @@ void CBombExplosion::SetData(const D3DXVECTOR3& pos)
 	m_state = STATE_EXTEND;					// 状態
 	m_nStateCount = 0;						// 状態カウント
 	m_fAlpha = 1.0f;						// 透明度
+
+	// 岩の当たり判定
+	RockHit();
 }
 
 //=======================================
@@ -287,4 +294,77 @@ void CBombExplosion::AddScale(const float fAdd)
 	// 結果を適用
 	SetCircum(fCircum);
 	SetHeight(fHeight);
+}
+
+//=======================================
+// 岩の当たり判定
+//=======================================
+void CBombExplosion::RockHit(void)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 pos = GetPos();			// 位置を取得
+	float fRadius = GetCircum();		// 円周を取得
+	float fHeight = GetHeight();		// 高さを取得
+
+	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
+	float fRadiusRock = 0.0f;					// 岩の半径
+	float fTopRock = 0.0f;						// 岩の上の高さ
+	float fBottomRock = 0.0f;					// 岩の下の高さ
+
+	CListManager<CRock*> list = CRock::GetList();
+	CRock* pRock = nullptr;			// 先頭の値
+	CRock* pRockEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pRock = list.GetTop();
+
+		// 末尾の値を取得する
+		pRockEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pRock->GetType() == CRock::TYPE_BREAK)
+			{ // 破壊できる岩の場合
+
+				// 岩の位置を取得する
+				posRock = pRock->GetPos();
+
+				// 岩の半径を取得する
+				fRadiusRock = pRock->GetRadius();
+
+				// 岩の上の高さを取得する
+				fTopRock = pRock->GetTopHeight();
+
+				// 岩の下の高さを取得する
+				fBottomRock = pRock->GetBottomHeight();
+
+				if (pos.y <= posRock.y + fTopRock &&
+					pos.y + fHeight >= posRock.y + fBottomRock &&
+					useful::CircleCollisionXZ(pos, posRock, fRadius, fRadiusRock) == true)
+				{ // 範囲内にいた場合
+
+					// 破壊処理
+					pRock->Break();
+				}
+			}
+
+			if (pRock == pRockEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pRock = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
 }

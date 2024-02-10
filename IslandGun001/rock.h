@@ -23,8 +23,9 @@ public:			// 誰でもアクセスできる
 	// 列挙型定義(種類)
 	enum TYPE
 	{
-		TYPE_SOFT = 0,	// 柔らかい岩
-		TYPE_HARD,		// 硬い岩
+		TYPE_BROWN = 0,	// 茶色岩
+		TYPE_GRAY,		// 灰色岩
+		TYPE_BREAK,		// 壊れる岩
 		TYPE_MAX		// この列挙型の総数
 	};
 
@@ -41,6 +42,7 @@ public:			// 誰でもアクセスできる
 	void Break(void);				// 破壊処理
 
 	// セット・ゲット関係
+	TYPE GetType(void) const;			// 種類の取得処理
 	float GetRadius(void) const;		// 半径の取得処理
 	float GetTopHeight(void) const;		// 上の高さの取得処理
 	float GetBottomHeight(void) const;	// 下の高さの取得処理
@@ -54,7 +56,6 @@ private:		// 自分だけアクセスできる
 	
 	// メンバ変数
 	TYPE m_type;		// 種類
-	int m_nBreakLevel;	// 破壊レベル
 	float m_fRadius;	// 半径
 	float m_fTop;		// 上の高さ
 	float m_fBottom;	// 下の高さ

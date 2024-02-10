@@ -26,16 +26,15 @@ namespace
 		"data\\MODEL\\Platform\\FracGear.x",
 		"data\\MODEL\\Platform\\FracRing.x",
 		"data\\MODEL\\Platform\\FracWood.x",
+		"data\\MODEL\\Platform\\FracRock.x",
 	};
 	const float GRAVITY = 0.4f;			// 重力
-	const int RAND_MOVE_WIDTH = 3;		// XZ軸のランダムの移動量
-	const int RAND_MOVE_HEIGHT = 5;		// Y軸のランダムの移動量
+	const float BOUND_MAGNI = -0.7f;	// バウンドの倍率
 	const int MIN_MOVE_WIDTH = 3;		// XZ軸の最小限の移動量
 	const int MIN_MOVE_HEIGHT = 4;		// Y軸の最小限の移動量
 	const int RAND_ROT_MOVE = 30;		// 向きのランダムの移動量
 	const int MIN_ROT_MOVE = 12;		// 向きの最小限の移動量
 	const float SUB_ALPHA = 0.05f;		// 透明度の減算量
-	const int DELETE_COUNT = 80;		// 消去状態になるまでのカウント
 }
 
 //==============================
@@ -47,7 +46,7 @@ CFraction::CFraction() : CModel(CObject::TYPE_FRACTION, CObject::PRIORITY_ENTITY
 	m_move = NONE_D3DXVECTOR3;			// 移動量
 	m_rotMove = NONE_D3DXVECTOR3;		// 向きの移動量
 	m_state = STATE_NONE;				// 状態
-	m_nStateCount = 0;					// 状態カウント
+	m_nLife = 0;						// 寿命
 	m_fAlpha = 0.0f;					// 透明度
 }
 
@@ -71,13 +70,6 @@ HRESULT CFraction::Init(void)
 		return E_FAIL;
 	}
 
-	// 全ての値を初期化する
-	m_move = NONE_D3DXVECTOR3;			// 移動量
-	m_rotMove = NONE_D3DXVECTOR3;		// 向きの移動量
-	m_state = STATE_NONE;				// 状態
-	m_nStateCount = 0;					// 状態カウント
-	m_fAlpha = 0.0f;					// 透明度
-
 	// 値を返す
 	return S_OK;
 }
@@ -100,14 +92,14 @@ void CFraction::Update(void)
 	{
 	case STATE_NONE:		// 通常状態
 
-		// 状態カウントを加算する
-		m_nStateCount++;
+		// 寿命を減算する
+		m_nLife--;
 
-		if (m_nStateCount % DELETE_COUNT == 0)
+		if (m_nLife <= 0)
 		{ // 状態カウントが一定数になった場合
 
 			// 状態カウントを0にする
-			m_nStateCount = 0;
+			m_nLife = 0;
 
 			// 消去状態にする
 			m_state = STATE_DELETE;
@@ -183,7 +175,7 @@ void CFraction::Draw(void)
 //=====================================
 // 情報の設定処理
 //=====================================
-void CFraction::SetData(const D3DXVECTOR3& pos, const TYPE type)
+void CFraction::SetData(const D3DXVECTOR3& pos, const TYPE type, const int nLife, const int nMoveWidth, const int nMoveHeight)
 {
 	// 情報の設定処理
 	SetPos(pos);					// 位置
@@ -193,18 +185,18 @@ void CFraction::SetData(const D3DXVECTOR3& pos, const TYPE type)
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL[type]));		// モデル情報を設定する
 
 	// 移動量の設定処理
-	MoveSet();
+	MoveSet(nMoveWidth, nMoveHeight);
 
 	// 情報の設定処理
 	m_state = STATE_NONE;		// 状態
-	m_nStateCount = 0;			// 状態カウント
+	m_nLife = nLife;			// 寿命
 	m_fAlpha = 1.0f;			// 透明度
 }
 
 //=======================================
 // 生成処理
 //=======================================
-CFraction* CFraction::Create(const D3DXVECTOR3& pos, const TYPE type)
+CFraction* CFraction::Create(const D3DXVECTOR3& pos, const TYPE type, const int nLife, const int nMoveWidth, const int nMoveHeight)
 {
 	// ローカルオブジェクトを生成
 	CFraction* pFrac = nullptr;	// インスタンスを生成
@@ -240,7 +232,7 @@ CFraction* CFraction::Create(const D3DXVECTOR3& pos, const TYPE type)
 		}
 
 		// 情報の設定処理
-		pFrac->SetData(pos, type);
+		pFrac->SetData(pos, type, nLife, nMoveWidth, nMoveHeight);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -259,7 +251,7 @@ CFraction* CFraction::Create(const D3DXVECTOR3& pos, const TYPE type)
 //=======================================
 // 移動量の設定処理
 //=======================================
-void CFraction::MoveSet(void)
+void CFraction::MoveSet(const int nMoveWidth, const int nMoveHeight)
 {
 	// ローカル変数宣言
 	float m_fRot;			// 飛んでいく向き
@@ -268,9 +260,9 @@ void CFraction::MoveSet(void)
 	m_fRot = (float)((rand() % 629 - 314) * 0.01f);
 
 	// 全ての値を設定する
-	m_move.x = sinf(m_fRot) * (rand() % RAND_MOVE_WIDTH + MIN_MOVE_WIDTH);
-	m_move.y = (float)(rand() % RAND_MOVE_HEIGHT + MIN_MOVE_HEIGHT);
-	m_move.z = cosf(m_fRot) * (rand() % RAND_MOVE_WIDTH + MIN_MOVE_WIDTH);
+	m_move.x = sinf(m_fRot) * (rand() % nMoveWidth + MIN_MOVE_WIDTH);
+	m_move.y = (float)(rand() % nMoveHeight + MIN_MOVE_HEIGHT);
+	m_move.z = cosf(m_fRot) * (rand() % nMoveWidth + MIN_MOVE_WIDTH);
 
 	// 向きの移動量を設定する
 	m_rotMove.x = (rand() % RAND_ROT_MOVE - MIN_ROT_MOVE) * 0.01f;		// 向きの移動量
@@ -352,7 +344,7 @@ void CFraction::Elevation(void)
 				pos.y = fHeight;
 
 				// 重力を設定する
-				m_move.y *= -0.7f;
+				m_move.y *= BOUND_MAGNI;
 			}
 
 			if (pElev == pElevEnd)

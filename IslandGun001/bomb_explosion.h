@@ -52,6 +52,7 @@ private:			// 自分だけアクセスできる
 
 	// メンバ関数
 	void AddScale(const float fAdd);		// 拡大処理
+	void RockHit(void);						// 岩の当たり判定
 
 	// メンバ変数
 	CMeshTornado* m_pSmoke;		// 煙の情報
