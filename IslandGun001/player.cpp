@@ -851,10 +851,13 @@ void CPlayer::StateManager(void)
 
 			// 敵との当たり判定
 			collision::EnemyHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
-		}
 
-		// ボスとの当たり判定
-		collision::BossHit(GetPos(), COLLISION_SIZE);
+			// 爆風との当たり判定
+			collision::ExplosionHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
+
+			// ボスとの当たり判定
+			collision::BossHit(GetPos(), COLLISION_SIZE);
+		}
 
 		break;
 

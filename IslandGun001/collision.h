@@ -65,6 +65,11 @@ namespace collision
 	bool BombHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const float fRadius);	// 爆弾のヒット判定(銃弾)
 	bool BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight);		// 爆弾のヒット判定(ダガー)
 
+	// 爆風との当たり判定
+	void ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);		// 爆風と岩との当たり判定
+	void ExplosionHitToEnemy(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);		// 爆風と敵との当たり判定
+	bool ExplosionHitToPlayer(CPlayer* pPlayer, const float fRadius, const float fHeight);			// 爆風とプレイヤーとの当たり判定
+	
 	// 壁との当たり判定
 	bool WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// 壁との当たり判定
 

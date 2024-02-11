@@ -13,7 +13,7 @@
 #include "texture.h"
 #include "useful.h"
 
-#include "mesh_tornado.h"
+#include "collision.h"
 #include "rock.h"
 
 //-------------------------------------------
@@ -46,7 +46,6 @@ CListManager<CBombExplosion*> CBombExplosion::m_list = {};			// リスト
 CBombExplosion::CBombExplosion() : CMeshSphere(PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
-	m_pSmoke = nullptr;		// 煙の情報
 	m_state = STATE_EXTEND;	// 状態
 	m_nStateCount = 0;		// 状態カウント
 	m_fAlpha = 0.0f;		// 透明度
@@ -87,14 +86,6 @@ HRESULT CBombExplosion::Init(void)
 //========================================
 void CBombExplosion::Uninit(void)
 {
-	if (m_pSmoke != nullptr)
-	{ // 煙が NULL じゃない場合
-
-		// 終了処理
-		m_pSmoke->Uninit();
-		m_pSmoke = nullptr;
-	}
-
 	// 終了処理
 	CMeshSphere::Uninit();
 
@@ -144,7 +135,7 @@ void CBombExplosion::Update(void)
 		{ // 状態カウントが一定以上になった場合
 
 			// 岩の当たり判定
-			RockHit();
+			collision::ExplosionHitToRock(GetPos(), GetCircum(), GetHeight());
 
 			// 終了処理
 			Uninit();
@@ -165,6 +156,9 @@ void CBombExplosion::Update(void)
 
 	// 頂点座標の設定処理
 	SetVertex();
+
+	// 敵の当たり判定
+	collision::ExplosionHitToEnemy(GetPos(), GetCircum(), GetHeight());
 }
 
 //=====================================
@@ -174,13 +168,6 @@ void CBombExplosion::Draw(void)
 {
 	// 描画処理
 	CMeshSphere::Draw();
-
-	if (m_pSmoke != nullptr)
-	{ // 導火線が NULL じゃない場合
-
-		// 導火線の描画処理
-		m_pSmoke->Draw();
-	}
 }
 
 //=====================================
@@ -205,13 +192,12 @@ void CBombExplosion::SetData(const D3DXVECTOR3& pos)
 	SetCulling(true);		// カリング状況
 
 	// 全ての値を設定する
-	//m_pSmoke = CMeshTornado::Create()		// 煙の情報
 	m_state = STATE_EXTEND;					// 状態
 	m_nStateCount = 0;						// 状態カウント
 	m_fAlpha = 1.0f;						// 透明度
 
 	// 岩の当たり判定
-	RockHit();
+	collision::ExplosionHitToRock(GetPos(), GetCircum(), GetHeight());
 }
 
 //=======================================
@@ -294,77 +280,4 @@ void CBombExplosion::AddScale(const float fAdd)
 	// 結果を適用
 	SetCircum(fCircum);
 	SetHeight(fHeight);
-}
-
-//=======================================
-// 岩の当たり判定
-//=======================================
-void CBombExplosion::RockHit(void)
-{
-	// ローカル変数宣言
-	D3DXVECTOR3 pos = GetPos();			// 位置を取得
-	float fRadius = GetCircum();		// 円周を取得
-	float fHeight = GetHeight();		// 高さを取得
-
-	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
-	float fRadiusRock = 0.0f;					// 岩の半径
-	float fTopRock = 0.0f;						// 岩の上の高さ
-	float fBottomRock = 0.0f;					// 岩の下の高さ
-
-	CListManager<CRock*> list = CRock::GetList();
-	CRock* pRock = nullptr;			// 先頭の値
-	CRock* pRockEnd = nullptr;		// 末尾の値
-	int nIdx = 0;
-
-	if (list.IsEmpty() == false)
-	{ // 空白じゃない場合
-
-		// 先頭の値を取得する
-		pRock = list.GetTop();
-
-		// 末尾の値を取得する
-		pRockEnd = list.GetEnd();
-
-		while (true)
-		{ // 無限ループ
-
-			if (pRock->GetType() == CRock::TYPE_BREAK)
-			{ // 破壊できる岩の場合
-
-				// 岩の位置を取得する
-				posRock = pRock->GetPos();
-
-				// 岩の半径を取得する
-				fRadiusRock = pRock->GetRadius();
-
-				// 岩の上の高さを取得する
-				fTopRock = pRock->GetTopHeight();
-
-				// 岩の下の高さを取得する
-				fBottomRock = pRock->GetBottomHeight();
-
-				if (pos.y <= posRock.y + fTopRock &&
-					pos.y + fHeight >= posRock.y + fBottomRock &&
-					useful::CircleCollisionXZ(pos, posRock, fRadius, fRadiusRock) == true)
-				{ // 範囲内にいた場合
-
-					// 破壊処理
-					pRock->Break();
-				}
-			}
-
-			if (pRock == pRockEnd)
-			{ // 末尾に達した場合
-
-				// while文を抜け出す
-				break;
-			}
-
-			// 次のオブジェクトを代入する
-			pRock = list.GetData(nIdx + 1);
-
-			// インデックスを加算する
-			nIdx++;
-		}
-	}
 }

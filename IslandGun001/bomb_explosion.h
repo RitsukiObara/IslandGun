@@ -14,11 +14,6 @@
 #include "list_manager.h"
 
 //--------------------------------------------
-// 前方宣言
-//--------------------------------------------
-class CMeshTornado;		// メッシュトルネード
-
-//--------------------------------------------
 // クラス定義(爆発)
 //--------------------------------------------
 class CBombExplosion : public CMeshSphere
@@ -52,11 +47,8 @@ private:			// 自分だけアクセスできる
 
 	// メンバ関数
 	void AddScale(const float fAdd);		// 拡大処理
-	void RockHit(void);						// 岩の当たり判定
 
 	// メンバ変数
-	CMeshTornado* m_pSmoke;		// 煙の情報
-
 	STATE m_state;				// 状態
 	int m_nStateCount;			// 状態カウント
 	float m_fAlpha;				// 透明度

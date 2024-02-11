@@ -27,6 +27,7 @@
 #include "rock.h"
 #include "bang_flower.h"
 #include "bomb.h"
+#include "bomb_explosion.h"
 #include "wall.h"
 #include "block.h"
 #include "boss.h"
@@ -45,6 +46,8 @@ namespace
 	const float DAGGER_RADIUS = 180.0f;				// ダガーの半径
 	const int DAGGER_DAMAGE = 40;					// ダガーのダメージ
 	const float DAGGER_KNOCKBACK = 100.0f;			// ダガーのノックバック
+	const int EXPLOSION_DAMAGE = 30;				// 爆風のダメージ
+	const float EXPLOSION_KNOCKBACK = 150.0f;		// 爆風のノックバック
 
 	const int COIN_SCORE = 100;						// コインのスコア
 
@@ -965,6 +968,204 @@ bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight)
 
 	// ヒット判定を返す
 	return bHit;
+}
+
+//===============================
+// 爆風と敵との当たり判定
+//===============================
+void collision::ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
+	float fRadiusRock = 0.0f;					// 岩の半径
+	float fTopRock = 0.0f;						// 岩の上の高さ
+	float fBottomRock = 0.0f;					// 岩の下の高さ
+
+	CListManager<CRock*> list = CRock::GetList();
+	CRock* pRock = nullptr;			// 先頭の値
+	CRock* pRockEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pRock = list.GetTop();
+
+		// 末尾の値を取得する
+		pRockEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pRock->GetType() == CRock::TYPE_BREAK)
+			{ // 破壊できる岩の場合
+
+				// 岩の位置を取得する
+				posRock = pRock->GetPos();
+
+				// 岩の半径を取得する
+				fRadiusRock = pRock->GetRadius();
+
+				// 岩の上の高さを取得する
+				fTopRock = pRock->GetTopHeight();
+
+				// 岩の下の高さを取得する
+				fBottomRock = pRock->GetBottomHeight();
+
+				if (pos.y <= posRock.y + fTopRock &&
+					pos.y + fHeight >= posRock.y + fBottomRock &&
+					useful::CircleCollisionXZ(pos, posRock, fRadius, fRadiusRock) == true)
+				{ // 範囲内にいた場合
+
+					// 破壊処理
+					pRock->Break();
+				}
+			}
+
+			if (pRock == pRockEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pRock = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+}
+
+//===============================
+// 爆風と敵との当たり判定
+//===============================
+void collision::ExplosionHitToEnemy(const D3DXVECTOR3& pos, const float fRadius, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posEnemy = NONE_D3DXVECTOR3;	// 敵の位置
+	float fRadiusEnemy = 0.0f;					// 敵の半径
+	float fHeightEnemy = 0.0f;					// 敵の高さ
+
+	CListManager<CEnemy*> list = CEnemy::GetList();
+	CEnemy* pEnemy = nullptr;			// 先頭の値
+	CEnemy* pEnemyEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pEnemy = list.GetTop();
+
+		// 末尾の値を取得する
+		pEnemyEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pEnemy->GetState() == CEnemy::STATE_NONE)
+			{ // 通常状態の場合
+
+				// 敵関係の変数を取得する
+				posEnemy = pEnemy->GetPos();
+				fRadiusEnemy = pEnemy->GetCollSize().x;
+				fHeightEnemy = pEnemy->GetCollSize().y;
+
+				if (pos.y <= posEnemy.y + fHeightEnemy &&
+					pos.y + fHeight >= posEnemy.y &&
+					useful::CircleCollisionXZ(pos, posEnemy, fRadius, fRadiusEnemy) == true)
+				{ // 範囲内にいた場合
+
+					// 破壊処理
+					pEnemy->Hit(EXPLOSION_DAMAGE, EXPLOSION_KNOCKBACK);
+				}
+			}
+
+			if (pEnemy == pEnemyEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pEnemy = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+}
+
+//===============================
+// 爆風とプレイヤーとの当たり判定
+//===============================
+bool collision::ExplosionHitToPlayer(CPlayer* pPlayer, const float fRadius, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 pos = pPlayer->GetPos();	// プレイヤーの位置
+	D3DXVECTOR3 posExpl = NONE_D3DXVECTOR3;	// 爆風の位置
+	float fRadiusExpl = 0.0f;				// 爆風の半径
+	float fHeightExpl = 0.0f;				// 爆風の高さ
+	float fRotSmash = 0.0f;					// 吹き飛ぶ方向
+
+	CListManager<CBombExplosion*> list = CBombExplosion::GetList();
+	CBombExplosion* pBombExplosion = nullptr;			// 先頭の値
+	CBombExplosion* pBombExplosionEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pBombExplosion = list.GetTop();
+
+		// 末尾の値を取得する
+		pBombExplosionEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 爆発関係の変数を取得する
+			posExpl = pBombExplosion->GetPos();
+			fRadiusExpl = pBombExplosion->GetCircum();
+			fHeightExpl = pBombExplosion->GetHeight();
+
+			if (pos.y <= posExpl.y + fHeightExpl &&
+				pos.y + fHeight >= posExpl.y - fHeightExpl &&
+				useful::CircleCollisionXZ(pos, posExpl, fRadius, fRadiusExpl) == true)
+			{ // 範囲内にいた場合
+
+				// 吹き飛ぶ向きを算出する
+				fRotSmash = atan2f(pos.x - posExpl.x, pos.z - posExpl.z);
+
+				// プレイヤーのヒット処理
+				pPlayer->Hit(EXPLOSION_DAMAGE, fRotSmash);
+
+				// true を返す
+				return true;
+			}
+
+			if (pBombExplosion == pBombExplosionEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBombExplosion = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
 }
 
 //===============================
