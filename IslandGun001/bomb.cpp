@@ -43,8 +43,8 @@ namespace
 		-0.166f / EXPLO_COUNT,
 		0.0f
 	};
-	const float SMASH_SPEED = 13.0f;			// 吹き飛ぶ速度
 	const float SMASH_HEIGHT = 8.0f;			// 吹き飛ぶ高さ
+	const float SMASH_FUSE_SUB_MABNI = 0.1f;	// 吹き飛び時の導火線の減算量
 }
 
 //-------------------------------------------
@@ -220,12 +220,21 @@ void CBomb::Draw(void)
 //=====================================
 // ヒット処理
 //=====================================
-void CBomb::Hit(const float rot)
+void CBomb::Hit(const float fRot, const float fSpeed)
 {
 	// 移動量を設定する
-	m_move.x = sinf(rot) * SMASH_SPEED;
+	m_move.x = sinf(fRot) * fSpeed;
 	m_move.y = SMASH_HEIGHT;
-	m_move.z = cosf(rot) * SMASH_SPEED;
+	m_move.z = cosf(fRot) * fSpeed;
+
+	// 位置を取得する
+	D3DXVECTOR3 pos = m_pFuse->GetPos();
+
+	// 位置を下げる
+	pos.y -= fSpeed * SMASH_FUSE_SUB_MABNI;
+
+	// 位置を適用する
+	m_pFuse->SetPos(pos);
 }
 
 //=====================================

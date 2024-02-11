@@ -45,7 +45,7 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void Hit(const float rot);		// ヒット処理
+	void Hit(const float fRot, const float fSpeed);		// ヒット処理
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);				// 情報の設定処理
 
 	// セット・ゲット関係

@@ -37,16 +37,19 @@
 //===============================
 namespace
 {
-	const float COLLISION_ADD_DIFF_LENGTH = 0.01f;			// ‹Í‚©‚ÈŒë·‚ð–„‚ß‚é‚½‚ß‚Ìƒ}ƒNƒ’è‹`(“Ë‚Á‚©‚©‚è–hŽ~)
-	const float TREE_RADIUS[CTree::TYPE_MAX] =				// –Ø‚Ì“–‚½‚è”»’èŽž‚Ì”¼Œa
+	const float COLLISION_ADD_DIFF_LENGTH = 0.01f;	// ‹Í‚©‚ÈŒë·‚ð–„‚ß‚é‚½‚ß‚Ìƒ}ƒNƒ’è‹`(“Ë‚Á‚©‚©‚è–hŽ~)
+	const float TREE_RADIUS[CTree::TYPE_MAX] =		// –Ø‚Ì“–‚½‚è”»’èŽž‚Ì”¼Œa
 	{
 		50.5f,		// –Ø‚Ì”¼Œa
 	};
-	const float DAGGER_RADIUS = 180.0f;						// ƒ_ƒK[‚Ì”¼Œa
-	const int DAGGER_DAMAGE = 40;							// ƒ_ƒK[‚Ìƒ_ƒ[ƒW
-	const float DAGGER_KNOCKBACK = 100.0f;					// ƒ_ƒK[‚ÌƒmƒbƒNƒoƒbƒN
+	const float DAGGER_RADIUS = 180.0f;				// ƒ_ƒK[‚Ì”¼Œa
+	const int DAGGER_DAMAGE = 40;					// ƒ_ƒK[‚Ìƒ_ƒ[ƒW
+	const float DAGGER_KNOCKBACK = 100.0f;			// ƒ_ƒK[‚ÌƒmƒbƒNƒoƒbƒN
 
-	const int COIN_SCORE = 100;								// ƒRƒCƒ“‚ÌƒXƒRƒA
+	const int COIN_SCORE = 100;						// ƒRƒCƒ“‚ÌƒXƒRƒA
+
+	const float BOMB_BULLET_SMASH = 10.0f;			// e’e‚Å”š’e‚Ì‚«”ò‚Ô‘¬“x
+	const float BOMB_DAGGER_SMASH = 23.0f;			// ƒ_ƒK[‚Å”š’e‚Ì‚«”ò‚Ô‘¬“x
 }
 
 //===============================
@@ -866,7 +869,7 @@ bool collision::BombHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, 
 				{ // ”ÍˆÍ“à‚É‚¢‚½ê‡
 
 					// ƒqƒbƒgˆ—
-					pBomb->Hit(fRot);
+					pBomb->Hit(fRot, BOMB_BULLET_SMASH);
 
 					// ƒqƒbƒg‚µ‚½
 					bHit = true;
@@ -938,7 +941,7 @@ bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight)
 					fRot = atan2f(posBomb.x - pos.x, posBomb.z - pos.z);
 
 					// ƒqƒbƒgˆ—
-					pBomb->Hit(fRot);
+					pBomb->Hit(fRot, BOMB_DAGGER_SMASH);
 
 					// ƒqƒbƒg‚µ‚½
 					bHit = true;
