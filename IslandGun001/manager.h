@@ -47,7 +47,6 @@ public:						// 誰でもアクセスできる
 	void Draw(void);							// 描画処理
 
 	HRESULT TexLoad(void);						// テクスチャの読み込み処理
-	void TexUnload(void);						// テクスチャの破棄処理
 
 	// セット・ゲット関係
 	CRenderer* GetRenderer(void);			// レンダラーの取得処理

@@ -16,6 +16,7 @@
 #include "player.h"
 
 #include "boss_flystate.h"
+#include "boss_windstate.h"
 
 //----------------------------------------------------------------------------------------------------------------
 // 無名名前空間
@@ -70,8 +71,8 @@ void CBossNoneState::Process(CBoss* pBoss)
 	if (m_nCount >= STATECHANGE_COUNT)
 	{ // 一定時間経過した場合
 
-		// 飛行状態にする
-		pBoss->ChangeState(new CBossFlyState);
+		// 状態の選択処理
+		StateSelect(pBoss);
 
 		// この先の処理を行わない
 		return;
@@ -89,4 +90,35 @@ void CBossNoneState::SetData(CBoss* pBoss)
 
 	// 待機モーションを設定する
 	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_NEUTRAL);
+}
+
+//==========================
+// 状態の選択処理
+//==========================
+void CBossNoneState::StateSelect(CBoss* pBoss)
+{
+	// プレイヤーを取得する
+	CPlayer* pPlayer = CGame::GetPlayer();
+
+	if (pPlayer != nullptr)
+	{ // プレイヤーが NULL じゃない場合
+
+		// 位置を取得する
+		D3DXVECTOR3 posPlayer = pPlayer->GetPos();
+		D3DXVECTOR3 posBoss = pBoss->GetPos();
+		float fLength = sqrtf((posPlayer.x - posBoss.x) * (posPlayer.x - posBoss.x) + (posPlayer.z - posBoss.z) * (posPlayer.z - posBoss.z));
+
+		if (fLength <= 2000.0f)
+		{ // 長さが近い場合
+
+			// かまいたち状態にする
+			pBoss->ChangeState(new CBossWindState);
+		}
+		else
+		{ // 上記以外
+
+			// 飛行状態にする
+			pBoss->ChangeState(new CBossFlyState);
+		}
+	}
 }

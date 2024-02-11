@@ -276,6 +276,7 @@
     <ClCompile Include="tutorial.cpp" />
     <ClCompile Include="useful.cpp" />
     <ClCompile Include="wall.cpp" />
+    <ClCompile Include="wind_shot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aim.h" />
@@ -398,6 +399,7 @@
     <ClInclude Include="tutorial.h" />
     <ClInclude Include="useful.h" />
     <ClInclude Include="wall.h" />
+    <ClInclude Include="wind_shot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

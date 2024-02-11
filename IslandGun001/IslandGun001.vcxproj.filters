@@ -435,6 +435,9 @@
     <ClCompile Include="wall.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
+    <ClCompile Include="wind_shot.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -796,6 +799,9 @@
     </ClInclude>
     <ClInclude Include="wall.h">
       <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="wind_shot.h">
+      <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

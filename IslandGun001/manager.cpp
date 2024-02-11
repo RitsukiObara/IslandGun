@@ -255,9 +255,6 @@ void CManager::Uninit(void)
 		m_pSound->Stop();
 	}
 
-	// テクスチャの破棄処理
-	TexUnload();
-
 	if (m_pRenderer != nullptr)
 	{ // レンダラーが NULL じゃない場合
 
@@ -361,6 +358,9 @@ void CManager::Uninit(void)
 		m_pScene->Uninit();
 		m_pScene = nullptr;
 	}
+
+	// 全てのオブジェクトの破棄処理
+	CObject::ReleaseAll();
 
 	// マネージャーのメモリを解放する
 	delete m_pManager;
@@ -488,15 +488,6 @@ HRESULT CManager::TexLoad(void)
 
 	// 成功を返す
 	return S_OK;
-}
-
-//======================================
-// テクスチャの破棄処理
-//======================================
-void CManager::TexUnload(void)
-{
-	// 全てのオブジェクトの破棄処理
-	CObject::ReleaseAll();
 }
 
 //======================================

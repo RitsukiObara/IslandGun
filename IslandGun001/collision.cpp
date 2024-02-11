@@ -1342,7 +1342,24 @@ void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 
 	//		// 変数を宣言
 	//		D3DXMATRIX   mtxScale, mtxRot, mtxTrans, mtx, mtxParent;	// 計算用マトリックス
-	//		LPDIRECT3DDEVICE9 pDevice = CManager::Get()->GetRenderer()->GetDevice();	// デバイスへのポインタ
+	//		D3DXMATRIX mtxWorld = pBoss->GetMatrix();					// マトリックスを取得する
+	//		D3DXCOLOR effectcol = NONE_D3DXCOLOR;
+	//		float effectsize = 0.0f;
+
+	//		// ワールドマトリックスの初期化
+	//		D3DXMatrixIdentity(&mtxWorld);
+
+	//		// 拡大率を反映
+	//		D3DXMatrixScaling(&mtxScale, pBoss->GetScale().x, pBoss->GetScale().y, pBoss->GetScale().z);
+	//		D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
+
+	//		// 向きを反映
+	//		D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->GetRot().y + D3DX_PI, pBoss->GetRot().x, pBoss->GetRot().z);
+	//		D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
+
+	//		// 位置を反映
+	//		D3DXMatrixTranslation(&mtxTrans, pBoss->GetPos().x, pBoss->GetPos().y, pBoss->GetPos().z);
+	//		D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
 	//		// 壁の位置を取得する
 	//		posBoss = pBoss->GetPos();
@@ -1370,11 +1387,17 @@ void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 
 	//				// 親モデルのインデックスを指定する
 	//				mtxParent = pBoss->GetHierarchy(nCnt)->GetParent()->GetMatrix();
+
+	//				effectcol = NONE_D3DXCOLOR;
+	//				effectsize = 80.0f;
 	//			}
 	//			else
 	//			{ // 親モデルがない場合
 
-	//				mtxParent = pBoss->GetMatrix();
+	//				mtxParent = mtxWorld;
+
+	//				effectcol = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+	//				effectsize = 200.0f;
 	//			}
 
 	//			// 算出した「パーツのワールドマトリックス」と「親のマトリックス」を掛け合わせる
@@ -1389,7 +1412,7 @@ void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 	//			posPart.y = mtx._42;
 	//			posPart.z = mtx._43;
 
-	//			CEffect::Create(posPart, NONE_D3DXVECTOR3, 3, 80.0f, CEffect::TYPE_NONE, NONE_D3DXCOLOR, true, false);
+	//			CEffect::Create(posPart, NONE_D3DXVECTOR3, 3, effectsize, CEffect::TYPE_NONE, effectcol, true, false);
 	//		}
 
 	//		if (pBoss == pBossEnd)

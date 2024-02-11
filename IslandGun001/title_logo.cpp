@@ -16,8 +16,8 @@
 //--------------------------------------------
 namespace
 {
-	const D3DXVECTOR3 LOGO_SIZE = D3DXVECTOR3(400.0f, 100.0f, 0.0f);
-	const char* TEXTURE = "data/TEXTURE/KariTitle.png";
+	const D3DXVECTOR3 LOGO_SIZE = D3DXVECTOR3(600.0f, 200.0f, 0.0f);
+	const char* TEXTURE = "data/TEXTURE/TitleLogo.png";
 }
 
 //============================

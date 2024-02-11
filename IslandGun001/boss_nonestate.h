@@ -24,6 +24,9 @@ public:
 
 private:
 
+	// メンバ関数
+	void StateSelect(CBoss* pBoss);				// 状態の選択処理
+
 	// メンバ変数
 	int m_nCount;		// 経過カウント
 	float m_fGravity;	// 重力
