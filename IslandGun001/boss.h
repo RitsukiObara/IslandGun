@@ -35,6 +35,7 @@ public:					// 誰でもアクセスできる
 		MOTIONTYPE_LANDING,			// 着地モーション
 		MOTIONTYPE_HOWLING,			// 雄たけびモーション
 		MOTIONTYPE_FLYING,			// 飛行モーション
+		MOTIONTYPE_CHARGE,			// チャージモーション
 		MOTIONTYPE_MAX				// この列挙型の総数
 	};
 
@@ -47,6 +48,7 @@ public:					// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
+	void Hit(void);					// ヒット処理
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 情報の設定処理
 	bool ElevationCollision(void);			// 起伏地面との当たり判定
 	void ChangeState(CBossState* pNext);	// 状態の遷移処理

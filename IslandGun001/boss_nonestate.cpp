@@ -23,8 +23,9 @@
 //----------------------------------------------------------------------------------------------------------------
 namespace
 {
-	const int STATECHANGE_COUNT = 90;		// 状態が変化するカウント数
-	const float GRAVITY = 0.1f;				// 重力
+	const int STATECHANGE_COUNT = 90;			// 状態が変化するカウント数
+	const float GRAVITY = 0.1f;					// 重力
+	const float WIND_STATE_LENGTH = 5000.0f;	// 風攻撃状態になる距離
 }
 
 //==========================
@@ -108,7 +109,7 @@ void CBossNoneState::StateSelect(CBoss* pBoss)
 		D3DXVECTOR3 posBoss = pBoss->GetPos();
 		float fLength = sqrtf((posPlayer.x - posBoss.x) * (posPlayer.x - posBoss.x) + (posPlayer.z - posBoss.z) * (posPlayer.z - posBoss.z));
 
-		if (fLength <= 2000.0f)
+		if (fLength <= WIND_STATE_LENGTH)
 		{ // 長さが近い場合
 
 			// かまいたち状態にする

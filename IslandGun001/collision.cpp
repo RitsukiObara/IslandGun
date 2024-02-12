@@ -31,7 +31,6 @@
 #include "wall.h"
 #include "block.h"
 #include "boss.h"
-#include "Effect.h"
 
 //===============================
 // マクロ定義
@@ -1328,107 +1327,84 @@ void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 	CBoss* pBossEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
 
-	//if (list.IsEmpty() == false)
-	//{ // 空白じゃない場合
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
 
-	//	// 先頭の値を取得する
-	//	pBoss = list.GetTop();
+		// 先頭の値を取得する
+		pBoss = list.GetTop();
 
-	//	// 末尾の値を取得する
-	//	pBossEnd = list.GetEnd();
+		// 末尾の値を取得する
+		pBossEnd = list.GetEnd();
 
-	//	while (true)
-	//	{ // 無限ループ
+		while (true)
+		{ // 無限ループ
 
-	//		// 変数を宣言
-	//		D3DXMATRIX   mtxScale, mtxRot, mtxTrans, mtx, mtxParent;	// 計算用マトリックス
-	//		D3DXMATRIX mtxWorld = pBoss->GetMatrix();					// マトリックスを取得する
-	//		D3DXCOLOR effectcol = NONE_D3DXCOLOR;
-	//		float effectsize = 0.0f;
+			// 変数を宣言
+			D3DXMATRIX   mtxScale, mtxRot, mtxTrans, mtx;	// 計算用マトリックス
+			D3DXMATRIX mtxWorld = pBoss->GetMatrix();		// マトリックスを取得する
 
-	//		// ワールドマトリックスの初期化
-	//		D3DXMatrixIdentity(&mtxWorld);
+			// ワールドマトリックスの初期化
+			D3DXMatrixIdentity(&mtxWorld);
 
-	//		// 拡大率を反映
-	//		D3DXMatrixScaling(&mtxScale, pBoss->GetScale().x, pBoss->GetScale().y, pBoss->GetScale().z);
-	//		D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
+			// 拡大率を反映
+			D3DXMatrixScaling(&mtxScale, pBoss->GetScale().x, pBoss->GetScale().y, pBoss->GetScale().z);
+			D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
 
-	//		// 向きを反映
-	//		D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->GetRot().y + D3DX_PI, pBoss->GetRot().x, pBoss->GetRot().z);
-	//		D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
+			// 向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->GetRot().y + D3DX_PI, pBoss->GetRot().x, pBoss->GetRot().z);
+			D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
 
-	//		// 位置を反映
-	//		D3DXMatrixTranslation(&mtxTrans, pBoss->GetPos().x, pBoss->GetPos().y, pBoss->GetPos().z);
-	//		D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
+			// 位置を反映
+			D3DXMatrixTranslation(&mtxTrans, pBoss->GetPos().x, pBoss->GetPos().y, pBoss->GetPos().z);
+			D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
-	//		// 壁の位置を取得する
-	//		posBoss = pBoss->GetPos();
+			// ボスの位置を取得する
+			posBoss = pBoss->GetPos();
 
-	//		for (int nCnt = 0; nCnt < pBoss->GetNumModel(); nCnt++)
-	//		{
-	//			// ワールドマトリックスの初期化
-	//			D3DXMatrixIdentity(&mtx);
+			for (int nCnt = 0; nCnt < pBoss->GetNumModel(); nCnt++)
+			{
+				// マトリックスの計算処理
+				pBoss->GetHierarchy(nCnt)->MatrixCalc(&mtx, mtxWorld);
 
-	//			// 拡大率を反映
-	//			D3DXMatrixScaling(&mtxScale, pBoss->GetHierarchy(nCnt)->GetScale().x, pBoss->GetHierarchy(nCnt)->GetScale().y, pBoss->GetHierarchy(nCnt)->GetScale().z);
-	//			D3DXMatrixMultiply(&mtx, &mtx, &mtxScale);
+				// 位置を設定する
+				posPart.x = mtx._41;
+				posPart.y = mtx._42;
+				posPart.z = mtx._43;
 
-	//			// 向きを反映
-	//			D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->GetHierarchy(nCnt)->GetRot().y, pBoss->GetHierarchy(nCnt)->GetRot().x, pBoss->GetHierarchy(nCnt)->GetRot().z);
-	//			D3DXMatrixMultiply(&mtx, &mtx, &mtxRot);
+				// 半径を算出する
+				D3DXVECTOR3 Radius = (pBoss->GetHierarchy(nCnt)->GetFileData().vtxMax + pBoss->GetHierarchy(nCnt)->GetFileData().vtxMin) * 0.5f;
+				float fRadius = (Radius.x + Radius.y + Radius.z) * 0.3f;
 
-	//			// 位置を反映
-	//			D3DXMatrixTranslation(&mtxTrans, pBoss->GetHierarchy(nCnt)->GetPos().x, pBoss->GetHierarchy(nCnt)->GetPos().y, pBoss->GetHierarchy(nCnt)->GetPos().z);
-	//			D3DXMatrixMultiply(&mtx, &mtx, &mtxTrans);
+				// 位置を中心にする
+				posPart += Radius;
 
-	//			// パーツの「親のマトリックス」を設定
-	//			if (pBoss->GetHierarchy(nCnt)->GetParent() != nullptr)
-	//			{ // 親モデルがある場合
+				if (useful::CircleCollisionXY(pos, posPart, size.y, fRadius) == true &&
+					useful::CircleCollisionYZ(pos, posPart, size.y, fRadius) == true &&
+					useful::CircleCollisionXZ(pos, posPart, size.y, fRadius) == true)
+				{ // 当たり判定に当たった場合
 
-	//				// 親モデルのインデックスを指定する
-	//				mtxParent = pBoss->GetHierarchy(nCnt)->GetParent()->GetMatrix();
+					// ヒット処理
+					pBoss->Hit();
 
-	//				effectcol = NONE_D3DXCOLOR;
-	//				effectsize = 80.0f;
-	//			}
-	//			else
-	//			{ // 親モデルがない場合
+					// この先の処理を行わない
+					return;
+				}
+			}
 
-	//				mtxParent = mtxWorld;
+			if (pBoss == pBossEnd)
+			{ // 末尾に達した場合
 
-	//				effectcol = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
-	//				effectsize = 200.0f;
-	//			}
+				// while文を抜け出す
+				break;
+			}
 
-	//			// 算出した「パーツのワールドマトリックス」と「親のマトリックス」を掛け合わせる
-	//			D3DXMatrixMultiply
-	//			(
-	//				&mtx,
-	//				&mtx,
-	//				&mtxParent
-	//			);
+			// 次のオブジェクトを代入する
+			pBoss = list.GetData(nIdx + 1);
 
-	//			posPart.x = mtx._41;
-	//			posPart.y = mtx._42;
-	//			posPart.z = mtx._43;
-
-	//			CEffect::Create(posPart, NONE_D3DXVECTOR3, 3, effectsize, CEffect::TYPE_NONE, effectcol, true, false);
-	//		}
-
-	//		if (pBoss == pBossEnd)
-	//		{ // 末尾に達した場合
-
-	//			// while文を抜け出す
-	//			break;
-	//		}
-
-	//		// 次のオブジェクトを代入する
-	//		pBoss = list.GetData(nIdx + 1);
-
-	//		// インデックスを加算する
-	//		nIdx++;
-	//	}
-	//}
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
 }
 
 /*

@@ -158,6 +158,15 @@ void CBoss::Draw(void)
 }
 
 //================================
+// ƒqƒbƒgˆ—
+//================================
+void CBoss::Hit(void)
+{
+	// ’â~
+	assert(false);
+}
+
+//================================
 // î•ñ‚Ìİ’èˆ—
 //================================
 void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)

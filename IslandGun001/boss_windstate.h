@@ -11,7 +11,14 @@
 //***********************************
 #include "boss_state.h"
 
+//-----------------------------------
+// 前方宣言
+//-----------------------------------
+class CWindShot;			// 風攻撃
+
+//-----------------------------------
 // クラス定義(ボスのかまいたち状態クラス)
+//-----------------------------------
 class CBossWindState : public CBossState
 {
 public:
@@ -19,9 +26,8 @@ public:
 	// 行動状況
 	enum ACTION
 	{
-		ACTION_MOVE = 0,	// 移動行動
-		ACTION_POSITION,	// 位置につく行動
-		ACTION_WIND,		// かまいたち行動
+		ACTION_CHARGE = 0,	// チャージ行動
+		ACTION_WIND,		// 風発生行動
 		ACTION_MAX			// この列挙型の総数
 	};
 
@@ -34,16 +40,12 @@ public:
 private:
 
 	// メンバ関数
-	void Chase(CBoss* pBoss);		// 追跡処理
-	void Move(CBoss* pBoss);		// 移動処理
-	void Position(CBoss* pBoss);	// 定位置到着処理
-	void Wind(CBoss* pBoss);		// 風処理
+	void Chase(CBoss* pBoss);			// 追跡処理
 
 	// メンバ変数
-	D3DXVECTOR3 m_move;		// 移動量
-	D3DXVECTOR3 m_rotDest;	// 目的の向き
-	ACTION m_action;		// 行動状況
-	int m_nCount;			// 経過カウント
+	CWindShot* m_pWindShot;		// 風攻撃の情報
+	ACTION m_action;			// 行動状況
+	int m_nCount;				// 経過カウント
 };
 
 #endif

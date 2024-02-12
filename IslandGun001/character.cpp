@@ -462,6 +462,52 @@ void CHierarchy::Draw(float fAlpha)
 }
 
 //========================
+// マトリックスの計算処理
+//========================
+void CHierarchy::MatrixCalc(D3DXMATRIX* pMtx, const D3DXMATRIX& mtxWorld)
+{
+	// 変数を宣言
+	D3DXMATRIX   mtxScale, mtxRot, mtxTrans, mtxParent;	// 計算用マトリックス
+
+	// マトリックスの初期化
+	D3DXMatrixIdentity(pMtx);
+
+	// 拡大率を反映
+	D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
+	D3DXMatrixMultiply(pMtx, pMtx, &mtxScale);
+
+	// 向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
+	D3DXMatrixMultiply(pMtx, pMtx, &mtxRot);
+
+	// 位置を反映
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
+	D3DXMatrixMultiply(pMtx, pMtx, &mtxTrans);
+
+	// パーツの「親のマトリックス」を設定
+	if (m_apParent != nullptr)
+	{ // 親モデルがある場合
+
+		// 親モデルのマトリックスを代入する
+		mtxParent = m_apParent->m_mtxWorld;
+	}
+	else
+	{ // 親モデルがない場合
+
+		// 本体のマトリックスを代入する
+		mtxParent = mtxWorld;
+	}
+
+	// 算出した「パーツのワールドマトリックス」と「親のマトリックス」を掛け合わせる
+	D3DXMatrixMultiply
+	(
+		pMtx,
+		pMtx,
+		&mtxParent
+	);
+}
+
+//========================
 // Xファイルのデータの取得処理
 //========================
 CXFile::SXFile CHierarchy::GetFileData(void)

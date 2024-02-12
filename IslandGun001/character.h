@@ -34,6 +34,8 @@ public:			// 誰でもアクセスできる
 	void DrawShadow(void);		// モデル影の描画処理
 	void Draw(float fAlpha);	// 描画処理(透明度処理)
 
+	void MatrixCalc(D3DXMATRIX* pMtx, const D3DXMATRIX& mtxWorld);		// マトリックスの計算処理
+
 	// セット・ゲット関数
 	void SetPos(const D3DXVECTOR3& pos);	// 位置設定処理
 	D3DXVECTOR3 GetPos(void) const;			// 位置取得処理

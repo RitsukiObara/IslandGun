@@ -29,7 +29,8 @@ public:		// 誰でもアクセスできる
 	virtual void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const float fWidth, const float fHeight, const int nVortex, const float fShift, const float fCircum, const SGrid& Divi);			// 情報の設定処理
-	void SetVertex(void);	// 頂点の設定処理
+	void SetVertexAll(void);	// 全ての頂点の設定処理
+	void SetVertex(void);		// 頂点の設定処理
 
 	// セット・ゲット関係
 	void SetWidth(const float fWidth);		// 幅の設定処理

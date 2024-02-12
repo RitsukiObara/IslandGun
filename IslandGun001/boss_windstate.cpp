@@ -14,20 +14,18 @@
 
 #include "game.h"
 #include "player.h"
+#include "wind_shot.h"
+
+#include "boss_nonestate.h"
 
 //----------------------------------------------------------------------------------------------------------------
 // 無名名前空間
 //----------------------------------------------------------------------------------------------------------------
 namespace
 {
-	const float CHASE_CORRECT = 0.2f;			// 追跡の補正数
-	const float MOVE_ROT = D3DX_PI * 0.5f;		// 移動状態の向き
-	const float MOVE_DEST_Y = 200.0f;			// 目的の移動量
-	const float MOVE_POS_CORRECT = 0.05f;		// 移動状況の位置の補正量
-	const float MOVE_ROT_CORRECT = 0.1f;		// 移動状況の向きの補正量
-	const float MOVE_CHANGE_POS_Y = 10000.0f;	// 位置に着く状態になる高さ
-	const D3DXVECTOR3 POSITION_POS = D3DXVECTOR3(0.0f, 500.0f, 8000.0f);		// 定位置
-	const int POSITION_COUNT = 40;				// 定位置に移動するまでのカウント
+	const float CHASE_CORRECT = 0.01f;			// 追跡の補正数
+	const int WIND_CREATE_COUNT = 180;			// 風が出るまでのカウント数
+	const int FINISH_COUNT = 450;				// 終了カウント
 }
 
 //==========================
@@ -36,9 +34,8 @@ namespace
 CBossWindState::CBossWindState()
 {
 	// 全ての値をクリアする
-	m_move = NONE_D3DXVECTOR3;		// 移動量
-	m_rotDest = NONE_D3DXVECTOR3;	// 目的の向き
-	m_action = ACTION_MOVE;			// 行動状況
+	m_pWindShot = nullptr;			// 風攻撃の情報
+	m_action = ACTION_CHARGE;		// 行動状況
 	m_nCount = 0;					// 経過カウント
 }
 
@@ -47,7 +44,12 @@ CBossWindState::CBossWindState()
 //==========================
 CBossWindState::~CBossWindState()
 {
+	if (m_pWindShot != nullptr)
+	{ // 風攻撃が NULL じゃない場合
 
+		// 風攻撃を NULL にする
+		m_pWindShot = nullptr;
+	}
 }
 
 //==========================
@@ -57,17 +59,29 @@ void CBossWindState::Process(CBoss* pBoss)
 {
 	switch (m_action)
 	{
-	case CBossWindState::ACTION_MOVE:
+	case CBossWindState::ACTION_CHARGE:
 
-		// 移動処理
-		Move(pBoss);
+		// 経過カウントを加算する
+		m_nCount++;
 
-		break;
+		if (m_nCount % WIND_CREATE_COUNT == 0)
+		{ // 一定カウントを経過した場合
 
-	case CBossWindState::ACTION_POSITION:
+			// 経過カウントを初期化する
+			m_nCount = 0;
 
-		// 定位置到着処理
-		Position(pBoss);
+			// 風発生状態にする
+			m_action = ACTION_WIND;
+
+			D3DXVECTOR3 pos = pBoss->GetPos();
+
+			if (m_pWindShot == nullptr)
+			{ // 風攻撃の情報が NULL じゃない場合
+
+				// 風を生成する
+				m_pWindShot = CWindShot::Create(pos);
+			}
+		}
 
 		break;
 
@@ -76,8 +90,21 @@ void CBossWindState::Process(CBoss* pBoss)
 		// 追跡処理
 		Chase(pBoss);
 
-		// かまいたち処理
-		Wind(pBoss);
+		// カウントを加算する
+		m_nCount++;
+
+		if (m_nCount >= FINISH_COUNT)
+		{ // 一定カウント経過した場合
+
+			// 消去状態にする
+			m_pWindShot->SetState(CWindShot::STATE_DELETE);
+
+			// 通常状態にする
+			pBoss->ChangeState(new CBossNoneState);
+
+			// この先の処理を行わない
+			return;
+		}
 
 		break;
 
@@ -96,10 +123,7 @@ void CBossWindState::Process(CBoss* pBoss)
 void CBossWindState::SetData(CBoss* pBoss)
 {
 	// 飛行モーションにする
-	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_FLY);
-
-	// 目的の向きを設定する
-	m_rotDest.x = MOVE_ROT;
+	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_CHARGE);
 }
 
 //==========================
@@ -125,113 +149,4 @@ void CBossWindState::Chase(CBoss* pBoss)
 		// 向きを適用する
 		pBoss->SetRot(rotBoss);
 	}
-}
-
-//==========================
-// 移動処理
-//==========================
-void CBossWindState::Move(CBoss* pBoss)
-{
-	// 位置と向きを取得
-	D3DXVECTOR3 pos = pBoss->GetPos();
-	D3DXVECTOR3 rot = pBoss->GetRot();
-
-	// 移動量をどんどん早くしていく
-	useful::Correct(MOVE_DEST_Y, &m_move.y, MOVE_POS_CORRECT);
-
-	// 移動する
-	pos.y += m_move.y;
-
-	if (pos.y >= MOVE_CHANGE_POS_Y)
-	{ // 一定の高さまで上がった場合
-
-		// ベクトルを算出する
-		D3DXVECTOR3 vec = POSITION_POS - pos;
-
-		// 位置を補正する
-		pos.y = MOVE_CHANGE_POS_Y;
-
-		// 位置に着く状態にする
-		m_action = ACTION_POSITION;
-
-		// 移動量を設定する
-		m_move.x = vec.x / POSITION_COUNT;
-		m_move.y = vec.y / POSITION_COUNT;
-		m_move.z = vec.z / POSITION_COUNT;
-
-		// ベクトルの正規化(向きの設定の為)
-		D3DXVec3Normalize(&vec, &vec);
-
-		// 目的の向きを設定する
-		m_rotDest.x = vec.y * D3DX_PI;
-		m_rotDest.y = atan2f(vec.x, vec.z);
-		m_rotDest.z = 0.0f;
-	}
-
-	// 向きの補正処理
-	useful::RotCorrect(m_rotDest.x, &rot.x, MOVE_ROT_CORRECT);
-
-	// 位置と向きを適用する
-	pBoss->SetPos(pos);
-	pBoss->SetRot(rot);
-}
-
-//==========================
-// 定位置到着処理
-//==========================
-void CBossWindState::Position(CBoss* pBoss)
-{
-	// 経過カウントを加算する
-	m_nCount++;
-
-	// 位置と向きを取得
-	D3DXVECTOR3 pos = pBoss->GetPos();
-	D3DXVECTOR3 rot = pBoss->GetRot();
-
-	// 移動する
-	pos += m_move;
-
-	// 向きの補正処理
-	useful::RotCorrect(m_rotDest.x, &rot.x, MOVE_ROT_CORRECT);
-	useful::RotCorrect(m_rotDest.y, &rot.y, MOVE_ROT_CORRECT);
-	useful::RotCorrect(m_rotDest.z, &rot.z, MOVE_ROT_CORRECT);
-
-	if (m_nCount >= POSITION_COUNT)
-	{ // 経過カウントが一定数になった場合
-
-		// 経過カウントをリセットする
-		m_nCount = 0;
-
-		// かまいたち行動にする
-		m_action = ACTION_WIND;
-
-		// 位置を定位置にする
-		pos = POSITION_POS;
-
-		// 目的の向きを設定する
-		m_rotDest = NONE_D3DXVECTOR3;
-	}
-
-	// 位置と向きを適用する
-	pBoss->SetPos(pos);
-	pBoss->SetRot(rot);
-}
-
-//==========================
-// 風処理
-//==========================
-void CBossWindState::Wind(CBoss* pBoss)
-{
-	// 経過カウントを加算する
-	m_nCount++;
-
-	// 向きを取得
-	D3DXVECTOR3 rot = pBoss->GetRot();
-
-	// 向きの補正処理
-	useful::RotCorrect(m_rotDest.x, &rot.x, MOVE_ROT_CORRECT);
-	useful::RotCorrect(m_rotDest.z, &rot.z, MOVE_ROT_CORRECT);
-
-	// 向きを適用する
-	pBoss->SetRot(rot);
 }

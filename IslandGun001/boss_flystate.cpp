@@ -15,6 +15,7 @@
 #include "ripple.h"
 #include "game.h"
 #include "player.h"
+
 #include "boss_nonestate.h"
 
 //----------------------------------------------------------------------------------------------------------------
@@ -23,8 +24,8 @@
 namespace
 {
 	const int FLYMOTION_COUNT = 50;		// 飛行モーションになるカウント数
-	const int MOVE_COUNT = 100;			// 動くカウント数
-	const int NONESTATE_COUNT = 135;	// 通常状態に戻るカウント数
+	const int MOVE_COUNT = 115;			// 動くまでのカウント数
+	const int NONESTATE_COUNT = 150;	// 通常状態に戻るカウント数
 	const float ROT_CORRECT = 0.08f;	// 向きの補正係数
 	const float STANDBY_MOVE_Y = 1.0f;	// スタンバイ時のY軸の移動量
 	const float MOVE_CORRECT = 0.1f;	// 移動の補正係数

@@ -854,9 +854,6 @@ void CPlayer::StateManager(void)
 
 			// ”š•—‚Æ‚Ì“–‚½‚è”»’è
 			collision::ExplosionHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
-
-			// ƒ{ƒX‚Æ‚Ì“–‚½‚è”»’è
-			collision::BossHit(GetPos(), COLLISION_SIZE);
 		}
 
 		break;

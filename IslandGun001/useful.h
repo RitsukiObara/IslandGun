@@ -39,7 +39,7 @@ namespace useful
 	bool FrameCorrect(const float fDest, float *fTarget, const float fCorrect);		// 均等な数値の補正
 	float QuadraticCurve(const float fPos, const float fStart, const float fEnd, const float fHeight);		// 二次曲線処理
 	void Parabola(const float fVelo, const float fAdd, const int nCount, float* pGravity, float* pHeight);	// 放物線処理
-	D3DXVECTOR3 VtxMinConv(const D3DXVECTOR3& size);		// キャラクターの頂点の最小値変換処理 
+	D3DXVECTOR3 VtxMinConv(const D3DXVECTOR3& size);		// キャラクターの頂点の最小値変換処理
 }
 
 #endif

@@ -46,7 +46,7 @@ HRESULT CMeshTornado::Init(void)
 	}
 
 	// 頂点情報の設定処理
-	SetVertex();
+	SetVertexAll();
 
 	// インデックスの設定処理
 	SetIndex(GetVtx().nHeight, GetVtx().nWidth);
@@ -111,11 +111,11 @@ void CMeshTornado::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const
 }
 
 //================================
-// 頂点の設定処理
+// 全ての頂点の設定処理
 //================================
-void CMeshTornado::SetVertex(void)
+void CMeshTornado::SetVertexAll(void)
 {
-	VERTEX_3D *pVtx;									// 頂点情報へのポインタ
+	VERTEX_3D* pVtx;									// 頂点情報へのポインタ
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuff = GetVtxBuff();	// 頂点バッファ
 	SGrid Divi = GetDivi();			// 分割数
 	SGrid vtx = GetVtx();			// 頂点数
@@ -161,6 +161,60 @@ void CMeshTornado::SetVertex(void)
 
 					// テクスチャ座標の設定
 					pVtx[nCount].tex = D3DXVECTOR2(((nCntHei * Divi.nWidth) + nCntCir) * (1.0f / (float)(Divi.nWidth)), nCntWid * (1.0f / (float)(Divi.nHeight)));
+
+					// カウントを加算する
+					nCount++;
+				}
+			}
+		}
+
+		// 頂点バッファをアンロックする
+		pVtxBuff->Unlock();
+	}
+}
+
+//================================
+// 頂点の設定処理
+//================================
+void CMeshTornado::SetVertex(void)
+{
+	VERTEX_3D* pVtx;									// 頂点情報へのポインタ
+	LPDIRECT3DVERTEXBUFFER9 pVtxBuff = GetVtxBuff();	// 頂点バッファ
+	SGrid Divi = GetDivi();			// 分割数
+	SGrid vtx = GetVtx();			// 頂点数
+	float fAngle;					// 向き
+	float fLength;					// 長さ
+	float fHeight;					// 高さ
+	int nCount = 0;					// カウント
+
+	if (pVtxBuff != nullptr)
+	{ // 頂点バッファのポインタが NULL じゃない場合
+
+		// 頂点バッファをロックし、頂点情報へのポインタを取得
+		pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+		for (int nCntWid = 0; nCntWid < vtx.nHeight; nCntWid++)
+		{
+			for (int nCntHei = 0; nCntHei < m_nVortex; nCntHei++)
+			{
+				fLength = ((m_fWidth / Divi.nHeight) * (Divi.nHeight - nCntWid)) + (m_fShift * nCntHei) + m_fCircum;
+
+				for (int nCntCir = 0; nCntCir < Divi.nWidth; nCntCir++)
+				{
+					fHeight = (nCntHei * m_fHeight) + ((m_fHeight / Divi.nWidth) * nCntCir);
+
+					fAngle = ((D3DX_PI * 2) / Divi.nWidth) * nCntCir;
+
+					// 向きを正規化する
+					useful::RotNormalize(&fAngle);
+
+					// 頂点座標の設定
+					pVtx[nCount].pos = D3DXVECTOR3
+					( // 引数
+						sinf(fAngle) * fLength,		// X座標
+						fHeight,					// Y座標
+						cosf(fAngle) * fLength		// Z座標
+					);
 
 					// カウントを加算する
 					nCount++;
