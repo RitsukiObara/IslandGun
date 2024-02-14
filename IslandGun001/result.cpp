@@ -13,10 +13,12 @@
 #include "input.h"
 #include "fade.h"
 #include "Objectmesh.h"
+#include "game.h"
 
 #include "file.h"
 #include "camera.h"
 #include "skybox.h"
+#include "result_score.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -51,6 +53,18 @@ HRESULT CResult::Init(void)
 
 	// テキスト読み込み処理
 	CMesh::TxtSet();
+
+	{
+		// リザルトスコアを生成
+		CResultScore* pScore = CResultScore::Create();
+
+		if (pScore != nullptr)
+		{ // スコアが NULL じゃない場合
+
+			// スコアを設定する
+			pScore->SetScore(CGame::GetScore());
+		}
+	}
 
 	// 成功を返す
 	return S_OK;

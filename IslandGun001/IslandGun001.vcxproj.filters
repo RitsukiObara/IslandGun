@@ -453,6 +453,9 @@
     <ClCompile Include="result_score.cpp">
       <Filter>scene\result</Filter>
     </ClCompile>
+    <ClCompile Include="boss_collision.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -832,6 +835,9 @@
     </ClInclude>
     <ClInclude Include="result_score.h">
       <Filter>scene\result</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_collision.h">
+      <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

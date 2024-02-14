@@ -167,6 +167,7 @@
     <ClCompile Include="boss.cpp" />
     <ClCompile Include="boss_appearstate.cpp" />
     <ClCompile Include="boss_chargestate.cpp" />
+    <ClCompile Include="boss_collision.cpp" />
     <ClCompile Include="boss_firestate.cpp" />
     <ClCompile Include="boss_flystate.cpp" />
     <ClCompile Include="boss_howlingstate.cpp" />
@@ -297,6 +298,7 @@
     <ClInclude Include="boss.h" />
     <ClInclude Include="boss_appearstate.h" />
     <ClInclude Include="boss_chargestate.h" />
+    <ClInclude Include="boss_collision.h" />
     <ClInclude Include="boss_flystate.h" />
     <ClInclude Include="boss_howlingstate.h" />
     <ClInclude Include="boss_lifeUI.h" />
