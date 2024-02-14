@@ -17,7 +17,6 @@
 #include "file.h"
 #include "camera.h"
 #include "skybox.h"
-#include "Kari_ResultLogo.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -52,9 +51,6 @@ HRESULT CResult::Init(void)
 
 	// テキスト読み込み処理
 	CMesh::TxtSet();
-
-	// リザルトロゴを生成
-	CResultLogo::Create();
 
 	// 成功を返す
 	return S_OK;

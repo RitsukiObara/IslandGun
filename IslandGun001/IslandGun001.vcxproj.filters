@@ -384,9 +384,6 @@
     <ClCompile Include="title_logo.cpp">
       <Filter>scene\title</Filter>
     </ClCompile>
-    <ClCompile Include="Kari_ResultLogo.cpp">
-      <Filter>scene\result</Filter>
-    </ClCompile>
     <ClCompile Include="ocean.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
@@ -452,6 +449,9 @@
     </ClCompile>
     <ClCompile Include="fire_shot.cpp">
       <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="result_score.cpp">
+      <Filter>scene\result</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -764,9 +764,6 @@
     <ClInclude Include="title_logo.h">
       <Filter>scene\title</Filter>
     </ClInclude>
-    <ClInclude Include="Kari_ResultLogo.h">
-      <Filter>scene\result</Filter>
-    </ClInclude>
     <ClInclude Include="ocean.h">
       <Filter>gimmick\Map</Filter>
     </ClInclude>
@@ -832,6 +829,9 @@
     </ClInclude>
     <ClInclude Include="fire_shot.h">
       <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="result_score.h">
+      <Filter>scene\result</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

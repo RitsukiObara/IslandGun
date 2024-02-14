@@ -34,6 +34,7 @@
 #include "slash_ripple.h"
 #include "wind_shot.h"
 #include "fire_shot.h"
+#include "game.h"
 
 //===============================
 // マクロ定義
@@ -177,11 +178,11 @@ void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size)
 					// 取得処理
 					pCoin->Hit();
 
-					if (pPlayer->GetGameScore() != nullptr)
+					if (CGame::GetGameScore() != nullptr)
 					{ // ゲームスコアが NULL じゃない場合
 
 						// コイン分のスコアを加算する
-						pPlayer->GetGameScore()->SetScore(pPlayer->GetGameScore()->GetScore() + COIN_SCORE);
+						CGame::GetGameScore()->SetScore(CGame::GetGameScore()->GetScore() + COIN_SCORE);
 					}
 				}
 			}

@@ -29,7 +29,6 @@ class CBulletUI;			// 弾丸UI
 class CGoldBoneUI;			// 金の骨UI
 class CLifeUI;				// 寿命UI
 class CPlayerController;	// プレイヤーコントローラー
-class CGameScore;			// ゲームスコア
 
 //--------------------------------------------
 // クラス(プレイヤークラス)
@@ -88,7 +87,6 @@ public:			// 誰でもアクセスできる
 	CBulletUI* GetBulletUI(void) const;				// 残弾UIの情報の取得処理
 	CGoldBoneUI* GetGoldBoneUI(void) const;			// 金の骨UIの情報の取得処理
 	CLifeUI* GetLifeUI(void) const;					// 寿命UIの情報の取得処理
-	CGameScore* GetGameScore(void) const;			// ゲームスコアの情報の取得処理
 
 	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
@@ -127,7 +125,6 @@ private:		// 自分だけアクセスできる
 	CGoldBoneUI* m_pGoldBoneUI;			// 金の骨UIの情報
 	CLifeUI* m_pLifeUI;					// 寿命UIの情報
 	CPlayerController* m_pController;	// プレイヤーのコントローラーの情報
-	CGameScore* m_pGameScore;			// ゲームスコアの情報
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 	D3DXVECTOR3 m_move;			// 移動量

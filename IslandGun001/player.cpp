@@ -84,7 +84,6 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_pGoldBoneUI = nullptr;				// 金の骨のUIの情報
 	m_pLifeUI = nullptr;					// 寿命UIの情報
 	m_pController = nullptr;				// プレイヤーのコントローラーの情報
-	m_pGameScore = nullptr;					// ゲームスコアの情報
 
 	m_stateInfo.state = STATE_NONE;			// 状態
 	m_stateInfo.nCount = 0;					// 状態カウント
@@ -214,19 +213,6 @@ HRESULT CPlayer::Init(void)
 	}
 	else
 	{ // ポインタが NULL じゃない場合
-
-		// 停止
-		assert(false);
-	}
-
-	if (m_pGameScore == nullptr)
-	{ // ゲームスコアの情報が NULL の場合
-
-		// ゲームスコアの生成
-		m_pGameScore = CGameScore::Create();
-	}
-	else
-	{ // 上記以外
 
 		// 停止
 		assert(false);
@@ -623,15 +609,6 @@ CLifeUI* CPlayer::GetLifeUI(void) const
 {
 	// 寿命UIの情報を返す
 	return m_pLifeUI;
-}
-
-//=======================================
-// ゲームスコアの情報の取得処理
-//=======================================
-CGameScore* CPlayer::GetGameScore(void) const
-{
-	// ゲームスコアの情報を返す
-	return m_pGameScore;
 }
 
 //=======================================

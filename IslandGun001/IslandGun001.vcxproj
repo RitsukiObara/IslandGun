@@ -206,7 +206,6 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="iwakari.cpp" />
     <ClCompile Include="iwakari_shell.cpp" />
-    <ClCompile Include="Kari_ResultLogo.cpp" />
     <ClCompile Include="lake.cpp" />
     <ClCompile Include="lifeUI.cpp" />
     <ClCompile Include="light.cpp" />
@@ -260,6 +259,7 @@
     <ClCompile Include="ranking.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
+    <ClCompile Include="result_score.cpp" />
     <ClCompile Include="ripple.cpp" />
     <ClCompile Include="rock.cpp" />
     <ClCompile Include="scene.cpp" />
@@ -335,7 +335,6 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="iwakari.h" />
     <ClInclude Include="iwakari_shell.h" />
-    <ClInclude Include="Kari_ResultLogo.h" />
     <ClInclude Include="lake.h" />
     <ClInclude Include="lifeUI.h" />
     <ClInclude Include="light.h" />
@@ -387,6 +386,7 @@
     <ClInclude Include="ranking.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="result_score.h" />
     <ClInclude Include="ripple.h" />
     <ClInclude Include="rock.h" />
     <ClInclude Include="scene.h" />
