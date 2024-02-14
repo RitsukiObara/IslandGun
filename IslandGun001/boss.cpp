@@ -15,6 +15,7 @@
 
 #include "motion.h"
 #include "boss_appearstate.h"
+#include "boss_lifeUI.h"
 #include "objectElevation.h"
 
 //------------------------------------------------------------
@@ -23,6 +24,7 @@
 namespace
 {
 	const float LAND_GRAVITY = -50.0f;		// 着地時の重力
+	const int MAX_LIFE = 3000;				// 体力の最大数
 }
 
 // 静的メンバ変数
@@ -36,6 +38,8 @@ CBoss::CBoss() : CCharacter(CObject::TYPE_BOSS, CObject::PRIORITY_ENTITY)
 	// 全ての値をクリアする
 	m_pMotion = nullptr;			// モーション
 	m_pState = nullptr;				// 状態の情報
+	m_pLifeUI = nullptr;			// 体力UIの情報
+	m_nLife = MAX_LIFE;				// 体力
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -125,6 +129,13 @@ void CBoss::Uninit(void)
 		m_pState = nullptr;
 	}
 
+	if (m_pLifeUI != nullptr)
+	{ // 体力UIが NULL じゃない場合
+
+		// 体力UIを NULL にする
+		m_pLifeUI = nullptr;
+	}
+
 	// 終了処理
 	CCharacter::Uninit();
 
@@ -144,8 +155,12 @@ void CBoss::Update(void)
 		m_pState->Process(this);
 	}
 
-	// モーションの更新処理
-	m_pMotion->Update();
+	if (m_pMotion != nullptr)
+	{ // モーションが NULL じゃない場合
+
+		// モーションの更新処理
+		m_pMotion->Update();
+	}
 }
 
 //================================
@@ -191,6 +206,10 @@ void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 
 	// 状態の切り替え処理
 	ChangeState(new CBossAppearState);
+
+	// 全ての値を設定する
+	m_pLifeUI = CBossLifeUI::Create(MAX_LIFE);		// 体力UI
+	m_nLife = MAX_LIFE;		// 体力
 }
 
 //===========================================

@@ -18,6 +18,7 @@
 //-----------------------------------
 class CMotion;		// モーション
 class CBossState;	// ボスの状態
+class CBossLifeUI;	// ボスの体力UI
 
 //-----------------------------------
 // クラス定義(CBoss)
@@ -66,6 +67,9 @@ private:				// 自分だけアクセスできる
 	// メンバ変数
 	CMotion* m_pMotion;		// モーションの情報
 	CBossState* m_pState;	// 状態の情報
+	CBossLifeUI* m_pLifeUI;	// 体力UIの情報
+
+	int m_nLife;			// 体力
 
 	// 静的メンバ変数
 	static CListManager<CBoss*> m_list;		// リスト

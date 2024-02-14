@@ -438,6 +438,9 @@
     <ClCompile Include="wind_shot.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
+    <ClCompile Include="boss_lifeUI.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -801,6 +804,9 @@
       <Filter>gimmick\Map</Filter>
     </ClInclude>
     <ClInclude Include="wind_shot.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_lifeUI.h">
       <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>

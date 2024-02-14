@@ -1,6 +1,6 @@
 //============================================
 //
-// 寿命UI処理[lifeUI.cpp]
+// ボスの寿命UI処理[boss_lifeUI.cpp]
 // Author：小原立暉
 //
 //============================================
@@ -8,7 +8,7 @@
 // インクルードファイル
 //********************************************
 #include "manager.h"
-#include "lifeUI.h"
+#include "boss_lifeUI.h"
 #include "renderer.h"
 #include "texture.h"
 #include "useful.h"
@@ -20,59 +20,50 @@
 //--------------------------------------------
 namespace
 {
-	const float METER_WIDTH = 160.0f;		// メーターの横幅
-	const D3DXVECTOR3 POLY_POS[CLifeUI::POLY_MAX] =			// ポリゴンの位置
+	const float METER_WIDTH = 350.0f;		// メーターの横幅
+	const D3DXVECTOR3 POLY_SIZE[CBossLifeUI::POLY_MAX] =		// ポリゴンのサイズ
 	{
-		D3DXVECTOR3(47.0f, 40.0f, 0.0f),
-		D3DXVECTOR3(47.0f, 40.0f, 0.0f),
-		D3DXVECTOR3(50.0f, 30.0f, 0.0f),
+		D3DXVECTOR3(METER_WIDTH, 50.0f, 0.0f),
+		D3DXVECTOR3(METER_WIDTH, 50.0f, 0.0f),
 	};
-	const D3DXVECTOR3 POLY_ROT[CLifeUI::POLY_MAX] =			// ポリゴンの向き
+	const D3DXVECTOR3 POLY_POS[CBossLifeUI::POLY_MAX] =			// ポリゴンの位置
+	{
+		D3DXVECTOR3((SCREEN_WIDTH * 0.5f) - METER_WIDTH, 650.0f, 0.0f),
+		D3DXVECTOR3((SCREEN_WIDTH * 0.5f) - METER_WIDTH, 650.0f, 0.0f),
+	};
+	const D3DXVECTOR3 POLY_ROT[CBossLifeUI::POLY_MAX] =			// ポリゴンの向き
 	{
 		NONE_D3DXVECTOR3,
 		NONE_D3DXVECTOR3,
-		D3DXVECTOR3(0.0f,0.0f,D3DX_PI * -0.25f),
 	};
-	const D3DXVECTOR3 POLY_SIZE[CLifeUI::POLY_MAX] =		// ポリゴンのサイズ
-	{
-		D3DXVECTOR3(METER_WIDTH, 10.0f, 0.0f),
-		D3DXVECTOR3(METER_WIDTH, 10.0f, 0.0f),
-		D3DXVECTOR3(20.0f, 20.0f, 0.0f),
-	};
-	const char* TEXTURE[CLifeUI::POLY_MAX] =		// テクスチャ
+	const char* TEXTURE[CBossLifeUI::POLY_MAX] =		// テクスチャ
 	{
 		"data\\TEXTURE\\LifeUIGage.png",
 		"data\\TEXTURE\\LifeUIMeter.png",
-		"data\\TEXTURE\\LifeUIIcon.png"
 	};
-	const float METER_MEMORY = METER_WIDTH * 0.01f;		// メーターの1メモリのサイズ
 	const float METER_ADD = 1.0f;						// メーターの加算数
-	const int ICON_FLASH_LIFE = 30;						// アイコンが明滅しだす体力
-	const D3DXCOLOR ICON_FLASH_COL = D3DXCOLOR(1.0f, 0.2f, 0.2f, 1.0f);		// アイコンの点滅時の色
-	const float ICON_CALC_COL = 0.05f;					// アイコンの色の移動量
 }
 
 //========================
 // コンストラクタ
 //========================
-CLifeUI::CLifeUI() : CObject(TYPE_LIFEUI, DIM_2D, PRIORITY_UI)
+CBossLifeUI::CBossLifeUI() : CObject(TYPE_LIFEUI, DIM_2D, PRIORITY_UI)
 {
 	// 全ての値をクリアする
 	for (int nCnt = 0; nCnt < POLY_MAX; nCnt++)
 	{
-		m_apObject2D[nCnt] = nullptr;		// 影の情報
+		m_apObject2D[nCnt] = nullptr;		// ポリゴン
 	}
-	m_iconflash.col = NONE_D3DXCOLOR;		// アイコンの色
-	m_iconflash.bAdd = false;				// アイコンの加算状況
 	m_nLife = 0;							// 寿命
 	m_fMeterDest = 0.0f;					// 目的のメーター
 	m_fMeter = 0.0f;						// メーター
+	m_fMemory = 0.0f;						// 1メモリの値
 }
 
 //========================
 // デストラクタ
 //========================
-CLifeUI::~CLifeUI()
+CBossLifeUI::~CBossLifeUI()
 {
 
 }
@@ -80,7 +71,7 @@ CLifeUI::~CLifeUI()
 //========================
 // 初期化処理
 //========================
-HRESULT CLifeUI::Init(void)
+HRESULT CBossLifeUI::Init(void)
 {
 	// 全ての値をクリアする
 	for (int nCnt = 0; nCnt < POLY_MAX; nCnt++)
@@ -100,7 +91,7 @@ HRESULT CLifeUI::Init(void)
 //========================
 // 終了処理
 //========================
-void CLifeUI::Uninit(void)
+void CBossLifeUI::Uninit(void)
 {
 	for (int nCnt = 0; nCnt < POLY_MAX; nCnt++)
 	{
@@ -120,10 +111,10 @@ void CLifeUI::Uninit(void)
 //========================
 // 更新処理
 //========================
-void CLifeUI::Update(void)
+void CBossLifeUI::Update(void)
 {
 	// サイズを設定する
-	m_fMeterDest = METER_MEMORY * m_nLife;
+	m_fMeterDest = m_fMemory * m_nLife;
 
 	// 均等な数値の補正処理
 	useful::FrameCorrect(m_fMeterDest, &m_fMeter, METER_ADD);
@@ -140,9 +131,6 @@ void CLifeUI::Update(void)
 		m_apObject2D[POLY_METER]->SetSize(size);
 	}
 
-	// アイコンの点滅処理
-	IconFlash();
-
 	// 頂点座標の設定処理
 	m_apObject2D[POLY_METER]->SetVtxWidthGage();
 
@@ -153,7 +141,7 @@ void CLifeUI::Update(void)
 //========================
 // 描画処理
 //========================
-void CLifeUI::Draw(void)
+void CBossLifeUI::Draw(void)
 {
 	for (int nCnt = 0; nCnt < POLY_MAX; nCnt++)
 	{
@@ -169,7 +157,7 @@ void CLifeUI::Draw(void)
 //========================
 // 情報の設定処理
 //========================
-void CLifeUI::SetData(const int nLife)
+void CBossLifeUI::SetData(const int nLife)
 {
 	for (int nCnt = 0; nCnt < POLY_MAX; nCnt++)
 	{
@@ -206,13 +194,6 @@ void CLifeUI::SetData(const int nLife)
 
 				break;
 
-			case POLY::POLY_WIPE:
-
-				// 頂点座標の設定処理
-				m_apObject2D[nCnt]->SetVertexRot();
-
-				break;
-
 			default:
 
 				// 停止
@@ -222,26 +203,25 @@ void CLifeUI::SetData(const int nLife)
 			}
 		}
 	}
-	m_iconflash.col = NONE_D3DXCOLOR;		// アイコンの色
-	m_iconflash.bAdd = false;				// アイコンの加算状況
 	m_nLife = nLife;						// 寿命
-	m_fMeterDest = nLife * METER_MEMORY;	// 目的のメーター
+	m_fMemory = METER_WIDTH / nLife;		// 1メモリの値
+	m_fMeterDest = nLife * m_fMemory;		// 目的のメーター
 	m_fMeter = m_fMeterDest;				// メーター
 }
 
 //========================
 // 生成処理
 //========================
-CLifeUI* CLifeUI::Create(const int nLife)
+CBossLifeUI* CBossLifeUI::Create(const int nLife)
 {
 	// ローカルオブジェクトを生成
-	CLifeUI* pUI = nullptr;	// UIのインスタンスを生成
+	CBossLifeUI* pUI = nullptr;	// UIのインスタンスを生成
 
 	if (pUI == nullptr)
 	{ // オブジェクトが NULL の場合
 
 		// オブジェクトを生成
-		pUI = new CLifeUI;
+		pUI = new CBossLifeUI;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -287,7 +267,7 @@ CLifeUI* CLifeUI::Create(const int nLife)
 //========================
 // 寿命の設定処理
 //========================
-void CLifeUI::SetLife(const int nLife)
+void CBossLifeUI::SetLife(const int nLife)
 {
 	// 寿命を設定する
 	m_nLife = nLife;
@@ -296,64 +276,8 @@ void CLifeUI::SetLife(const int nLife)
 //========================
 // 寿命の取得処理
 //========================
-int CLifeUI::GetLife(void) const
+int CBossLifeUI::GetLife(void) const
 {
 	// 寿命を返す
 	return m_nLife;
-}
-
-//========================
-// アイコンの点滅処理
-//========================
-void CLifeUI::IconFlash(void)
-{
-	if (m_nLife <= ICON_FLASH_LIFE)
-	{ // 体力が一定以下の場合
-
-		if (m_iconflash.bAdd == true)
-		{ // 加算状況が true の場合
-
-			// 色を白に近づける
-			m_iconflash.col.g += ICON_CALC_COL;
-			m_iconflash.col.b += ICON_CALC_COL;
-
-			if (m_iconflash.col.g >= NONE_D3DXCOLOR.g &&
-				m_iconflash.col.b >= NONE_D3DXCOLOR.b)
-			{ // 白になった場合
-
-				// 色を設定する
-				m_iconflash.col = NONE_D3DXCOLOR;
-
-				// 加算状況を false にする
-				m_iconflash.bAdd = false;
-			}
-		}
-		else
-		{ // 上記以外
-
-			// 色を赤に近づける
-			m_iconflash.col.g -= ICON_CALC_COL;
-			m_iconflash.col.b -= ICON_CALC_COL;
-
-			if (m_iconflash.col.g <= ICON_FLASH_COL.g &&
-				m_iconflash.col.b <= ICON_FLASH_COL.b)
-			{ // 赤になった場合
-
-				// 色を設定する
-				m_iconflash.col = ICON_FLASH_COL;
-
-				// 加算状況を true にする
-				m_iconflash.bAdd = true;
-			}
-		}
-	}
-	else
-	{ // 上記以外
-
-		// アイコンの色を設定する
-		m_iconflash.col = NONE_D3DXCOLOR;
-	}
-
-	// 頂点カラーの設定処理
-	m_apObject2D[POLY_WIPE]->SetVtxColor(m_iconflash.col);
 }

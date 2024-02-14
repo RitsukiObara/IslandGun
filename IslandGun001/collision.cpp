@@ -32,6 +32,7 @@
 #include "block.h"
 #include "boss.h"
 #include "slash_ripple.h"
+#include "wind_shot.h"
 
 //===============================
 // マクロ定義
@@ -43,11 +44,16 @@ namespace
 	{
 		50.5f,		// 木の半径
 	};
+
 	const float DAGGER_RADIUS = 180.0f;				// ダガーの半径
 	const int DAGGER_DAMAGE = 40;					// ダガーのダメージ
 	const float DAGGER_KNOCKBACK = 100.0f;			// ダガーのノックバック
+
 	const int EXPLOSION_DAMAGE = 30;				// 爆風のダメージ
 	const float EXPLOSION_KNOCKBACK = 150.0f;		// 爆風のノックバック
+
+	const int WINDSHOT_DAMAGE = 10;					// 風攻撃のダメージ
+
 	const int PALM_FRUIT_HEALING = 30;				// ヤシの実の回復値
 
 	const int COIN_SCORE = 100;						// コインのスコア
@@ -1472,6 +1478,75 @@ bool collision::RippleHit(const D3DXVECTOR3& pos, const float fRadius, const flo
 
 			// 次のオブジェクトを代入する
 			pRipple = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
+// 風攻撃とプレイヤーの当たり判定
+//===============================
+bool collision::WindShotHitToPlayer(CPlayer* pPlayer, const float fRadius, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posWind = NONE_D3DXVECTOR3;		// 壁の位置
+	float fRadiusWind = 0.0f;					// 風の半径
+	float fHeightWind = 0.0f;					// 風の高さ
+
+	D3DXVECTOR3 posPlayer = pPlayer->GetPos();	// 位置を取得する
+	float fSmashRot = 0.0f;						// 吹き飛ぶ方向
+
+	CListManager<CWindShot*> list = CWindShot::GetList();
+	CWindShot* pWind = nullptr;			// 先頭の値
+	CWindShot* pWindEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pWind = list.GetTop();
+
+		// 末尾の値を取得する
+		pWindEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 風関係の変数を設定する
+			posWind = pWind->GetPos();
+			fRadiusWind = pWind->GetCircum() + pWind->GetWidth();
+			fHeightWind = pWind->GetHeight() * pWind->GetVortex();
+
+			if (posPlayer.y <= posWind.y + fHeightWind &&
+				posPlayer.y + fHeight >= posWind.y &&
+				useful::CircleCollisionXZ(posPlayer, posWind, fRadius, fRadiusWind) == true)
+			{ // 風攻撃に当たった場合
+
+				// 吹き飛ぶ向きを設定する
+				fSmashRot = atan2f(posPlayer.x - posWind.x, posPlayer.z - posWind.z);
+
+				// ヒット処理
+				pPlayer->Hit(WINDSHOT_DAMAGE, fSmashRot);
+
+				// true を返す
+				return true;
+			}
+
+			if (pWind == pWindEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pWind = list.GetData(nIdx + 1);
 
 			// インデックスを加算する
 			nIdx++;

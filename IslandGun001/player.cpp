@@ -60,8 +60,10 @@ namespace
 	const D3DXCOLOR DAMAGE_COLOR = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);		// ダメージ状態の色
 	const int INVINCIBLE_COUNT = 90;				// 無敵状態のカウント数
 	const int INVINCIBLE_FLUSH_COUNT = 10;			// 無敵状態の点滅のカウント
+
 	const float KNOCKBACK_MOVE = 23.0f;				// 吹き飛ぶ移動量
 	const float KNOCKBACK_JUMP = 15.0f;				// 吹き飛ぶ高さ
+	const float WIND_SHOT_DAMAGE = 10;				// 風攻撃のダメージ
 }
 
 //=========================================
@@ -395,8 +397,14 @@ void CPlayer::Update(void)
 		m_pLifeUI->SetLife(m_nLife);
 	}
 
+	// ヤシの実との当たり判定
+	collision::PalmFruitHit(this, COLLISION_SIZE);
+
 	// 小判との当たり判定
 	collision::CoinCollision(this, COLLISION_SIZE);
+
+	// 金の骨との当たり判定
+	collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
 	// 木との当たり判定
 	TreeCollision();
@@ -412,12 +420,6 @@ void CPlayer::Update(void)
 
 	// 壁との当たり判定
 	WallCollision();
-
-	// 金の骨との当たり判定
-	collision::GoldBoneCollision(*this, COLLISION_SIZE);
-
-	// ヤシの実との当たり判定
-	collision::PalmFruitHit(this, COLLISION_SIZE);
 
 	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
@@ -868,11 +870,15 @@ void CPlayer::StateManager(void)
 		if (m_pAction->GetAction() != CPlayerAction::ACTION_DODGE)
 		{ // 回避状態以外
 
-			// 敵との当たり判定
-			collision::EnemyHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
+			// 当たり判定
+			if (collision::EnemyHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y) == true ||
+				collision::ExplosionHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y) == true ||
+				collision::WindShotHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y) == true)
+			{ // 何かに当たった場合
 
-			// 爆風との当たり判定
-			collision::ExplosionHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
+				// この先の処理を行わない
+				return;
+			}
 		}
 
 		break;

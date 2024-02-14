@@ -28,11 +28,13 @@ namespace
 	const float DODGE_SPEED = 20.0f;			// ‰ñ”ðó‘Ô‚Ì‘¬“x
 	const int DODGE_COUNT = 27;					// ‰ñ”ðó‘Ô‚ÌƒJƒEƒ“ƒg”
 	const int DAGGER_COUNT = 35;				// ƒ_ƒK[ó‘Ô‚ÌƒJƒEƒ“ƒg”
+
 	const int SWOOP_COUNT = 50;					// ‹}~‰ºó‘Ô‚ÌƒJƒEƒ“ƒg”
 	const float SWOOP_RIPPLE_HEIGHT = 50.0f;	// ‹}~‰ºó‘Ô‚Ì”g–ä‚Ìo‚é‚‚³
+
 	const int DODGE_BLUR_LIFE = 10;				// ‰ñ”ðó‘Ô‚Ìƒuƒ‰[‚ÌŽõ–½
 	const D3DXCOLOR DODGE_BLUR_COL = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);		// ‰ñ”ðó‘Ô‚Ìƒuƒ‰[‚ÌF
-	const float DAGGER_HEIGHT = 80.0f;			// ƒ_ƒK[‚Ì‚‚³
+
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì‚‚³
 	const float ATTACK_DAGGER_RADIUS = 180.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì”¼Œa
 	const int DAGGER_ATTACK_START = 8;			// ƒ_ƒK[‚ÌUŒ‚”»’è‚ªŽn‚Ü‚éƒJƒEƒ“ƒg”
@@ -379,8 +381,11 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 		// ‹OÕ‚Ì•`‰æó‹µ‚ð true ‚É‚·‚é
 		pPlayer->GetDagger()->SetEnableDispOrbit(true);
 
+		// ”š’e‰Ô‚Æƒ_ƒK[‚Æ‚Ì“–‚½‚è”»’è
+		collision::BangFlowerHit(pPlayer->GetPos(), ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
+
 		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
-		collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
+		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_HEIGHT);
 
 		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
 		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
@@ -544,7 +549,7 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 		pPlayer->GetDagger()->SetEnableDispOrbit(true);
 
 		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
-		collision::TreeAttack(*pPlayer, DAGGER_HEIGHT);
+		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_HEIGHT);
 
 		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
 		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
