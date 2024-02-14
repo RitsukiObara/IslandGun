@@ -16,12 +16,13 @@
 //----------------------------------------------------
 namespace
 {
-	const char* TEXTURE = "data\\TEXTURE\\Lake002.png";		// ƒeƒNƒXƒ`ƒƒ‚ÌƒpƒX
-	const int OCEAN_DIVI_WIDTH = 50;		// ŠC‚Ìc‚Ì•ªŠ„”
-	const int OCEAN_DIVI_DEPTH = 50;		// ŠC‚Ì‰œs‚Ì•ªŠ„”
-	const float OCEAN_WIDTH = 10000.0f;		// ŠC‚Ì•
-	const float OCEAN_DEPTH = 10000.0f;		// ŠC‚Ì‰œs
-	const float OCEAN_WAVE_HEIGHT = 20.0f;	// ŠC‚Ì‚‚³
+	const char* TEXTURE = "data\\TEXTURE\\Lake002.png";			// ƒeƒNƒXƒ`ƒƒ‚ÌƒpƒX
+	const D3DXVECTOR3 POS = D3DXVECTOR3(0.0f, -50.0f, 0.0f);	// ˆÊ’u
+	const int OCEAN_DIVI_WIDTH = 80;		// ŠC‚Ìc‚Ì•ªŠ„”
+	const int OCEAN_DIVI_DEPTH = 80;		// ŠC‚Ì‰œs‚Ì•ªŠ„”
+	const float OCEAN_WIDTH = 80000.0f;		// ŠC‚Ì•
+	const float OCEAN_DEPTH = 80000.0f;		// ŠC‚Ì‰œs
+	const float OCEAN_WAVE_HEIGHT = 30.0f;	// ŠC‚Ì‚‚³
 	const float OCEAN_CYCLE = 0.5f;			// ŠC‚Ì‰ñ“]—¦
 	const float OCEAN_SPEED = 0.01f;		// ŠC‚Ì—¬‚ê‚Ì‘¬“x
 }
@@ -98,7 +99,7 @@ void COcean::SetData(void)
 	grid.nHeight = OCEAN_DIVI_DEPTH;
 
 	// î•ñ‚ÌÝ’èˆ—
-	CMeshWave::SetData(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3, OCEAN_WIDTH, OCEAN_DEPTH, grid, OCEAN_WAVE_HEIGHT, OCEAN_CYCLE, OCEAN_SPEED);
+	CMeshWave::SetData(POS, NONE_D3DXVECTOR3, OCEAN_WIDTH, OCEAN_DEPTH, grid, OCEAN_WAVE_HEIGHT, OCEAN_CYCLE, OCEAN_SPEED);
 
 	BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE));
 	SetLighting(true);

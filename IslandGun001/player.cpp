@@ -416,6 +416,9 @@ void CPlayer::Update(void)
 	// 金の骨との当たり判定
 	collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
+	// ヤシの実との当たり判定
+	collision::PalmFruitHit(this, COLLISION_SIZE);
+
 	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
 
@@ -529,6 +532,22 @@ void CPlayer::Hit(const int nDamage, const float fRotSmash)
 		m_move.x = sinf(fRotSmash) * KNOCKBACK_MOVE;
 		m_move.y = KNOCKBACK_JUMP;
 		m_move.z = cosf(fRotSmash) * KNOCKBACK_MOVE;
+	}
+}
+
+//===========================================
+// 回復処理
+//===========================================
+void CPlayer::Healing(const int nHealing)
+{
+	// 体力を回復する
+	m_nLife += nHealing;
+
+	if (m_nLife >= MAX_LIFE)
+	{ // 体力が最大値以上になった場合
+
+		// 体力を最大値にする
+		m_nLife = MAX_LIFE;
 	}
 }
 

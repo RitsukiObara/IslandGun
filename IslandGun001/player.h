@@ -76,6 +76,7 @@ public:			// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void Hit(const int nDamage, const float fRotSmash);	// ヒット処理
+	void Healing(const int nHealing);			// 回復処理
 	void SetData(const D3DXVECTOR3& pos);		// 情報の設定処理
 
 	// セット・ゲット関係

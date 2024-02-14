@@ -55,7 +55,7 @@ namespace collision
 	void TreeAttack(const CPlayer& pPlayer, const float fHeight);		// 木への攻撃判定処理
 
 	// ヤシの実との当たり判定
-	void PalmFruitHit(CPlayer* pPlayer, const float fHeight);			// ヤシの木との当たり判定
+	void PalmFruitHit(CPlayer* pPlayer, const D3DXVECTOR3& size);			// ヤシの木との当たり判定
 
 	// 岩との当たり判定
 	bool RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight);		// 岩との当たり判定
@@ -79,6 +79,9 @@ namespace collision
 	// ボスとの当たり判定
 	void BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size);		// ボスの当たり判定
 	
+	// 斬撃波紋との当たり判定
+	bool RippleHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fRotSmash = nullptr);		// 斬撃の波紋の当たり判定
+
 	// 汎用的な当たり判定
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定
 	bool HexahedronHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体のヒット判定
