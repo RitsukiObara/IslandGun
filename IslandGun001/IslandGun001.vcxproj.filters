@@ -450,6 +450,9 @@
     <ClCompile Include="fire_warning.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
+    <ClCompile Include="fire_shot.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -825,6 +828,9 @@
       <Filter>enemy\boss</Filter>
     </ClInclude>
     <ClInclude Include="fire_warning.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="fire_shot.h">
       <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>

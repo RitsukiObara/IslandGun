@@ -33,6 +33,7 @@
 #include "boss.h"
 #include "slash_ripple.h"
 #include "wind_shot.h"
+#include "fire_shot.h"
 
 //===============================
 // マクロ定義
@@ -51,8 +52,6 @@ namespace
 
 	const int EXPLOSION_DAMAGE = 30;				// 爆風のダメージ
 	const float EXPLOSION_KNOCKBACK = 150.0f;		// 爆風のノックバック
-
-	const int WINDSHOT_DAMAGE = 10;					// 風攻撃のダメージ
 
 	const int PALM_FRUIT_HEALING = 30;				// ヤシの実の回復値
 
@@ -1491,15 +1490,12 @@ bool collision::RippleHit(const D3DXVECTOR3& pos, const float fRadius, const flo
 //===============================
 // 風攻撃とプレイヤーの当たり判定
 //===============================
-bool collision::WindShotHitToPlayer(CPlayer* pPlayer, const float fRadius, const float fHeight)
+bool collision::WindShotHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fSmashRot)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posWind = NONE_D3DXVECTOR3;		// 壁の位置
 	float fRadiusWind = 0.0f;					// 風の半径
 	float fHeightWind = 0.0f;					// 風の高さ
-
-	D3DXVECTOR3 posPlayer = pPlayer->GetPos();	// 位置を取得する
-	float fSmashRot = 0.0f;						// 吹き飛ぶ方向
 
 	CListManager<CWindShot*> list = CWindShot::GetList();
 	CWindShot* pWind = nullptr;			// 先頭の値
@@ -1518,24 +1514,29 @@ bool collision::WindShotHitToPlayer(CPlayer* pPlayer, const float fRadius, const
 		while (true)
 		{ // 無限ループ
 
-			// 風関係の変数を設定する
-			posWind = pWind->GetPos();
-			fRadiusWind = pWind->GetCircum() + pWind->GetWidth();
-			fHeightWind = pWind->GetHeight() * pWind->GetVortex();
+			if (pWind->GetState() != CWindShot::STATE_DELETE)
+			{ // 消去状態以外
 
-			if (posPlayer.y <= posWind.y + fHeightWind &&
-				posPlayer.y + fHeight >= posWind.y &&
-				useful::CircleCollisionXZ(posPlayer, posWind, fRadius, fRadiusWind) == true)
-			{ // 風攻撃に当たった場合
+				// 風関係の変数を設定する
+				posWind = pWind->GetPos();
+				fRadiusWind = pWind->GetCircum() + pWind->GetWidth();
+				fHeightWind = pWind->GetHeight() * pWind->GetVortex();
 
-				// 吹き飛ぶ向きを設定する
-				fSmashRot = atan2f(posPlayer.x - posWind.x, posPlayer.z - posWind.z);
+				if (pos.y <= posWind.y + fHeightWind &&
+					pos.y + fHeight >= posWind.y &&
+					useful::CircleCollisionXZ(pos, posWind, fRadius, fRadiusWind) == true)
+				{ // 風攻撃に当たった場合
 
-				// ヒット処理
-				pPlayer->Hit(WINDSHOT_DAMAGE, fSmashRot);
+					if (fSmashRot != nullptr)
+					{ // 向きのポインタが NULL じゃない場合
 
-				// true を返す
-				return true;
+						// 吹き飛ぶ向きを設定する
+						*fSmashRot = atan2f(pos.x - posWind.x, pos.z - posWind.z);
+					}
+
+					// true を返す
+					return true;
+				}
 			}
 
 			if (pWind == pWindEnd)
@@ -1547,6 +1548,73 @@ bool collision::WindShotHitToPlayer(CPlayer* pPlayer, const float fRadius, const
 
 			// 次のオブジェクトを代入する
 			pWind = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
+// 炎攻撃との当たり判定
+//===============================
+bool collision::FireShotHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fSmashRot)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posFire = NONE_D3DXVECTOR3;		// 壁の位置
+	float fRadiusFire = 0.0f;					// 炎の半径
+	float fHeightFire = 0.0f;					// 炎の高さ
+
+	CListManager<CFireShot*> list = CFireShot::GetList();
+	CFireShot* pFire = nullptr;			// 先頭の値
+	CFireShot* pFireEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pFire = list.GetTop();
+
+		// 末尾の値を取得する
+		pFireEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 炎関係の変数を設定する
+			posFire = pFire->GetPos();
+			fRadiusFire = pFire->GetCircum();
+			fHeightFire = pFire->GetHeight();
+
+			if (pos.y <= posFire.y + fHeightFire &&
+				pos.y + fHeight >= posFire.y &&
+				useful::CircleCollisionXZ(pos, posFire, fRadius, fRadiusFire) == true)
+			{ // 炎攻撃に当たった場合
+
+				if (fSmashRot != nullptr)
+				{ // 向きのポインタが NULL じゃない場合
+
+					// 吹き飛ぶ向きを設定する
+					*fSmashRot = atan2f(pos.x - posFire.x, pos.z - posFire.z);
+				}
+
+				// true を返す
+				return true;
+			}
+
+			if (pFire == pFireEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pFire = list.GetData(nIdx + 1);
 
 			// インデックスを加算する
 			nIdx++;

@@ -12,16 +12,17 @@
 #include "manager.h"
 #include "useful.h"
 
+#include "fire_shot.h"
+
 //--------------------------------------------
 // 無名名前空間
 //--------------------------------------------
 namespace
 {
-	const int NUM_ANGLE = 8;		// 角度の数
-	const float RADIUS = 200.0f;	// 半径
-	const D3DXCOLOR INIT_COL = D3DXCOLOR(1.0f, 0.7f, 0.0f, 1.0f);		// 色の初期値
-	const float INIT_COL_ANGLE = D3DX_PI;	// 色の向きの初期値
-	const float ADD_COL_ANGLE = 0.005f;		// 色の向きの加算数
+	const int NUM_ANGLE = 8;			// 角度の数
+	const float RADIUS = 200.0f;		// 半径
+	const D3DXCOLOR INIT_COL = D3DXCOLOR(1.0f, 0.3f, 0.0f, 1.0f);		// 色の初期値
+	const int FIRE_CREATE_COUNT = 50;	// 炎の生成カウント
 }
 
 //=========================================
@@ -30,9 +31,8 @@ namespace
 CFireWarning::CFireWarning() : CObject3DFan(TYPE_FIREWARNING, PRIORITY_BG)
 {
 	// 全ての値をクリアする
-	m_col = INIT_COL;				// 色
-	m_fColAngle = INIT_COL_ANGLE;	// 色の向き
-	m_fAddColAngle = 0.0f;			// 色の向きの加算数
+	m_col = INIT_COL;		// 色
+	m_nCount = 0;			// 経過カウント
 }
 
 //=========================================
@@ -44,7 +44,7 @@ CFireWarning::~CFireWarning()
 }
 
 //===========================================
-// オブジェクト3Dの初期化処理
+// 炎注意の初期化処理
 //===========================================
 HRESULT CFireWarning::Init(void)
 {
@@ -55,12 +55,15 @@ HRESULT CFireWarning::Init(void)
 		return E_FAIL;
 	}
 
+	// 頂点カラーの設定処理
+	SetVtxColor(m_col);
+
 	// 値を返す
 	return S_OK;
 }
 
 //===========================================
-// オブジェクト3Dの終了処理
+// 炎注意の終了処理
 //===========================================
 void CFireWarning::Uninit(void)
 {
@@ -69,25 +72,33 @@ void CFireWarning::Uninit(void)
 }
 
 //===========================================
-// オブジェクト3Dの更新処理
+// 炎注意の更新処理
 //===========================================
 void CFireWarning::Update(void)
 {
+	// 経過カウントを加算する
+	m_nCount++;
+
 	// 色を設定する
-	m_fAddColAngle += ADD_COL_ANGLE;
-	m_fColAngle += m_fAddColAngle;
-	useful::RotNormalize(&m_fColAngle);
-	m_col.g = sinf(m_fColAngle) * INIT_COL.g;
-	
+	if (m_nCount >= FIRE_CREATE_COUNT)
+	{ // 色の向きが一定値以上になった場合
+		 
+		// 炎を出す
+		CFireShot::Create(GetPos());
+
+		// 終了処理
+		Uninit();
+
+		// この先の処理を行わない
+		return;
+	}
+
 	// 頂点の設定処理
 	SetVertex();
-
-	// 頂点カラーの設定処理
-	SetVtxColor(m_col);
 }
 
 //===========================================
-// オブジェクト3Dの描画処理
+// 炎注意の描画処理
 //===========================================
 void CFireWarning::Draw(void)
 {
@@ -118,9 +129,8 @@ void CFireWarning::SetData(const D3DXVECTOR3& pos)
 	SetRadius(RADIUS);				// 半径
 
 	// 全ての値を設定する
-	m_col = INIT_COL;				// 色
-	m_fColAngle = INIT_COL_ANGLE;	// 色の向き
-	m_fAddColAngle = 0.0f;			// 色の向きの加算数
+	m_col = INIT_COL;		// 色
+	m_nCount = 0;			// 経過カウント
 }
 
 //===========================================

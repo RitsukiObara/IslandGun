@@ -37,8 +37,7 @@ private:
 
 	// メンバ変数
 	D3DXCOLOR m_col;		// 色
-	float m_fColAngle;		// 色の向き
-	float m_fAddColAngle;	// 色の向きの加算数
+	int m_nCount;			// 経過カウント
 };
 
 #endif

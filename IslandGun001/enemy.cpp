@@ -42,7 +42,9 @@ namespace
 	const int DAMAGE_COUNT = 12;						// ダメージ状態のカウント
 	const float LAND_GRAVITY = -50.0f;					// 起伏地面に着地している時の重力
 	const int SLASHRIPPLE_DAMAGE = 2;					// 斬撃波紋に当たった時のダメージ
-	const float SLASHRIPPLE_KNOCKBACK = 20.0f;			// 斬撃波紋に当たった時のダメージ
+	const float SLASHRIPPLE_KNOCKBACK = 20.0f;			// 斬撃波紋に当たった時の吹き飛び
+	const int WIND_SHOT_DAMAGE = 10;					// 風攻撃に当たった時のダメージ
+	const float WIND_SHOT_KNOCKBACK = 50.0f;			// 風攻撃に当たった時の吹き飛び
 }
 
 // 静的メンバ変数
@@ -128,6 +130,15 @@ void CEnemy::Update(void)
 
 	// 敵同士の当たり判定
 	collision::EnemyHitToEnemy(this);
+
+	if (m_state == STATE_NONE &&
+		(collision::WindShotHit(GetPos(), m_collSize.x, m_collSize.y) == true ||
+		collision::FireShotHit(GetPos(), m_collSize.x, m_collSize.y) == true))
+	{ // 当たった場合
+
+		// ヒット処理
+		Hit(WIND_SHOT_DAMAGE, WIND_SHOT_KNOCKBACK);
+	}
 
 	if (m_state == STATE_DAMAGE)
 	{ // ダメージ状態の場合
@@ -580,8 +591,8 @@ void CEnemy::SlashRippleHit(void)
 	float fRadius = m_collSize.x;
 	float fHeight = m_collSize.y;
 
-	if (collision::RippleHit(pos, fRadius, fHeight) == true &&
-		m_state == STATE_NONE)
+	if (m_state == STATE_NONE &&
+		collision::RippleHit(pos, fRadius, fHeight) == true)
 	{ // 斬撃波紋に当たった場合
 
 		// ヒット処理

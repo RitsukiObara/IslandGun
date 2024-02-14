@@ -63,7 +63,7 @@ namespace
 
 	const float KNOCKBACK_MOVE = 23.0f;				// 吹き飛ぶ移動量
 	const float KNOCKBACK_JUMP = 15.0f;				// 吹き飛ぶ高さ
-	const float WIND_SHOT_DAMAGE = 10;				// 風攻撃のダメージ
+	const int WIND_SHOT_DAMAGE = 10;				// 風攻撃のダメージ
 }
 
 //=========================================
@@ -872,12 +872,22 @@ void CPlayer::StateManager(void)
 
 			// 当たり判定
 			if (collision::EnemyHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y) == true ||
-				collision::ExplosionHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y) == true ||
-				collision::WindShotHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y) == true)
+				collision::ExplosionHitToPlayer(this, COLLISION_SIZE.x, COLLISION_SIZE.y) == true)
 			{ // 何かに当たった場合
 
 				// この先の処理を行わない
 				return;
+			}
+
+			// 吹き飛ぶ向き
+			float fRotSmash = 0.0f;
+
+			if (collision::WindShotHit(GetPos(), COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true ||
+				collision::FireShotHit(GetPos(), COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true)
+			{ // 当たった場合
+
+				// ヒット処理
+				Hit(WIND_SHOT_DAMAGE, fRotSmash);
 			}
 		}
 
