@@ -69,6 +69,9 @@ CGame::~CGame()
 //=========================================
 HRESULT CGame::Init(void)
 {
+	// 通常カメラで描画
+	CManager::Get()->GetCamera()->SetType(CCamera::TYPE_NONE);
+
 	// テキスト読み込み処理
 	CElevation::TxtSet();
 

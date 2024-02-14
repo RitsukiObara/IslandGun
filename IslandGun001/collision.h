@@ -61,9 +61,10 @@ namespace collision
 	bool RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight);		// Šâ‚Æ‚Ì“–‚½‚è”»’è
 
 	// ”š’e‰Ô‚Æ‚Ì“–‚½‚è”»’è
-	bool BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);		// ”š’e‰Ô‚Ìƒqƒbƒg”»’è
-	bool BombHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const float fRadius);	// ”š’e‚Ìƒqƒbƒg”»’è(e’e)
+	bool BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);			// ”š’e‰Ô‚Ìƒqƒbƒg”»’è
+	bool BombHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const float fRadius);		// ”š’e‚Ìƒqƒbƒg”»’è(e’e)
 	bool BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight);		// ”š’e‚Ìƒqƒbƒg”»’è(ƒ_ƒK[)
+	bool BombHitToSlashRipple(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);	// ”š’e‚Ìƒqƒbƒg”»’è(aŒ‚”g–ä)
 
 	// ”š•—‚Æ‚Ì“–‚½‚è”»’è
 	void ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);		// ”š•—‚ÆŠâ‚Æ‚Ì“–‚½‚è”»’è

@@ -59,6 +59,7 @@ namespace
 
 	const float BOMB_BULLET_SMASH = 10.0f;			// 銃弾で爆弾の吹き飛ぶ速度
 	const float BOMB_DAGGER_SMASH = 23.0f;			// ダガーで爆弾の吹き飛ぶ速度
+	const float BOMB_SLASH_RIPPLE_SMASH = 10.0f;	// 斬撃波紋で爆弾の吹き飛ぶ速度
 }
 
 //===============================
@@ -957,6 +958,78 @@ bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight)
 
 					// ヒット処理
 					pBomb->Hit(fRot, BOMB_DAGGER_SMASH);
+
+					// ヒットした
+					bHit = true;
+				}
+			}
+
+			if (pBomb == pBombEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBomb = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// ヒット判定を返す
+	return bHit;
+}
+
+//===============================
+// 爆弾のヒット判定(斬撃波紋)
+//===============================
+bool collision::BombHitToSlashRipple(const D3DXVECTOR3& pos, const float fRadius, const float fHeight)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posBomb = NONE_D3DXVECTOR3;		// 爆弾の位置
+	float fRadiusBomb = 0.0f;	// 爆弾の半径
+	float fHeightBomb = 0.0f;	// 爆弾の高さ
+	float fRot = 0.0f;			// 吹き飛ぶ向き
+
+	CListManager<CBomb*> list = CBomb::GetList();
+	CBomb* pBomb = nullptr;			// 先頭の値
+	CBomb* pBombEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+	bool bHit = false;		// ヒット判定
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pBomb = list.GetTop();
+
+		// 末尾の値を取得する
+		pBombEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pBomb->GetState() == CBomb::STATE_DETONATION)
+			{ // 爆弾が起爆状態だった場合
+
+				// 爆弾関係の情報を取得する
+				posBomb = pBomb->GetPos();
+				fRadiusBomb = pBomb->GetFileData().fRadius;
+				fHeightBomb = pBomb->GetFileData().vtxMax.y;
+
+				if (pos.y + fHeight >= posBomb.y &&
+					pos.y <= posBomb.y + fHeightBomb &&
+					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
+				{ // 範囲内にいた場合
+
+					// 向きを算出する
+					fRot = atan2f(posBomb.x - pos.x, posBomb.z - pos.z);
+
+					// ヒット処理
+					pBomb->Hit(fRot, BOMB_SLASH_RIPPLE_SMASH);
 
 					// ヒットした
 					bHit = true;

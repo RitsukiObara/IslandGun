@@ -7,6 +7,7 @@
 #include "manager.h"
 #include "slash_ripple.h"
 #include "renderer.h"
+#include "collision.h"
 #include "texture.h"
 #include "useful.h"
 
@@ -86,6 +87,12 @@ void CSlashRipple::Update(void)
 
 	// î•ñ‚ğXV‚·‚é
 	SetScale(scale);			// Šg‘å—¦
+
+	// ”š’e‚Æ‚Ì“–‚½‚è”»’è
+	collision::BombHitToSlashRipple(GetPos(), GetFileData().vtxMax.x * scale.x, GetFileData().vtxMax.y);
+
+	// ”š’e‰Ô‚Æ‚Ì“–‚½‚è”»’è
+	collision::BangFlowerHit(GetPos(), GetFileData().vtxMax.x * scale.x, GetFileData().vtxMax.y);
 
 	if (m_nLife < 0)
 	{ // õ–½‚ª 0 –¢–‚Ìê‡
