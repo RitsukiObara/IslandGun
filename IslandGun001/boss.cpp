@@ -125,7 +125,7 @@ void CBoss::Uninit(void)
 	{ // ó‘Ô‚ª NULL ‚¶‚á‚È‚¢ê‡
 
 		// ó‘Ô‚ÌI—¹ˆ—
-		m_pState->Uninit();
+		m_pState->Delete();
 		m_pState = nullptr;
 	}
 

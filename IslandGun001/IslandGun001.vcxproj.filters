@@ -441,6 +441,15 @@
     <ClCompile Include="boss_lifeUI.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
+    <ClCompile Include="boss_firestate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_chargestate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="fire_warning.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -807,6 +816,15 @@
       <Filter>enemy\boss</Filter>
     </ClInclude>
     <ClInclude Include="boss_lifeUI.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_firestate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_chargestate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="fire_warning.h">
       <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>

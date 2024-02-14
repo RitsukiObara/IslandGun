@@ -1,6 +1,6 @@
 //================================================================================================================
 //
-// ボスのかまいたち状態処理 [boss_windstate.cpp]
+// ボスの炎攻撃状態処理 [boss_firestate.cpp]
 // Author：小原立暉
 //
 //================================================================================================================
@@ -9,12 +9,12 @@
 //****************************************************************************************************************
 #include "useful.h"
 #include "boss.h"
-#include "boss_windstate.h"
+#include "boss_firestate.h"
 #include "motion.h"
 
 #include "game.h"
 #include "player.h"
-#include "wind_shot.h"
+#include "fire_warning.h"
 
 #include "boss_nonestate.h"
 
@@ -23,37 +23,32 @@
 //----------------------------------------------------------------------------------------------------------------
 namespace
 {
-	const float CHASE_CORRECT = 0.01f;			// 追跡の補正数
-	const int FINISH_COUNT = 400;				// 終了カウント
+	const float CHASE_CORRECT = 0.01f;		// 追跡の補正数
+	const int FIRE_CREATE_COUNT = 30;		// 炎を出すカウント数
+	const int FINISH_COUNT = 180;			// 終了カウント
 }
 
 //==========================
 // コンストラクタ
 //==========================
-CBossWindState::CBossWindState()
+CBossFireState::CBossFireState()
 {
 	// 全ての値をクリアする
-	m_pWindShot = nullptr;			// 風攻撃の情報
 	m_nCount = 0;					// 経過カウント
 }
 
 //==========================
 // デストラクタ
 //==========================
-CBossWindState::~CBossWindState()
+CBossFireState::~CBossFireState()
 {
-	if (m_pWindShot != nullptr)
-	{ // 風攻撃が NULL じゃない場合
 
-		// 風攻撃を NULL にする
-		m_pWindShot = nullptr;
-	}
 }
 
 //==========================
 // 状態処理
 //==========================
-void CBossWindState::Process(CBoss* pBoss)
+void CBossFireState::Process(CBoss* pBoss)
 {
 	// 追跡処理
 	Chase(pBoss);
@@ -61,40 +56,37 @@ void CBossWindState::Process(CBoss* pBoss)
 	// カウントを加算する
 	m_nCount++;
 
+	CPlayer* pPlayer = CGame::GetPlayer();
+
+	if (m_nCount % FIRE_CREATE_COUNT == 0 &&
+		pPlayer != nullptr)
+	{ // 経過カウントが一定数経過した場合
+
+		// 炎注意の生成
+		CFireWarning::Create(pPlayer->GetPos());
+	}
+
 	if (m_nCount >= FINISH_COUNT)
-	{ // 一定カウント経過した場合
+	{ // 終了カウント経過した場合
 
-		if (m_pWindShot != nullptr)
-		{ // 風攻撃が NULL じゃない場合
-
-			// 消去状態にする
-			m_pWindShot->SetState(CWindShot::STATE_DELETE);
-		}
-
-		// 通常状態にする
+		// 状態切り替え処理
 		pBoss->ChangeState(new CBossNoneState);
-
-		// この先の処理を行わない
-		return;
 	}
 }
 
 //==========================
 // 情報の設定処理
 //==========================
-void CBossWindState::SetData(CBoss* pBoss)
+void CBossFireState::SetData(CBoss* pBoss)
 {
 	// 待機モーションにする
 	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_NEUTRAL);
-
-	// 風攻撃を生成
-	m_pWindShot = CWindShot::Create(pBoss->GetPos());
 }
 
 //==========================
 // 追跡処理
 //==========================
-void CBossWindState::Chase(CBoss* pBoss)
+void CBossFireState::Chase(CBoss* pBoss)
 {
 	// プレイヤーの情報を取得する
 	CPlayer* pPlayer = CGame::GetPlayer();

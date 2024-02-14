@@ -38,8 +38,17 @@ CBossState::~CBossState()
 //==========================
 // 終了処理
 //==========================
-void CBossState::Uninit()
+void CBossState::Uninit(void)
 {
 	// 自身を削除する
+	delete this;
+}
+
+//==========================
+// 完全消去処理
+//==========================
+void CBossState::Delete(void)
+{
+	// 自信を削除する
 	delete this;
 }
