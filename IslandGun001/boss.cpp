@@ -14,10 +14,9 @@
 #include "file.h"
 #include "useful.h"
 
-#include "game.h"
-
 #include "motion.h"
 #include "boss_appearstate.h"
+#include "boss_destroystate.h"
 #include "boss_lifeUI.h"
 #include "objectElevation.h"
 #include "boss_collision.h"
@@ -196,17 +195,25 @@ void CBoss::Draw(void)
 //================================
 void CBoss::Hit(const int nDamage)
 {
-	// ダメージを受ける
-	m_nLife -= nDamage;
+	if (m_nLife > 0)
+	{ // 体力がまだある場合
 
-	// 寿命を適用する
-	m_pLifeUI->SetLife(m_nLife);
+		// ダメージを受ける
+		m_nLife -= nDamage;
 
-	if (m_nLife <= 0)
-	{ // 体力が無くなった場合
+		// 寿命を適用する
+		m_pLifeUI->SetLife(m_nLife);
 
-		// 終了状態にする
-		CGame::SetState(CGame::STATE_FINISH);
+		if (m_nLife <= 0)
+		{ // 体力が無くなった場合
+
+			// 状態の消去処理(メモリリークが起きる可能性があるため)
+			m_pState->Delete();
+			m_pState = nullptr;
+
+			// 状態の遷移処理
+			ChangeState(new CBossDestroyState);
+		}
 	}
 }
 

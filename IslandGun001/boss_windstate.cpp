@@ -46,6 +46,7 @@ CBossWindState::~CBossWindState()
 	{ // •—UŒ‚‚ª NULL ‚¶‚á‚È‚¢ê‡
 
 		// •—UŒ‚‚ð NULL ‚É‚·‚é
+		m_pWindShot->SetState(CWindShot::STATE_DELETE);
 		m_pWindShot = nullptr;
 	}
 }
@@ -63,13 +64,6 @@ void CBossWindState::Process(CBoss* pBoss)
 
 	if (m_nCount >= FINISH_COUNT)
 	{ // ˆê’èƒJƒEƒ“ƒgŒo‰ß‚µ‚½ê‡
-
-		if (m_pWindShot != nullptr)
-		{ // •—UŒ‚‚ª NULL ‚¶‚á‚È‚¢ê‡
-
-			// Á‹Žó‘Ô‚É‚·‚é
-			m_pWindShot->SetState(CWindShot::STATE_DELETE);
-		}
 
 		// ’Êíó‘Ô‚É‚·‚é
 		pBoss->ChangeState(new CBossNoneState);

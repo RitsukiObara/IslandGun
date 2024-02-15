@@ -49,6 +49,6 @@ void CBossState::Uninit(void)
 //==========================
 void CBossState::Delete(void)
 {
-	// ©M‚ğíœ‚·‚é
+	// ©g‚ğíœ‚·‚é
 	delete this;
 }

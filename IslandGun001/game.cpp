@@ -177,13 +177,8 @@ void CGame::Update(void)
 	switch (m_GameState)
 	{
 	case CGame::STATE_START:
-
-		// ポーズ処理
-		Pause();
-
-		break;
-
 	case CGame::STATE_PLAY:
+	case CGame::STATE_BOSSAPPEAR:
 
 		// ポーズ処理
 		Pause();

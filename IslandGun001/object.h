@@ -74,6 +74,7 @@ public:			// 誰でもアクセスできる
 		TYPE_WINDSHOT,			// 風攻撃
 		TYPE_FIREWARNING,		// 炎注意
 		TYPE_FIRESHOT,			// 炎攻撃
+		TYPE_RANKUI,			// 順位UI
 		TYPE_MAX				// この列挙型の総数
 	};
 

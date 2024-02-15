@@ -123,51 +123,53 @@ void CIwakari::Uninit(void)
 //================================
 void CIwakari::Update(void)
 {
-	// 前回の位置を設定する
-	SetPosOld(GetPos());
+	if (CGame::GetState() != CGame::STATE_BOSSAPPEAR)
+	{ // ボス出現状態以外
 
-	// 追跡処理
-	Chase();
+		// 前回の位置を設定する
+		SetPosOld(GetPos());
 
-	switch (m_action)
-	{
-	case CIwakari::ACTION_NONE:		// 通常状態
+		// 追跡処理
+		Chase();
 
+		switch (m_action)
+		{
+		case CIwakari::ACTION_NONE:		// 通常状態
 
+			break;
 
-		break;
+		case CIwakari::ACTION_MOVE:		// 移動状態
 
-	case CIwakari::ACTION_MOVE:		// 移動状態
+			if (GetState() == STATE_NONE)
+			{ // 通常状態の場合
 
-		if (GetState() == STATE_NONE)
-		{ // 通常状態の場合
+				// 向きの移動処理
+				RotMove();
+			}
 
-			// 向きの移動処理
-			RotMove();
+			// 移動処理
+			Move();
+
+			break;
+
+		default:
+
+			// 停止
+			assert(false);
+
+			break;
 		}
 
-		// 移動処理
-		Move();
+		// 更新処理
+		CEnemy::Update();
 
-		break;
+		if (m_pShell != nullptr)
+		{ // 殻が NULL じゃない場合
 
-	default:
-
-		// 停止
-		assert(false);
-
-		break;
-	}
-
-	// 更新処理
-	CEnemy::Update();
-
-	if (m_pShell != nullptr)
-	{ // 殻が NULL じゃない場合
-
-		// 殻の位置と向きを設定する
-		m_pShell->SetPos(GetPos());
-		m_pShell->SetRot(GetRot());
+			// 殻の位置と向きを設定する
+			m_pShell->SetPos(GetPos());
+			m_pShell->SetRot(GetRot());
+		}
 	}
 }
 

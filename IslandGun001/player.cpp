@@ -328,86 +328,90 @@ void CPlayer::Uninit(void)
 //===========================================
 void CPlayer::Update(void)
 {
-	// 前回の位置の設定処理
-	SetPosOld(GetPos());
+	if (CGame::GetState() != CGame::STATE_BOSSAPPEAR)
+	{ // ボス出現状態以外
 
-	// 状態管理処理
-	StateManager();
+		// 前回の位置の設定処理
+		SetPosOld(GetPos());
 
-	if (m_stateInfo.state == STATE_NONE ||
-		m_stateInfo.state == STATE_INVINSIBLE)
-	{ // 通常状態・無敵状態の場合
+		// 状態管理処理
+		StateManager();
 
-		// 操作処理
-		m_pController->Control(this);
-	}
+		if (m_stateInfo.state == STATE_NONE ||
+			m_stateInfo.state == STATE_INVINSIBLE)
+		{ // 通常状態・無敵状態の場合
 
-	// 移動処理
-	Move();
-
-	if (m_pMotion != nullptr)
-	{ // モーションが NULL じゃない場合
-
-		// モーションの更新処理
-		m_pMotion->Update();
-	}
-
-	if (m_pAction != nullptr)
-	{ // 行動が NULL じゃない場合
-
-		// 行動の更新処理
-		m_pAction->Update(this);
-	}
-
-	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
-	{
-		if (m_apHandGun[nCntGun] != nullptr)
-		{ // 拳銃が NULL じゃない場合
-
-			// 更新処理
-			m_apHandGun[nCntGun]->Update();
+			// 操作処理
+			m_pController->Control(this);
 		}
+
+		// 移動処理
+		Move();
+
+		if (m_pMotion != nullptr)
+		{ // モーションが NULL じゃない場合
+
+			// モーションの更新処理
+			m_pMotion->Update();
+		}
+
+		if (m_pAction != nullptr)
+		{ // 行動が NULL じゃない場合
+
+			// 行動の更新処理
+			m_pAction->Update(this);
+		}
+
+		for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
+		{
+			if (m_apHandGun[nCntGun] != nullptr)
+			{ // 拳銃が NULL じゃない場合
+
+				// 更新処理
+				m_apHandGun[nCntGun]->Update();
+			}
+		}
+
+		if (m_pAim != nullptr)
+		{ // エイムが NULL じゃない場合
+
+			// エイムの更新処理
+			m_pAim->Update();
+		}
+
+		if (m_pLifeUI != nullptr)
+		{ // 寿命が NULL じゃない場合
+
+			// 寿命を設定する
+			m_pLifeUI->SetLife(m_nLife);
+		}
+
+		// ヤシの実との当たり判定
+		collision::PalmFruitHit(this, COLLISION_SIZE);
+
+		// 小判との当たり判定
+		collision::CoinCollision(this, COLLISION_SIZE);
+
+		// 金の骨との当たり判定
+		collision::GoldBoneCollision(*this, COLLISION_SIZE);
+
+		// 木との当たり判定
+		TreeCollision();
+
+		// 起伏地面との当たり判定処理
+		ElevationCollision();
+
+		// ブロックとの当たり判定処理
+		BlockCollision();
+
+		// 岩との当たり判定
+		RockCollision();
+
+		// 壁との当たり判定
+		WallCollision();
+
+		CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 	}
-
-	if (m_pAim != nullptr)
-	{ // エイムが NULL じゃない場合
-
-		// エイムの更新処理
-		m_pAim->Update();
-	}
-
-	if (m_pLifeUI != nullptr)
-	{ // 寿命が NULL じゃない場合
-
-		// 寿命を設定する
-		m_pLifeUI->SetLife(m_nLife);
-	}
-
-	// ヤシの実との当たり判定
-	collision::PalmFruitHit(this, COLLISION_SIZE);
-
-	// 小判との当たり判定
-	collision::CoinCollision(this, COLLISION_SIZE);
-
-	// 金の骨との当たり判定
-	collision::GoldBoneCollision(*this, COLLISION_SIZE);
-
-	// 木との当たり判定
-	TreeCollision();
-
-	// 起伏地面との当たり判定処理
-	ElevationCollision();
-
-	// ブロックとの当たり判定処理
-	BlockCollision();
-
-	// 岩との当たり判定
-	RockCollision();
-
-	// 壁との当たり判定
-	WallCollision();
-
-	CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 }
 
 //===========================================

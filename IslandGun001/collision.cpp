@@ -1498,7 +1498,7 @@ bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
 							{ // 上記以外
 
 								// ヒット処理
-								pBoss->Hit(5);
+								pBoss->Hit(100);
 							}
 
 							// true を返す

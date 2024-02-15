@@ -12,6 +12,7 @@
 #include "boss_howlingstate.h"
 #include "motion.h"
 
+#include "game.h"
 #include "manager.h"
 #include "camera.h"
 
@@ -115,6 +116,9 @@ void CBossHowlingState::Process(CBoss* pBoss)
 		break;
 
 	case NONESTATE_COUNT:			// ’Êíó‘Ô
+
+		// ƒ{ƒXoŒ»ó‘Ô‚ðÝ’è‚·‚é
+		CGame::SetState(CGame::STATE_PLAY);
 
 		// ’Êíó‘Ô‚É‚·‚é
 		pBoss->ChangeState(new CBossNoneState);
