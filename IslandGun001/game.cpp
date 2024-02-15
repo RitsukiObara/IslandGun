@@ -96,7 +96,7 @@ HRESULT CGame::Init(void)
 	CMotion::Load(CMotion::STYLE_IWAKARI);		// イワカリ
 	CMotion::Load(CMotion::STYLE_BOSS);			// ボス
 
-	// マップをロード
+	// データをロード
 	CManager::Get()->GetFile()->Load(CFile::TYPE_ENEMY);
 	CManager::Get()->GetFile()->Load(CFile::TYPE_COIN);
 	CManager::Get()->GetFile()->Load(CFile::TYPE_GOLDBONE);
@@ -105,6 +105,7 @@ HRESULT CGame::Init(void)
 	CManager::Get()->GetFile()->Load(CFile::TYPE_BLOCK);
 	CManager::Get()->GetFile()->Load(CFile::TYPE_BANGFLOWER);
 	CManager::Get()->GetFile()->Load(CFile::TYPE_WALL);
+	CManager::Get()->GetFile()->Load(CFile::TYPE_BOSSCOLL);
 
 	// マップの生成
 	CManager::Get()->GetFile()->SetEnemy();

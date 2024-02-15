@@ -78,7 +78,7 @@ namespace collision
 	bool BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// ブロックとのヒット判定
 
 	// ボスとの当たり判定
-	void BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size);		// ボスの当たり判定
+	bool BossHit(const D3DXVECTOR3& pos, const float fRadius);		// ボスの当たり判定
 	
 	// 斬撃波紋との当たり判定
 	bool RippleHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fRotSmash = nullptr);		// 斬撃の波紋の当たり判定

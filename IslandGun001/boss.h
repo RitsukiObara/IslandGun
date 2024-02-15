@@ -16,9 +16,10 @@
 //-----------------------------------
 // 前方宣言
 //-----------------------------------
-class CMotion;		// モーション
-class CBossState;	// ボスの状態
-class CBossLifeUI;	// ボスの体力UI
+class CMotion;			// モーション
+class CBossState;		// ボスの状態
+class CBossLifeUI;		// ボスの体力UI
+class CBossCollision;	// ボスの当たり判定
 
 //-----------------------------------
 // クラス定義(CBoss)
@@ -49,13 +50,14 @@ public:					// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void Hit(void);					// ヒット処理
+	void Hit(const int nDamage);			// ヒット処理
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 情報の設定処理
 	bool ElevationCollision(void);			// 起伏地面との当たり判定
 	void ChangeState(CBossState* pNext);	// 状態の遷移処理
 
 	// セット・ゲット関係
 	CMotion* GetMotion(void);		// モーションの取得処理
+	CBossCollision* GetColl(const int nIdx);		// 当たり判定の取得処理
 
 	// 静的メンバ関数
 	static CBoss* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 生成処理
@@ -68,6 +70,7 @@ private:				// 自分だけアクセスできる
 	CMotion* m_pMotion;		// モーションの情報
 	CBossState* m_pState;	// 状態の情報
 	CBossLifeUI* m_pLifeUI;	// 体力UIの情報
+	CBossCollision* m_apColl[MAX_PARTS];	// 当たり判定の球
 
 	int m_nLife;			// 体力
 

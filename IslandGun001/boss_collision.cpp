@@ -8,6 +8,10 @@
 //	インクルードファイル
 //*********************************************************
 #include "boss_collision.h"
+#include "boss.h"
+
+#include "manager.h"
+#include "objectX.h"
 
 //===============================
 // コンストラクタ
@@ -28,17 +32,26 @@ CBossCollision::~CBossCollision()
 }
 
 //===============================
-// 更新処理
+// 終了処理
 //===============================
-void CBossCollision::Update(void)
+void CBossCollision::Uninit(void)
 {
+	// 自身を削除する
+	delete this;
+}
 
+//===============================
+// 情報の設定処理
+//===============================
+void CBossCollision::SetData(const int nNum)
+{
+	m_nNumColl = nNum;
 }
 
 //===============================
 // 生成処理
 //===============================
-CBossCollision* CBossCollision::Create(void)
+CBossCollision* CBossCollision::Create(const int nNum)
 {
 	// ボスのインスタンス
 	CBossCollision* pColl = nullptr;
@@ -48,6 +61,9 @@ CBossCollision* CBossCollision::Create(void)
 
 		// ボスを生成する
 		pColl = new CBossCollision;
+
+		// 情報の設定処理
+		pColl->SetData(nNum);
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合

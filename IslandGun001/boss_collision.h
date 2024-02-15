@@ -12,6 +12,11 @@
 //***********************************
 #include "model.h"
 
+//-----------------------------------
+// 前方宣言
+//-----------------------------------
+class CBoss;		// ボス
+
 // クラス定義(ボスの出現状態クラス)
 class CBossCollision
 {
@@ -20,14 +25,16 @@ public:
 	// 構造体定義(当たり判定)
 	struct SCollision
 	{
-		D3DXVECTOR3 offset;		// オフセット座標
-		float fRadius;			// 半径
+		D3DXVECTOR3 offset;			// オフセット座標
+		float fRadius;				// 半径
 	};
 
-	CBossCollision();			// コンストラクタ
-	~CBossCollision();			// デストラクタ
+	CBossCollision();				// コンストラクタ
+	~CBossCollision();				// デストラクタ
 
-	void Update(void);			// 更新処理
+	void Uninit(void);				// 終了処理
+
+	void SetData(const int nNum);	// 情報の設定処理
 
 	// セット・ゲット関係
 	void SetColl(const SCollision& coll, const int nIdx);				// 当たり判定の情報の設定処理
@@ -40,12 +47,12 @@ public:
 	int GetNumColl(void) const;						// 当たり判定の総数の取得処理
 
 	// 静的メンバ関数
-	static CBossCollision* Create(void);		// 生成処理
-
-private:
+	static CBossCollision* Create(const int nNum);	// 生成処理
 
 	// 定数定義
 	static const int MAX_COLLISION = 10;	// 当たり判定の最大数
+
+private:
 
 	// メンバ関数
 	SCollision m_coll[MAX_COLLISION];		// 当たり判定の情報

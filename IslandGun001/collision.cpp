@@ -31,6 +31,7 @@
 #include "wall.h"
 #include "block.h"
 #include "boss.h"
+#include "boss_collision.h"
 #include "slash_ripple.h"
 #include "wind_shot.h"
 #include "fire_shot.h"
@@ -1403,11 +1404,13 @@ bool collision::BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DX
 //===============================
 // ボスの当たり判定
 //===============================
-void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
+bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
 {
 	// ローカル変数宣言
-	D3DXVECTOR3 posBoss = NONE_D3DXVECTOR3;
 	D3DXVECTOR3 posPart = NONE_D3DXVECTOR3;
+	CBossCollision* coll = nullptr;
+	D3DXMATRIX mtxScale, mtxRot, mtxTrans, mtx, mtxColl;	// 計算用マトリックス
+	D3DXMATRIX mtxWorld;		// マトリックスを取得する
 
 	CListManager<CBoss*> list = CBoss::GetList();
 	CBoss* pBoss = nullptr;			// 先頭の値
@@ -1426,10 +1429,6 @@ void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 		while (true)
 		{ // 無限ループ
 
-			// 変数を宣言
-			D3DXMATRIX   mtxScale, mtxRot, mtxTrans, mtx;	// 計算用マトリックス
-			D3DXMATRIX mtxWorld = pBoss->GetMatrix();		// マトリックスを取得する
-
 			// ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&mtxWorld);
 
@@ -1445,36 +1444,51 @@ void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 			D3DXMatrixTranslation(&mtxTrans, pBoss->GetPos().x, pBoss->GetPos().y, pBoss->GetPos().z);
 			D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
 
-			// ボスの位置を取得する
-			posBoss = pBoss->GetPos();
-
-			for (int nCnt = 0; nCnt < pBoss->GetNumModel(); nCnt++)
+			for (int nCntPart = 0; nCntPart < pBoss->GetNumModel(); nCntPart++)
 			{
 				// マトリックスの計算処理
-				pBoss->GetHierarchy(nCnt)->MatrixCalc(&mtx, mtxWorld);
+				pBoss->GetHierarchy(nCntPart)->MatrixCalc(&mtx, mtxWorld);
 
-				// 位置を設定する
-				posPart.x = mtx._41;
-				posPart.y = mtx._42;
-				posPart.z = mtx._43;
+				// 当たり判定の情報を取得
+				coll = pBoss->GetColl(nCntPart);
 
-				// 半径を算出する
-				D3DXVECTOR3 Radius = (pBoss->GetHierarchy(nCnt)->GetFileData().vtxMax + pBoss->GetHierarchy(nCnt)->GetFileData().vtxMin) * 0.5f;
-				float fRadius = (Radius.x + Radius.y + Radius.z) * 0.3f;
+				if (coll != nullptr)
+				{ // 当たり判定が NULL じゃない場合
 
-				// 位置を中心にする
-				posPart += Radius;
+					for (int nCntColl = 0; nCntColl < coll->GetNumColl(); nCntColl++)
+					{
+						// マトリックスの初期化
+						D3DXMatrixIdentity(&mtxColl);
 
-				if (useful::CircleCollisionXY(pos, posPart, size.y, fRadius) == true &&
-					useful::CircleCollisionYZ(pos, posPart, size.y, fRadius) == true &&
-					useful::CircleCollisionXZ(pos, posPart, size.y, fRadius) == true)
-				{ // 当たり判定に当たった場合
+						// 位置を反映
+						D3DXMatrixTranslation(&mtxTrans, coll->GetCollOffset(nCntColl).x, coll->GetCollOffset(nCntColl).y, coll->GetCollOffset(nCntColl).z);
+						D3DXMatrixMultiply(&mtxColl, &mtxColl, &mtxTrans);
 
-					// ヒット処理
-					pBoss->Hit();
+						// 算出した「パーツのワールドマトリックス」と「親のマトリックス」を掛け合わせる
+						D3DXMatrixMultiply
+						(
+							&mtxColl,
+							&mtxColl,
+							&mtx
+						);
 
-					// この先の処理を行わない
-					return;
+						// 位置を設定する
+						posPart.x = mtxColl._41;
+						posPart.y = mtxColl._42;
+						posPart.z = mtxColl._43;
+
+						if (useful::CircleCollisionXY(pos, posPart, fRadius, coll->GetRadius(nCntColl)) == true &&
+							useful::CircleCollisionYZ(pos, posPart, fRadius, coll->GetRadius(nCntColl)) == true &&
+							useful::CircleCollisionXZ(pos, posPart, fRadius, coll->GetRadius(nCntColl)) == true)
+						{ // 球が当たった場合
+
+							// ヒット処理
+							pBoss->Hit(8);
+
+							// true を返す
+							return true;
+						}
+					}
 				}
 			}
 
@@ -1492,6 +1506,9 @@ void collision::BossHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& size)
 			nIdx++;
 		}
 	}
+
+	// false を返す
+	return false;
 }
 
 //===============================

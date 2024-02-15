@@ -11,12 +11,15 @@
 #include "model.h"
 #include "boss.h"
 #include "manager.h"
+#include "file.h"
 #include "useful.h"
 
 #include "motion.h"
 #include "boss_appearstate.h"
 #include "boss_lifeUI.h"
 #include "objectElevation.h"
+#include "boss_collision.h"
+
 
 //------------------------------------------------------------
 // 無名名前空間
@@ -39,6 +42,10 @@ CBoss::CBoss() : CCharacter(CObject::TYPE_BOSS, CObject::PRIORITY_ENTITY)
 	m_pMotion = nullptr;			// モーション
 	m_pState = nullptr;				// 状態の情報
 	m_pLifeUI = nullptr;			// 体力UIの情報
+	for (int nCnt = 0; nCnt < MAX_PARTS; nCnt++)
+	{
+		m_apColl[nCnt] = nullptr;	// 当たり判定の球
+	}
 	m_nLife = MAX_LIFE;				// 体力
 
 	// リストに追加する
@@ -136,6 +143,17 @@ void CBoss::Uninit(void)
 		m_pLifeUI = nullptr;
 	}
 
+	for (int nCnt = 0; nCnt < GetNumModel(); nCnt++)
+	{
+		if (m_apColl[nCnt] != nullptr)
+		{ // 当たり判定の情報が NULL じゃない場合
+
+			// 終了処理
+			m_apColl[nCnt]->Uninit();
+			m_apColl[nCnt] = nullptr;
+		}
+	}
+
 	// 終了処理
 	CCharacter::Uninit();
 
@@ -175,10 +193,13 @@ void CBoss::Draw(void)
 //================================
 // ヒット処理
 //================================
-void CBoss::Hit(void)
+void CBoss::Hit(const int nDamage)
 {
-	// 停止
-	assert(false);
+	// ダメージを受ける
+	m_nLife -= nDamage;
+
+	// 寿命を適用する
+	m_pLifeUI->SetLife(m_nLife);
 }
 
 //================================
@@ -210,6 +231,9 @@ void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	// 全ての値を設定する
 	m_pLifeUI = CBossLifeUI::Create(MAX_LIFE);		// 体力UI
 	m_nLife = MAX_LIFE;		// 体力
+
+	// 当たり判定を設定する
+	CManager::Get()->GetFile()->SetBossColl(&m_apColl[0]);
 }
 
 //===========================================
@@ -372,4 +396,13 @@ CMotion* CBoss::GetMotion(void)
 {
 	// モーションの情報を返す
 	return m_pMotion;
+}
+
+//===========================================
+// 当たり判定の取得処理
+//===========================================
+CBossCollision* CBoss::GetColl(const int nIdx)
+{
+	// 当たり判定の情報を返す
+	return m_apColl[nIdx];
 }
