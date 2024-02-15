@@ -131,6 +131,24 @@ float CBossCollision::GetRadius(const int nIdx) const
 }
 
 //===============================
+// 弱点状況の設定処理
+//===============================
+void CBossCollision::SetEnableWeakness(const bool bWeak, const int nIdx)
+{
+	// 弱点状況を設定する
+	m_coll[nIdx].bWeakness = bWeak;
+}
+
+//===============================
+// 弱点状況の取得処理
+//===============================
+bool CBossCollision::IsWeakness(const int nIdx) const
+{
+	// 弱点状況を返す
+	return m_coll[nIdx].bWeakness;
+}
+
+//===============================
 // 当たり判定の総数の設定処理
 //===============================
 void CBossCollision::SetNumColl(const int nNum)

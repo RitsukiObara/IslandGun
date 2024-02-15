@@ -27,6 +27,7 @@ public:
 	{
 		D3DXVECTOR3 offset;			// オフセット座標
 		float fRadius;				// 半径
+		bool bWeakness;				// 弱点状況
 	};
 
 	CBossCollision();				// コンストラクタ
@@ -43,6 +44,8 @@ public:
 	D3DXVECTOR3 GetCollOffset(const int nIdx) const;					// オフセット座標の取得処理
 	void SetRadius(const float fRadius, const int nIdx);				// 半径の設定処理
 	float GetRadius(const int nIdx) const;								// 半径の取得処理
+	void SetEnableWeakness(const bool bWeak, const int nIdx);			// 弱点状況の設定処理
+	bool IsWeakness(const int nIdx) const;								// 弱点状況の取得処理
 	void SetNumColl(const int nNum);				// 当たり判定の総数の設定処理
 	int GetNumColl(void) const;						// 当たり判定の総数の取得処理
 

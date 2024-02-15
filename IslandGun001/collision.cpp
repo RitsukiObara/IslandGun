@@ -36,6 +36,7 @@
 #include "wind_shot.h"
 #include "fire_shot.h"
 #include "game.h"
+#include "fraction.h"
 
 //===============================
 // マクロ定義
@@ -1482,8 +1483,23 @@ bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
 							useful::CircleCollisionXZ(pos, posPart, fRadius, coll->GetRadius(nCntColl)) == true)
 						{ // 球が当たった場合
 
-							// ヒット処理
-							pBoss->Hit(30);
+							if (coll->IsWeakness(nCntColl) == true)
+							{ // 弱点だった場合
+
+								for (int nCnt = 0; nCnt < 10; nCnt++)
+								{
+									float fMoveWidth = (rand() % 80 + 20);
+									float fMoveHeight = (rand() % 80 + 20);
+
+									CFraction::Create(pos, CFraction::TYPE::TYPE_GEAR, 100, fMoveWidth, fMoveHeight);
+								}
+							}
+							else
+							{ // 上記以外
+
+								// ヒット処理
+								pBoss->Hit(5);
+							}
 
 							// true を返す
 							return true;

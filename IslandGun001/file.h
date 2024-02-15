@@ -115,6 +115,7 @@ public:			// 誰でもアクセスできる
 	{
 		D3DXVECTOR3 offset;		// オフセット座標
 		float fRadius;			// 半径
+		bool bWeakness;			// 弱点状況
 	};
 
 	// ボスの当たり判定の情報

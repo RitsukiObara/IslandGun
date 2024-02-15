@@ -64,6 +64,7 @@ CFile::CFile()
 		{
 			m_BossCollFile.aFile[nCntBoss].aBase[nCntColl].offset = NONE_D3DXVECTOR3;
 			m_BossCollFile.aFile[nCntBoss].aBase[nCntColl].fRadius = 0.0f;
+			m_BossCollFile.aFile[nCntBoss].aBase[nCntColl].bWeakness = false;
 		}
 
 		m_BossCollFile.aFile[nCntBoss].nNum = 0;
@@ -554,6 +555,7 @@ void CFile::SetBossColl(CBossCollision** pColl)
 			{
 				pColl[nCntPart]->SetCollOffset(m_BossCollFile.aFile[nCntPart].aBase[nCntColl].offset, nCntColl);
 				pColl[nCntPart]->SetRadius(m_BossCollFile.aFile[nCntPart].aBase[nCntColl].fRadius, nCntColl);
+				pColl[nCntPart]->SetEnableWeakness(m_BossCollFile.aFile[nCntPart].aBase[nCntColl].bWeakness, nCntColl);
 			}
 		}
 	}
@@ -634,6 +636,7 @@ HRESULT CFile::Init(void)
 		{
 			m_BossCollFile.aFile[nCntBoss].aBase[nCntColl].offset = NONE_D3DXVECTOR3;
 			m_BossCollFile.aFile[nCntBoss].aBase[nCntColl].fRadius = 0.0f;
+			m_BossCollFile.aFile[nCntBoss].aBase[nCntColl].bWeakness = false;
 		}
 
 		m_BossCollFile.aFile[nCntBoss].nNum = 0;
@@ -1536,6 +1539,21 @@ HRESULT CFile::LoadBossColl(void)
 									fscanf(pFile, "%s", &aString[0]);				// RADIUS を読み込む (不要)
 									fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
 									fscanf(pFile, "%f", &m_BossCollFile.aFile[nCnt].aBase[nCntColl].fRadius);		// 半径を読み込む
+
+									fscanf(pFile, "%s", &aString[0]);				// WEAK を読み込む (不要)
+									fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+									fscanf(pFile, "%s", &aString[0]);				// 弱点状況を読み込む
+
+									if (strcmp(&aString[0], "TRUE") == 0)
+									{ // 弱点状況が true の場合
+
+										m_BossCollFile.aFile[nCnt].aBase[nCntColl].bWeakness = true;
+									}
+									else
+									{ // 上記以外
+
+										m_BossCollFile.aFile[nCnt].aBase[nCntColl].bWeakness = false;
+									}
 								}
 							}
 						} while (strcmp(&aString[0], "END_SET_COLL") != 0);		// 読み込んだ文字列が END_SET_WALL ではない場合ループ
