@@ -14,12 +14,13 @@
 #include "file.h"
 #include "useful.h"
 
+#include "game.h"
+
 #include "motion.h"
 #include "boss_appearstate.h"
 #include "boss_lifeUI.h"
 #include "objectElevation.h"
 #include "boss_collision.h"
-
 
 //------------------------------------------------------------
 // 無名名前空間
@@ -200,6 +201,13 @@ void CBoss::Hit(const int nDamage)
 
 	// 寿命を適用する
 	m_pLifeUI->SetLife(m_nLife);
+
+	if (m_nLife <= 0)
+	{ // 体力が無くなった場合
+
+		// 終了状態にする
+		CGame::SetState(CGame::STATE_FINISH);
+	}
 }
 
 //================================

@@ -33,7 +33,7 @@
 //--------------------------------------------
 // マクロ定義
 //--------------------------------------------
-#define TRANS_COUNT		(80)		// 成功時の遷移カウント
+#define TRANS_COUNT		(80)		// 遷移カウント
 
 //--------------------------------------------
 // 静的メンバ変数宣言
@@ -190,7 +190,7 @@ void CGame::Update(void)
 
 		break;
 
-	case CGame::STATE_GOAL:
+	case CGame::STATE_FINISH:
 
 		// 遷移処理
 		Transition();
@@ -217,13 +217,6 @@ void CGame::Update(void)
 	//	return;
 	//}
 
-	if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_0) == true)
-	{ // 0キーを押した
-
-		// ボスの生成処理
-		CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
-	}
-
 	if (m_bPause == true)
 	{ // ポーズ状況が true の場合
 
@@ -238,14 +231,6 @@ void CGame::Update(void)
 
 			// レンダラーの更新
 			CManager::Get()->GetRenderer()->Update();
-		}
-
-		if (CEnemy::GetList().IsEmpty() == true &&
-			m_GameState != STATE_GOAL)
-		{ // 敵を全て倒した場合
-
-			// ゴール状態にする
-			m_GameState = STATE_GOAL;
 		}
 	}
 

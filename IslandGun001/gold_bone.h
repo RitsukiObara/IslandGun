@@ -40,7 +40,6 @@ public:			// 誰でもアクセスできる
 private:		// 自分だけアクセスできる
 
 	// メンバ関数
-	void Get(void);			// 取得状態処理
 
 	// 静的メンバ変数
 	static CListManager<CGoldBone*> m_list;		// リスト

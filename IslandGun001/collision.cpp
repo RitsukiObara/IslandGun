@@ -1483,7 +1483,7 @@ bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
 						{ // ‹…‚ª“–‚½‚Á‚½ê‡
 
 							// ƒqƒbƒgˆ—
-							pBoss->Hit(8);
+							pBoss->Hit(30);
 
 							// true ‚ð•Ô‚·
 							return true;
