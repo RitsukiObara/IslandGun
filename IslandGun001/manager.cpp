@@ -82,6 +82,21 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 		// ファイルの生成処理
 		m_pFile = CFile::Create();
+
+		if (m_pFile != nullptr)
+		{ // ファイルが NULL じゃない場合
+
+			// データをロード
+			CManager::Get()->GetFile()->Load(CFile::TYPE_ENEMY);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_COIN);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_GOLDBONE);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_TREE);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_ROCK);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_BLOCK);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_BANGFLOWER);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_WALL);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_BOSSCOLL);
+		}
 	}
 	else
 	{ // ポインタが使われていた場合

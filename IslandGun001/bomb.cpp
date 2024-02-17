@@ -120,7 +120,7 @@ void CBomb::Uninit(void)
 //========================================
 void CBomb::Update(void)
 {
-	if (CGame::GetState() != CGame::STATE_BOSSAPPEAR)
+	if (CGame::GetState() != CGame::STATE_BOSSMOVIE)
 	{ // ボス出現状態以外
 
 		// 前回の位置を設定する

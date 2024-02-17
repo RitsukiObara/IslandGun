@@ -80,32 +80,11 @@ HRESULT CGame::Init(void)
 	// テキスト読み込み処理
 	CElevation::TxtSet();
 
-	// メッシュのテキスト読み込み
-	//CMesh::TxtSet();
-
-	//if (m_pField == NULL)
-	//{ // フィールドへのポインタが NULL の場合
-
-	//	// フィールドの設定処理
-	//	m_pField = CField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1000.0f, 0.0f, 1000.0f));
-	//}
-
 	// モーションの読み込み処理
 	CMotion::Load(CMotion::STYLE_PLAYER);		// プレイヤー
 	CMotion::Load(CMotion::STYLE_TORDLE);		// タードル
 	CMotion::Load(CMotion::STYLE_IWAKARI);		// イワカリ
 	CMotion::Load(CMotion::STYLE_BOSS);			// ボス
-
-	// データをロード
-	CManager::Get()->GetFile()->Load(CFile::TYPE_ENEMY);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_COIN);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_GOLDBONE);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_TREE);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_ROCK);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_BLOCK);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_BANGFLOWER);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_WALL);
-	CManager::Get()->GetFile()->Load(CFile::TYPE_BOSSCOLL);
 
 	// マップの生成
 	CManager::Get()->GetFile()->SetEnemy();
@@ -178,7 +157,7 @@ void CGame::Update(void)
 	{
 	case CGame::STATE_START:
 	case CGame::STATE_PLAY:
-	case CGame::STATE_BOSSAPPEAR:
+	case CGame::STATE_BOSSMOVIE:
 
 		// ポーズ処理
 		Pause();

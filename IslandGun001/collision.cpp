@@ -36,7 +36,6 @@
 #include "wind_shot.h"
 #include "fire_shot.h"
 #include "game.h"
-#include "fraction.h"
 
 //===============================
 // マクロ定義
@@ -1486,19 +1485,14 @@ bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
 							if (coll->IsWeakness(nCntColl) == true)
 							{ // 弱点だった場合
 
-								for (int nCnt = 0; nCnt < 10; nCnt++)
-								{
-									float fMoveWidth = (rand() % 80 + 20);
-									float fMoveHeight = (rand() % 80 + 20);
-
-									CFraction::Create(pos, CFraction::TYPE::TYPE_GEAR, 100, fMoveWidth, fMoveHeight);
-								}
+								// バリア破壊処理
+								pBoss->BarrierBreak(pos, nCntPart);
 							}
 							else
 							{ // 上記以外
 
 								// ヒット処理
-								pBoss->Hit(100);
+								pBoss->Hit(10);
 							}
 
 							// true を返す

@@ -90,7 +90,7 @@ void CResult::Update(void)
 	{ // ENTERキーを押した場合
 
 		// ランキングに遷移する
-		CManager::Get()->GetFade()->SetFade(CScene::MODE_RANKING);
+		CManager::Get()->GetFade()->SetFade(CScene::MODE_TITLE);
 
 		// この先の処理を行わない
 		return;

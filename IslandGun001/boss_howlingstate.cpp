@@ -10,6 +10,7 @@
 #include "useful.h"
 #include "boss.h"
 #include "boss_howlingstate.h"
+#include "sound.h"
 #include "motion.h"
 
 #include "game.h"
@@ -112,6 +113,9 @@ void CBossHowlingState::Process(CBoss* pBoss)
 				CManager::Get()->GetCamera()->SetVibrate(HOWLING_VIB_INFO);
 			}
 		}
+
+		// ƒ{ƒX‚Ì—Y‚½‚¯‚Ñ‰¹‚ð–Â‚ç‚·
+		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_BOSSHOWLING);
 
 		break;
 

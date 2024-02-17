@@ -462,6 +462,9 @@
     <ClCompile Include="boss_destroystate.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
+    <ClCompile Include="boss_stunstate.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -849,6 +852,9 @@
       <Filter>scene\ranking</Filter>
     </ClInclude>
     <ClInclude Include="boss_destroystate.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_stunstate.h">
       <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>

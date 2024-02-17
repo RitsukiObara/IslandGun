@@ -78,7 +78,7 @@ void CBossTurnState::Process(CBoss* pBoss)
 		{ // 一定数経過した場合
 
 			// ボス出現状態を設定する
-			CGame::SetState(CGame::STATE_BOSSAPPEAR);
+			CGame::SetState(CGame::STATE_BOSSMOVIE);
 
 			if (CManager::Get()->GetCamera()->GetType() != CCamera::TYPE_BOSSCLOSER)
 			{ // ボス近づき状態以外の場合
