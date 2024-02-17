@@ -325,6 +325,29 @@ void CBoss::BarrierHit(const D3DXVECTOR3& pos, const int nPart, const int nCntPa
 }
 
 //================================
+// 気絶回復処理
+//================================
+void CBoss::StunRecovery(void)
+{
+	int nNumMat = 0;
+
+	// 気絶を直す
+	m_bDown = false;
+
+	for (int nCnt = WEAK_RFSHIN; nCnt < WEAK_MAX; nCnt++)
+	{
+		// 体力を回復する
+		m_aWeakPointLife[nCnt] = WEAK_LIFE[nCnt];
+
+		// マテリアルの総数を取得
+		nNumMat = (int)GetHierarchy(WEAK_PART[nCnt])->GetFileData().dwNumMat;
+
+		// マテリアルのコピーを取得
+		m_apMatCopy[WEAK_PART[nCnt]][WEAK_MATERIAL_NUM] = GetHierarchy(WEAK_PART[nCnt])->GetMaterial(WEAK_MATERIAL_NUM);
+	}
+}
+
+//================================
 // 情報の設定処理
 //================================
 void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
@@ -348,6 +371,7 @@ void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 		// マテリアルの数を取得する
 		nNumMat = (int)GetHierarchy(nCntData)->GetFileData().dwNumMat;
 
+		// マテリアルのコピーを生成する
 		m_apMatCopy[nCntData] = new D3DXMATERIAL[nNumMat];
 
 		for (int nCntMat = 0; nCntMat < nNumMat; nCntMat++)

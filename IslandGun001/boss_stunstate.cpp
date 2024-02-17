@@ -12,12 +12,14 @@
 #include "boss_stunstate.h"
 #include "motion.h"
 
+#include "boss_nonestate.h"
+
 //----------------------------------------------------------------------------------------------------------------
 // 無名名前空間
 //----------------------------------------------------------------------------------------------------------------
 namespace
 {
-
+	const int STUN_COUNT = 480;		// 気絶カウント
 }
 
 //==========================
@@ -44,6 +46,19 @@ void CBossStunState::Process(CBoss* pBoss)
 {
 	// 経過カウントを加算する
 	m_nCount++;
+
+	if (m_nCount >= STUN_COUNT)
+	{ // 一定時間経過後
+
+		// 気絶回復処理
+		pBoss->StunRecovery();
+
+		// 通常状態にする
+		pBoss->ChangeState(new CBossNoneState);
+
+		// この先の処理を行わない
+		return;
+	}
 }
 
 //==========================

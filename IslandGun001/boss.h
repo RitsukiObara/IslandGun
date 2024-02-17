@@ -62,9 +62,11 @@ public:					// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void Hit(const int nDamage);					// ヒット処理
+	void Hit(const int nDamage);	// ヒット処理
 	void BarrierBreak(const D3DXVECTOR3& pos, const int nPart);			// バリア破壊処理
 	void BarrierHit(const D3DXVECTOR3& pos, const int nPart, const int nCntPart);		// バリアのヒット処理
+	void StunRecovery(void);		// 気絶回復処理
+
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 情報の設定処理
 
 	bool ElevationCollision(void);					// 起伏地面との当たり判定

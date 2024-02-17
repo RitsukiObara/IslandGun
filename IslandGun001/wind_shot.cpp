@@ -33,7 +33,7 @@ namespace
 	const float HOMING_CORRECT = 0.03f;			// ホーミング時の向きの補正係数
 	const float HOMING_SPEED = 10.0f;			// ホーミング時の速度
 	const float GRAVITY = -25.0f;				// 重力
-	const float ADD_ROT = 0.05f;				// 向きの加算量
+	const float ADD_ROT = 0.3f;					// 向きの加算量
 	const float DELETE_SUB_ALPHA = 0.05f;		// 消去時の透明度の減算量
 	const float DELETE_ADD_SHIFT = 20.0f;		// 消去時のずらす幅の加算量
 }
