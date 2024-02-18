@@ -48,7 +48,6 @@ namespace
 		50.5f,		// –Ø‚Ì”¼Œa
 	};
 
-	const float DAGGER_RADIUS = 180.0f;				// ƒ_ƒK[‚Ì”¼Œa
 	const int DAGGER_DAMAGE = 40;					// ƒ_ƒK[‚Ìƒ_ƒ[ƒW
 	const float DAGGER_KNOCKBACK = 100.0f;			// ƒ_ƒK[‚ÌƒmƒbƒNƒoƒbƒN
 
@@ -592,7 +591,7 @@ bool collision::TreeCollision(D3DXVECTOR3* pos, const float fRadius)
 //===============================
 // –Ø‚Ö‚ÌUŒ‚”»’èˆ—
 //===============================
-void collision::TreeAttack(const CPlayer& pPlayer, const float fHeight)
+void collision::TreeAttack(const CPlayer& pPlayer, const float fRadius, const float fHeight)
 {
 	// ƒ[ƒJƒ‹•Ï”éŒ¾
 	D3DXVECTOR3 posTree = NONE_D3DXVECTOR3;			// –Ø‚ÌˆÊ’u
@@ -617,7 +616,7 @@ void collision::TreeAttack(const CPlayer& pPlayer, const float fHeight)
 			// –Ø‚ÌˆÊ’u‚ðÝ’è‚·‚é
 			posTree = pTree->GetPos();
 
-			if (useful::CircleCollisionXZ(posPlayer, posTree, DAGGER_RADIUS, TREE_RADIUS[pTree->GetType()]) &&
+			if (useful::CircleCollisionXZ(posPlayer, posTree, fRadius, TREE_RADIUS[pTree->GetType()]) &&
 				posPlayer.y <= posTree.y + pTree->GetFileData().vtxMax.y &&
 				posPlayer.y + fHeight >= posTree.y)
 			{ // ƒ_ƒK[‚ª–Ø‚ÉÚG‚µ‚½ê‡
@@ -645,7 +644,7 @@ void collision::TreeAttack(const CPlayer& pPlayer, const float fHeight)
 //===============================
 // ƒ„ƒV‚Ì–Ø‚Æ‚Ì“–‚½‚è”»’è
 //===============================
-void collision::PalmFruitHit(CPlayer* pPlayer, const D3DXVECTOR3& size)
+void collision::PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float fHeight)
 {
 	// ƒ[ƒJƒ‹•Ï”éŒ¾
 	D3DXVECTOR3 posFruit = NONE_D3DXVECTOR3;		// –Ø‚ÌˆÊ’u
@@ -673,8 +672,8 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const D3DXVECTOR3& size)
 			fRadiusFruit = pFruit->GetFileData().vtxMax.x;	// ”¼Œa
 
 			if (posPlayer.y <= posFruit.y + pFruit->GetFileData().vtxMax.y &&
-				posPlayer.y + size.y >= posFruit.y &&
-				useful::CircleCollisionXZ(posPlayer, posFruit, DAGGER_RADIUS, fRadiusFruit) == true &&
+				posPlayer.y + fHeight >= posFruit.y &&
+				useful::CircleCollisionXZ(posPlayer, posFruit, fRadius, fRadiusFruit) == true &&
 				pPlayer->GetState().state != CPlayer::STATE_DEATH &&
 				pFruit->GetState() == CPalmFruit::STATE_STOP)
 			{ // ‰~’Œ‚Ì“–‚½‚è”»’è‚É“ü‚Á‚½ê‡
@@ -920,7 +919,7 @@ bool collision::BombHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, 
 //===============================
 // ”š’e‚Ìƒqƒbƒg”»’è(ƒ_ƒK[)
 //===============================
-bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight)
+bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fRadius, const float fHeight)
 {
 	// ƒ[ƒJƒ‹•Ï”éŒ¾
 	D3DXVECTOR3 posBomb = NONE_D3DXVECTOR3;		// ”š’e‚ÌˆÊ’u
@@ -956,7 +955,7 @@ bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight)
 
 				if (pos.y + fHeight >= posBomb.y &&
 					pos.y <= posBomb.y + fHeightBomb &&
-					useful::CircleCollisionXZ(pos, posBomb, DAGGER_RADIUS, fRadiusBomb) == true)
+					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
 				{ // ”ÍˆÍ“à‚É‚¢‚½ê‡
 
 					// Œü‚«‚ðŽZo‚·‚é

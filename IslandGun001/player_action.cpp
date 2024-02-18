@@ -36,7 +36,7 @@ namespace
 	const D3DXCOLOR DODGE_BLUR_COL = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);		// ‰ñ”ðó‘Ô‚Ìƒuƒ‰[‚ÌF
 
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì‚‚³
-	const float ATTACK_DAGGER_RADIUS = 180.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì”¼Œa
+	const float ATTACK_DAGGER_RADIUS = 240.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì”¼Œa
 	const int DAGGER_ATTACK_START = 8;			// ƒ_ƒK[‚ÌUŒ‚”»’è‚ªŽn‚Ü‚éƒJƒEƒ“ƒg”
 	const int DAGGER_ATTACK_END = 28;			// ƒ_ƒK[‚ÌUŒ‚”»’è‚ªI‚í‚éƒJƒEƒ“ƒg”
 }
@@ -385,13 +385,13 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 		collision::BangFlowerHit(pPlayer->GetPos(), ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 
 		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
-		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_HEIGHT);
+		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 
 		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
 		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
 
 		// ”š’e‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
-		collision::BombHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT);
+		collision::BombHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 	}
 
 	if (m_nActionCount % DAGGER_COUNT == 0)
@@ -549,7 +549,7 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 		pPlayer->GetDagger()->SetEnableDispOrbit(true);
 
 		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
-		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_HEIGHT);
+		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 
 		// “G‚Æƒ_ƒK[‚Ì“–‚½‚è”»’è
 		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);

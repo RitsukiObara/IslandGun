@@ -52,10 +52,10 @@ namespace collision
 
 	// –Ø‚Æ‚Ì“–‚½‚è”»’è
 	bool TreeCollision(D3DXVECTOR3* pos, const float fRadius);			// –Ø‚Ì“–‚½‚è”»’è
-	void TreeAttack(const CPlayer& pPlayer, const float fHeight);		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
+	void TreeAttack(const CPlayer& pPlayer, const float fRadius, const float fHeight);		// –Ø‚Ö‚ÌUŒ‚”»’èˆ—
 
 	// ƒ„ƒV‚ÌÀ‚Æ‚Ì“–‚½‚è”»’è
-	void PalmFruitHit(CPlayer* pPlayer, const D3DXVECTOR3& size);			// ƒ„ƒV‚Ì–Ø‚Æ‚Ì“–‚½‚è”»’è
+	void PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float fHeight);		// ƒ„ƒV‚Ì–Ø‚Æ‚Ì“–‚½‚è”»’è
 
 	// Šâ‚Æ‚Ì“–‚½‚è”»’è
 	bool RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight);		// Šâ‚Æ‚Ì“–‚½‚è”»’è
@@ -63,7 +63,7 @@ namespace collision
 	// ”š’e‰Ô‚Æ‚Ì“–‚½‚è”»’è
 	bool BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);			// ”š’e‰Ô‚Ìƒqƒbƒg”»’è
 	bool BombHitToGun(const D3DXVECTOR3& pos, const D3DXVECTOR3& posOld, const float fRadius);		// ”š’e‚Ìƒqƒbƒg”»’è(e’e)
-	bool BombHitToDagger(const D3DXVECTOR3& pos, const float fHeight);		// ”š’e‚Ìƒqƒbƒg”»’è(ƒ_ƒK[)
+	bool BombHitToDagger(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);			// ”š’e‚Ìƒqƒbƒg”»’è(ƒ_ƒK[)
 	bool BombHitToSlashRipple(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);	// ”š’e‚Ìƒqƒbƒg”»’è(aŒ‚”g–ä)
 
 	// ”š•—‚Æ‚Ì“–‚½‚è”»’è

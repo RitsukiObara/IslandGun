@@ -23,7 +23,7 @@
 #include "gold_bone_UI.h"
 #include "lifeUI.h"
 #include "player_controller.h"
-#include "game_score.h"
+#include "airplane.h"
 
 #include "collision.h"
 #include "camera.h"
@@ -84,6 +84,7 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_pGoldBoneUI = nullptr;				// 金の骨のUIの情報
 	m_pLifeUI = nullptr;					// 寿命UIの情報
 	m_pController = nullptr;				// プレイヤーのコントローラーの情報
+	m_pAirplane = nullptr;					// 飛行機の情報
 
 	m_stateInfo.state = STATE_NONE;			// 状態
 	m_stateInfo.nCount = 0;					// 状態カウント
@@ -319,6 +320,14 @@ void CPlayer::Uninit(void)
 		m_pController = nullptr;
 	}
 
+	if (m_pAirplane != nullptr)
+	{ // 飛行機の情報が NULL じゃない場合
+
+		// 飛行機の終了処理
+		m_pAirplane->Uninit();
+		m_pAirplane = nullptr;
+	}
+
 	// 終了処理
 	CCharacter::Uninit();
 }
@@ -328,8 +337,47 @@ void CPlayer::Uninit(void)
 //===========================================
 void CPlayer::Update(void)
 {
-	if (CGame::GetState() != CGame::STATE_BOSSMOVIE)
-	{ // ボス出現状態以外
+	switch (CGame::GetState())
+	{
+	case CGame::STATE_START:	// 開始状態
+
+		// 移動処理
+		Move();
+
+		if (m_pAirplane != nullptr &&
+			m_pAirplane->GetState() == CAirplane::STATE_MOVE)
+		{ // 飛行機が NULL じゃない場合
+
+			// 位置を飛行機に合わせる
+			SetPos(m_pAirplane->GetPos());
+
+			// 更新処理
+			m_pAirplane->Update(this);
+		}
+
+		if (m_pMotion != nullptr)
+		{ // モーションが NULL じゃない場合
+
+			// モーションの更新処理
+			m_pMotion->Update();
+		}
+
+		// 起伏地面との当たり判定処理
+		ElevationCollision();
+
+		if (m_bJump == false)
+		{ // ジャンプ状況が false の場合
+
+			// プレイ状態にする
+			CGame::SetState(CGame::STATE_PLAY);
+
+			// 通常カメラにする
+			CManager::Get()->GetCamera()->SetType(CCamera::TYPE_NONE);
+		}
+
+		break;
+
+	case CGame::STATE_PLAY:			// プレイ状態
 
 		// 前回の位置の設定処理
 		SetPosOld(GetPos());
@@ -390,7 +438,7 @@ void CPlayer::Update(void)
 		}
 
 		// ヤシの実との当たり判定
-		collision::PalmFruitHit(this, COLLISION_SIZE);
+		collision::PalmFruitHit(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
 
 		// 小判との当たり判定
 		collision::CoinCollision(this, COLLISION_SIZE);
@@ -414,6 +462,23 @@ void CPlayer::Update(void)
 		WallCollision();
 
 		CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
+
+		break;
+
+	case CGame::STATE_BOSSMOVIE:	// ボス出現状態
+
+		break;
+
+	case CGame::STATE_FINISH:		// 終了状態
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
 	}
 }
 
@@ -422,6 +487,13 @@ void CPlayer::Update(void)
 //===========================================
 void CPlayer::Draw(void)
 {
+	if (m_pAirplane != nullptr)
+	{ // 飛行機が NULL じゃない場合
+
+		// 飛行機の描画処理
+		m_pAirplane->Draw();
+	}
+
 	switch (m_stateInfo.state)
 	{
 	case STATE_NONE:		// 通常状態
@@ -619,6 +691,15 @@ CLifeUI* CPlayer::GetLifeUI(void) const
 }
 
 //=======================================
+// 飛行機の管轄外し処理
+//=======================================
+void CPlayer::RemoveAirplane(void)
+{
+	// 飛行機を NULL にする
+	m_pAirplane = nullptr;
+}
+
+//=======================================
 // 情報の設定処理
 //=======================================
 void CPlayer::SetData(const D3DXVECTOR3& pos)
@@ -643,15 +724,37 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 
 	for (int nCnt = 0; nCnt < NUM_HANDGUN; nCnt++)
 	{
-		// 拳銃の情報を生成する
-		m_apHandGun[nCnt] = CHandgun::Create(GUN_POS[nCnt], GUN_ROT[nCnt], GetHierarchy(INIT_GUN_IDX + nCnt)->GetMatrixP());
+		if (m_apHandGun[nCnt] == nullptr)
+		{ // 拳銃が NULL の場合
+
+			// 拳銃の情報を生成する
+			m_apHandGun[nCnt] = CHandgun::Create(GUN_POS[nCnt], GUN_ROT[nCnt], GetHierarchy(INIT_GUN_IDX + nCnt)->GetMatrixP());
+		}
 	}
 
-	// ダガーを生成する
-	m_pDagger = CDagger::Create(GetHierarchy(INIT_DAGGER_IDX)->GetMatrixP());
+	if (m_pDagger == nullptr)
+	{ // ダガーが NULL の場合
 
-	// エイムを生成する
-	m_pAim = CAim::Create(GetPos());
+		// ダガーを生成する
+		m_pDagger = CDagger::Create(GetHierarchy(INIT_DAGGER_IDX)->GetMatrixP());
+	}
+
+	if (m_pAim == nullptr)
+	{ // エイムが NULL の場合
+
+		// エイムを生成する
+		m_pAim = CAim::Create(GetPos());
+	}
+
+	if (m_pAirplane == nullptr)
+	{ // 飛行機が NULL の場合
+
+		// 飛行機を生成
+		m_pAirplane = CAirplane::Create(pos);
+	}
+
+	// 位置を飛行機に合わせる
+	SetPos(m_pAirplane->GetPos());
 	
 	// 全ての値を設定する
 	m_stateInfo.state = STATE_NONE;		// 状態

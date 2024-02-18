@@ -27,7 +27,6 @@
 #include "ocean.h"
 #include "game_score.h"
 #include "boss.h"
-#include "airplane.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -73,8 +72,8 @@ CGame::~CGame()
 //=========================================
 HRESULT CGame::Init(void)
 {
-	// 通常カメラで描画
-	CManager::Get()->GetCamera()->SetType(CCamera::TYPE_NONE);
+	// スタートカメラで描画
+	CManager::Get()->GetCamera()->SetType(CCamera::TYPE_START);
 
 	// テキスト読み込み処理
 	CElevation::TxtSet();
@@ -109,9 +108,6 @@ HRESULT CGame::Init(void)
 
 	// ゲームスコアの生成
 	m_pGameScore = CGameScore::Create();
-
-	// 飛行機の生成
-	CAirplane::Create(D3DXVECTOR3(0.0f, 300.0f, 0.0f));
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント
