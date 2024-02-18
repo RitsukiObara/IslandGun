@@ -27,8 +27,7 @@
 #include "ocean.h"
 #include "game_score.h"
 #include "boss.h"
-#include "enemy.h"
-#include "list_manager.h"
+#include "airplane.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -110,6 +109,9 @@ HRESULT CGame::Init(void)
 
 	// ゲームスコアの生成
 	m_pGameScore = CGameScore::Create();
+
+	// 飛行機の生成
+	CAirplane::Create(D3DXVECTOR3(0.0f, 300.0f, 0.0f));
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

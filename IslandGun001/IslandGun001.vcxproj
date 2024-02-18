@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="aim.cpp" />
+    <ClCompile Include="airplane.cpp" />
     <ClCompile Include="anim_reaction.cpp" />
     <ClCompile Include="bang_flower.cpp" />
     <ClCompile Include="block.cpp" />
@@ -258,6 +259,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="propeller.cpp" />
     <ClCompile Include="push_timing.cpp" />
     <ClCompile Include="ranking.cpp" />
     <ClCompile Include="ranking_rank.cpp" />
@@ -289,6 +291,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aim.h" />
+    <ClInclude Include="airplane.h" />
     <ClInclude Include="anim_reaction.h" />
     <ClInclude Include="bang_flower.h" />
     <ClInclude Include="block.h" />
@@ -389,6 +392,7 @@
     <ClInclude Include="player_action.h" />
     <ClInclude Include="player_controller.h" />
     <ClInclude Include="precompile.h" />
+    <ClInclude Include="propeller.h" />
     <ClInclude Include="push_timing.h" />
     <ClInclude Include="ranking.h" />
     <ClInclude Include="ranking_rank.h" />

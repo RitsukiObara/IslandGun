@@ -76,6 +76,9 @@
     <Filter Include="gimmick\Map\BangFlower">
       <UniqueIdentifier>{dc6fa207-aece-4428-ae6f-7048a3559fe5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player\Airplane">
+      <UniqueIdentifier>{1a72ad39-88d2-4a23-8150-851ac102edb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -464,6 +467,12 @@
     </ClCompile>
     <ClCompile Include="boss_stunstate.cpp">
       <Filter>enemy\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="airplane.cpp">
+      <Filter>Player\Airplane</Filter>
+    </ClCompile>
+    <ClCompile Include="propeller.cpp">
+      <Filter>Player\Airplane</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -856,6 +865,12 @@
     </ClInclude>
     <ClInclude Include="boss_stunstate.h">
       <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="airplane.h">
+      <Filter>Player\Airplane</Filter>
+    </ClInclude>
+    <ClInclude Include="propeller.h">
+      <Filter>Player\Airplane</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
