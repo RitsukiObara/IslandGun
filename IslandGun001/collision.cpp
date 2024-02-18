@@ -493,24 +493,28 @@ void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& siz
 		while (true)
 		{ // 無限ループ
 
-			// 金の骨の変数を取得する
-			posBone = pBone->GetPos();
-			vtxMaxBone = pBone->GetFileData().vtxMax;
-			vtxMinBone = pBone->GetFileData().vtxMin;
+			if (pBone->GetState() == CGoldBone::STATE_NONE)
+			{ // 通常状態の場合
 
-			if (useful::RectangleCollisionXY(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
-				useful::RectangleCollisionXZ(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
-				useful::RectangleCollisionYZ(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true)
-			{ // 金の骨と重なった場合
+				// 金の骨の変数を取得する
+				posBone = pBone->GetPos();
+				vtxMaxBone = pBone->GetFileData().vtxMax;
+				vtxMinBone = pBone->GetFileData().vtxMin;
 
-				// 取得処理
-				pBone->Hit();
+				if (useful::RectangleCollisionXY(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
+					useful::RectangleCollisionXZ(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true &&
+					useful::RectangleCollisionYZ(pos, posBone, vtxMax, vtxMaxBone, vtxMin, vtxMinBone) == true)
+				{ // 金の骨と重なった場合
 
-				if (pPlayer.GetGoldBoneUI() != nullptr)
-				{ // 金の骨UIが NULL じゃない場合
+					// 取得処理
+					pBone->Hit();
 
-					// 金の骨取得処理
-					pPlayer.GetGoldBoneUI()->GetGoldBone();
+					if (pPlayer.GetGoldBoneUI() != nullptr)
+					{ // 金の骨UIが NULL じゃない場合
+
+						// 金の骨取得処理
+						pPlayer.GetGoldBoneUI()->GetGoldBone();
+					}
 				}
 			}
 

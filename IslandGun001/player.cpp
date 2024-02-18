@@ -372,6 +372,9 @@ void CPlayer::Update(void)
 			}
 		}
 
+		// 緊急のリロード処理
+		EmergentReload();
+
 		if (m_pAim != nullptr)
 		{ // エイムが NULL じゃない場合
 
@@ -980,6 +983,21 @@ void CPlayer::Move(void)
 	// 位置と向きを適用する
 	SetPos(pos);
 	SetRot(rot);
+}
+
+//=======================================
+// 緊急のリロード処理
+//=======================================
+void CPlayer::EmergentReload(void)
+{
+	if (m_pBulletUI != nullptr &&
+		m_pBulletUI->GetNumBullet() <= 0 &&
+		m_stateInfo.state == STATE_NONE)
+	{ // 通常状態で弾がリロードできてなかった場合
+
+		// 緊急で弾丸をリロードする
+		m_pBulletUI->SetNumBullet(MAX_REMAINING_BULLET);
+	}
 }
 
 //=======================================

@@ -104,12 +104,12 @@ private:		// 自分だけアクセスできる
 	// メンバ関数
 	void StateManager(void);		// 状態管理処理
 	void Move(void);				// 移動処理
+	void EmergentReload(void);		// 緊急のリロード処理
 	void ElevationCollision(void);	// 起伏地面の当たり判定処理
 	void TreeCollision(void);		// 木との当たり判定
 	void BlockCollision(void);		// ブロックとの当たり判定
 	void RockCollision(void);		// 岩との当たり判定
 	void WallCollision(void);		// 壁との当たり判定
-	bool WindShotHit(void);			// 風攻撃との当たり判定
 
 	// 状態ごとの処理
 	void DamageState();				// ダメージ状態処理
