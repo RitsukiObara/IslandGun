@@ -76,6 +76,9 @@ public:					// 誰でもアクセスできる
 	CMotion* GetMotion(void);		// モーションの取得処理
 	CBossCollision* GetColl(const int nIdx);		// 当たり判定の取得処理
 
+	void SetEnableHit(const bool bHit);		// ヒット状況の設定処理
+	bool IsHit(void) const;					// ヒット状況の取得処理
+
 	// 静的メンバ関数
 	static CBoss* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot);		// 生成処理
 
@@ -93,6 +96,7 @@ private:				// 自分だけアクセスできる
 	int m_aWeakPointLife[WEAK_MAX];			// 弱点のライフ
 	int m_nLife;			// 体力
 	bool m_bDown;			// ダウン状況
+	bool m_bHit;			// ヒット状況
 
 	// 静的メンバ変数
 	static CListManager<CBoss*> m_list;		// リスト

@@ -1525,6 +1525,124 @@ bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
 }
 
 //===============================
+// ボスとのヒット判定
+//===============================
+bool collision::BossAttack(const D3DXVECTOR3& pos, const float fRadius, float* fRotSmash)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posPart = NONE_D3DXVECTOR3;
+	CBossCollision* coll = nullptr;
+	D3DXMATRIX mtxScale, mtxRot, mtxTrans, mtx, mtxColl;	// 計算用マトリックス
+	D3DXMATRIX mtxWorld;		// マトリックスを取得する
+
+	CListManager<CBoss*> list = CBoss::GetList();
+	CBoss* pBoss = nullptr;			// 先頭の値
+	CBoss* pBossEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pBoss = list.GetTop();
+
+		// 末尾の値を取得する
+		pBossEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pBoss->IsHit() == true)
+			{ // ヒット状況が true の場合
+
+				// ワールドマトリックスの初期化
+				D3DXMatrixIdentity(&mtxWorld);
+
+				// 拡大率を反映
+				D3DXMatrixScaling(&mtxScale, pBoss->GetScale().x, pBoss->GetScale().y, pBoss->GetScale().z);
+				D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScale);
+
+				// 向きを反映
+				D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->GetRot().y + D3DX_PI, pBoss->GetRot().x, pBoss->GetRot().z);
+				D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
+
+				// 位置を反映
+				D3DXMatrixTranslation(&mtxTrans, pBoss->GetPos().x, pBoss->GetPos().y, pBoss->GetPos().z);
+				D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
+
+				for (int nCntPart = 0; nCntPart < pBoss->GetNumModel(); nCntPart++)
+				{
+					// マトリックスの計算処理
+					pBoss->GetHierarchy(nCntPart)->MatrixCalc(&mtx, mtxWorld);
+
+					// 当たり判定の情報を取得
+					coll = pBoss->GetColl(nCntPart);
+
+					if (coll != nullptr)
+					{ // 当たり判定が NULL じゃない場合
+
+						for (int nCntColl = 0; nCntColl < coll->GetNumColl(); nCntColl++)
+						{
+							// マトリックスの初期化
+							D3DXMatrixIdentity(&mtxColl);
+
+							// 位置を反映
+							D3DXMatrixTranslation(&mtxTrans, coll->GetCollOffset(nCntColl).x, coll->GetCollOffset(nCntColl).y, coll->GetCollOffset(nCntColl).z);
+							D3DXMatrixMultiply(&mtxColl, &mtxColl, &mtxTrans);
+
+							// 算出した「パーツのワールドマトリックス」と「親のマトリックス」を掛け合わせる
+							D3DXMatrixMultiply
+							(
+								&mtxColl,
+								&mtxColl,
+								&mtx
+							);
+
+							// 位置を設定する
+							posPart.x = mtxColl._41;
+							posPart.y = mtxColl._42;
+							posPart.z = mtxColl._43;
+
+							if (useful::CircleCollisionXY(pos, posPart, fRadius, coll->GetRadius(nCntColl)) == true &&
+								useful::CircleCollisionYZ(pos, posPart, fRadius, coll->GetRadius(nCntColl)) == true &&
+								useful::CircleCollisionXZ(pos, posPart, fRadius, coll->GetRadius(nCntColl)) == true)
+							{ // 球が当たった場合
+
+								if (fRotSmash != nullptr)
+								{ // 吹き飛ぶ向きが NULL じゃない場合
+
+									// 吹き飛ぶ向きを設定する
+									*fRotSmash = atan2f(pos.x - posPart.x, pos.z - posPart.z);
+								}
+
+								// true を返す
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			if (pBoss == pBossEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pBoss = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
 // 斬撃の波紋の当たり判定
 //===============================
 bool collision::RippleHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fRotSmash)

@@ -467,9 +467,15 @@ void CPlayer::Update(void)
 
 	case CGame::STATE_BOSSMOVIE:	// ボス出現状態
 
+		// 起伏地面との当たり判定処理
+		ElevationCollision();
+
 		break;
 
 	case CGame::STATE_FINISH:		// 終了状態
+
+		// 起伏地面との当たり判定処理
+		ElevationCollision();
 
 		break;
 
@@ -968,9 +974,11 @@ void CPlayer::StateManager(void)
 
 			// 吹き飛ぶ向き
 			float fRotSmash = 0.0f;
+			D3DXVECTOR3 pos = GetPos();
 
-			if (collision::WindShotHit(GetPos(), COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true ||
-				collision::FireShotHit(GetPos(), COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true)
+			if (collision::WindShotHit(pos, COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true ||
+				collision::FireShotHit(pos, COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true ||
+				collision::BossAttack(D3DXVECTOR3(pos.x, pos.y + (COLLISION_SIZE.y * 0.5f), pos.z), COLLISION_SIZE.x, &fRotSmash) == true)
 			{ // 当たった場合
 
 				// ヒット処理

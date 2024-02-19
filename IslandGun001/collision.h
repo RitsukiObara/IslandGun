@@ -79,6 +79,7 @@ namespace collision
 
 	// ƒ{ƒX‚Æ‚Ì“–‚½‚è”»’è
 	bool BossHit(const D3DXVECTOR3& pos, const float fRadius);		// ƒ{ƒX‚Ì“–‚½‚è”»’è
+	bool BossAttack(const D3DXVECTOR3& pos, const float fRadius, float* fRotSmash = nullptr);	// ƒ{ƒX‚Æ‚Ìƒqƒbƒg”»’è
 	
 	// ŽaŒ‚”g–ä‚Æ‚Ì“–‚½‚è”»’è
 	bool RippleHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fRotSmash = nullptr);		// ŽaŒ‚‚Ì”g–ä‚Ì“–‚½‚è”»’è

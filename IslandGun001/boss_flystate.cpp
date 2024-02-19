@@ -65,6 +65,9 @@ void CBossFlyState::Process(CBoss* pBoss)
 	if (m_nCount >= NONESTATE_COUNT)
 	{ // 通常状態に戻るようになった場合
 
+		// ヒット状況を false にする
+		pBoss->SetEnableHit(false);
+
 		// 状態の切り替え処理
 		pBoss->ChangeState(new CBossNoneState);
 
@@ -79,6 +82,9 @@ void CBossFlyState::Process(CBoss* pBoss)
 
 		// 波紋の生成処理
 		Ripple(pBoss);
+
+		// ヒット状況を true にする
+		pBoss->SetEnableHit(true);
 	}
 	else if (m_nCount >= FLYMOTION_COUNT)
 	{ // 一定時間経過した場合

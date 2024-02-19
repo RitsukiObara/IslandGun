@@ -74,6 +74,7 @@ CBoss::CBoss() : CCharacter(CObject::TYPE_BOSS, CObject::PRIORITY_ENTITY)
 	}
 	m_nLife = MAX_LIFE;				// 体力
 	m_bDown = false;				// ダウン状況
+	m_bHit = false;					// ヒット状況
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -391,6 +392,7 @@ void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	m_pLifeUI = CBossLifeUI::Create(MAX_LIFE);		// 体力UI
 	m_nLife = MAX_LIFE;		// 体力
 	m_bDown = false;		// ダウン状況
+	m_bHit = false;			// ヒット状況
 
 	// 当たり判定を設定する
 	CManager::Get()->GetFile()->SetBossColl(&m_apColl[0]);
@@ -565,4 +567,22 @@ CBossCollision* CBoss::GetColl(const int nIdx)
 {
 	// 当たり判定の情報を返す
 	return m_apColl[nIdx];
+}
+
+//===========================================
+// ヒット状況の設定処理
+//===========================================
+void CBoss::SetEnableHit(const bool bHit)
+{
+	// ヒット状況を設定する
+	m_bHit = bHit;
+}
+
+//===========================================
+// ヒット状況の取得処理
+//===========================================
+bool CBoss::IsHit(void) const
+{
+	// ヒット状況を返す
+	return m_bHit;
 }
