@@ -474,7 +474,7 @@ void CBomb::Collision(void)
 	D3DXVECTOR3 vtxMin = GetFileData().vtxMin;	// ç≈è¨íl
 
 	// ìñÇΩÇËîªíË
-	collision::RockCollision(&pos, vtxMax.x, vtxMax.y);
+	collision::RockCollision(&pos, posOld, vtxMax.x, vtxMax.y, &m_move.y);
 	collision::TreeCollision(&pos, vtxMax.x);
 	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
 	collision::BlockHit(&pos, posOld, vtxMax, vtxMin);

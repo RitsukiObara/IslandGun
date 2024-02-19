@@ -293,7 +293,7 @@ bool CBullet::Hit(void)
 		collision::BangFlowerHit(pos, size.x, size.y) == true ||
 		collision::BombHitToGun(pos, posOld, size.x) == true ||
 		collision::BlockHit(&pos, posOld, vtxMax, vtxMin) == true ||
-		collision::RockCollision(&pos, vtxMax.x, vtxMax.y) == true ||
+		collision::RockCollision(&pos, posOld, vtxMax.x, vtxMax.y) == true ||
 		collision::TreeCollision(&pos, vtxMax.x) == true ||
 		collision::WallCollision(&pos, posOld, vtxMax, vtxMin) == true)
 	{ // ìGÇ…ìñÇΩÇ¡ÇΩèÍçá

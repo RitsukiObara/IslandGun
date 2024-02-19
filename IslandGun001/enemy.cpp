@@ -498,7 +498,7 @@ void CEnemy::RockCollision(void)
 	D3DXVECTOR3 pos = GetPos();
 
 	// Šâ‚Æ‚Ì“–‚½‚è”»’è
-	collision::RockCollision(&pos, m_collSize.x, m_collSize.y);
+	collision::RockCollision(&pos, GetPosOld(), m_collSize.x, m_collSize.y, &m_fGravity);
 
 	// ˆÊ’u‚Ìİ’èˆ—
 	SetPos(pos);

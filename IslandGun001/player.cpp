@@ -1205,7 +1205,7 @@ void CPlayer::RockCollision(void)
 	D3DXVECTOR3 pos = GetPos();
 
 	// Šâ‚Æ‚Ì“–‚½‚è”»’è
-	collision::RockCollision(&pos, COLLISION_SIZE.x, COLLISION_SIZE.y);
+	collision::RockCollision(&pos, GetPosOld(), COLLISION_SIZE.x, COLLISION_SIZE.y, &m_move.y, &m_bJump);
 
 	// ˆÊ’u‚Ìİ’èˆ—
 	SetPos(pos);

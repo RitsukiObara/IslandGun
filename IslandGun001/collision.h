@@ -58,7 +58,7 @@ namespace collision
 	void PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float fHeight);		// ƒ„ƒV‚Ì–Ø‚Æ‚Ì“–‚½‚è”»’è
 
 	// Šâ‚Æ‚Ì“–‚½‚è”»’è
-	bool RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight);		// Šâ‚Æ‚Ì“–‚½‚è”»’è
+	bool RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius, const float fHeight, float* fGravity = nullptr, bool* bJump = nullptr);		// Šâ‚Æ‚Ì“–‚½‚è”»’è
 
 	// ”š’e‰Ô‚Æ‚Ì“–‚½‚è”»’è
 	bool BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight);			// ”š’e‰Ô‚Ìƒqƒbƒg”»’è

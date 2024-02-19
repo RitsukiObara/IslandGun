@@ -704,7 +704,7 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float 
 //===============================
 // 岩との当たり判定
 //===============================
-bool collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float fHeight)
+bool collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius, const float fHeight, float* fGravity, bool* bJump)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
@@ -717,7 +717,7 @@ bool collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 	CRock* pRock = nullptr;			// 先頭の値
 	CRock* pRockEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
-	
+
 	if (list.IsEmpty() == false)
 	{ // 空白じゃない場合
 
@@ -742,17 +742,49 @@ bool collision::RockCollision(D3DXVECTOR3* pos, const float fRadius, const float
 			// 岩の下の高さを取得する
 			fBottomRock = pRock->GetBottomHeight();
 
-			if (pos->y <= posRock.y + fTopRock &&
-				pos->y + fHeight >= posRock.y + fBottomRock)
-			{ // 範囲内にいた場合
+			if (posRock.y + fTopRock <= posOld.y &&
+				posRock.y + fTopRock >= pos->y &&
+				useful::CircleCollisionXZ(*pos, posRock, fRadius, fRadiusRock) == true)
+			{ // 上にぶつかった場合
 
-				// 円柱の当たり判定
-				if (useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius) == true)
-				{ // 当たった場合
+				// 位置を設定する
+				pos->y = posRock.y + fTopRock + COLLISION_ADD_DIFF_LENGTH;
 
-					// 当たり判定状況を true にする
-					bCollision = true;
+				if (bJump != nullptr)
+				{ // ジャンプ状況が NULL じゃない場合
+
+					// ジャンプ状況を false にする
+					*bJump = false;
 				}
+
+				if (fGravity != nullptr)
+				{ // 重力が NULL じゃない場合
+
+					// 重力を0にする
+					*fGravity = 0.0f;
+				}
+
+				// 当たり判定状況を true にする
+				bCollision = true;
+			}
+			else if (posRock.y + fBottomRock >= posOld.y + fHeight &&
+				posRock.y + fBottomRock <= pos->y + fHeight &&
+				useful::CircleCollisionXZ(*pos, posRock, fRadius, fRadiusRock) == true)
+			{ // 下にぶつかった場合
+
+				// 位置を設定する
+				pos->y = posRock.y + fBottomRock - (fHeight + COLLISION_ADD_DIFF_LENGTH);
+
+				// 当たり判定状況を true にする
+				bCollision = true;
+			}
+			else if (pos->y <= posRock.y + fTopRock &&
+				pos->y + fHeight >= posRock.y + fBottomRock &&
+				useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius) == true)
+			{ // 当たった場合
+
+				// 当たり判定状況を true にする
+				bCollision = true;
 			}
 
 			if (pRock == pRockEnd)
