@@ -478,6 +478,7 @@ void CBomb::Collision(void)
 	collision::TreeCollision(&pos, vtxMax.x);
 	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
 	collision::BlockHit(&pos, posOld, vtxMax, vtxMin);
+	collision::AlterCollision(&pos, posOld, vtxMax, vtxMin);
 
 	// ˆÊ’u‚ð“K—p‚·‚é
 	SetPos(pos);

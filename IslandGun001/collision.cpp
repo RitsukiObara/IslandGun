@@ -32,6 +32,8 @@
 #include "block.h"
 #include "boss.h"
 #include "boss_collision.h"
+#include "alter.h"
+#include "alter_pole.h"
 #include "slash_ripple.h"
 #include "wind_shot.h"
 #include "fire_shot.h"
@@ -1667,6 +1669,72 @@ bool collision::BossAttack(const D3DXVECTOR3& pos, const float fRadius, float* f
 
 			// インデックスを加算する
 			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
+// 祭壇との当たり判定
+//===============================
+bool collision::AlterCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin)
+{
+	// 当たり判定の変数を宣言
+	CAlter* pAlter = CGame::GetAlter();
+	CAlterPole* pPole = nullptr;
+	D3DXVECTOR3 posAlter;
+	D3DXVECTOR3 posOldAlter;
+	D3DXVECTOR3 vtxMinAlter;
+	D3DXVECTOR3 vtxMaxAlter;
+
+	if (pAlter != nullptr)
+	{ // 祭壇が NULL じゃない場合
+
+		// 位置とサイズを取得する
+		posAlter = pAlter->GetPos();
+		posOldAlter = pAlter->GetPosOld();
+		vtxMinAlter = pAlter->GetFileData().vtxMin;
+		vtxMaxAlter = pAlter->GetFileData().vtxMax;
+
+		if (HexahedronCollision
+		(
+			pos,
+			posAlter,
+			posOld,
+			posOldAlter,
+			vtxMin,
+			vtxMinAlter,
+			vtxMax,
+			vtxMaxAlter
+		) == true)
+		{ // 祭壇に当たった場合
+
+			// true を返す
+			return true;
+		}
+
+		for (int nCntPole = 0; nCntPole < CAlter::NUM_POLE; nCntPole++)
+		{
+			// 石柱の情報を取得する
+			pPole = CGame::GetAlter()->GetPole(nCntPole);
+
+			if (pPole != nullptr)
+			{ // 石柱が NULL じゃない場合
+
+				// 位置とサイズを取得する
+				posAlter = pPole->GetPos();
+				posOldAlter = pPole->GetPosOld();
+				vtxMaxAlter = pPole->GetFileData().vtxMax;
+
+				if (useful::CylinderCollision(pos, posAlter, vtxMax.x + vtxMaxAlter.x) == true)
+				{ // 祭壇に当たった場合
+
+					// true を返す
+					return true;
+				}
+			}
 		}
 	}
 

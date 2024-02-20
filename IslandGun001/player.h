@@ -112,6 +112,7 @@ private:		// 自分だけアクセスできる
 	void BlockCollision(void);		// ブロックとの当たり判定
 	void RockCollision(void);		// 岩との当たり判定
 	void WallCollision(void);		// 壁との当たり判定
+	void AlterCollision(void);		// 際算との当たり判定
 
 	// 状態ごとの処理
 	void DamageState();				// ダメージ状態処理

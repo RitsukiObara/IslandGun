@@ -80,6 +80,9 @@ namespace collision
 	// ボスとの当たり判定
 	bool BossHit(const D3DXVECTOR3& pos, const float fRadius);		// ボスの当たり判定
 	bool BossAttack(const D3DXVECTOR3& pos, const float fRadius, float* fRotSmash = nullptr);	// ボスとのヒット判定
+
+	// 祭壇との当たり判定
+	bool AlterCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// 祭壇との当たり判定
 	
 	// 斬撃波紋との当たり判定
 	bool RippleHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fRotSmash = nullptr);		// 斬撃の波紋の当たり判定

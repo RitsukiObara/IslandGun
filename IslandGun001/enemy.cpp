@@ -128,6 +128,9 @@ void CEnemy::Update(void)
 	// 壁との当たり判定
 	WallCollision();
 
+	// 祭壇との当たり判定
+	AlterCollision();
+
 	// 敵同士の当たり判定
 	collision::EnemyHitToEnemy(this);
 
@@ -576,6 +579,23 @@ void CEnemy::WallCollision(void)
 
 	// 壁との当たり判定
 	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
+
+	// 位置を適用する
+	SetPos(pos);
+}
+
+//===========================================
+// 祭壇との当たり判定
+//===========================================
+void CEnemy::AlterCollision(void)
+{
+	D3DXVECTOR3 pos = GetPos();			// 位置
+	D3DXVECTOR3 posOld = GetPosOld();	// 前回の位置
+	D3DXVECTOR3 vtxMax = m_collSize;	// 最大値
+	D3DXVECTOR3 vtxMin = useful::VtxMinConv(m_collSize);	// 最小値
+
+	// 壁との当たり判定
+	collision::AlterCollision(&pos, posOld, vtxMax, vtxMin);
 
 	// 位置を適用する
 	SetPos(pos);

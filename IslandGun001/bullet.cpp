@@ -295,7 +295,8 @@ bool CBullet::Hit(void)
 		collision::BlockHit(&pos, posOld, vtxMax, vtxMin) == true ||
 		collision::RockCollision(&pos, posOld, vtxMax.x, vtxMax.y) == true ||
 		collision::TreeCollision(&pos, vtxMax.x) == true ||
-		collision::WallCollision(&pos, posOld, vtxMax, vtxMin) == true)
+		collision::WallCollision(&pos, posOld, vtxMax, vtxMin) == true ||
+		collision::AlterCollision(&pos, posOld, vtxMax, vtxMin) == true)
 	{ // ìGÇ…ìñÇΩÇ¡ÇΩèÍçá
 
 		// true Çï‘Ç∑

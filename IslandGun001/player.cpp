@@ -461,6 +461,9 @@ void CPlayer::Update(void)
 		// 壁との当たり判定
 		WallCollision();
 
+		// 祭壇との当たり判定
+		AlterCollision();
+
 		CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 
 		break;
@@ -1221,6 +1224,27 @@ void CPlayer::WallCollision(void)
 
 	// 岩との当たり判定
 	collision::WallCollision
+	(
+		&pos,
+		GetPosOld(),
+		COLLISION_SIZE,
+		D3DXVECTOR3(-COLLISION_SIZE.x, 0.0f, -COLLISION_SIZE.z)
+	);
+
+	// 位置の設定処理
+	SetPos(pos);
+}
+
+//=======================================
+// 際算との当たり判定
+//=======================================
+void CPlayer::AlterCollision(void)
+{
+	// 位置を取得する
+	D3DXVECTOR3 pos = GetPos();
+
+	// 岩との当たり判定
+	collision::AlterCollision
 	(
 		&pos,
 		GetPosOld(),

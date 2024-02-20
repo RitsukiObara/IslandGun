@@ -89,6 +89,7 @@ private:				// 自分だけアクセスできる
 	void RockCollision(void);		// 岩との当たり判定
 	void BlockCollision(void);		// ブロックとの当たり判定
 	void WallCollision(void);		// 壁との当たり判定
+	void AlterCollision(void);		// 祭壇との当たり判定
 	void SlashRippleHit(void);		// 斬撃の波紋との当たり判定
 
 	// メンバ変数

@@ -25,9 +25,9 @@ namespace
 	const D3DXVECTOR3 POS = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 位置
 	const D3DXVECTOR3 POLE_POS[CAlter::NUM_POLE] =		// 石柱の位置
 	{
-		D3DXVECTOR3(0.0f,0.0f,-400.0f),
-		D3DXVECTOR3(400.0f,0.0f,0.0f),
-		D3DXVECTOR3(-400.0f,0.0f,0.0f),
+		D3DXVECTOR3(0.0f,0.0f,-450.0f),
+		D3DXVECTOR3(450.0f,0.0f,0.0f),
+		D3DXVECTOR3(-450.0f,0.0f,0.0f),
 	};
 }
 
@@ -201,4 +201,20 @@ CAlter* CAlter::Create(void)
 
 	// 祭壇のポインタを返す
 	return pAlter;
+}
+
+//=======================================
+// 石柱の取得処理
+//=======================================
+CAlterPole* CAlter::GetPole(const int nIdx) const
+{
+	if (nIdx >= NUM_POLE)
+	{ // インデックスが最大数以上の場合
+
+		// 停止
+		assert(false);
+	}
+
+	// 石柱の情報を返す
+	return m_apPole[nIdx];
 }
