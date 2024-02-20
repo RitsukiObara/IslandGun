@@ -33,6 +33,8 @@ public:			// 誰でもアクセスできる
 	// セット・ゲット関係
 	void SetEnableEmpty(const bool bEmpty);		// 空白状況の設定処理
 	bool IsEmpty(void) const;					// 空白状況の取得処理
+	void SetEnableArrival(const bool bArv);		// 到着状況の設定処理
+	bool IsArrival(void) const;					// 到着状況の取得処理
 
 	// 静的メンバ関数
 	static CAlterPole* Create(const D3DXVECTOR3& pos);	// 生成処理
@@ -41,6 +43,7 @@ private:		// 自分だけアクセスできる
 
 	// メンバ変数
 	bool m_bEmpty;		// 空白状況
+	bool m_bArrival;	// 到着状況
 };
 
 #endif

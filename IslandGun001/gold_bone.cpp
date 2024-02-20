@@ -341,6 +341,9 @@ void CGoldBone::Up(void)
 					// 目的の高さを設定する
 					m_fDestHeight = pPole->GetPos().y + pPole->GetFileData().vtxMax.y;
 
+					// 石柱のインデックスを設定する
+					m_nPoleIdx = nCnt;
+
 					// 金の骨を供える
 					pPole->SetEnableEmpty(false);
 
@@ -372,8 +375,27 @@ void CGoldBone::AlterSet(void)
 	// 位置を取得する
 	D3DXVECTOR3 pos = GetPos();
 
-	// 位置を一定の場所まで下げる
-	useful::FrameCorrect(m_fDestHeight, &pos.y, ALTER_SET_MOVE_Y);
+	if (useful::FrameCorrect(m_fDestHeight, &pos.y, ALTER_SET_MOVE_Y) == true)
+	{ // 石柱に到着したとき
+
+		// 祭壇の情報を取得
+		CAlter* pAlter = CGame::GetAlter();
+		CAlterPole* pPole = nullptr;
+
+		if (pAlter != nullptr)
+		{ // 祭壇が NULL じゃない場合
+
+			// 石柱の情報を取得
+			pPole = pAlter->GetPole(m_nPoleIdx);
+
+			if (pPole != nullptr)
+			{ // ポールが NULL じゃない場合
+
+				// 到着状況を true にする
+				pPole->SetEnableArrival(true);
+			}
+		}
+	}
 
 	// 位置を適用する
 	SetPos(pos);

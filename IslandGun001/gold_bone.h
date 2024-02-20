@@ -61,6 +61,7 @@ private:		// 自分だけアクセスできる
 
 	// メンバ関数
 	STATE m_state;			// 状態
+	int m_nPoleIdx;			// 石柱のインデックス
 	float m_fDestHeight;	// 目的の高さ
 	float m_fRotMove;		// 向きの移動量
 

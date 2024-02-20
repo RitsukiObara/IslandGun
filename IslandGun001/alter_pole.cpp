@@ -28,6 +28,7 @@ CAlterPole::CAlterPole() : CModel(TYPE_NONE, PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
 	m_bEmpty = true;			// 空白状況
+	m_bArrival = false;			// 到着状況
 }
 
 //==============================
@@ -94,6 +95,7 @@ void CAlterPole::SetData(const D3DXVECTOR3& pos)
 
 	// 全ての値を設定する
 	m_bEmpty = true;				// 空白状況
+	m_bArrival = false;				// 到着状況
 }
 
 //=======================================
@@ -167,4 +169,22 @@ bool CAlterPole::IsEmpty(void) const
 {
 	// 空白状況を返す
 	return m_bEmpty;
+}
+
+//=======================================
+// 到着状況の設定処理
+//=======================================
+void CAlterPole::SetEnableArrival(const bool bArv)
+{
+	// 到着状況を設定する
+	m_bArrival = bArv;
+}
+
+//=======================================
+// 到着状況の取得処理
+//=======================================
+bool CAlterPole::IsArrival(void) const
+{
+	// 到着状況を返す
+	return m_bArrival;
 }

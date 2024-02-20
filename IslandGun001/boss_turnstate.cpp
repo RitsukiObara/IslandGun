@@ -26,7 +26,7 @@ namespace
 {
 	const float ROT_CORRECT = 0.08f;		// 向きの補正倍率
 	const int COUNT = 100;					// 向き直り状態のカウント数
-	const float SUB_HEIGHT = 10.0f;			// 高度の減算量
+	const float SUB_HEIGHT = 30.0f;			// 高度の減算量
 }
 //==========================
 // コンストラクタ

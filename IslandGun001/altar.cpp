@@ -15,6 +15,7 @@
 
 #include "game.h"
 #include "alter_pole.h"
+#include "boss.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -95,6 +96,44 @@ void CAlter::Uninit(void)
 //========================================
 void CAlter::Update(void)
 {
+	switch (m_state)
+	{
+	case CAlter::STATE_NONE:
+
+		if (m_apPole[0]->IsArrival() == true &&
+			m_apPole[1]->IsArrival() == true &&
+			m_apPole[2]->IsArrival() == true)
+		{ // 石柱に全て金の骨が到着していた場合
+
+			// チャージ状態にする
+			m_state = STATE_CHARGE;
+
+			// ボスを生成する
+			CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
+		}
+
+		break;
+
+	case CAlter::STATE_CHARGE:
+		break;
+
+	case CAlter::STATE_BOSSAPPEAR:
+		break;
+
+	case CAlter::STATE_WAIT:
+		break;
+
+	case CAlter::STATE_BREAK:
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
+	}
+
 	for (int nCnt = 0; nCnt < NUM_POLE; nCnt++)
 	{
 		if (m_apPole[nCnt] != nullptr)
