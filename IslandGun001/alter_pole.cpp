@@ -26,7 +26,8 @@ namespace
 //==============================
 CAlterPole::CAlterPole() : CModel(TYPE_NONE, PRIORITY_ENTITY)
 {
-
+	// 全ての値をクリアする
+	m_bEmpty = true;			// 空白状況
 }
 
 //==============================
@@ -90,6 +91,9 @@ void CAlterPole::SetData(const D3DXVECTOR3& pos)
 	SetRot(NONE_D3DXVECTOR3);		// 向き
 	SetScale(NONE_SCALE);			// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
+
+	// 全ての値を設定する
+	m_bEmpty = true;				// 空白状況
 }
 
 //=======================================
@@ -145,4 +149,22 @@ CAlterPole* CAlterPole::Create(const D3DXVECTOR3& pos)
 
 	// 石柱のポインタを返す
 	return pPole;
+}
+
+//=======================================
+// 空白状況の設定処理
+//=======================================
+void CAlterPole::SetEnableEmpty(const bool bEmpty)
+{
+	// 空白状況を設定する
+	m_bEmpty = bEmpty;
+}
+
+//=======================================
+// 空白状況の取得処理
+//=======================================
+bool CAlterPole::IsEmpty(void) const
+{
+	// 空白状況を返す
+	return m_bEmpty;
 }

@@ -1718,7 +1718,7 @@ bool collision::AlterCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, cons
 		for (int nCntPole = 0; nCntPole < CAlter::NUM_POLE; nCntPole++)
 		{
 			// Î’Œ‚Ìî•ñ‚ğæ“¾‚·‚é
-			pPole = CGame::GetAlter()->GetPole(nCntPole);
+			pPole = pAlter->GetPole(nCntPole);
 
 			if (pPole != nullptr)
 			{ // Î’Œ‚ª NULL ‚¶‚á‚È‚¢ê‡

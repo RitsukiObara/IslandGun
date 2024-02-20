@@ -25,6 +25,8 @@ public:			// 誰でもアクセスできる
 	{
 		STATE_NONE = 0,		// 通常状態
 		STATE_GET,			// 取得状態
+		STATE_UP,			// 上昇状態
+		STATE_ALTERSET,		// 祭壇到着状態
 		STATE_MAX			// この列挙型の総数
 	};
 
@@ -53,7 +55,9 @@ private:		// 自分だけアクセスできる
 
 	// メンバ関数
 	void Cycle(void);		// 回転処理
-	bool Get(void);			// 取得処理
+	void Get(void);			// 取得処理
+	void Up(void);			// 上昇処理
+	void AlterSet(void);	// 祭壇設定処理
 
 	// メンバ関数
 	STATE m_state;			// 状態
