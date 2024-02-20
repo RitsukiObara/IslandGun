@@ -548,7 +548,7 @@ void useful::DecimalCalculation(const int nDigit, const int nValue, int* aAnswer
 	for (int nCnt = 0; nCnt < nDigit; nCnt++)
 	{
 		// ’l‚ðŒvŽZ
-		aAnswer[nCnt] = (nValue % (int)(pow(10, (nDigit - (nCnt)))) / (int)(pow(10, (nDigit - (nCnt + 1)))));
+		aAnswer[nCnt] = (nValue % (int)(pow(10, (nDigit - nCnt))) / (int)(pow(10, (nDigit - (nCnt + 1)))));
 	}
 }
 

@@ -76,6 +76,7 @@ public:			// 誰でもアクセスできる
 		TYPE_FIRESHOT,			// 炎攻撃
 		TYPE_RANKUI,			// 順位UI
 		TYPE_AIRPLANE,			// 飛行機
+		TYPE_ALTER,				// 祭壇
 		TYPE_MAX				// この列挙型の総数
 	};
 

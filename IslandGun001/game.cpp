@@ -15,7 +15,6 @@
 #include "renderer.h"
 #include "texture.h"
 
-#include "pause.h"
 #include "debugproc.h"
 #include "sound.h"
 
@@ -23,9 +22,11 @@
 #include "skybox.h"
 #include "motion.h"
 
+#include "pause.h"
 #include "player.h"
 #include "ocean.h"
 #include "game_score.h"
+#include "alter.h"
 #include "boss.h"
 
 //--------------------------------------------
@@ -39,6 +40,7 @@
 CPause* CGame::m_pPause = nullptr;							// ポーズの情報
 CPlayer* CGame::m_pPlayer = nullptr;						// プレイヤーの情報
 CGameScore* CGame::m_pGameScore = nullptr;					// ゲームスコアの情報
+CAlter* CGame::m_pAlter = nullptr;							// 祭壇の情報
 CGame::STATE CGame::m_GameState = CGame::STATE_START;		// ゲームの進行状態
 int CGame::m_nScore = 0;									// スコア
 bool CGame::m_bPause = false;								// ポーズ状況
@@ -54,6 +56,7 @@ CGame::CGame()
 	m_pPause = nullptr;			// ポーズ
 	m_pPlayer = nullptr;		// プレイヤー
 	m_pGameScore = nullptr;		// スコア
+	m_pAlter = nullptr;			// 祭壇
 	m_GameState = STATE_START;	// 状態
 	m_nScore = 0;				// スコア
 	m_bPause = false;			// ポーズ状況
@@ -108,6 +111,9 @@ HRESULT CGame::Init(void)
 
 	// ゲームスコアの生成
 	m_pGameScore = CGameScore::Create();
+
+	// 祭壇の生成
+	m_pAlter = CAlter::Create();
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント
@@ -369,6 +375,15 @@ CGameScore* CGame::GetGameScore(void)
 }
 
 //======================================
+// 祭壇の取得処理
+//======================================
+CAlter* CGame::GetAlter(void)
+{
+	// 祭壇のポインタを返す
+	return m_pAlter;
+}
+
+//======================================
 // 総合スコアの取得処理
 //======================================
 int CGame::GetScore(void)
@@ -402,4 +417,13 @@ void CGame::DeleteGameScore(void)
 {
 	// スコアのポインタを NULL にする
 	m_pGameScore = nullptr;
+}
+
+//======================================
+// 祭壇のNULL化処理
+//======================================
+void CGame::DeleteAlter(void)
+{
+	// 祭壇のポインタを NULL にする
+	m_pAlter = nullptr;
 }
