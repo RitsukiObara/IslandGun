@@ -78,6 +78,7 @@ public:			// 誰でもアクセスできる
 		TYPE_AIRPLANE,			// 飛行機
 		TYPE_ALTER,				// 祭壇
 		TYPE_BOSSBARRIER,		// ボスのバリア
+		TYPE_SIGNBOARD,			// 看板
 		TYPE_MAX				// この列挙型の総数
 	};
 

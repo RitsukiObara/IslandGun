@@ -483,6 +483,9 @@
     <ClCompile Include="boss_barrier.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
+    <ClCompile Include="signboard.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -889,6 +892,9 @@
     </ClInclude>
     <ClInclude Include="boss_barrier.h">
       <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="signboard.h">
+      <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
