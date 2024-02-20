@@ -288,7 +288,7 @@ bool CBullet::Hit(void)
 	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-size.x, -size.y, -size.x);	// í∏ì_ÇÃç≈è¨íl
 
 	// ìGÇ∆èeÇÃìñÇΩÇËîªíË
-	if (collision::BossHit(pos, size.x) == true ||
+	if (collision::BossHit(pos, size.x, m_nDamage) == true ||
 		collision::EnemyHitToGun(*this) == true ||
 		collision::BangFlowerHit(pos, size.x, size.y) == true ||
 		collision::BombHitToGun(pos, posOld, size.x) == true ||
@@ -296,7 +296,8 @@ bool CBullet::Hit(void)
 		collision::RockCollision(&pos, posOld, vtxMax.x, vtxMax.y) == true ||
 		collision::TreeCollision(&pos, vtxMax.x) == true ||
 		collision::WallCollision(&pos, posOld, vtxMax, vtxMin) == true ||
-		collision::AlterCollision(&pos, posOld, vtxMax, vtxMin) == true)
+		collision::AlterCollision(&pos, posOld, vtxMax, vtxMin) == true ||
+		collision::PalmFruitAttack(pos, size.x) == true)
 	{ // ìGÇ…ìñÇΩÇ¡ÇΩèÍçá
 
 		// true Çï‘Ç∑

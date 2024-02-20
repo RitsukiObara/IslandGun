@@ -480,6 +480,9 @@
     <ClCompile Include="alter_pole.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
+    <ClCompile Include="boss_barrier.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -883,6 +886,9 @@
     </ClInclude>
     <ClInclude Include="alter_pole.h">
       <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_barrier.h">
+      <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

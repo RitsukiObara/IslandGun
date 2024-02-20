@@ -77,6 +77,7 @@ public:			// 誰でもアクセスできる
 		TYPE_RANKUI,			// 順位UI
 		TYPE_AIRPLANE,			// 飛行機
 		TYPE_ALTER,				// 祭壇
+		TYPE_BOSSBARRIER,		// ボスのバリア
 		TYPE_MAX				// この列挙型の総数
 	};
 

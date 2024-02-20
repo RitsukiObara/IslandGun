@@ -37,6 +37,7 @@ namespace
 
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ダガー攻撃時の高さ
 	const float ATTACK_DAGGER_RADIUS = 240.0f;	// ダガー攻撃時の半径
+	const int DAGGER_ATTACK = 100;				// ダガー攻撃時の攻撃力
 	const int DAGGER_ATTACK_START = 8;			// ダガーの攻撃判定が始まるカウント数
 	const int DAGGER_ATTACK_END = 28;			// ダガーの攻撃判定が終わるカウント数
 }
@@ -55,6 +56,7 @@ CPlayerAction::CPlayerAction()
 	m_bDodgeUse = true;					// 回避使用可能状況
 	m_bRipple = false;					// 波紋状況
 	m_bRecoil = false;					// 反動状況
+	m_bBossAttack = false;				// ボスへの当たり判定状況
 }
 
 //=========================
@@ -79,6 +81,7 @@ HRESULT CPlayerAction::Init(void)
 	m_bDodgeUse = true;					// 回避使用可能状況
 	m_bRipple = false;					// 波紋状況
 	m_bRecoil = false;					// 反動状況
+	m_bBossAttack = false;				// ボスへの当たり判定状況
 
 	// 成功を返す
 	return S_OK;
@@ -258,6 +261,9 @@ void CPlayerAction::SetAction(const ACTION action)
 
 	// 波紋状況を false にする
 	m_bRipple = false;
+
+	// ボスの攻撃状況を false にする
+	m_bBossAttack = false;
 }
 
 //=========================
@@ -330,6 +336,9 @@ void CPlayerAction::NoneProcess(void)
 {
 	// 緊急時に移動できるようにしておく
 	m_bRecoil = false;
+
+	// 緊急時にボスに攻撃が通るようにする
+	m_bBossAttack = false;
 }
 
 //=========================
@@ -378,20 +387,33 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 		m_nActionCount <= DAGGER_ATTACK_END)
 	{ // 行動カウントが一定以上の場合
 
+		// プレイヤーの位置を取得
+		D3DXVECTOR3 pos = pPlayer->GetPos();
+
 		// 軌跡の描画状況を true にする
 		pPlayer->GetDagger()->SetEnableDispOrbit(true);
 
 		// 爆弾花とダガーとの当たり判定
-		collision::BangFlowerHit(pPlayer->GetPos(), ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
+		collision::BangFlowerHit(pos, ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 
 		// 木への攻撃判定処理
 		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 
 		// 敵とダガーの当たり判定
-		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
+		collision::EnemyHitToDagger(pos, ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
 
 		// 爆弾とダガーの当たり判定
-		collision::BombHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
+		collision::BombHitToDagger(pos, ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
+
+		if (m_bBossAttack == false)
+		{ // ボスに攻撃がまだ通っていなかった場合
+
+			// ボスとの当たり判定
+			collision::BossHit(D3DXVECTOR3(pos.x, pos.y + (ATTACK_DAGGER_HEIGHT * 0.5f), pos.z), ATTACK_DAGGER_RADIUS * 0.5f, DAGGER_ATTACK);
+
+			// ボスに攻撃が通った
+			m_bBossAttack = true;
+		}
 	}
 
 	if (m_nActionCount % DAGGER_COUNT == 0)

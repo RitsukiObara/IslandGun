@@ -63,6 +63,7 @@ namespace
 	const float BOMB_BULLET_SMASH = 10.0f;			// 銃弾で爆弾の吹き飛ぶ速度
 	const float BOMB_DAGGER_SMASH = 23.0f;			// ダガーで爆弾の吹き飛ぶ速度
 	const float BOMB_SLASH_RIPPLE_SMASH = 10.0f;	// 斬撃波紋で爆弾の吹き飛ぶ速度
+	const int BOSS_DAMAGE = 5;						// ボスへのダメージ
 }
 
 //===============================
@@ -649,7 +650,7 @@ void collision::TreeAttack(const CPlayer& pPlayer, const float fRadius, const fl
 void collision::PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float fHeight)
 {
 	// ローカル変数宣言
-	D3DXVECTOR3 posFruit = NONE_D3DXVECTOR3;		// 木の位置
+	D3DXVECTOR3 posFruit = NONE_D3DXVECTOR3;		// 実の位置
 	D3DXVECTOR3 posPlayer = pPlayer->GetPos();		// プレイヤーの位置
 	float fRadiusFruit = 0.0f;						// 半径
 
@@ -670,7 +671,7 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float 
 		while (true)
 		{ // 無限ループ
 
-			posFruit = pFruit->GetPos();					// 木の位置
+			posFruit = pFruit->GetPos();					// 実の位置
 			fRadiusFruit = pFruit->GetFileData().vtxMax.x;	// 半径
 
 			if (posPlayer.y <= posFruit.y + pFruit->GetFileData().vtxMax.y &&
@@ -701,6 +702,77 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float 
 			nIdx++;
 		}
 	}
+}
+
+//===============================
+// ヤシの実への攻撃判定
+//===============================
+bool collision::PalmFruitAttack(const D3DXVECTOR3& pos, const float fRadius)
+{
+	// ローカル変数宣言
+	CPalmFruit* pFruit = nullptr;	// ヤシの実の情報
+	D3DXVECTOR3 posFruit = NONE_D3DXVECTOR3;	// 実の位置
+	float fRadiusFruit = 0.0f;		// 実の半径
+
+	CListManager<CTree*> list = CTree::GetList();
+	CTree* pTree = nullptr;			// 先頭の値
+	CTree* pTreeEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pTree = list.GetTop();
+
+		// 末尾の値を取得する
+		pTreeEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pTree->GetType() == CTree::TYPE::TYPE_PALM)
+			{
+				// ヤシの実を取得する
+				pFruit = pTree->GetFruit();
+
+				if (pFruit != nullptr)
+				{ // ヤシの実が NULL じゃない場合
+
+					posFruit = pFruit->GetPos();					// 実の位置
+					fRadiusFruit = pFruit->GetFileData().vtxMax.x;	// 実の半径
+
+					if (useful::CircleCollisionXY(pos, posFruit, fRadius, fRadiusFruit) == true &&
+						useful::CircleCollisionXZ(pos, posFruit, fRadius, fRadiusFruit) == true &&
+						useful::CircleCollisionYZ(pos, posFruit, fRadius, fRadiusFruit) == true)
+					{ // ヤシの実に当たった場合
+
+						// ヒット処理
+						pTree->Hit();
+
+						// この先の処理を行わない
+						return true;
+					}
+				}
+			}
+
+			if (pTree == pTreeEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pTree = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
 }
 
 //===============================
@@ -1441,7 +1513,7 @@ bool collision::BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DX
 //===============================
 // ボスの当たり判定
 //===============================
-bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
+bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius, const int nDamage)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posPart = NONE_D3DXVECTOR3;
@@ -1523,13 +1595,13 @@ bool collision::BossHit(const D3DXVECTOR3& pos, const float fRadius)
 							{ // 弱点だった場合
 
 								// バリア破壊処理
-								pBoss->BarrierBreak(pos, nCntPart);
+								pBoss->BarrierBreak(pos, nCntPart, nDamage);
 							}
 							else
 							{ // 上記以外
 
 								// ヒット処理
-								pBoss->Hit(10);
+								pBoss->Hit(BOSS_DAMAGE);
 							}
 
 							// true を返す

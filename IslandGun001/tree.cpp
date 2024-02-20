@@ -205,3 +205,12 @@ CTree::TYPE CTree::GetType(void) const
 	// 種類を返す
 	return m_type;
 }
+
+//=======================================
+// ヤシの実の取得処理(ヤシの木で必要)
+//=======================================
+CPalmFruit* CTree::GetFruit(void)
+{
+	// NULL を返す
+	return nullptr;
+}

@@ -19,6 +19,7 @@
 #include "boss_destroystate.h"
 #include "boss_stunstate.h"
 #include "boss_lifeUI.h"
+#include "boss_barrier.h"
 #include "objectElevation.h"
 #include "boss_collision.h"
 #include "fraction.h"
@@ -37,7 +38,7 @@ namespace
 	const int BARRIER_FRAC_LIFE = 100;			// バリア攻撃時の破片の寿命
 	const int WEAK_LIFE[CBoss::WEAK_MAX] =		// 弱点のライフ
 	{
-		40,
+		50,
 		10,
 		10,
 		10,
@@ -259,37 +260,58 @@ void CBoss::Hit(const int nDamage)
 //================================
 // バリア破壊処理
 //================================
-void CBoss::BarrierBreak(const D3DXVECTOR3& pos, const int nPart)
+void CBoss::BarrierBreak(const D3DXVECTOR3& pos, const int nPart, const int nDamage)
 {
-	for (int nCntPart = 0; nCntPart < WEAK_MAX; nCntPart++)
-	{
-		if (m_aWeakPointLife[nCntPart] > 0 &&
-			nPart == WEAK_PART[nCntPart])
-		{
-			// バリアのヒット処理
-			BarrierHit(pos, nPart, nCntPart);
+	if (nPart == WEAK_PART[WEAK_BODY])
+	{ // 胸の弱点に当たった場合
 
-			// for文から抜ける
-			break;
+		if (m_bDown == true)
+		{ // ダウン中胸に当たった場合
+
+			// ヒット処理
+			Hit(nDamage);
+		}
+		else
+		{ // 上記以外
+
+			// バリア処理
+			CBossBarrier::Create(pos);
 		}
 	}
+	else
+	{ // 上記以外
 
-	if (m_bDown == false &&
-		m_aWeakPointLife[WEAK_RFSHIN] <= 0 &&
-		m_aWeakPointLife[WEAK_LFSHIN] <= 0 &&
-		m_aWeakPointLife[WEAK_RBSHIN] <= 0 &&
-		m_aWeakPointLife[WEAK_LBSHIN] <= 0)
-	{ // 弱点が全て壊された場合
+		for (int nCntPart = WEAK_RFSHIN; nCntPart < WEAK_MAX; nCntPart++)
+		{
+			if (m_aWeakPointLife[nCntPart] > 0 &&
+				nPart == WEAK_PART[nCntPart])
+			{ // バリアに当たった場合
 
-		// 状態の消去処理(メモリリークが起きる可能性があるため)
-		m_pState->Delete();
-		m_pState = nullptr;
+				// バリアのヒット処理
+				BarrierHit(pos, nPart, nCntPart);
 
-		// 気絶状態にする
-		ChangeState(new CBossStunState);
+				// for文から抜ける
+				break;
+			}
+		}
 
-		// 気絶状態にする
-		m_bDown = true;
+		if (m_bDown == false &&
+			m_aWeakPointLife[WEAK_RFSHIN] <= 0 &&
+			m_aWeakPointLife[WEAK_LFSHIN] <= 0 &&
+			m_aWeakPointLife[WEAK_RBSHIN] <= 0 &&
+			m_aWeakPointLife[WEAK_LBSHIN] <= 0)
+		{ // 弱点が全て壊された場合
+
+			// 状態の消去処理(メモリリークが起きる可能性があるため)
+			m_pState->Delete();
+			m_pState = nullptr;
+
+			// 気絶状態にする
+			ChangeState(new CBossStunState);
+
+			// 気絶状態にする
+			m_bDown = true;
+		}
 	}
 }
 

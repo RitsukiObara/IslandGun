@@ -55,7 +55,8 @@ namespace collision
 	void TreeAttack(const CPlayer& pPlayer, const float fRadius, const float fHeight);		// 木への攻撃判定処理
 
 	// ヤシの実との当たり判定
-	void PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float fHeight);		// ヤシの木との当たり判定
+	void PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float fHeight);		// ヤシの実との当たり判定
+	bool PalmFruitAttack(const D3DXVECTOR3& pos, const float fRadius);					// ヤシの実への攻撃判定
 
 	// 岩との当たり判定
 	bool RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius, const float fHeight, float* fGravity = nullptr, bool* bJump = nullptr);		// 岩との当たり判定
@@ -75,10 +76,10 @@ namespace collision
 	bool WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// 壁との当たり判定
 
 	// ブロックとの当たり判定
-	bool BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// ブロックとのヒット判定
+	bool BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);			// ブロックとのヒット判定
 
 	// ボスとの当たり判定
-	bool BossHit(const D3DXVECTOR3& pos, const float fRadius);		// ボスの当たり判定
+	bool BossHit(const D3DXVECTOR3& pos, const float fRadius, const int nDamage);				// ボスの当たり判定
 	bool BossAttack(const D3DXVECTOR3& pos, const float fRadius, float* fRotSmash = nullptr);	// ボスとのヒット判定
 
 	// 祭壇との当たり判定

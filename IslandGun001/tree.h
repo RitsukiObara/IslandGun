@@ -14,6 +14,11 @@
 #include "list_manager.h"
 
 //-----------------------------------
+// 前方宣言
+//-----------------------------------
+class CPalmFruit;		// ヤシの実
+
+//-----------------------------------
 // クラス定義(木)
 //-----------------------------------
 class CTree : public CModel
@@ -41,6 +46,7 @@ public:			// 誰でもアクセスできる
 
 	// セット・ゲット関係
 	TYPE GetType(void) const;				// 種類の取得処理
+	virtual CPalmFruit* GetFruit(void);		// ヤシの実の取得処理(ヤシの木で必要)
 
 	// 静的メンバ関数
 	static CTree* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);	// 生成処理

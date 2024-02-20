@@ -169,6 +169,7 @@
     <ClCompile Include="bomb_fuse.cpp" />
     <ClCompile Include="boss.cpp" />
     <ClCompile Include="boss_appearstate.cpp" />
+    <ClCompile Include="boss_barrier.cpp" />
     <ClCompile Include="boss_chargestate.cpp" />
     <ClCompile Include="boss_collision.cpp" />
     <ClCompile Include="boss_destroystate.cpp" />
@@ -307,6 +308,7 @@
     <ClInclude Include="bomb_fuse.h" />
     <ClInclude Include="boss.h" />
     <ClInclude Include="boss_appearstate.h" />
+    <ClInclude Include="boss_barrier.h" />
     <ClInclude Include="boss_chargestate.h" />
     <ClInclude Include="boss_collision.h" />
     <ClInclude Include="boss_destroystate.h" />

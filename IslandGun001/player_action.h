@@ -85,6 +85,7 @@ private:		// 誰でもアクセスできる
 	bool m_bDodgeUse;			// 回避使用可能状況
 	bool m_bRipple;				// 波紋状況
 	bool m_bRecoil;				// 反動状況
+	bool m_bBossAttack;			// ボスへの攻撃判定状況
 };
 
 #endif

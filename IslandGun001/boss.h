@@ -63,7 +63,7 @@ public:					// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void Hit(const int nDamage);	// ヒット処理
-	void BarrierBreak(const D3DXVECTOR3& pos, const int nPart);			// バリア破壊処理
+	void BarrierBreak(const D3DXVECTOR3& pos, const int nPart, const int nDamage);		// バリア破壊処理
 	void BarrierHit(const D3DXVECTOR3& pos, const int nPart, const int nCntPart);		// バリアのヒット処理
 	void StunRecovery(void);		// 気絶回復処理
 
@@ -85,6 +85,9 @@ public:					// 誰でもアクセスできる
 	static CListManager<CBoss*> GetList(void);			// リストの取得処理
 
 private:				// 自分だけアクセスできる
+
+	// メンバ関数
+	void DownBarrier(const D3DXVECTOR3& pos, const int nPart);	// ダウン中のバリア処理
 
 	// メンバ変数
 	CMotion* m_pMotion;		// モーションの情報
