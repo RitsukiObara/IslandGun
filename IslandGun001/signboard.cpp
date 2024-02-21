@@ -13,21 +13,36 @@
 #include "texture.h"
 #include "useful.h"
 
+#include "push_timing.h"
+
 //-------------------------------------------
 // 無名名前空間
 //-------------------------------------------
 namespace
 {
 	const char* MODEL = "data\\MODEL\\Signboard.x";		// モデルの名前
+	const float BUTTON_SHIFT = 300.0f;					// ボタンのずらす幅
+	const float BUTTON_SIZE = 50.0f;					// ボタンのサイズ
+	const int BUTTON_INTERVAL = 10;						// ボタンのアニメーションのインターバル
 }
+
+//-------------------------------------------
+// 静的メンバ変数宣言
+//-------------------------------------------
+CListManager<CSignboard*> CSignboard::m_list = {};		// リスト
 
 //==============================
 // コンストラクタ
 //==============================
-CSignboard::CSignboard() : CModel(TYPE_SIGNBOARD, PRIORITY_PLAYER)
+CSignboard::CSignboard() : CModel(TYPE_SIGNBOARD, PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
+	m_pButton = nullptr;	// ボタンの情報
 	m_type = TYPE_JUMP;		// 種類
+	m_bDisp = false;		// 描画状況
+
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -59,8 +74,19 @@ HRESULT CSignboard::Init(void)
 //========================================
 void CSignboard::Uninit(void)
 {
+	if (m_pButton != nullptr)
+	{ // ボタンが NULL じゃない場合
+
+		// ボタンの終了処理
+		m_pButton->Uninit();
+		m_pButton = nullptr;
+	}
+
 	// 終了処理
 	CModel::Uninit();
+
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //========================================
@@ -68,7 +94,12 @@ void CSignboard::Uninit(void)
 //========================================
 void CSignboard::Update(void)
 {
+	if (m_pButton != nullptr)
+	{ // ボタンが NULL じゃない場合
 
+		// ボタンの更新処理
+		m_pButton->Update();
+	}
 }
 
 //=====================================
@@ -78,6 +109,14 @@ void CSignboard::Draw(void)
 {
 	// 描画処理
 	CModel::Draw();
+
+	if (m_bDisp == true &&
+		m_pButton != nullptr)
+	{ // ボタンを表示する状態だった場合
+
+		// ボタンの描画処理
+		m_pButton->Draw();
+	}
 }
 
 //=====================================
@@ -93,7 +132,10 @@ void CSignboard::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const T
 	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデルの情報
 
 	// 全ての値を設定する
+	m_pButton = CPushTiming::Create(D3DXVECTOR3(pos.x, pos.y + BUTTON_SHIFT, pos.z), BUTTON_SIZE, CPushTiming::TYPE_PAD_A, BUTTON_INTERVAL);	// ボタンの情報
+	m_pButton->CObject::SetType(TYPE_NONE);
 	m_type = type;		// 種類
+	m_bDisp = false;	// 描画状況
 }
 
 //=======================================
@@ -149,4 +191,13 @@ CSignboard* CSignboard::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, c
 
 	// 看板のポインタを返す
 	return pSignboard;
+}
+
+//=======================================
+// リストの取得処理
+//=======================================
+CListManager<CSignboard*> CSignboard::GetList(void)
+{
+	// リストの情報を返す
+	return m_list;
 }

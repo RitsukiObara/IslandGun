@@ -567,6 +567,9 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 		m_nActionCount <= DAGGER_ATTACK_END)
 	{ // 行動カウントが一定以上の場合
 
+		// プレイヤーの位置を取得する
+		D3DXVECTOR3 pos = pPlayer->GetPos();
+
 		// 軌跡の描画状況を true にする
 		pPlayer->GetDagger()->SetEnableDispOrbit(true);
 
@@ -574,7 +577,17 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 		collision::TreeAttack(*pPlayer, ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 
 		// 敵とダガーの当たり判定
-		collision::EnemyHitToDagger(pPlayer->GetPos(), ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
+		collision::EnemyHitToDagger(pos, ATTACK_DAGGER_HEIGHT, ATTACK_DAGGER_RADIUS);
+
+		if (m_bBossAttack == false)
+		{ // ボスに攻撃がまだ通っていなかった場合
+
+			// ボスとの当たり判定
+			collision::BossHit(D3DXVECTOR3(pos.x, pos.y + (ATTACK_DAGGER_HEIGHT * 0.5f), pos.z), ATTACK_DAGGER_RADIUS * 0.5f, DAGGER_ATTACK);
+
+			// ボスに攻撃が通った
+			m_bBossAttack = true;
+		}
 	}
 
 	if (m_nActionCount % SWOOP_COUNT == 0)

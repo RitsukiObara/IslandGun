@@ -28,7 +28,7 @@ namespace
 //=========================
 // コンストラクタ
 //=========================
-CAim::CAim() : CBillboard(CObject::TYPE_NONE, CObject::PRIORITY_EFFECT)
+CAim::CAim() : CBillboard(CObject::TYPE_NONE, CObject::PRIORITY_UI)
 {
 	// 全ての値をクリアする
 	m_posPlayer = NONE_D3DXVECTOR3;		// プレイヤーの位置

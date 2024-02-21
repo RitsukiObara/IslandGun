@@ -11,6 +11,12 @@
 // インクルードファイル
 //***********************************
 #include "model.h"
+#include "list_manager.h"
+
+//-----------------------------------
+// 前方宣言
+//-----------------------------------
+class CPushTiming;		// ボタン表示
 
 //-----------------------------------
 // クラス定義(看板)
@@ -40,10 +46,17 @@ public:			// 誰でもアクセスできる
 	// 静的メンバ関数
 	static CSignboard* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
 
+	static CListManager<CSignboard*> GetList(void);			// リストの取得処理
+
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
-	TYPE m_type;		// 種類
+	CPushTiming* m_pButton;	// ボタンの情報
+	TYPE m_type;			// 種類
+	bool m_bDisp;			// 描画状況
+
+	// 静的メンバ変数
+	static CListManager<CSignboard*> m_list;		// リスト
 };
 
 #endif
