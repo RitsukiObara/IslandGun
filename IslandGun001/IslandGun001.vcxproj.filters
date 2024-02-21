@@ -486,6 +486,12 @@
     <ClCompile Include="signboard.cpp">
       <Filter>gimmick\Map</Filter>
     </ClCompile>
+    <ClCompile Include="ranking_table.cpp">
+      <Filter>scene\ranking</Filter>
+    </ClCompile>
+    <ClCompile Include="rank_score.cpp">
+      <Filter>scene\ranking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -895,6 +901,12 @@
     </ClInclude>
     <ClInclude Include="signboard.h">
       <Filter>gimmick\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="ranking_table.h">
+      <Filter>scene\ranking</Filter>
+    </ClInclude>
+    <ClInclude Include="rank_score.h">
+      <Filter>scene\ranking</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

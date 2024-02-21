@@ -46,7 +46,7 @@ public:			// 誰でもアクセスできる
 	// ランキングの情報
 	struct SRankingInfo
 	{
-		int aRank[MAX_RANKING];				// ランキングのデータ
+		int aRank[CRanking::MAX_RANKING];				// ランキングのデータ
 		bool bSuccess;						// 成功状況
 	};
 

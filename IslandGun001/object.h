@@ -79,6 +79,7 @@ public:			// 誰でもアクセスできる
 		TYPE_ALTER,				// 祭壇
 		TYPE_BOSSBARRIER,		// ボスのバリア
 		TYPE_SIGNBOARD,			// 看板
+		TYPE_RANKINGTABLE,		// ランキングのスコア
 		TYPE_MAX				// この列挙型の総数
 	};
 

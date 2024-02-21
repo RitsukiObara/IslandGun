@@ -16,6 +16,7 @@
 #include "game.h"
 #include "skybox.h"
 #include "ranking_rank.h"
+#include "ranking_table.h"
 
 //マクロ定義
 #define SET_TITLE_TIMER			(300)			// タイトル画面に行く秒数
@@ -53,6 +54,9 @@ HRESULT CRanking::Init(void)
 
 	// 順位UIの生成
 	CRankUI::Create();
+
+	// ランキングの生成
+	CRankingTable::Create();
 
 	// 全ての値を初期化する
 	m_nTransCount = 0;			// 自動遷移カウント

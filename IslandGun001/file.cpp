@@ -53,7 +53,7 @@ const char* CFile::c_apBooleanDisp[2] =					// bool型の表示
 CFile::CFile()
 {
 	// 全ての値をクリアする
-	for (int nCntRank = 0; nCntRank < MAX_RANKING; nCntRank++)
+	for (int nCntRank = 0; nCntRank < CRanking::MAX_RANKING; nCntRank++)
 	{
 		m_RankingInfo.aRank[nCntRank] = 0;				// ランキングの値
 	}
@@ -310,7 +310,7 @@ HRESULT CFile::Load(const TYPE type)
 //===========================================
 void CFile::SetRankingInfo(int* pRank)
 {
-	for (int nCnt = 0; nCnt < MAX_RANKING; nCnt++, pRank++)
+	for (int nCnt = 0; nCnt < CRanking::MAX_RANKING; nCnt++, pRank++)
 	{
 		// ランキングの情報を設定する
 		m_RankingInfo.aRank[nCnt] = *pRank;
@@ -625,7 +625,7 @@ CFile* CFile::Create(void)
 HRESULT CFile::Init(void)
 {
 	// 全ての値をクリアする
-	for (int nCntRank = 0; nCntRank < MAX_RANKING; nCntRank++)
+	for (int nCntRank = 0; nCntRank < CRanking::MAX_RANKING; nCntRank++)
 	{
 		m_RankingInfo.aRank[nCntRank] = 0;				// ランキングの値
 	}
@@ -728,7 +728,7 @@ HRESULT CFile::SaveRanking(void)
 	{ // ファイルが開けた場合
 
 		// ファイルから数値を書き出す
-		fwrite(&m_RankingInfo.aRank[0], sizeof(int), MAX_RANKING, pFile);
+		fwrite(&m_RankingInfo.aRank[0], sizeof(int), CRanking::MAX_RANKING, pFile);
 
 		// ファイルを閉じる
 		fclose(pFile);
@@ -766,7 +766,7 @@ HRESULT CFile::LoadRanking(void)
 	{ // ファイルが開けた場合
 
 		// ファイルから数値を読み込む
-		fread(&m_RankingInfo.aRank[0], sizeof(int), MAX_RANKING, pFile);
+		fread(&m_RankingInfo.aRank[0], sizeof(int), CRanking::MAX_RANKING, pFile);
 
 		// ファイルを閉じる
 		fclose(pFile);
@@ -783,7 +783,7 @@ HRESULT CFile::LoadRanking(void)
 		// 停止
 		assert(false);
 
-		for (int nCntRank = 0; nCntRank < MAX_RANKING; nCntRank++)
+		for (int nCntRank = 0; nCntRank < CRanking::MAX_RANKING; nCntRank++)
 		{
 			// 数値を設定する
 			m_RankingInfo.aRank[0] = 0;

@@ -266,6 +266,8 @@
     <ClCompile Include="push_timing.cpp" />
     <ClCompile Include="ranking.cpp" />
     <ClCompile Include="ranking_rank.cpp" />
+    <ClCompile Include="ranking_table.cpp" />
+    <ClCompile Include="rank_score.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="result_score.cpp" />
@@ -403,6 +405,8 @@
     <ClInclude Include="push_timing.h" />
     <ClInclude Include="ranking.h" />
     <ClInclude Include="ranking_rank.h" />
+    <ClInclude Include="ranking_table.h" />
+    <ClInclude Include="rank_score.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="result_score.h" />
