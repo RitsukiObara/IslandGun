@@ -720,12 +720,39 @@ HRESULT CFile::SaveRanking(void)
 	FILE* pFile;												// ファイルポインタを宣言
 	m_RankingInfo.bSuccess = false;								// 成功状況
 
+	unsigned char aData[128];		// データ
+
+	int nSize = 0;		// データの総サイズ
+	int nCheckSum = 0;	// チェックサム
+
+	// ゼロクリア
+	memset(&aData[0], 0, sizeof(aData));
+
+	// aNumの数値をコピーする
+	memcpy(&aData[nSize], &m_RankingInfo.aRank, sizeof(m_RankingInfo.aRank));
+
+	// サイズ変数にバイト数分加算する
+	nSize += sizeof(m_RankingInfo.aRank);
+
+	// チェックサムを生成する
+	for (int nCnt = 0; nCnt < nSize; nCnt++)
+	{
+		// チェックサムに数値を加算していく
+		nCheckSum += aData[nCnt];
+	}
+
 	// ファイルを開く
 	pFile = fopen(RANKING_BIN, "wb");			// バイナリファイルに書き込むために開く
 
 	// ファイルを比較する
 	if (pFile != NULL)
 	{ // ファイルが開けた場合
+
+		// 総バイト数を書き込む
+		fwrite(&nSize, sizeof(int), 1, pFile);
+
+		// チェックサムを書き込む
+		fwrite(&nCheckSum, sizeof(int), 1, pFile);
 
 		// ファイルから数値を書き出す
 		fwrite(&m_RankingInfo.aRank[0], sizeof(int), CRanking::MAX_RANKING, pFile);
@@ -758,6 +785,15 @@ HRESULT CFile::LoadRanking(void)
 	FILE* pFile;						// ファイルポインタを宣言
 	m_RankingInfo.bSuccess = false;		// 成功状況
 
+	int nSize = 0;		// データの総サイズ
+	int nCheckSum = 0;	// チェックサム
+	int nCheckCnt = 0;	// カウント
+
+	unsigned char aData[128];		// データ
+
+	// ゼロクリア
+	memset(&aData[0], 0, sizeof(aData));
+
 	// ファイルを開く
 	pFile = fopen(RANKING_BIN, "rb");			// バイナリファイルから読み込むために開く
 
@@ -765,14 +801,39 @@ HRESULT CFile::LoadRanking(void)
 	if (pFile != NULL)
 	{ // ファイルが開けた場合
 
-		// ファイルから数値を読み込む
-		fread(&m_RankingInfo.aRank[0], sizeof(int), CRanking::MAX_RANKING, pFile);
+		//ファイルからサイズ数を読み込む
+		fread(&nSize, sizeof(int), 1, pFile);
+
+		//ファイルからサムチェックの値を読み込む
+		fread(&nCheckSum, sizeof(int), 1, pFile);
+
+		// ファイルから全てのデータを読み込む
+		fread(&aData[0], sizeof(unsigned char), nSize, pFile);
 
 		// ファイルを閉じる
 		fclose(pFile);
 
 		// 成功状況を true にする
 		m_RankingInfo.bSuccess = true;
+
+		for (int nCnt = 0; nCnt < nSize; nCnt++)
+		{
+			// カウントを加算する
+			nCheckCnt += aData[nCnt];
+		}
+
+		if (nCheckSum == nCheckCnt)
+		{ // サムチェック用変数と読み込んだデータが一致した場合
+
+			// aNumの数値をコピーする
+			memcpy(&m_RankingInfo.aRank, &aData[0], sizeof(m_RankingInfo.aRank));
+		}
+		else
+		{ // サムチェック用変数と読み込んだデータが一致した場合
+
+			// 停止
+			assert(false);
+		}
 
 		// 成功を返す
 		return S_OK;
