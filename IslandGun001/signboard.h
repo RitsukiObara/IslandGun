@@ -17,6 +17,7 @@
 // 前方宣言
 //-----------------------------------
 class CPushTiming;		// ボタン表示
+class CSignboardExpl;	// 看板の説明
 
 //-----------------------------------
 // クラス定義(看板)
@@ -51,9 +52,10 @@ public:			// 誰でもアクセスできる
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
-	CPushTiming* m_pButton;	// ボタンの情報
-	TYPE m_type;			// 種類
-	bool m_bDisp;			// 描画状況
+	CPushTiming* m_pButton;		// ボタンの情報
+	CSignboardExpl* m_pExplain;	// 説明の情報
+	TYPE m_type;				// 種類
+	bool m_bDisp;				// 描画状況
 
 	// 静的メンバ変数
 	static CListManager<CSignboard*> m_list;		// リスト

@@ -80,6 +80,7 @@ public:			// 誰でもアクセスできる
 		TYPE_BOSSBARRIER,		// ボスのバリア
 		TYPE_SIGNBOARD,			// 看板
 		TYPE_RANKINGTABLE,		// ランキングのスコア
+		TYPE_SIGNEXPLAIN,		// 看板の説明
 		TYPE_MAX				// この列挙型の総数
 	};
 

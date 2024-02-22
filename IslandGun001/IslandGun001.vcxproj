@@ -279,6 +279,7 @@
     <ClCompile Include="shadowCircle.cpp" />
     <ClCompile Include="shadowModel.cpp" />
     <ClCompile Include="signboard.cpp" />
+    <ClCompile Include="signboard_explain.cpp" />
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="slash_ripple.cpp" />
     <ClCompile Include="sound.cpp" />
@@ -418,6 +419,7 @@
     <ClInclude Include="shadowCircle.h" />
     <ClInclude Include="shadowModel.h" />
     <ClInclude Include="signboard.h" />
+    <ClInclude Include="signboard_explain.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="slash_ripple.h" />
     <ClInclude Include="sound.h" />

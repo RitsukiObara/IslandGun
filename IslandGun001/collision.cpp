@@ -37,6 +37,7 @@
 #include "slash_ripple.h"
 #include "wind_shot.h"
 #include "fire_shot.h"
+#include "signboard.h"
 #include "game.h"
 
 //===============================
@@ -59,6 +60,8 @@ namespace
 	const int PALM_FRUIT_HEALING = 30;				// ヤシの実の回復値
 
 	const int COIN_SCORE = 100;						// コインのスコア
+
+	const float SIGNBOARD_ADD_RADIUS = 200.0f;		// 看板の追加の半径
 
 	const float BOMB_BULLET_SMASH = 10.0f;			// 銃弾で爆弾の吹き飛ぶ速度
 	const float BOMB_DAGGER_SMASH = 23.0f;			// ダガーで爆弾の吹き飛ぶ速度
@@ -2009,6 +2012,62 @@ bool collision::FireShotHit(const D3DXVECTOR3& pos, const float fRadius, const f
 
 			// 次のオブジェクトを代入する
 			pFire = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
+// 看板との当たり判定
+//===============================
+bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
+{
+	// ローカル変数宣言
+	D3DXVECTOR3 posSign = NONE_D3DXVECTOR3;		// 壁の位置
+	float fRadiusSign = 0.0f;					// 看板の半径
+
+	CListManager<CSignboard*> list = CSignboard::GetList();
+	CSignboard* pSign = nullptr;			// 先頭の値
+	CSignboard* pSignEnd = nullptr;			// 末尾の値
+	int nIdx = 0;
+
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pSign = list.GetTop();
+
+		// 末尾の値を取得する
+		pSignEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			// 看板関係の変数を設定する
+			posSign = pSign->GetPos();
+			fRadiusSign = pSign->GetFileData().fRadius;
+
+			if (useful::CircleCollisionXZ(pos, posSign, fRadius, fRadiusSign + SIGNBOARD_ADD_RADIUS) == true)
+			{ // 看板に近づいた場合
+
+				// true を返す
+				return true;
+			}
+
+			if (pSign == pSignEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pSign = list.GetData(nIdx + 1);
 
 			// インデックスを加算する
 			nIdx++;

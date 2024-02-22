@@ -492,6 +492,9 @@
     <ClCompile Include="rank_score.cpp">
       <Filter>scene\ranking</Filter>
     </ClCompile>
+    <ClCompile Include="signboard_explain.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -907,6 +910,9 @@
     </ClInclude>
     <ClInclude Include="rank_score.h">
       <Filter>scene\ranking</Filter>
+    </ClInclude>
+    <ClInclude Include="signboard_explain.h">
+      <Filter>scene\tutorial</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

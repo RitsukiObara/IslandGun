@@ -14,6 +14,7 @@
 #include "useful.h"
 
 #include "push_timing.h"
+#include "signboard_explain.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -38,6 +39,7 @@ CSignboard::CSignboard() : CModel(TYPE_SIGNBOARD, PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
 	m_pButton = nullptr;	// ボタンの情報
+	m_pExplain = nullptr;	// 説明の情報
 	m_type = TYPE_JUMP;		// 種類
 	m_bDisp = false;		// 描画状況
 
