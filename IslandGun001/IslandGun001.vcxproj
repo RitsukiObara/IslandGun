@@ -159,7 +159,8 @@
     <ClCompile Include="altar.cpp" />
     <ClCompile Include="alter_pole.cpp" />
     <ClCompile Include="anim_reaction.cpp" />
-    <ClCompile Include="tutorial_target.cpp" />
+    <ClCompile Include="balloon.cpp" />
+    <ClCompile Include="balloon_rope.cpp" />
     <ClCompile Include="bang_flower.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="blur.cpp" />
@@ -304,7 +305,8 @@
     <ClInclude Include="alter.h" />
     <ClInclude Include="alter_pole.h" />
     <ClInclude Include="anim_reaction.h" />
-    <ClInclude Include="tutorial_target.h" />
+    <ClInclude Include="balloon.h" />
+    <ClInclude Include="balloon_rope.h" />
     <ClInclude Include="bang_flower.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="blur.h" />

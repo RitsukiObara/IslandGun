@@ -495,10 +495,13 @@
     <ClCompile Include="player_tutorial.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="tutorial_target.cpp">
+    <ClCompile Include="balloon.cpp">
       <Filter>scene\tutorial</Filter>
     </ClCompile>
     <ClCompile Include="signboard.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="balloon_rope.cpp">
       <Filter>scene\tutorial</Filter>
     </ClCompile>
   </ItemGroup>
@@ -920,10 +923,13 @@
     <ClInclude Include="player_tutorial.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="tutorial_target.h">
+    <ClInclude Include="balloon.h">
       <Filter>scene\tutorial</Filter>
     </ClInclude>
     <ClInclude Include="signboard.h">
+      <Filter>scene\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="balloon_rope.h">
       <Filter>scene\tutorial</Filter>
     </ClInclude>
   </ItemGroup>

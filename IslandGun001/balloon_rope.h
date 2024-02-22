@@ -1,27 +1,26 @@
 //===================================
 //
-// 的ヘッダー[tutorial_target.h]
+// 風船の紐ヘッダー[balloon_rope.h]
 // Author 小原立暉
 //
 //===================================
-#ifndef _TUTORIAL_TARGET_H_
-#define _TUTORIAL_TARGET_H_
+#ifndef _BALLOON_ROPE_H_
+#define _BALLOON_ROPE_H_
 
 //***********************************
 // インクルードファイル
 //***********************************
 #include "model.h"
-#include "list_manager.h"
 
 //-----------------------------------
-// クラス定義(ターゲット)
+// クラス定義(風船の紐)
 //-----------------------------------
-class CTarget : public CModel
+class CBalloonRope : public CModel
 {
 public:			// 誰でもアクセスできる
 
-	CTarget();			// コンストラクタ
-	~CTarget();			// デストラクタ
+	CBalloonRope();			// コンストラクタ
+	~CBalloonRope();		// デストラクタ
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -29,18 +28,15 @@ public:			// 誰でもアクセスできる
 	void Update(void) override;		// 更新処理
 	void Draw(void) override;		// 描画処理
 
-	void SetData(const D3DXVECTOR3& pos);				// 情報の設定処理
-	void Hit(void);					// ヒット処理
+	void SetData(D3DXMATRIX* mtx);					// 情報の設定処理
 
 	// 静的メンバ関数
-	static CTarget* Create(const D3DXVECTOR3& pos);		// 生成処理
-
-	static CListManager<CTarget*> GetList(void);		// リストの取得処理
+	static CBalloonRope* Create(D3DXMATRIX* mtx);	// 生成処理
 
 private:		// 自分だけアクセスできる
 
-	// 静的メンバ変数
-	static CListManager<CTarget*> m_list;		// リスト情報
+	// メンバ変数
+	D3DXMATRIX* m_pMtxParent;		// 親のマトリックス
 };
 
 #endif
