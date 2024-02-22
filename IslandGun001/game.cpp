@@ -28,7 +28,6 @@
 #include "game_score.h"
 #include "alter.h"
 #include "boss.h"
-#include "signboard.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -115,8 +114,6 @@ HRESULT CGame::Init(void)
 
 	// 祭壇の生成
 	m_pAlter = CAlter::Create();
-
-	CSignboard::Create(D3DXVECTOR3(3000.0f, 50.0f, 3000.0f), NONE_D3DXVECTOR3, CSignboard::TYPE::TYPE_JUMP);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

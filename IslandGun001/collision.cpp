@@ -11,6 +11,7 @@
 #include "useful.h"
 #include "manager.h"
 #include "renderer.h"
+#include "input.h"
 
 #include "shadowCircle.h"
 #include "objectElevation.h"
@@ -39,6 +40,7 @@
 #include "fire_shot.h"
 #include "signboard.h"
 #include "game.h"
+#include "tutorial.h"
 
 //===============================
 // マクロ定義
@@ -61,7 +63,7 @@ namespace
 
 	const int COIN_SCORE = 100;						// コインのスコア
 
-	const float SIGNBOARD_ADD_RADIUS = 200.0f;		// 看板の追加の半径
+	const float SIGNBOARD_ADD_RADIUS = 50.0f;		// 看板の追加の半径
 
 	const float BOMB_BULLET_SMASH = 10.0f;			// 銃弾で爆弾の吹き飛ぶ速度
 	const float BOMB_DAGGER_SMASH = 23.0f;			// ダガーで爆弾の吹き飛ぶ速度
@@ -2055,8 +2057,25 @@ bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
 			if (useful::CircleCollisionXZ(pos, posSign, fRadius, fRadiusSign + SIGNBOARD_ADD_RADIUS) == true)
 			{ // 看板に近づいた場合
 
-				// true を返す
-				return true;
+				// ボタンを描画する
+				pSign->SetEnableDisp(true);
+
+				if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true ||
+					CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_SPACE) == true)
+				{ // ボタンを押した場合
+
+					// 説明移行処理
+					pSign->Explain();
+
+					// true を返す
+					return true;
+				}
+			}
+			else
+			{ // 上記以外
+
+				// ボタンを描画しない
+				pSign->SetEnableDisp(false);
 			}
 
 			if (pSign == pSignEnd)
@@ -2076,6 +2095,14 @@ bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
 
 	// false を返す
 	return false;
+}
+
+//===============================
+// 的との当たり判定
+//===============================
+void collision::TargetHit(const D3DXVECTOR3& pos, const float fRadius)
+{
+
 }
 
 /*

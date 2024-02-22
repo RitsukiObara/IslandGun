@@ -81,6 +81,7 @@ public:			// 誰でもアクセスできる
 		TYPE_SIGNBOARD,			// 看板
 		TYPE_RANKINGTABLE,		// ランキングのスコア
 		TYPE_SIGNEXPLAIN,		// 看板の説明
+		TYPE_TARGET,			// 的
 		TYPE_MAX				// この列挙型の総数
 	};
 
@@ -130,6 +131,7 @@ public:			// 誰でもアクセスできる
 
 	static void AnyAllClear(const TYPE type);		// 汎用的な全消去処理
 	static void AnyAllClear(const DIM dim, const PRIORITY priority, const TYPE type);		// 汎用的な全消去処理
+	static void AnyUpdate(const TYPE type);			// 種類限定の更新処理
 	static void DeathDecision(const int dim, const int nCnt);		// 死亡判別処理
 
 protected:		// 自分と派生クラスだけがアクセスできる

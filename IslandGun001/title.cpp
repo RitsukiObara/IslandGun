@@ -118,7 +118,7 @@ void CTitle::Update(void)
 	{ // ENTERキーを押した場合
 
 		// ゲームに遷移する
-		CManager::Get()->GetFade()->SetFade(CScene::MODE_GAME);
+		CManager::Get()->GetFade()->SetFade(CScene::MODE_TUTORIAL);
 
 		// この先の処理を行わない
 		return;

@@ -483,9 +483,6 @@
     <ClCompile Include="boss_barrier.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
-    <ClCompile Include="signboard.cpp">
-      <Filter>gimmick\Map</Filter>
-    </ClCompile>
     <ClCompile Include="ranking_table.cpp">
       <Filter>scene\ranking</Filter>
     </ClCompile>
@@ -493,6 +490,15 @@
       <Filter>scene\ranking</Filter>
     </ClCompile>
     <ClCompile Include="signboard_explain.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="player_tutorial.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="tutorial_target.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="signboard.cpp">
       <Filter>scene\tutorial</Filter>
     </ClCompile>
   </ItemGroup>
@@ -902,9 +908,6 @@
     <ClInclude Include="boss_barrier.h">
       <Filter>enemy\boss</Filter>
     </ClInclude>
-    <ClInclude Include="signboard.h">
-      <Filter>gimmick\Map</Filter>
-    </ClInclude>
     <ClInclude Include="ranking_table.h">
       <Filter>scene\ranking</Filter>
     </ClInclude>
@@ -912,6 +915,15 @@
       <Filter>scene\ranking</Filter>
     </ClInclude>
     <ClInclude Include="signboard_explain.h">
+      <Filter>scene\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="player_tutorial.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial_target.h">
+      <Filter>scene\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="signboard.h">
       <Filter>scene\tutorial</Filter>
     </ClInclude>
   </ItemGroup>

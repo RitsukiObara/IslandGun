@@ -97,6 +97,9 @@ namespace collision
 	// ŠÅ”Â‚Ì“–‚½‚è”»’è
 	bool SignboardCollision(const D3DXVECTOR3& pos, const float fRadius);		// ŠÅ”Â‚Æ‚Ì“–‚½‚è”»’è
 
+	// “I‚Ì“–‚½‚è”»’è
+	void TargetHit(const D3DXVECTOR3& pos, const float fRadius);				// “I‚Æ‚Ì“–‚½‚è”»’è
+
 	// ”Ä—p“I‚È“–‚½‚è”»’è
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// ˜Z–Ê‘Ì‚Ì“–‚½‚è”»’è
 	bool HexahedronHit(const D3DXVECTOR3& pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// ˜Z–Ê‘Ì‚Ìƒqƒbƒg”»’è

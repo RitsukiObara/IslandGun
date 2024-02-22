@@ -70,10 +70,10 @@ public:			// 誰でもアクセスできる
 	~CPlayer();				// デストラクタ
 
 	// メンバ関数
-	HRESULT Init(void) override;	// 初期化処理
-	void Uninit(void) override;		// 終了処理
-	void Update(void) override;		// 更新処理
-	void Draw(void) override;		// 描画処理
+	virtual HRESULT Init(void) override;	// 初期化処理
+	virtual void Uninit(void) override;		// 終了処理
+	virtual void Update(void) override;		// 更新処理
+	virtual void Draw(void) override;		// 描画処理
 
 	void Hit(const int nDamage, const float fRotSmash);	// ヒット処理
 	void Healing(const int nHealing);			// 回復処理
@@ -88,12 +88,15 @@ public:			// 誰でもアクセスできる
 	CBulletUI* GetBulletUI(void) const;				// 残弾UIの情報の取得処理
 	CGoldBoneUI* GetGoldBoneUI(void) const;			// 金の骨UIの情報の取得処理
 	CLifeUI* GetLifeUI(void) const;					// 寿命UIの情報の取得処理
+	CPlayerController* GetController(void) const;	// コントローラーの情報の取得処理
+	CAirplane* GetAirplane(void) const;				// 飛行機の情報の取得処理
 	void RemoveAirplane(void);						// 飛行機の管轄外し処理
 
 	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
 	void SetMove(const D3DXVECTOR3& move);		// 移動量の設定処理
 	D3DXVECTOR3 GetMove(void) const;			// 移動量の取得処理
+	int GetLife(void) const;					// 体力の取得処理
 	SState GetState(void) const;				// 状態の取得処理
 	void SetEnableJump(const bool bJump);		// ジャンプ状況の設定処理
 	bool IsJump(void) const;					// ジャンプ状況の取得処理
@@ -101,7 +104,7 @@ public:			// 誰でもアクセスできる
 	// 静的メンバ関数
 	static CPlayer* Create(const D3DXVECTOR3& pos);	// 生成処理
 
-private:		// 自分だけアクセスできる
+protected:		// 自分と派生クラスだけアクセスできる
 
 	// メンバ関数
 	void StateManager(void);		// 状態管理処理
@@ -113,6 +116,8 @@ private:		// 自分だけアクセスできる
 	void RockCollision(void);		// 岩との当たり判定
 	void WallCollision(void);		// 壁との当たり判定
 	void AlterCollision(void);		// 際算との当たり判定
+
+private:		// 自分だけアクセスできる
 
 	// 状態ごとの処理
 	void DamageState();				// ダメージ状態処理

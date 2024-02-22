@@ -11,12 +11,14 @@
 #include "manager.h"
 #include "camera.h"
 #include "game.h"
+#include "tutorial.h"
 #include "renderer.h"
 #include "input.h"
 #include "debugproc.h"
 #include "useful.h"
 
 #include "player.h"
+#include "player_tutorial.h"
 #include "light.h"
 #include "boss.h"
 
@@ -145,6 +147,13 @@ void CCamera::Update(void)
 
 	switch (CManager::Get()->GetMode())
 	{
+	case CScene::MODE_TUTORIAL:	// チュートリアル
+
+		// チュートリアルシーン処理
+		Tutorial();
+
+		break;
+
 	case CScene::MODE_GAME:		// ゲームモード
 
 		if (CGame::IsPause() == false)
@@ -938,6 +947,42 @@ void CCamera::Chase(void)
 {
 	// ローカル変数宣言
 	CPlayer* pPlayer = CGame::GetPlayer();	// プレイヤーのポインタ
+
+	if (pPlayer != nullptr)
+	{ // プレイヤーが NULL じゃない場合
+
+		// プレイヤーの情報を取得する
+		D3DXVECTOR3 pos = pPlayer->GetPos();			// 位置
+
+		// 目的の注視点を設定する
+		m_posRDest.x = pos.x + sinf(m_rot.y) * POSR_SHIFT;
+		m_posRDest.y = pos.y + POSR_SHIFT_Y;
+		m_posRDest.z = pos.z + cosf(m_rot.y) * POSR_SHIFT;
+
+		// 目的の視点を設定する
+		m_posVDest.x = m_posRDest.x + sinf(m_rot.y) * sinf(m_rot.x) * -m_Dis;
+		m_posVDest.y = m_posRDest.y + cosf(m_rot.x) * -m_Dis;
+		m_posVDest.z = m_posRDest.z + cosf(m_rot.y) * sinf(m_rot.x) * -m_Dis;
+
+		// 注視点を補正
+		m_posR.x += (m_posRDest.x - m_posR.x) * CORRECT_POSR;
+		m_posR.y += (m_posRDest.y - m_posR.y) * CORRECT_POSR;
+		m_posR.z += (m_posRDest.z - m_posR.z) * CORRECT_POSR;
+
+		// 視点を補正
+		m_posV.x += (m_posVDest.x - m_posV.x) * CORRECT_POSV;
+		m_posV.y += (m_posVDest.y - m_posV.y) * CORRECT_POSV;
+		m_posV.z += (m_posVDest.z - m_posV.z) * CORRECT_POSV;
+	}
+}
+
+//=======================
+// チュートリアルシーン処理
+//=======================
+void CCamera::Tutorial(void)
+{
+	// ローカル変数宣言
+	CTutorialPlayer* pPlayer = CTutorial::GetPlayer();	// プレイヤーのポインタ
 
 	if (pPlayer != nullptr)
 	{ // プレイヤーが NULL じゃない場合

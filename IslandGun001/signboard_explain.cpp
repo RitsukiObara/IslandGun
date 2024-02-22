@@ -21,13 +21,13 @@ namespace
 	const D3DXVECTOR3 SCREEN_POS = D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);		// 背景の位置
 	const D3DXVECTOR3 SCREEN_SIZE = D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);		// 背景のサイズ
 	const D3DXVECTOR3 EXPLAIN_POS = D3DXVECTOR3(SCREEN_WIDTH * 0.5f, -200.0f, 0.0f);					// 説明の位置
-	const D3DXVECTOR3 EXPLAIN_SIZE = D3DXVECTOR3(200.0f, 200.0f, 0.0f);									// 説明のサイズ
+	const D3DXVECTOR3 EXPLAIN_SIZE = D3DXVECTOR3(500.0f, 250.0f, 0.0f);									// 説明のサイズ
 	const char* EXPLAIN_TEXTURE[CSignboard::TYPE_MAX] = 	// 説明のテクスチャ
 	{
 		""
 	};
 	const D3DXCOLOR SCREEN_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);		// 背景の色
-	const float SCREEN_ADD_ALPHA = 0.01f;			// 背景の透明度の加算数
+	const float SCREEN_ADD_ALPHA = 0.006f;			// 背景の透明度の加算数
 	const float SCREEN_MAX_ALPHA = 0.5f;			// 背景の透明度の最大数
 }
 
@@ -98,6 +98,9 @@ void CSignboardExpl::Update(void)
 
 	m_pExplain->SetPos(pos);
 
+	// 頂点座標の設定処理
+	m_pExplain->SetVertex();
+
 	// 頂点カラーの設定処理
 	m_screen.pScreen->SetVtxColor(D3DXCOLOR(SCREEN_COL.r, SCREEN_COL.g, SCREEN_COL.b, m_screen.fAlpha));
 }
@@ -149,7 +152,7 @@ void CSignboardExpl::SetData(const CSignboard::TYPE type)
 	}
 	m_screen.fAlpha = 0.0f;
 
-	if (m_pExplain != nullptr)
+	if (m_pExplain == nullptr)
 	{ // 説明が NULL の場合
 
 		// 説明を生成

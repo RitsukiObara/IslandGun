@@ -43,6 +43,11 @@ public:			// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);					// 情報の設定処理
+	void Explain(void);				// 説明移行処理
+
+	// セット・ゲット関係
+	void SetEnableDisp(const bool bDisp);		// 描画状況の設定処理
+	bool IsDisp(void) const;					// 描画状況の取得処理
 
 	// 静的メンバ関数
 	static CSignboard* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理

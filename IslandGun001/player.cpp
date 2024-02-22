@@ -700,6 +700,24 @@ CLifeUI* CPlayer::GetLifeUI(void) const
 }
 
 //=======================================
+// コントローラーの情報の取得処理
+//=======================================
+CPlayerController* CPlayer::GetController(void) const
+{
+	// コントローラー情報を返す
+	return m_pController;
+}
+
+//=======================================
+// 飛行機の情報の取得処理
+//=======================================
+CAirplane* CPlayer::GetAirplane(void) const
+{
+	// 飛行機の情報を返す
+	return m_pAirplane;
+}
+
+//=======================================
 // 飛行機の管轄外し処理
 //=======================================
 void CPlayer::RemoveAirplane(void)
@@ -859,6 +877,15 @@ D3DXVECTOR3 CPlayer::GetMove(void) const
 {
 	// 移動量を返す
 	return m_move;
+}
+
+//=======================================
+// 体力の取得処理
+//=======================================
+int CPlayer::GetLife(void) const
+{
+	// 体力を返す
+	return m_nLife;
 }
 
 //=======================================

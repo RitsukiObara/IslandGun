@@ -15,6 +15,7 @@
 
 #include "push_timing.h"
 #include "signboard_explain.h"
+#include "tutorial.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -141,6 +142,22 @@ void CSignboard::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const T
 }
 
 //=======================================
+// 説明移行処理
+//=======================================
+void CSignboard::Explain(void)
+{
+	if (m_pExplain == nullptr)
+	{ // 説明状況が NULL の場合
+
+		// 説明を生成
+		m_pExplain = CSignboardExpl::Create(m_type);
+	}
+
+	// 説明状況を true にする
+	CTutorial::SetEnableExplain(true);
+}
+
+//=======================================
 // 生成処理
 //=======================================
 CSignboard* CSignboard::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type)
@@ -193,6 +210,24 @@ CSignboard* CSignboard::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, c
 
 	// 看板のポインタを返す
 	return pSignboard;
+}
+
+//=======================================
+// 描画状況の設定処理
+//=======================================
+void CSignboard::SetEnableDisp(const bool bDisp)
+{
+	// 描画状況を設定する
+	m_bDisp = bDisp;
+}
+
+//=======================================
+// 描画状況の取得処理
+//=======================================
+bool CSignboard::IsDisp(void) const
+{
+	// 描画状況を返す
+	return m_bDisp;
 }
 
 //=======================================
