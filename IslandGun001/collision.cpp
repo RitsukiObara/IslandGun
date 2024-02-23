@@ -41,6 +41,8 @@
 #include "signboard.h"
 #include "game.h"
 #include "tutorial.h"
+#include "balloon.h"
+#include "balloon_spawner.h"
 
 //===============================
 // マクロ定義
@@ -2100,9 +2102,69 @@ bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
 //===============================
 // 的との当たり判定
 //===============================
-void collision::TargetHit(const D3DXVECTOR3& pos, const float fRadius)
+bool collision::TargetHit(const D3DXVECTOR3& pos, const float fRadius)
 {
+	// ローカル変数宣言
+	CBalloon* pBalloon = nullptr;				// 風船の情報
+	D3DXVECTOR3 posBalloon = NONE_D3DXVECTOR3;	// 風船の位置
+	float fRadiusBalloon = 0.0f;				// 風船の半径
+	CListManager<CBalloonSpawner*> list = CBalloonSpawner::GetList();
+	CBalloonSpawner* pSpawner = nullptr;		// 先頭の風船スポナー
+	CBalloonSpawner* pSpawnerEnd = nullptr;		// 末尾の値
+	int nIdx = 0;
 
+	if (list.IsEmpty() == false)
+	{ // 空白じゃない場合
+
+		// 先頭の値を取得する
+		pSpawner = list.GetTop();
+
+		// 末尾の値を取得する
+		pSpawnerEnd = list.GetEnd();
+
+		while (true)
+		{ // 無限ループ
+
+			if (pSpawner->GetBalloon() != nullptr)
+			{ // 風船が NULL じゃない場合
+
+				// 風船の情報を取得
+				pBalloon = pSpawner->GetBalloon();
+
+				// 情報を設定
+				posBalloon = pBalloon->GetPos();
+				fRadiusBalloon = pBalloon->GetFileData().fRadius;
+
+				if (useful::CircleCollisionXY(pos, posBalloon, fRadius, fRadiusBalloon) == true &&
+					useful::CircleCollisionXZ(pos, posBalloon, fRadius, fRadiusBalloon) == true &&
+					useful::CircleCollisionYZ(pos, posBalloon, fRadius, fRadiusBalloon) == true)
+				{ // 風船と重なった場合
+
+					// ヒット処理
+					pSpawner->Hit();
+
+					// true を返す
+					return true;
+				}
+			}
+
+			if (pSpawner == pSpawnerEnd)
+			{ // 末尾に達した場合
+
+				// while文を抜け出す
+				break;
+			}
+
+			// 次のオブジェクトを代入する
+			pSpawner = list.GetData(nIdx + 1);
+
+			// インデックスを加算する
+			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
 }
 
 /*

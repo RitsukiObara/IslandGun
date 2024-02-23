@@ -297,8 +297,9 @@ bool CBullet::Hit(void)
 		collision::TreeCollision(&pos, vtxMax.x) == true ||
 		collision::WallCollision(&pos, posOld, vtxMax, vtxMin) == true ||
 		collision::AlterCollision(&pos, posOld, vtxMax, vtxMin) == true ||
-		collision::PalmFruitAttack(pos, size.x) == true)
-	{ // 敵に当たった場合
+		collision::PalmFruitAttack(pos, size.x) == true ||
+		collision::TargetHit(pos, size.x) == true)
+	{ // オブジェクトに当たった場合
 
 		// true を返す
 		return true;

@@ -98,7 +98,7 @@ namespace collision
 	bool SignboardCollision(const D3DXVECTOR3& pos, const float fRadius);		// 看板との当たり判定
 
 	// 的の当たり判定
-	void TargetHit(const D3DXVECTOR3& pos, const float fRadius);				// 的との当たり判定
+	bool TargetHit(const D3DXVECTOR3& pos, const float fRadius);				// 的との当たり判定
 
 	// 汎用的な当たり判定
 	bool HexahedronCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posBlock, const D3DXVECTOR3& posOld, const D3DXVECTOR3& posOldBlock, const D3DXVECTOR3& min, const D3DXVECTOR3& minBlock, const D3DXVECTOR3& max, const D3DXVECTOR3& maxBlock);		// 六面体の当たり判定

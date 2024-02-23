@@ -45,10 +45,7 @@ namespace
 	const float SHOT_SHIFT_LENGTH = 95.0f;			// ŽËŒ‚Žž‚Ì‚¸‚ç‚·•
 	const float SHOTGUN_GRAVITY = 15.0f;			// ŽU’eó‘Ô‚ÌŽž‚Ìd—Í
 	const float SHOTGUN_RECOIL = 7.0f;				// ŽU’eó‘Ô‚Ì”½“®
-	const int LAST_SHOTCOUNT = 2;					// ƒ‰ƒXƒgƒtƒ@ƒCƒA‚Ì—P—\ƒtƒŒ[ƒ€
-	const int LAST_SHOT_BULLET = 20;				// ƒ‰ƒXƒgƒtƒ@ƒCƒA‚Ì’e‚Ì”
 	const int SHOTGUN_RAND_ROT = 60;				// ŽU’e‚Ìƒ‰ƒ“ƒ_ƒ€‚Å”ò‚Î‚·Œü‚«
-	const int LAST_RAND_ROT = 80;					// ƒ‰ƒXƒgƒtƒ@ƒCƒA‚Ìƒ‰ƒ“ƒ_ƒ€‚Å”ò‚Î‚·Œü‚«
 	const int NUM_SHOTGUN_BULLET = 8;				// ŽU’e‚Å”ò‚Î‚·’e‚Ì”
 	const int DODGE_INTERVAL = 90;					// ‰ñ”ðƒCƒ“ƒ^[ƒoƒ‹
 	const int SHOT_INTERVAL = 10;					// Œ‚‚ÂƒCƒ“ƒ^[ƒoƒ‹
@@ -702,34 +699,18 @@ void CPlayerController::ShotGun(CPlayer* pPlayer)
 	pos.y = pPlayer->GetPos().y + SHOT_ADD_HEIGHT;
 	pos.z = pPlayer->GetPos().z;
 
-	if (nNumBullet == 1 &&
-		m_nShotCount < LAST_SHOTCOUNT)
-	{ // ÅŒã‚Ì’e‚¾‚Á‚½ê‡
+	// ’†S‚É’e‚ðŒ‚‚Â
+	CBullet::Create(pos, rot, CBullet::TYPE::TYPE_SHOTGUN);
 
-		for (int nCnt = 0; nCnt < LAST_SHOT_BULLET; nCnt++)
-		{
-			// ’e‚Ìo‚éŒü‚«‚ðÝ’è‚·‚é
-			rotBullet.x = rot.x + (float)((rand() % LAST_RAND_ROT - (LAST_RAND_ROT / 2)) * 0.01f);
-			rotBullet.y = rot.y + (float)((rand() % LAST_RAND_ROT - (LAST_RAND_ROT / 2)) * 0.01f);
-			rotBullet.z = rot.z + (float)((rand() % LAST_RAND_ROT - (LAST_RAND_ROT / 2)) * 0.01f);
+	for (int nCnt = 0; nCnt < NUM_SHOTGUN_BULLET; nCnt++)
+	{
+		// ’e‚Ìo‚éŒü‚«‚ðÝ’è‚·‚é
+		rotBullet.x = rot.x + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
+		rotBullet.y = rot.y + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
+		rotBullet.z = rot.z + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
 
-			// ’e‚ðŒ‚‚Â
-			CBullet::Create(pos, rotBullet, CBullet::TYPE::TYPE_SHOTGUN);
-		}
-	}
-	else
-	{ // ã‹LˆÈŠO
-
-		for (int nCnt = 0; nCnt < NUM_SHOTGUN_BULLET; nCnt++)
-		{
-			// ’e‚Ìo‚éŒü‚«‚ðÝ’è‚·‚é
-			rotBullet.x = rot.x + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
-			rotBullet.y = rot.y + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
-			rotBullet.z = rot.z + (float)((rand() % SHOTGUN_RAND_ROT - (SHOTGUN_RAND_ROT / 2)) * 0.01f);
-
-			// ’e‚ðŒ‚‚Â
-			CBullet::Create(pos, rotBullet, CBullet::TYPE::TYPE_SHOTGUN);
-		}
+		// ’e‚ðŒ‚‚Â
+		CBullet::Create(pos, rotBullet, CBullet::TYPE::TYPE_SHOTGUN);
 	}
 
 	// Žc’e”‚ðŒ¸‚ç‚·

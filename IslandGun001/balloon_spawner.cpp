@@ -37,6 +37,9 @@ CBalloonSpawner::CBalloonSpawner() : CObject(CObject::TYPE_TARGET, DIM_3D, CObje
 	m_pBalloon = nullptr;		// 風船のモデル
 	m_pos = NONE_D3DXVECTOR3;	// 位置
 	m_nIntervalCount = 0;		// 風船の間隔カウント
+
+	// リストに追加する
+	m_list.Regist(this);
 }
 
 //==============================
@@ -71,6 +74,9 @@ void CBalloonSpawner::Uninit(void)
 
 	// 本体の終了処理
 	Release();
+
+	// 引き抜き処理
+	m_list.Pull(this);
 }
 
 //=====================================
@@ -195,6 +201,15 @@ CBalloonSpawner* CBalloonSpawner::Create(const D3DXVECTOR3& pos)
 
 	// 的のポインタを返す
 	return pTarget;
+}
+
+//=======================================
+// 風船の取得処理
+//=======================================
+CBalloon* CBalloonSpawner::GetBalloon(void) const
+{
+	// 風船の情報を返す
+	return m_pBalloon;
 }
 
 //=======================================
