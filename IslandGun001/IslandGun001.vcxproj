@@ -161,6 +161,7 @@
     <ClCompile Include="anim_reaction.cpp" />
     <ClCompile Include="balloon.cpp" />
     <ClCompile Include="balloon_rope.cpp" />
+    <ClCompile Include="balloon_spawner.cpp" />
     <ClCompile Include="bang_flower.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="blur.cpp" />
@@ -307,6 +308,7 @@
     <ClInclude Include="anim_reaction.h" />
     <ClInclude Include="balloon.h" />
     <ClInclude Include="balloon_rope.h" />
+    <ClInclude Include="balloon_spawner.h" />
     <ClInclude Include="bang_flower.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="blur.h" />

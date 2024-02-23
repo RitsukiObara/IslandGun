@@ -1,31 +1,32 @@
 //===================================
 //
-// 風船ヘッダー[balloon.h]
+// 風船スポナーヘッダー[balloon_spawner.h]
 // Author 小原立暉
 //
 //===================================
-#ifndef _BALLOON_H_
-#define _BALLOON_H_
+#ifndef _BALLOON_SPAWNER_H_
+#define _BALLOON_SPAWNER_H_
 
 //***********************************
 // インクルードファイル
 //***********************************
-#include "model.h"
+#include "object.h"
+#include "list_manager.h"
 
 //-----------------------------------
 // 前方宣言
 //-----------------------------------
-class CBalloonRope;		// 風船の紐
+class CBalloon;			// 風船
 
 //-----------------------------------
-// クラス定義(風船)
+// クラス定義(風船スポナー)
 //-----------------------------------
-class CBalloon : public CModel
+class CBalloonSpawner : public CObject
 {
 public:			// 誰でもアクセスできる
 
-	CBalloon();			// コンストラクタ
-	~CBalloon();		// デストラクタ
+	CBalloonSpawner();		// コンストラクタ
+	~CBalloonSpawner();		// デストラクタ
 
 	// メンバ関数
 	HRESULT Init(void) override;	// 初期化処理
@@ -34,16 +35,23 @@ public:			// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(const D3DXVECTOR3& pos);				// 情報の設定処理
+	void Hit(void);					// ヒット処理
 
 	// 静的メンバ関数
-	static CBalloon* Create(const D3DXVECTOR3& pos);	// 生成処理
+	static CBalloonSpawner* Create(const D3DXVECTOR3& pos);		// 生成処理
+
+	static CListManager<CBalloonSpawner*> GetList(void);		// リストの取得処理
 
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
-	CBalloonRope* m_pRope;	// 紐の情報
-	float m_fPosYInit;		// 初期の高さ
-	float m_fHeightRot;		// 高さを決める向き
+	CBalloon* m_pBalloon;	// 風船の情報
+
+	D3DXVECTOR3 m_pos;		// 位置
+	int m_nIntervalCount;	// 風船の間隔カウント
+
+	// 静的メンバ変数
+	static CListManager<CBalloonSpawner*> m_list;		// リスト情報
 };
 
 #endif

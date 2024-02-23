@@ -504,6 +504,9 @@
     <ClCompile Include="balloon_rope.cpp">
       <Filter>scene\tutorial</Filter>
     </ClCompile>
+    <ClCompile Include="balloon_spawner.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -930,6 +933,9 @@
       <Filter>scene\tutorial</Filter>
     </ClInclude>
     <ClInclude Include="balloon_rope.h">
+      <Filter>scene\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="balloon_spawner.h">
       <Filter>scene\tutorial</Filter>
     </ClInclude>
   </ItemGroup>

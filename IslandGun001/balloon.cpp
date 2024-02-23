@@ -10,34 +10,29 @@
 #include "main.h"
 #include "manager.h"
 #include "balloon.h"
-#include "renderer.h"
 #include "useful.h"
 
-#include "model.h"
 #include "balloon_rope.h"
 
 //-------------------------------------------
-// 無名名前空間
+// 定数定義
 //-------------------------------------------
 namespace
 {
 	const char* MODEL = "data\\MODEL\\Balloon.x";		// 風船モデルの名前
+	const float HEIGHT = 40.0f;			// 高さの変化量
+	const float ADD_ROT = 0.02f;		// 向きの加算量
 }
-
-//-------------------------------------------
-// 静的メンバ変数宣言
-//-------------------------------------------
-CListManager<CBalloon*> CBalloon::m_list = {};			// リスト情報
 
 //==============================
 // コンストラクタ
 //==============================
-CBalloon::CBalloon() : CObject(CObject::TYPE_TARGET, DIM_3D, CObject::PRIORITY_ENTITY)
+CBalloon::CBalloon() : CModel(CObject::TYPE_NONE, CObject::PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
-	m_pos = NONE_D3DXVECTOR3;	// 位置
-	m_pBalloon = nullptr;		// 風船のモデル
 	m_pRope = nullptr;			// 紐のモデル
+	m_fPosYInit = 0.0f;			// 初期の高さ
+	m_fHeightRot = 0.0f;		// 高さを決める向き
 }
 
 //==============================
@@ -53,6 +48,13 @@ CBalloon::~CBalloon()
 //==============================
 HRESULT CBalloon::Init(void)
 {
+	if (FAILED(CModel::Init()))
+	{ // 初期化処理に失敗した場合
+
+		// 失敗を返す
+		return E_FAIL;
+	}
+
 	// 値を返す
 	return S_OK;
 }
@@ -62,14 +64,6 @@ HRESULT CBalloon::Init(void)
 //========================================
 void CBalloon::Uninit(void)
 {
-	if (m_pBalloon != nullptr)
-	{ // 風船が NULL じゃない場合
-
-		// 風船の終了処理
-		m_pBalloon->Uninit();
-		m_pBalloon = nullptr;
-	}
-
 	if (m_pRope != nullptr)
 	{ // 紐が NULL じゃない場合
 
@@ -78,8 +72,8 @@ void CBalloon::Uninit(void)
 		m_pRope = nullptr;
 	}
 
-	// 本体の終了処理
-	Release();
+	// 終了処理
+	CModel::Uninit();
 }
 
 //=====================================
@@ -87,7 +81,20 @@ void CBalloon::Uninit(void)
 //=====================================
 void CBalloon::Update(void)
 {
+	// 位置を取得
+	D3DXVECTOR3 pos = GetPos();
 
+	// 位置を設定する
+	pos.y = m_fPosYInit + sinf(m_fHeightRot) * HEIGHT;
+
+	// 向きを加算する
+	m_fHeightRot += ADD_ROT;
+
+	// 向きの正規化
+	useful::RotNormalize(&m_fHeightRot);
+
+	// 位置を適用
+	SetPos(pos);
 }
 
 //=====================================
@@ -95,12 +102,8 @@ void CBalloon::Update(void)
 //=====================================
 void CBalloon::Draw(void)
 {
-	if (m_pBalloon != nullptr)
-	{ // 風船が NULL じゃない場合
-
-		// 風船の描画処理
-		m_pBalloon->Draw();
-	}
+	// 描画処理
+	CModel::Draw();
 
 	if (m_pRope != nullptr)
 	{ // 紐が NULL じゃない場合
@@ -115,37 +118,23 @@ void CBalloon::Draw(void)
 //=====================================
 void CBalloon::SetData(const D3DXVECTOR3& pos)
 {
+	// 情報の設定処理
+	SetPos(pos);					// 位置
+	SetPosOld(pos);					// 前回の位置
+	SetRot(NONE_D3DXVECTOR3);		// 向き
+	SetScale(NONE_SCALE);			// 拡大率
+	SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));	// モデル情報
+
 	// 全ての値を設定する
-	m_pos = pos;	// 位置
-
-	if (m_pBalloon == nullptr)
-	{ // 風船が NULL の場合
-
-		// 風船を生成
-		m_pBalloon = CModel::Create(TYPE_NONE, PRIORITY_ENTITY);
-
-		// 情報の設定処理
-		m_pBalloon->SetPos(pos);
-		m_pBalloon->SetPosOld(pos);
-		m_pBalloon->SetRot(NONE_D3DXVECTOR3);
-		m_pBalloon->SetScale(NONE_SCALE);
-		m_pBalloon->SetFileData(CManager::Get()->GetXFile()->Regist(MODEL));
-	}
+	m_fPosYInit = pos.y;			// 初期の高さ
+	m_fHeightRot = 0.0f;			// 高さを決める向き
 
 	if (m_pRope == nullptr)
-	{ // 紐が NULL の場合
+	{ // 紐が NULL じゃない場合
 
-		// 風船を生成
-		m_pRope = CBalloonRope::Create(m_pBalloon->GetMatrixPoint());
+		// 紐の生成
+		m_pRope = CBalloonRope::Create(GetMatrixPoint());
 	}
-}
-
-//=======================================
-// ヒット処理
-//=======================================
-void CBalloon::Hit(void)
-{
-
 }
 
 //=======================================
@@ -154,13 +143,13 @@ void CBalloon::Hit(void)
 CBalloon* CBalloon::Create(const D3DXVECTOR3& pos)
 {
 	// ローカルオブジェクトを生成
-	CBalloon* pTarget = nullptr;	// インスタンスを生成
+	CBalloon* pBalloon = nullptr;		// インスタンスを生成
 
-	if (pTarget == nullptr)
+	if (pBalloon == nullptr)
 	{ // オブジェクトが NULL の場合
 
 		// インスタンスを生成
-		pTarget = new CBalloon;
+		pBalloon = new CBalloon;
 	}
 	else
 	{ // オブジェクトが NULL じゃない場合
@@ -172,11 +161,11 @@ CBalloon* CBalloon::Create(const D3DXVECTOR3& pos)
 		return nullptr;
 	}
 
-	if (pTarget != nullptr)
+	if (pBalloon != nullptr)
 	{ // オブジェクトが NULL じゃない場合
 
 		// 初期化処理
-		if (FAILED(pTarget->Init()))
+		if (FAILED(pBalloon->Init()))
 		{ // 初期化に失敗した場合
 
 			// 停止
@@ -187,7 +176,7 @@ CBalloon* CBalloon::Create(const D3DXVECTOR3& pos)
 		}
 
 		// 情報の設定処理
-		pTarget->SetData(pos);
+		pBalloon->SetData(pos);
 	}
 	else
 	{ // オブジェクトが NULL の場合
@@ -199,15 +188,6 @@ CBalloon* CBalloon::Create(const D3DXVECTOR3& pos)
 		return nullptr;
 	}
 
-	// 的のポインタを返す
-	return pTarget;
-}
-
-//=======================================
-// リストの取得処理
-//=======================================
-CListManager<CBalloon*> CBalloon::GetList(void)
-{
-	// リスト構造の情報を返す
-	return m_list;
+	// 風船のポインタを返す
+	return pBalloon;
 }

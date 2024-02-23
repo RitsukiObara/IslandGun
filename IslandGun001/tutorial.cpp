@@ -19,7 +19,7 @@
 #include "skybox.h"
 
 #include "player_tutorial.h"
-#include "balloon.h"
+#include "balloon_spawner.h"
 #include "signboard.h"
 
 //--------------------------------------------
@@ -90,7 +90,7 @@ HRESULT CTutorial::Init(void)
 	// ÉvÉåÉCÉÑÅ[Çê∂ê¨
 	m_pPlayer = CTutorialPlayer::Create(NONE_D3DXVECTOR3);
 
-	CBalloon::Create(D3DXVECTOR3(300.0f, 600.0f, 0.0f));
+	CBalloonSpawner::Create(D3DXVECTOR3(300.0f, 600.0f, 0.0f));
 
 	CSignboard::Create(D3DXVECTOR3(3000.0f, 50.0f, 3000.0f), NONE_D3DXVECTOR3, CSignboard::TYPE::TYPE_JUMP);
 
