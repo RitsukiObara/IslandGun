@@ -155,6 +155,9 @@ void CSignboard::Explain(void)
 
 	// à–¾ó‹µ‚ğ true ‚É‚·‚é
 	CTutorial::SetEnableExplain(true);
+
+	// ŠÅ”Â‚Ìî•ñ‚ğİ’è‚·‚é
+	CTutorial::SetLookSign(this);
 }
 
 //=======================================
@@ -210,6 +213,15 @@ CSignboard* CSignboard::Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, c
 
 	// ŠÅ”Â‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
 	return pSignboard;
+}
+
+//=======================================
+// à–¾‚Ìİ’èˆ—
+//=======================================
+void CSignboard::SetExplain(CSignboardExpl* pExpl)
+{
+	// à–¾‚Ìî•ñ‚ğİ’è‚·‚é
+	m_pExplain = pExpl;
 }
 
 //=======================================

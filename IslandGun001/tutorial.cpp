@@ -34,6 +34,7 @@ namespace
 // 静的メンバ変数宣言
 //--------------------------------------------
 CTutorialPlayer* CTutorial::m_pPlayer = nullptr;		// プレイヤーの情報
+CSignboard* CTutorial::m_pLook = nullptr;				// 現在見てる看板
 bool CTutorial::m_bExpl = false;						// 説明状況
 
 //=========================================
@@ -43,6 +44,8 @@ CTutorial::CTutorial()
 {
 	// 全ての情報をクリアする
 	m_nEndCount = 0;			// 終了までのカウント
+	m_pPlayer = nullptr;		// プレイヤーの情報
+	m_pLook = nullptr;			// 現在見てる看板
 	m_bExpl = false;			// 説明状況
 }
 
@@ -108,6 +111,7 @@ void CTutorial::Uninit(void)
 {
 	// 全ての値をクリアする
 	m_pPlayer = nullptr;		// プレイヤーのポインタ
+	m_pLook = nullptr;			// 現在見てる看板
 	m_bExpl = false;			// 説明状況
 
 	// 終了処理
@@ -180,6 +184,24 @@ bool CTutorial::IsExplain(void)
 {
 	// 説明状況を返す
 	return m_bExpl;
+}
+
+//======================================
+// 看板の設定処理
+//======================================
+void CTutorial::SetLookSign(CSignboard* pSign)
+{
+	// 看板の情報を設定する
+	m_pLook = pSign;
+}
+
+//======================================
+// 看板の取得処理
+//======================================
+CSignboard* CTutorial::GetLookSign(void)
+{
+	// 看板の情報を返す
+	return m_pLook;
 }
 
 //======================================

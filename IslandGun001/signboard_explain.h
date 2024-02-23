@@ -25,11 +25,27 @@ class CSignboardExpl : public CObject
 {
 public:			// 誰でもアクセスできる
 
-	// 構造体定義(画面)
+	// 列挙型定義(状態)
+	enum STATE
+	{
+		STATE_APPEAR = 0,		// 出現状態
+		STATE_STOP,				// 停止状態
+		STATE_LEAVE,			// 退場状態
+		STATE_MAX				// この列挙型の総数
+	};
+
+	// 構造体定義(背景)
 	struct SScreen
 	{
+		CObject2D* pScreen;		// 背景の情報
 		float fAlpha;			// 透明度
-		CObject2D* pScreen;		// ロゴマークの情報
+	};
+
+	// 構造体定義(説明)
+	struct SExplain
+	{
+		CObject2D* pExplain;	// 説明の情報
+		float fMoveY;			// Y軸の移動量
 	};
 
 	CSignboardExpl();			// コンストラクタ
@@ -48,9 +64,14 @@ public:			// 誰でもアクセスできる
 
 private:		// 自分だけアクセスできる
 
+	// メンバ関数
+	void Appear(void);		// 出現状態処理
+	bool Leave(void);		// 退場状態処理
+
 	// メンバ変数
 	SScreen m_screen;		// 画面の情報
-	CObject2D* m_pExplain;	// 説明のポリゴン
+	SExplain m_explain;		// 説明の情報
+	STATE m_state;			// 状態
 };
 
 #endif

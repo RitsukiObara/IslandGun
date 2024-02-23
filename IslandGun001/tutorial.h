@@ -16,6 +16,7 @@
 // 前方宣言
 //--------------------------------------------
 class CTutorialPlayer;			// チュートリアルプレイヤー
+class CSignboard;				// 看板
 
 //--------------------------------------------
 // クラス(チュートリアルクラス)
@@ -34,9 +35,11 @@ public:				// 誰でもアクセスできる
 	void Draw(void) override;			// 描画処理
 
 	// 静的メンバ関数
-	static CTutorialPlayer* GetPlayer(void);		// プレイヤーの取得処理
-	static void SetEnableExplain(const bool bExpl);	// 説明状況の設定処理
-	static bool IsExplain(void);					// 説明状況の取得処理
+	static CTutorialPlayer* GetPlayer(void);			// プレイヤーの取得処理
+	static void SetEnableExplain(const bool bExpl);		// 説明状況の設定処理
+	static bool IsExplain(void);						// 説明状況の取得処理
+	static void SetLookSign(CSignboard* pSign);			// 看板の設定処理
+	static CSignboard* GetLookSign(void);				// 看板の取得処理
 
 	static void DeletePlayer(void);				// プレイヤーのNULL化処理
 
@@ -47,6 +50,7 @@ private:			// 自分だけアクセスできる
 
 	// 静的メンバ変数
 	static CTutorialPlayer* m_pPlayer;	// プレイヤーの情報
+	static CSignboard* m_pLook;			// 現在見てる看板
 	static bool m_bExpl;				// 説明状況
 };
 

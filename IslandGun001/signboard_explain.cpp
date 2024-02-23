@@ -10,8 +10,12 @@
 #include "manager.h"
 #include "signboard_explain.h"
 #include "object2D.h"
+#include "input.h"
 #include "texture.h"
 #include "useful.h"
+
+#include "tutorial.h"
+#include "signboard.h"
 
 //--------------------------------------------
 // 定数定義
@@ -27,8 +31,13 @@ namespace
 		""
 	};
 	const D3DXCOLOR SCREEN_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);		// 背景の色
-	const float SCREEN_ADD_ALPHA = 0.006f;			// 背景の透明度の加算数
-	const float SCREEN_MAX_ALPHA = 0.5f;			// 背景の透明度の最大数
+	const float SCREEN_ADD_ALPHA = 0.01f;			// 背景の透明度の加算数
+	const float SCREEN_MAX_ALPHA = 0.6f;			// 背景の透明度の最大数
+
+	const float APPEAR_ADD_MOVE = 1.2f;				// 出現状態の移動量の追加量
+	const float LEAVE_ADD_MOVE = 1.2f;				// 退場状態の移動量の追加量
+	const float LEAVE_DEST_EXPLAIN_POSY = -300.0f;	// 退場状態の説明文の目的の高さ
+	const float SCREEN_LEAVE_ALPHA = 0.0f;			// 退場状態の背景の透明度
 }
 
 //============================
@@ -37,9 +46,11 @@ namespace
 CSignboardExpl::CSignboardExpl() : CObject(CObject::TYPE_SIGNEXPLAIN, DIM_2D, PRIORITY_UI)
 {
 	// 全ての値をクリアする
-	m_screen.pScreen = nullptr;		// 画面の情報
-	m_screen.fAlpha = 0.0f;			// 透明度
-	m_pExplain = nullptr;			// 説明のポリゴン
+	m_screen.pScreen = nullptr;			// 画面の情報
+	m_screen.fAlpha = 0.0f;				// 透明度
+	m_explain.pExplain = nullptr;		// 説明のポリゴン
+	m_explain.fMoveY = 0.0f;			// Y軸の移動量
+	m_state = STATE_APPEAR;				// 状態
 }
 
 //============================
@@ -72,12 +83,12 @@ void CSignboardExpl::Uninit(void)
 		m_screen.pScreen = nullptr;
 	}
 
-	if (m_pExplain != nullptr)
+	if (m_explain.pExplain != nullptr)
 	{ // 説明が NULL じゃない場合
 
 		// 説明の終了処理
-		m_pExplain->Uninit();
-		m_pExplain = nullptr;
+		m_explain.pExplain->Uninit();
+		m_explain.pExplain = nullptr;
 	}
 
 	// 破棄処理
@@ -89,17 +100,57 @@ void CSignboardExpl::Uninit(void)
 //============================
 void CSignboardExpl::Update(void)
 {
-	// 均等な補正処理
-	useful::FrameCorrect(SCREEN_MAX_ALPHA, &m_screen.fAlpha, SCREEN_ADD_ALPHA);
+	switch (m_state)
+	{
+	case CSignboardExpl::STATE_APPEAR:		// 出現状態
 
-	D3DXVECTOR3 pos = m_pExplain->GetPos();
+		// 出現状態処理
+		Appear();
 
-	useful::FrameCorrect(SCREEN_HEIGHT * 0.5f, &pos.y, 10.0f);
+		break;
 
-	m_pExplain->SetPos(pos);
+	case CSignboardExpl::STATE_STOP:		// 停止状態
+
+		if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true ||
+			CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_SPACE) == true)
+		{ // Aキーを押した場合
+
+			// 退場状態にする
+			m_state = STATE_LEAVE;
+		}
+
+		break;
+
+	case CSignboardExpl::STATE_LEAVE:		// 退場状態
+
+		if (Leave() == true)
+		{ // 退場しきった場合
+
+			// 説明状況を false にする
+			CTutorial::SetEnableExplain(false);
+
+			// 看板の説明を NULL にする
+			CTutorial::GetLookSign()->SetExplain(nullptr);
+
+			// 終了処理
+			Uninit();
+
+			// この先の処理を行わない
+			return;
+		}
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
+	}
 
 	// 頂点座標の設定処理
-	m_pExplain->SetVertex();
+	m_explain.pExplain->SetVertex();
 
 	// 頂点カラーの設定処理
 	m_screen.pScreen->SetVtxColor(D3DXCOLOR(SCREEN_COL.r, SCREEN_COL.g, SCREEN_COL.b, m_screen.fAlpha));
@@ -117,11 +168,11 @@ void CSignboardExpl::Draw(void)
 		m_screen.pScreen->Draw();
 	}
 
-	if (m_pExplain != nullptr)
+	if (m_explain.pExplain != nullptr)
 	{ // 説明が NULL じゃない場合
 
 		// 説明の描画処理
-		m_pExplain->Draw();
+		m_explain.pExplain->Draw();
 	}
 }
 
@@ -137,12 +188,12 @@ void CSignboardExpl::SetData(const CSignboard::TYPE type)
 		m_screen.pScreen = CObject2D::Create(CObject2D::TYPE_NONE, TYPE_NONE, PRIORITY_UI);
 
 		// 情報の設定処理
-		m_screen.pScreen->SetPos(SCREEN_POS);		// 位置
-		m_screen.pScreen->SetPosOld(SCREEN_POS);	// 前回の位置
-		m_screen.pScreen->SetRot(NONE_D3DXVECTOR3);	// 向き
-		m_screen.pScreen->SetSize(SCREEN_SIZE);		// サイズ
-		m_screen.pScreen->SetAngle();				// 方向
-		m_screen.pScreen->SetLength();				// 長さ
+		m_screen.pScreen->SetPos(SCREEN_POS);			// 位置
+		m_screen.pScreen->SetPosOld(SCREEN_POS);		// 前回の位置
+		m_screen.pScreen->SetRot(NONE_D3DXVECTOR3);		// 向き
+		m_screen.pScreen->SetSize(SCREEN_SIZE);			// サイズ
+		m_screen.pScreen->SetAngle();					// 方向
+		m_screen.pScreen->SetLength();					// 長さ
 
 		// 頂点座標の設定処理
 		m_screen.pScreen->SetVertex();
@@ -152,26 +203,29 @@ void CSignboardExpl::SetData(const CSignboard::TYPE type)
 	}
 	m_screen.fAlpha = 0.0f;
 
-	if (m_pExplain == nullptr)
+	if (m_explain.pExplain == nullptr)
 	{ // 説明が NULL の場合
 
 		// 説明を生成
-		m_pExplain = CObject2D::Create(CObject2D::TYPE_NONE, TYPE_NONE, PRIORITY_UI);
+		m_explain.pExplain = CObject2D::Create(CObject2D::TYPE_NONE, TYPE_NONE, PRIORITY_UI);
 
 		// 情報の設定処理
-		m_pExplain->SetPos(EXPLAIN_POS);		// 位置
-		m_pExplain->SetPosOld(EXPLAIN_POS);		// 前回の位置
-		m_pExplain->SetRot(NONE_D3DXVECTOR3);	// 向き
-		m_pExplain->SetSize(EXPLAIN_SIZE);		// サイズ
-		m_pExplain->SetAngle();					// 方向
-		m_pExplain->SetLength();				// 長さ
+		m_explain.pExplain->SetPos(EXPLAIN_POS);		// 位置
+		m_explain.pExplain->SetPosOld(EXPLAIN_POS);		// 前回の位置
+		m_explain.pExplain->SetRot(NONE_D3DXVECTOR3);	// 向き
+		m_explain.pExplain->SetSize(EXPLAIN_SIZE);		// サイズ
+		m_explain.pExplain->SetAngle();					// 方向
+		m_explain.pExplain->SetLength();				// 長さ
 
 		// テクスチャの設定処理
-		m_pExplain->BindTexture(CManager::Get()->GetTexture()->Regist(EXPLAIN_TEXTURE[type]));
+		m_explain.pExplain->BindTexture(CManager::Get()->GetTexture()->Regist(EXPLAIN_TEXTURE[type]));
 
 		// 頂点座標の設定処理
-		m_pExplain->SetVertex();
+		m_explain.pExplain->SetVertex();
 	}
+	m_explain.fMoveY = 0.0f;
+
+	m_state = STATE_APPEAR;			// 状態
 }
 
 //============================
@@ -227,4 +281,72 @@ CSignboardExpl* CSignboardExpl::Create(const CSignboard::TYPE type)
 
 	// 説明のポインタを返す
 	return pExplain;
+}
+
+//============================
+// 出現状態処理
+//============================
+void CSignboardExpl::Appear(void)
+{
+	// 背景を黒に近づける
+	useful::FrameCorrect(SCREEN_MAX_ALPHA, &m_screen.fAlpha, SCREEN_ADD_ALPHA);
+
+	// 移動量を加算する
+	m_explain.fMoveY += APPEAR_ADD_MOVE;
+
+	// 位置を取得する
+	D3DXVECTOR3 pos = m_explain.pExplain->GetPos();
+
+	// 移動する
+	pos.y += m_explain.fMoveY;
+
+	if (pos.y >= SCREEN_HEIGHT * 0.5f)
+	{ // 中心を超えた場合
+
+		// 位置を補正する
+		pos.y = SCREEN_HEIGHT * 0.5f;
+
+		// 停止状態にする
+		m_state = STATE_STOP;
+
+		// 移動量をリセットする
+		m_explain.fMoveY = 0.0f;
+	}
+
+	// 位置を適用
+	m_explain.pExplain->SetPos(pos);
+}
+
+//============================
+// 退場状態処理
+//============================
+bool CSignboardExpl::Leave(void)
+{
+	// 終了状況
+	bool bEnd = false;
+
+	// 背景を黒に近づける
+	useful::FrameCorrect(SCREEN_LEAVE_ALPHA, &m_screen.fAlpha, SCREEN_ADD_ALPHA);
+
+	// 移動量を加算する
+	m_explain.fMoveY -= LEAVE_ADD_MOVE;
+
+	// 位置を取得する
+	D3DXVECTOR3 pos = m_explain.pExplain->GetPos();
+
+	// 移動する
+	pos.y += m_explain.fMoveY;
+
+	if (pos.y <= LEAVE_DEST_EXPLAIN_POSY)
+	{ // 中心を超えた場合
+
+		// 終了する
+		bEnd = true;
+	}
+
+	// 位置を適用
+	m_explain.pExplain->SetPos(pos);
+
+	// 終了状況を返す
+	return bEnd;
 }

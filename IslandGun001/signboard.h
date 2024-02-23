@@ -46,6 +46,7 @@ public:			// 誰でもアクセスできる
 	void Explain(void);				// 説明移行処理
 
 	// セット・ゲット関係
+	void SetExplain(CSignboardExpl* pExpl);		// 説明の設定処理
 	void SetEnableDisp(const bool bDisp);		// 描画状況の設定処理
 	bool IsDisp(void) const;					// 描画状況の取得処理
 
