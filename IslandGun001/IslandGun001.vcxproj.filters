@@ -513,6 +513,9 @@
     <ClCompile Include="alter_light.cpp">
       <Filter>gimmick\Map\Alter</Filter>
     </ClCompile>
+    <ClCompile Include="addscoreUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -946,6 +949,9 @@
     </ClInclude>
     <ClInclude Include="alter_light.h">
       <Filter>gimmick\Map\Alter</Filter>
+    </ClInclude>
+    <ClInclude Include="addscoreUI.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

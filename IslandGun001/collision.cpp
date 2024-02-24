@@ -17,6 +17,7 @@
 #include "objectElevation.h"
 #include "coin.h"
 #include "game_score.h"
+#include "addscoreUI.h"
 #include "enemy.h"
 #include "tree.h"
 #include "gold_bone.h"
@@ -193,6 +194,9 @@ void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size)
 
 						// コイン分のスコアを加算する
 						CGame::GetGameScore()->SetScore(CGame::GetGameScore()->GetScore() + COIN_SCORE);
+
+						// 追加スコアUIを生成
+						CAddScoreUI::Create(posCoin, CAddScoreUI::TYPE_COIN);
 					}
 				}
 			}

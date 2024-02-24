@@ -83,6 +83,7 @@ public:			// 誰でもアクセスできる
 		TYPE_SIGNEXPLAIN,		// 看板の説明
 		TYPE_TARGET,			// 的
 		TYPE_ALTERLIGHT,		// 祭壇の光
+		TYPE_ADDSCOREUI,		// 追加スコアUI
 		TYPE_MAX				// この列挙型の総数
 	};
 

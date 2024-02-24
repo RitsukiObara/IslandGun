@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="addscoreUI.cpp" />
     <ClCompile Include="aim.cpp" />
     <ClCompile Include="airplane.cpp" />
     <ClCompile Include="altar.cpp" />
@@ -302,6 +303,7 @@
     <ClCompile Include="wind_shot.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="addscoreUI.h" />
     <ClInclude Include="aim.h" />
     <ClInclude Include="airplane.h" />
     <ClInclude Include="alter.h" />

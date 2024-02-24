@@ -18,7 +18,7 @@
 namespace
 {
 	const D3DXVECTOR3 INIT_SIZE = D3DXVECTOR3(60.0f, 60.0f, 0.0f);		// 初期サイズ
-	const char* TEXTURE = "data\\TEXTURE\\BossLight.png";				// テクスチャ
+	const char* TEXTURE = "data\\TEXTURE\\AlterLight.png";				// テクスチャ
 }
 
 //===========================================

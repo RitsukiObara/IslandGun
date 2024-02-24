@@ -13,6 +13,9 @@
 #include "useful.h"
 
 #include "motion.h"
+#include "game.h"
+#include "game_score.h"
+#include "addscoreUI.h"
 #include "rock.h"
 #include "block.h"
 #include "collision.h"
@@ -36,6 +39,16 @@ namespace
 	{
 		50,
 		5,
+	};
+	const int SCORE[CEnemy::TYPE_MAX] =					// スコア
+	{
+		500,
+		1000,
+	};
+	const CAddScoreUI::TYPE ADDSCORE_TYPE[CEnemy::TYPE_MAX] =		// 追加スコアの種類
+	{
+		CAddScoreUI::TYPE_TORDLE,
+		CAddScoreUI::TYPE_IWAKARI,
 	};
 	const D3DXVECTOR3 DEATH_EXPLOSION = D3DXVECTOR3(200.0f, 200.0f, 0.0f);		// 死亡時の爆発
 	const D3DXCOLOR DAMAGE_COL = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);				// ダメージ状態の色
@@ -239,6 +252,16 @@ void CEnemy::Death(void)
 
 		// アニメーションリアクションを生成
 		CAnimReaction::Create(pos, DEATH_EXPLOSION, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
+
+		if (CGame::GetGameScore() != nullptr)
+		{ // ゲームスコアが NULL じゃない場合
+
+			// スコアを加算する
+			CGame::GetGameScore()->AddScore(SCORE[m_type]);
+
+			// 追加スコアUIを生成
+			CAddScoreUI::Create(pos + m_collSize, ADDSCORE_TYPE[m_type]);
+		}
 
 		// 終了処理
 		Uninit();
