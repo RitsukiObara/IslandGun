@@ -75,9 +75,10 @@ public:			// 誰でもアクセスできる
 	virtual void Update(void) override;		// 更新処理
 	virtual void Draw(void) override;		// 描画処理
 
-	void Hit(const int nDamage, const float fRotSmash);	// ヒット処理
+	void Hit(const int nDamage, const float fRotSmash);		// ヒット処理
 	void Healing(const int nHealing);			// 回復処理
 	void SetData(const D3DXVECTOR3& pos);		// 情報の設定処理
+	void ArrivalAirplane(void);					// 飛行機の到着処理
 
 	// セット・ゲット関係
 	CMotion* GetMotion(void) const;					// モーションの情報の取得処理
@@ -90,7 +91,7 @@ public:			// 誰でもアクセスできる
 	CLifeUI* GetLifeUI(void) const;					// 寿命UIの情報の取得処理
 	CPlayerController* GetController(void) const;	// コントローラーの情報の取得処理
 	CAirplane* GetAirplane(void) const;				// 飛行機の情報の取得処理
-	void RemoveAirplane(void);						// 飛行機の管轄外し処理
+	void DeleteAirplane();							// 飛行機のNULL化処理
 
 	void SetRotDest(const D3DXVECTOR3& rot);	// 目的の向きの設定処理
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理

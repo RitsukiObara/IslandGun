@@ -82,6 +82,7 @@ public:			// 誰でもアクセスできる
 		TYPE_RANKINGTABLE,		// ランキングのスコア
 		TYPE_SIGNEXPLAIN,		// 看板の説明
 		TYPE_TARGET,			// 的
+		TYPE_ALTERLIGHT,		// 祭壇の光
 		TYPE_MAX				// この列挙型の総数
 	};
 

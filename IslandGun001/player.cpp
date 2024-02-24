@@ -42,6 +42,8 @@ namespace
 	const D3DXVECTOR3 INIT_CAMERA_ROT = D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f);		// カメラの初期向き
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
+	const D3DXVECTOR3 AIRPLANE_ARRIVAL_MOVE = D3DXVECTOR3(0.0f, 30.0f, 0.0f);			// 飛行機到着時の移動量
+	const D3DXVECTOR3 AIRPLANE_ARRIVAL_POSV = D3DXVECTOR3(-1000.0f, 1500.0f, 0.0f);		// 飛行機到着時のカメラの視点の位置
 	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 190.0f, 40.0f);		// 当たり判定時のサイズ
 	const D3DXVECTOR3 GUN_POS[NUM_HANDGUN] =		// 拳銃の位置
 	{
@@ -718,12 +720,53 @@ CAirplane* CPlayer::GetAirplane(void) const
 }
 
 //=======================================
-// 飛行機の管轄外し処理
+// 飛行機のNULL化処理
 //=======================================
-void CPlayer::RemoveAirplane(void)
+void CPlayer::DeleteAirplane()
 {
 	// 飛行機を NULL にする
 	m_pAirplane = nullptr;
+}
+
+//=======================================
+// 飛行機の到着処理
+//=======================================
+void CPlayer::ArrivalAirplane(void)
+{
+	if (m_pAirplane != nullptr)
+	{ // 飛行機が NULL じゃない場合
+
+		// 飛行機の位置を取得
+		D3DXVECTOR3 pos = m_pAirplane->GetPos();
+
+		// 目的の位置に補正する
+		pos.x = m_pAirplane->GetPosDest().x;
+		pos.z = m_pAirplane->GetPosDest().z;
+
+		// 位置を適用
+		m_pAirplane->SetPos(pos);
+
+		// プレイヤー登場状態にする
+		CManager::Get()->GetCamera()->SetType(CCamera::TYPE_PLAYERAPPEAR);
+
+		// カメラの視点を設定する
+		CManager::Get()->GetCamera()->SetPosV(pos + AIRPLANE_ARRIVAL_POSV);
+
+		// 位置を設定する
+		SetPos(pos);
+
+		// 移動量の設定処理
+		SetMove(AIRPLANE_ARRIVAL_MOVE);
+
+		// 墜落状態にする
+		m_pAirplane->SetState(CAirplane::STATE_FALL);
+
+		// 種類を飛行機に変える
+		m_pAirplane->SetType(TYPE_AIRPLANE);
+
+		// 飛行機を NULL にする
+		m_pAirplane = nullptr;
+	}
 }
 
 //=======================================

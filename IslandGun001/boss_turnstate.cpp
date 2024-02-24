@@ -13,6 +13,7 @@
 #include "motion.h"
 
 #include "game.h"
+#include "alter.h"
 #include "player.h"
 #include "manager.h"
 #include "camera.h"
@@ -96,6 +97,9 @@ void CBossTurnState::Process(CBoss* pBoss)
 			// 起伏地面との当たり判定
 			if (pBoss->ElevationCollision() == true)
 			{ // 地面に着地した場合
+
+				// 祭壇の破壊処理
+				CGame::GetAlter()->Break();
 
 				// 向きを補正する
 				rot.y = fRotDest;

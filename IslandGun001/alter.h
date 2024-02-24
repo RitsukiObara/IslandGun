@@ -46,9 +46,12 @@ public:			// 誰でもアクセスできる
 	void Draw(void) override;		// 描画処理
 
 	void SetData(void);				// 情報の設定処理
+	void Break(void);				// 破壊処理
 
 	// セット・ゲット関係
 	CAlterPole* GetPole(const int nIdx) const;	// 石柱の取得処理
+	void SetState(const STATE state);			// 状態の設定処理
+	STATE GetState(void) const;					// 状態の取得処理
 
 	// 静的メンバ関数
 	static CAlter* Create(void);	// 生成処理

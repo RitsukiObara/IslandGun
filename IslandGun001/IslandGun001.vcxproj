@@ -157,6 +157,7 @@
     <ClCompile Include="aim.cpp" />
     <ClCompile Include="airplane.cpp" />
     <ClCompile Include="altar.cpp" />
+    <ClCompile Include="alter_light.cpp" />
     <ClCompile Include="alter_pole.cpp" />
     <ClCompile Include="anim_reaction.cpp" />
     <ClCompile Include="balloon.cpp" />
@@ -304,6 +305,7 @@
     <ClInclude Include="aim.h" />
     <ClInclude Include="airplane.h" />
     <ClInclude Include="alter.h" />
+    <ClInclude Include="alter_light.h" />
     <ClInclude Include="alter_pole.h" />
     <ClInclude Include="anim_reaction.h" />
     <ClInclude Include="balloon.h" />

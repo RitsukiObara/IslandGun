@@ -83,7 +83,7 @@ private:					// 自分だけアクセスできる
 	static CPlayer* m_pPlayer;			// プレイヤーの情報
 	static CGameScore* m_pGameScore;	// ゲームスコアの情報
 	static CAlter* m_pAlter;			// 祭壇の情報
-	static STATE m_GameState;			// ゲームの進行状態
+	static STATE m_state;				// ゲームの進行状態
 	static int m_nScore;				// スコア
 	static bool m_bPause;				// ポーズ状況
 };

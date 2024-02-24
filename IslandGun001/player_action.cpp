@@ -28,8 +28,8 @@ namespace
 	const float DODGE_SPEED = 20.0f;			// 回避状態の速度
 	const int DODGE_COUNT = 27;					// 回避状態のカウント数
 	const int DAGGER_COUNT = 35;				// ダガー状態のカウント数
-
 	const int SWOOP_COUNT = 50;					// 急降下状態のカウント数
+
 	const float SWOOP_RIPPLE_HEIGHT = 50.0f;	// 急降下状態の波紋の出る高さ
 
 	const int DODGE_BLUR_LIFE = 10;				// 回避状態のブラーの寿命
@@ -38,6 +38,8 @@ namespace
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ダガー攻撃時の高さ
 	const float ATTACK_DAGGER_RADIUS = 240.0f;	// ダガー攻撃時の半径
 	const int DAGGER_ATTACK = 100;				// ダガー攻撃時の攻撃力
+	const float DAGGER_MOVE = 8.0f;				// ダガー状態の移動量
+	const int DAGGER_MOVE_COUNT = 25;			// ダガー状態で動くカウント数
 	const int DAGGER_ATTACK_START = 8;			// ダガーの攻撃判定が始まるカウント数
 	const int DAGGER_ATTACK_END = 28;			// ダガーの攻撃判定が終わるカウント数
 }
@@ -370,18 +372,30 @@ void CPlayerAction::ShotProcess(CPlayer* pPlayer)
 //=========================
 void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 {
-	// 移動量を取得する
+	// 行動カウントを加算する
+	m_nActionCount++;
+
+	// 向きと移動量を取得する
+	D3DXVECTOR3 rot = pPlayer->GetRot();
 	D3DXVECTOR3 move = pPlayer->GetMove();
 
-	// 移動量を0.0fにする
-	move.x = 0.0f;
-	move.z = 0.0f;
+	if (m_nActionCount <= DAGGER_MOVE_COUNT)
+	{ // 動く時間の場合 
+
+		// 移動量を設定する
+		move.x = sinf(rot.y) * DAGGER_MOVE;
+		move.z = cosf(rot.y) * DAGGER_MOVE;
+	}
+	else
+	{ // 上記以外
+
+		// 移動量を0にする
+		move.x = 0.0f;
+		move.z = 0.0f;
+	}
 
 	// 移動量を適用する
 	pPlayer->SetMove(move);
-
-	// 行動カウントを加算する
-	m_nActionCount++;
 
 	if (m_nActionCount >= DAGGER_ATTACK_START &&
 		m_nActionCount <= DAGGER_ATTACK_END)

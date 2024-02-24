@@ -15,6 +15,7 @@
 
 #include "game.h"
 #include "alter_pole.h"
+#include "alter_light.h"
 #include "boss.h"
 
 //-------------------------------------------
@@ -23,6 +24,8 @@
 namespace
 {
 	const char* MODEL = "data\\MODEL\\Alter.x";			// モデルの名前
+	const char* BREAKALTER_MODEL = "data\\MODEL\\BreakAlter.x";			// 壊れた祭壇のモデル
+	const char* BREAKALTERPOLE_MODEL = "data\\MODEL\\BreakAlterPole.x";	// 壊れた祭壇の石柱のモデル
 	const D3DXVECTOR3 POS = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 位置
 	const D3DXVECTOR3 POLE_POS[CAlter::NUM_POLE] =		// 石柱の位置
 	{
@@ -110,11 +113,16 @@ void CAlter::Update(void)
 
 			// ボスを生成する
 			CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
+
+			CAlterLight::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 900.0f, GetPos().z));
 		}
 
 		break;
 
 	case CAlter::STATE_CHARGE:
+
+
+
 		break;
 
 	case CAlter::STATE_BOSSAPPEAR:
@@ -256,4 +264,44 @@ CAlterPole* CAlter::GetPole(const int nIdx) const
 
 	// 石柱の情報を返す
 	return m_apPole[nIdx];
+}
+
+//=======================================
+// 状態の設定処理
+//=======================================
+void CAlter::SetState(const STATE state)
+{
+	// 状態を設定する
+	m_state = state;
+}
+
+//=======================================
+// 状態の取得処理
+//=======================================
+CAlter::STATE CAlter::GetState(void) const
+{
+	// 状態を返す
+	return m_state;
+}
+
+//=======================================
+// 破壊処理
+//=======================================
+void CAlter::Break(void)
+{
+	// 祭壇のモデルを変える
+	SetFileData(CManager::Get()->GetXFile()->Regist(BREAKALTER_MODEL));
+
+	for (int nCntPole = 0; nCntPole < CAlter::NUM_POLE; nCntPole++)
+	{
+		if (m_apPole[nCntPole] != nullptr)
+		{ // 石柱が NULL じゃない場合
+
+			// 石柱のモデルを変える
+			m_apPole[nCntPole]->SetFileData(CManager::Get()->GetXFile()->Regist(BREAKALTERPOLE_MODEL));
+		}
+	}
+
+	// 破壊状態にする
+	m_state = STATE_BREAK;
 }

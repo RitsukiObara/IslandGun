@@ -41,7 +41,7 @@ CPause* CGame::m_pPause = nullptr;							// ポーズの情報
 CPlayer* CGame::m_pPlayer = nullptr;						// プレイヤーの情報
 CGameScore* CGame::m_pGameScore = nullptr;					// ゲームスコアの情報
 CAlter* CGame::m_pAlter = nullptr;							// 祭壇の情報
-CGame::STATE CGame::m_GameState = CGame::STATE_START;		// ゲームの進行状態
+CGame::STATE CGame::m_state = CGame::STATE_START;		// ゲームの進行状態
 int CGame::m_nScore = 0;									// スコア
 bool CGame::m_bPause = false;								// ポーズ状況
 
@@ -57,7 +57,7 @@ CGame::CGame()
 	m_pPlayer = nullptr;		// プレイヤー
 	m_pGameScore = nullptr;		// スコア
 	m_pAlter = nullptr;			// 祭壇
-	m_GameState = STATE_START;	// 状態
+	m_state = STATE_START;		// 状態
 	m_nScore = 0;				// スコア
 	m_bPause = false;			// ポーズ状況
 }
@@ -117,7 +117,7 @@ HRESULT CGame::Init(void)
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント
-	m_GameState = STATE_START;	// 状態
+	m_state = STATE_START;		// 状態
 	m_bPause = false;			// ポーズ状況
 
 	// 成功を返す
@@ -142,7 +142,7 @@ void CGame::Uninit(void)
 	m_pGameScore = nullptr;		// ゲームスコア
 
 	// 情報を初期化する
-	m_GameState = STATE_START;	// ゲームの進行状態
+	m_state = STATE_START;		// ゲームの進行状態
 	m_bPause = false;			// ポーズ状況
 
 	// 終了カウントを初期化する
@@ -157,9 +157,34 @@ void CGame::Uninit(void)
 //======================================
 void CGame::Update(void)
 {
-	switch (m_GameState)
+	switch (m_state)
 	{
 	case CGame::STATE_START:
+
+		if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_RETURN) == true ||
+			CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_START, 0) == true ||
+			CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true)
+		{ // ENTERキーを押した場合
+
+			if (m_pPlayer != nullptr)
+			{ // プレイヤーが存在する場合
+
+				// 飛行機到着処理
+				m_pPlayer->ArrivalAirplane();
+			}
+
+			// 通常カメラにする
+			CManager::Get()->GetCamera()->SetType(CCamera::TYPE_NONE);
+
+			// プレイ状態にする
+			m_state = STATE_PLAY;
+		}
+
+		// ポーズ処理
+		Pause();
+
+		break;
+
 	case CGame::STATE_PLAY:
 	case CGame::STATE_BOSSMOVIE:
 
@@ -183,18 +208,6 @@ void CGame::Update(void)
 		break;
 	}
 
-	//if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_RETURN) == true ||
-	//	CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_START, 0) == true ||
-	//	CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true)
-	//{ // ENTERキーを押した場合
-
-	//	// チュートリアルに遷移する
-	//	CManager::Get()->GetFade()->SetFade(CScene::MODE_RESULT);
-
-	//	// この先の処理を行わない
-	//	return;
-	//}
-
 	if (m_bPause == true)
 	{ // ポーズ状況が true の場合
 
@@ -212,7 +225,7 @@ void CGame::Update(void)
 		}
 	}
 
-	CManager::Get()->GetDebugProc()->Print("状態：%d", m_GameState);
+	CManager::Get()->GetDebugProc()->Print("状態：%d", m_state);
 }
 
 //======================================
@@ -238,7 +251,7 @@ void CGame::SetData(const MODE mode)
 	CScene::SetData(mode);
 
 	// 全ての値を設定する
-	m_GameState = STATE_START;	// スタート状態にする
+	m_state = STATE_START;		// スタート状態にする
 	m_bPause = false;			// ポーズ状況
 
 	// 情報の初期化
@@ -344,7 +357,7 @@ bool CGame::IsPause(void)
 void CGame::SetState(const STATE state)
 {
 	// ゲームの進行状態を設定する
-	m_GameState = state;
+	m_state = state;
 }
 
 //======================================
@@ -353,7 +366,7 @@ void CGame::SetState(const STATE state)
 CGame::STATE CGame::GetState(void)
 {
 	// ゲームの進行状態を返す
-	return m_GameState;
+	return m_state;
 }
 
 //======================================

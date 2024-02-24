@@ -1768,8 +1768,9 @@ bool collision::AlterCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, cons
 	D3DXVECTOR3 vtxMinAlter;
 	D3DXVECTOR3 vtxMaxAlter;
 
-	if (pAlter != nullptr)
-	{ // Õ’d‚ª NULL ‚¶‚á‚È‚¢ê‡
+	if (pAlter != nullptr &&
+		pAlter->GetState() != CAlter::STATE_BREAK)
+	{ // Õ’d‚ª‰ó‚ê‚Ä‚¢‚È‚¢ê‡
 
 		// ˆÊ’u‚ÆƒTƒCƒY‚ðŽæ“¾‚·‚é
 		posAlter = pAlter->GetPos();

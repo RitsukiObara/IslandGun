@@ -224,6 +224,15 @@ CAirplane::STATE CAirplane::GetState(void) const
 }
 
 //=======================================
+// 目的の位置の取得処理
+//=======================================
+D3DXVECTOR3 CAirplane::GetPosDest(void) const
+{
+	// 目的の位置を返す
+	return m_posDest;
+}
+
+//=======================================
 // 移動処理
 //=======================================
 void CAirplane::Move(CPlayer* pPlayer)
@@ -235,27 +244,11 @@ void CAirplane::Move(CPlayer* pPlayer)
 		useful::FrameCorrect(m_posDest.z, &pos.z, m_move.z) == true)
 	{ // 目的の位置に着いた場合
 
-		// 目的の位置に補正する
-		pos.x = m_posDest.x;
-		pos.z = m_posDest.z;
+		// 飛行機到着処理
+		pPlayer->ArrivalAirplane();
 
-		// プレイヤー登場状態にする
-		CManager::Get()->GetCamera()->SetType(CCamera::TYPE_PLAYERAPPEAR);
-
-		// カメラの視点を設定する
-		CManager::Get()->GetCamera()->SetPosV(D3DXVECTOR3(pos.x - 1000.0f, pos.y + 1500.0f, pos.z));
-
-		// 移動量の設定処理
-		pPlayer->SetMove(D3DXVECTOR3(0.0f, 30.0f, 10.0f));
-
-		// 飛行機の管轄外し処理
-		pPlayer->RemoveAirplane();
-
-		// 墜落状態にする
-		m_state = STATE_FALL;
-
-		// 種類を飛行機に変える
-		SetType(TYPE_AIRPLANE);
+		// この先の処理を行わない
+		return;
 	}
 
 	// 位置を適用

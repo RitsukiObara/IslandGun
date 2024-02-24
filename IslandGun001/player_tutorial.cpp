@@ -183,7 +183,7 @@ void CTutorialPlayer::SetData(const D3DXVECTOR3& pos)
 
 	// ”òs‹@‚ğÁ‹‚·‚é
 	GetAirplane()->Uninit();
-	RemoveAirplane();
+	DeleteAirplane();
 
 	// ˆÊ’u‚ğÄİ’è‚·‚é
 	SetPos(pos);
