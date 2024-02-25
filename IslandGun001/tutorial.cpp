@@ -28,7 +28,7 @@
 //--------------------------------------------
 namespace
 {
-	const int TRANS_COUNT = 120;			// 遷移までのカウント数
+	const int TRANS_COUNT = 380;			// 遷移までのカウント数
 }
 
 //--------------------------------------------
@@ -45,7 +45,7 @@ CTutorial::STATE CTutorial::m_state = STATE_NONE;		// 状態
 CTutorial::CTutorial()
 {
 	// 全ての情報をクリアする
-	m_nEndCount = 0;			// 終了までのカウント
+	m_nTransCount = 0;			// 遷移カウント
 	m_pPlayer = nullptr;		// プレイヤーの情報
 	m_pLook = nullptr;			// 現在見てる看板
 	m_state = STATE_NONE;		// 説明状況
@@ -103,7 +103,7 @@ HRESULT CTutorial::Init(void)
 	m_pDoor = CDoor::Create(D3DXVECTOR3(0.0f, 0.0f, 400.0f));
 
 	// 全ての値をクリアする
-	m_nEndCount = 0;			// 終了までのカウント
+	m_nTransCount = 0;			// 遷移カウント
 
 	// 成功を返す
 	return S_OK;
@@ -151,6 +151,22 @@ void CTutorial::Update(void)
 
 	case CTutorial::STATE_TRANS:
 
+		// 遷移カウントを加算する
+		m_nTransCount++;
+
+		if (CManager::Get()->GetRenderer() != nullptr)
+		{ // レンダラーが NULL じゃない場合
+
+			// 更新処理
+			CManager::Get()->GetRenderer()->Update();
+		}
+
+		if (m_nTransCount >= TRANS_COUNT)
+		{ // 遷移カウントが一定数を超えた場合
+
+			// ゲームに遷移する
+			CManager::Get()->GetFade()->SetFade(CScene::MODE_GAME);
+		}
 
 		break;
 

@@ -2207,6 +2207,9 @@ bool collision::DoorHit(const D3DXVECTOR3& pos, const float fRadius)
 				// ŠJ‚«ó‘Ô‚É‚·‚é
 				pDoor->SetState(CDoor::STATE_OPEN);
 
+				// ‘JˆÚó‘Ô‚É‚·‚é
+				CTutorial::SetState(CTutorial::STATE_TRANS);
+
 				// true ‚ğ•Ô‚·
 				return true;
 			}

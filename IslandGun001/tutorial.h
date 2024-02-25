@@ -58,7 +58,7 @@ public:				// 誰でもアクセスできる
 private:			// 自分だけアクセスできる
 
 	// メンバ変数
-	int m_nEndCount;					// 終了までのカウント
+	int m_nTransCount;					// 遷移カウント
 
 	// 静的メンバ変数
 	static CTutorialPlayer* m_pPlayer;	// プレイヤーの情報

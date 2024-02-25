@@ -55,6 +55,10 @@ public:			// 誰でもアクセスできる
 
 private:		// 自分だけアクセスできる
 
+	// メンバ関数
+	void Open(void);		// 開き処理
+	void Close(void);		// 閉じ処理
+
 	// メンバ変数
 	CModel* m_pDoor;		// ドア本体の情報
 	CPushTiming* m_pButton;	// ボタンの情報

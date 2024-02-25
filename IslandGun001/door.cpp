@@ -26,6 +26,8 @@ namespace
 	const float BUTTON_SHIFT = 300.0f;			// ボタンのずらす高さ
 	const float BUTTON_SIZE = 30.0f;			// ボタンのサイズ
 	const int BUTTON_INTERVAL = 10;				// ボタンの間隔
+
+	const float OPEN_ROT = -D3DX_PI * 0.5f;		// 開き状態の時の向き
 }
 
 //==============================
@@ -109,11 +111,21 @@ void CDoor::Update(void)
 
 	case CDoor::STATE_OPEN:
 
+		// 開き処理
+		Open();
+
+		// 描画状況を false にする
+		m_bDisp = false;
 
 		break;
 
 	case CDoor::STATE_CLOSE:
 
+		// 閉じ処理
+		Close();
+
+		// 描画状況を false にする
+		m_bDisp = false;
 
 		break;
 
@@ -284,4 +296,34 @@ bool CDoor::IsDisp(void) const
 {
 	// 描画状況を返す
 	return m_bDisp;
+}
+
+//=======================================
+// 開き処理
+//=======================================
+void CDoor::Open(void)
+{
+	// 向きを取得
+	D3DXVECTOR3 rot = m_pDoor->GetRot();
+
+	// 向きの補正処理
+	useful::RotCorrect(OPEN_ROT, &rot.y, 0.05f);
+
+	// 向きを適用
+	m_pDoor->SetRot(rot);
+}
+
+//=======================================
+// 閉じ処理
+//=======================================
+void CDoor::Close(void)
+{
+	// 向きを取得
+	D3DXVECTOR3 rot = m_pDoor->GetRot();
+
+	// 向きの補正処理
+	useful::RotCorrect(0.0f, &rot.y, 0.05f);
+
+	// 向きを適用
+	m_pDoor->SetRot(rot);
 }

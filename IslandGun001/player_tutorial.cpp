@@ -12,6 +12,7 @@
 #include "tutorial.h"
 #include "collision.h"
 #include "renderer.h"
+#include "useful.h"
 
 #include "player_controller.h"
 #include "motion.h"
@@ -20,11 +21,19 @@
 #include "aim.h"
 #include "lifeUI.h"
 #include "airplane.h"
+#include "door.h"
 
 // 定数定義
 namespace
 {
-	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 190.0f, 40.0f);		// 当たり判定時のサイズ
+	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 200.0f, 40.0f);		// 当たり判定時のサイズ
+	const float TRANS_DEPTH = -180.0f;				// 遷移の時の目的のZ座標
+	const float TRANS_DEST_ROT = 0.0f;				// 遷移の時の目的の向き
+	const float TRANS_DEST_CAMERAROT_X = 1.5f;		// 遷移の時の目的の向き
+	const float TRANS_DEST_CAMERAROT_Y = 0.0f;		// 遷移の時の目的の向き
+	const float TRANS_CORRECT = 0.05f;				// 遷移の時の補正係数
+	const int MOVE_COUNT = 100;						// 移動するカウント
+	const float MOVE_DEPTH = 180.0f;				// 移動する目的のZ座標
 }
 
 //=========================================
@@ -32,7 +41,8 @@ namespace
 //=========================================
 CTutorialPlayer::CTutorialPlayer() : CPlayer()
 {
-
+	// 全ての値をクリアする
+	m_nTransCount = 0;		// 遷移カウント
 }
 
 //=========================================
@@ -82,65 +92,90 @@ void CTutorialPlayer::Update(void)
 	// 前回の位置の設定処理
 	SetPosOld(GetPos());
 
-	if (collision::SignboardCollision(GetPos(), COLLISION_SIZE.x) == true)
-	{ // 看板に近づいた場合
+	switch (CTutorial::GetState())
+	{
+	case CTutorial::STATE_NONE:
 
-		// この先の処理を行わない
-		return;
+		if (collision::SignboardCollision(GetPos(), COLLISION_SIZE.x) == true)
+		{ // 看板に近づいた場合
+
+			// この先の処理を行わない
+			return;
+		}
+
+		if (collision::DoorHit(GetPos(), COLLISION_SIZE.x) == true)
+		{ // ドアを開けた場合
+
+			// この先の処理を行わない
+			return;
+		}
+
+		// 操作処理
+		GetController()->Control(this);
+
+		// 移動処理
+		Move();
+
+		if (GetAction() != nullptr)
+		{ // 行動が NULL じゃない場合
+
+			// 行動の更新処理
+			GetAction()->Update(this);
+		}
+
+		for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
+		{
+			if (GetHandGun(nCntGun) != nullptr)
+			{ // 拳銃が NULL じゃない場合
+
+				// 更新処理
+				GetHandGun(nCntGun)->Update();
+			}
+		}
+
+		// 緊急のリロード処理
+		EmergentReload();
+
+		if (GetAim() != nullptr)
+		{ // エイムが NULL じゃない場合
+
+			// エイムの更新処理
+			GetAim()->Update();
+		}
+
+		if (GetLifeUI() != nullptr)
+		{ // 寿命が NULL じゃない場合
+
+			// 寿命を設定する
+			GetLifeUI()->SetLife(GetLife());
+		}
+
+		break;
+
+	case CTutorial::STATE_EXPL:
+
+		break;
+
+	case CTutorial::STATE_TRANS:
+
+		// 遷移状態処理
+		Trans();
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
 	}
-
-	if (collision::DoorHit(GetPos(), COLLISION_SIZE.x) == true)
-	{ // ドアを開けた場合
-
-		// この先の処理を行わない
-		return;
-	}
-
-	// 操作処理
-	GetController()->Control(this);
-
-	// 移動処理
-	Move();
 
 	if (GetMotion() != nullptr)
 	{ // モーションが NULL じゃない場合
 
 		// モーションの更新処理
 		GetMotion()->Update();
-	}
-
-	if (GetAction() != nullptr)
-	{ // 行動が NULL じゃない場合
-
-		// 行動の更新処理
-		GetAction()->Update(this);
-	}
-
-	for (int nCntGun = 0; nCntGun < NUM_HANDGUN; nCntGun++)
-	{
-		if (GetHandGun(nCntGun) != nullptr)
-		{ // 拳銃が NULL じゃない場合
-
-			// 更新処理
-			GetHandGun(nCntGun)->Update();
-		}
-	}
-
-	// 緊急のリロード処理
-	EmergentReload();
-
-	if (GetAim() != nullptr)
-	{ // エイムが NULL じゃない場合
-
-		// エイムの更新処理
-		GetAim()->Update();
-	}
-
-	if (GetLifeUI() != nullptr)
-	{ // 寿命が NULL じゃない場合
-
-		// 寿命を設定する
-		GetLifeUI()->SetLife(GetLife());
 	}
 
 	// ヤシの実との当たり判定
@@ -158,8 +193,12 @@ void CTutorialPlayer::Update(void)
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
 
-	// ドアとの当たり判定
-	DoorCollision();
+	if (CTutorial::GetState() == CTutorial::STATE_NONE)
+	{ // 通常状態以外の場合
+
+		// ドアとの当たり判定
+		DoorCollision();
+	}
 
 	// ブロックとの当たり判定処理
 	BlockCollision();
@@ -169,9 +208,6 @@ void CTutorialPlayer::Update(void)
 
 	// 壁との当たり判定
 	WallCollision();
-
-	// 祭壇との当たり判定
-	AlterCollision();
 }
 
 //===========================================
@@ -197,6 +233,9 @@ void CTutorialPlayer::SetData(const D3DXVECTOR3& pos)
 
 	// 位置を再設定する
 	SetPos(pos);
+
+	// 全ての値をクリアする
+	m_nTransCount = 0;		// 遷移カウント
 }
 
 //===========================================
@@ -271,4 +310,61 @@ void CTutorialPlayer::DoorCollision(void)
 	// 位置と移動量を適用
 	SetPos(pos);
 	SetMove(move);
+}
+
+//===========================================
+// 遷移状態処理
+//===========================================
+void CTutorialPlayer::Trans(void)
+{
+	// 遷移カウントを加算する
+	m_nTransCount++;
+
+	CDoor* pDoor = CTutorial::GetDoor();	// ドアの情報
+	D3DXVECTOR3 pos = GetPos();				// 位置
+	D3DXVECTOR3 rot = GetRot();				// 向き
+	D3DXVECTOR3 rotCamera = CManager::Get()->GetCamera()->GetRot();
+
+	if (pDoor != nullptr)
+	{ // ドアが NULL じゃない場合
+
+		if (m_nTransCount >= MOVE_COUNT)
+		{ // 遷移カウントが一定数以上の場合
+
+			if (pDoor->GetState() == CDoor::STATE_OPEN &&
+				GetMotion()->GetType() != MOTIONTYPE_MOVE)
+			{ // ドアが開き状態の場合
+
+				// 移動モーションにする
+				GetMotion()->Set(MOTIONTYPE_MOVE);
+			}
+
+			if (useful::FrameCorrect(pDoor->GetPos().z + MOVE_DEPTH, &pos.z, GetController()->GetSpeedInit()) == true)
+			{ // 目的の位置に着いた場合
+
+				// 閉じ状態にする
+				pDoor->SetState(CDoor::STATE_CLOSE);
+
+				// 通常モーションにする
+				GetMotion()->Set(MOTIONTYPE_NEUTRAL);
+			}
+		}
+		else
+		{ // 上記以外
+
+			// 移動する
+			useful::Correct(pDoor->GetPos().x, &pos.x, TRANS_CORRECT);
+			useful::Correct(pDoor->GetPos().z + TRANS_DEPTH, &pos.z, TRANS_CORRECT);
+
+			// 正面を向く
+			useful::RotCorrect(TRANS_DEST_ROT, &rot.y, TRANS_CORRECT);
+			useful::RotCorrect(TRANS_DEST_CAMERAROT_X, &rotCamera.x, TRANS_CORRECT);
+			useful::RotCorrect(TRANS_DEST_CAMERAROT_Y, &rotCamera.y, TRANS_CORRECT);
+		}
+	}
+
+	// 位置と向きを適用
+	SetPos(pos);
+	SetRot(rot);
+	CManager::Get()->GetCamera()->SetRot(rotCamera);
 }
