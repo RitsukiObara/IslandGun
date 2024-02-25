@@ -22,9 +22,9 @@ namespace
 	};
 	const D3DXVECTOR3 UI_SIZE = D3DXVECTOR3(90.0f, 30.0f, 0.0f);		// サイズ
 	const float ADD_HEIGHT = 2.0f;			// 高さの追加量
-	const int LIFE = 120;					// 寿命
-	const float SUB_ALPHA = 0.05f;			// 透明度の減算量
-	const float SUB_ALPHA_LIFE = 20;		// 透明度を減らす寿命
+	const int LIFE = 60;					// 寿命
+	const float SUB_ALPHA = 0.1f;			// 透明度の減算量
+	const float SUB_ALPHA_LIFE = 10;		// 透明度を減らす寿命
 }
 
 //=========================

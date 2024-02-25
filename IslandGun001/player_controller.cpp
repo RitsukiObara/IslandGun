@@ -109,7 +109,6 @@ void CPlayerController::Control(CPlayer* pPlayer)
 	}
 
 	if (pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DODGE &&
-		pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
 		pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_SHOTGUN &&
 		pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_SWOOP)
 	{ // 一定状態以外の場合
@@ -128,6 +127,7 @@ void CPlayerController::Control(CPlayer* pPlayer)
 		}
 
 		if (pPlayer->GetAction() != nullptr &&
+			pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
 			pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_RELOAD)
 		{ // リロード状態以外
 
@@ -196,6 +196,24 @@ CPlayerController* CPlayerController::Create(void)
 
 	// コントローラーを返す
 	return pControl;
+}
+
+//=======================================
+// 速度の設定処理
+//=======================================
+void CPlayerController::SetSpeed(const float fSpeed)
+{
+	// 速度を設定する
+	m_fSpeed = fSpeed;
+}
+
+//=======================================
+// 初期速度の取得処理
+//=======================================
+float CPlayerController::GetSpeedInit(void) const
+{
+	// 初期速度を返す
+	return SPEED;
 }
 
 //=======================================
@@ -299,7 +317,8 @@ void CPlayerController::RotMove(CPlayer* pPlayer)
 		move.x = sinf(m_fStickRot) * m_fSpeed;
 		move.z = cosf(m_fStickRot) * m_fSpeed;
 
-		if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_MOVE)
+		if (pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
+			pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_MOVE)
 		{ // 移動モーションじゃなかった場合
 
 			// 移動モーションを設定する
@@ -313,7 +332,8 @@ void CPlayerController::RotMove(CPlayer* pPlayer)
 		useful::Correct(0.0f, &move.x, 0.1f);
 		useful::Correct(0.0f, &move.z, 0.1f);
 
-		if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)
+		if (pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
+			pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)
 		{ // 移動モーションじゃなかった場合
 
 			// 移動モーションを設定する
@@ -392,7 +412,8 @@ void CPlayerController::KeyboardMove(CPlayer* pPlayer)
 		move.x = sinf(m_fStickRot) * m_fSpeed;
 		move.z = cosf(m_fStickRot) * m_fSpeed;
 
-		if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_MOVE)
+		if (pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
+			pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_MOVE)
 		{ // 移動モーションじゃなかった場合
 
 			// 移動モーションを設定する
@@ -406,7 +427,8 @@ void CPlayerController::KeyboardMove(CPlayer* pPlayer)
 		useful::Correct(0.0f, &move.x, 0.5f);
 		useful::Correct(0.0f, &move.z, 0.5f);
 
-		if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)
+		if (pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
+			pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)
 		{ // 移動モーションじゃなかった場合
 
 			// 移動モーションを設定する

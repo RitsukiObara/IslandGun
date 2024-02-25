@@ -68,7 +68,7 @@ public:			// 誰でもアクセスできる
 private:		// 誰でもアクセスできる
 
 	// メンバ関数
-	void NoneProcess(void);					// 通常状態処理
+	void NoneProcess(CPlayer* pPlayer);		// 通常状態処理
 	void ShotProcess(CPlayer* pPlayer);		// 射撃状態処理
 	void DaggerPrecess(CPlayer* pPlayer);	// ダガー状態処理
 	void DodgeProcess(CPlayer* pPlayer);	// 回避状態処理

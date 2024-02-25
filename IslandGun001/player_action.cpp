@@ -15,6 +15,7 @@
 #include "player.h"
 #include "handgun.h"
 #include "dagger.h"
+#include "player_controller.h"
 #include "slash_ripple.h"
 #include "chara_blur.h"
 #include "collision.h"
@@ -38,7 +39,7 @@ namespace
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì‚‚³
 	const float ATTACK_DAGGER_RADIUS = 240.0f;	// ƒ_ƒK[UŒ‚Žž‚Ì”¼Œa
 	const int DAGGER_ATTACK = 100;				// ƒ_ƒK[UŒ‚Žž‚ÌUŒ‚—Í
-	const float DAGGER_MOVE = 8.0f;				// ƒ_ƒK[ó‘Ô‚ÌˆÚ“®—Ê
+	const float DAGGER_MOVE = 10.0f;			// ƒ_ƒK[ó‘Ô‚ÌˆÚ“®—Ê
 	const int DAGGER_MOVE_COUNT = 25;			// ƒ_ƒK[ó‘Ô‚Å“®‚­ƒJƒEƒ“ƒg”
 	const int DAGGER_ATTACK_START = 8;			// ƒ_ƒK[‚ÌUŒ‚”»’è‚ªŽn‚Ü‚éƒJƒEƒ“ƒg”
 	const int DAGGER_ATTACK_END = 28;			// ƒ_ƒK[‚ÌUŒ‚”»’è‚ªI‚í‚éƒJƒEƒ“ƒg”
@@ -108,7 +109,7 @@ void CPlayerAction::Update(CPlayer* pPlayer)
 	case CPlayerAction::ACTION_NONE:	// ’Êíó‘Ô
 
 		// ’Êíó‘Ôˆ—
-		NoneProcess();
+		NoneProcess(pPlayer);
 
 		break;
 
@@ -334,13 +335,16 @@ bool CPlayerAction::IsRecoil(void) const
 //=========================
 // ’Êíó‘Ôˆ—
 //=========================
-void CPlayerAction::NoneProcess(void)
+void CPlayerAction::NoneProcess(CPlayer* pPlayer)
 {
 	// ‹Ù‹}Žž‚ÉˆÚ“®‚Å‚«‚é‚æ‚¤‚É‚µ‚Ä‚¨‚­
 	m_bRecoil = false;
 
 	// ‹Ù‹}Žž‚Éƒ{ƒX‚ÉUŒ‚‚ª’Ê‚é‚æ‚¤‚É‚·‚é
 	m_bBossAttack = false;
+
+	// ‹Ù‹}Žž‚ÉƒXƒs[ƒh‚ðÝ’è‚·‚é
+	pPlayer->GetController()->SetSpeed(pPlayer->GetController()->GetSpeedInit());
 }
 
 //=========================
@@ -383,15 +387,13 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 	{ // “®‚­ŽžŠÔ‚Ìê‡ 
 
 		// ˆÚ“®—Ê‚ðÝ’è‚·‚é
-		move.x = sinf(rot.y) * DAGGER_MOVE;
-		move.z = cosf(rot.y) * DAGGER_MOVE;
+		pPlayer->GetController()->SetSpeed(DAGGER_MOVE);
 	}
 	else
 	{ // ã‹LˆÈŠO
 
 		// ˆÚ“®—Ê‚ð0‚É‚·‚é
-		move.x = 0.0f;
-		move.z = 0.0f;
+		pPlayer->GetController()->SetSpeed(0.0f);
 	}
 
 	// ˆÚ“®—Ê‚ð“K—p‚·‚é
@@ -443,6 +445,9 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 		// Œe‚ð•`‰æ‚·‚é
 		pPlayer->GetHandGun(0)->SetEnableDisp(true);
 		pPlayer->GetHandGun(1)->SetEnableDisp(true);
+
+		// ‹Ù‹}Žž‚ÉƒXƒs[ƒh‚ðÝ’è‚·‚é
+		pPlayer->GetController()->SetSpeed(pPlayer->GetController()->GetSpeedInit());
 	}
 }
 
