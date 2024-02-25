@@ -89,6 +89,13 @@ void CTutorialPlayer::Update(void)
 		return;
 	}
 
+	if (collision::DoorHit(GetPos(), COLLISION_SIZE.x) == true)
+	{ // ドアを開けた場合
+
+		// この先の処理を行わない
+		return;
+	}
+
 	// 操作処理
 	GetController()->Control(this);
 
@@ -150,6 +157,9 @@ void CTutorialPlayer::Update(void)
 
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
+
+	// ドアとの当たり判定
+	DoorCollision();
 
 	// ブロックとの当たり判定処理
 	BlockCollision();
@@ -236,4 +246,29 @@ CTutorialPlayer* CTutorialPlayer::Create(const D3DXVECTOR3& pos)
 
 	// プレイヤーのポインタを返す
 	return pPlayer;
+}
+
+//===========================================
+// ドアとの当たり判定
+//===========================================
+void CTutorialPlayer::DoorCollision(void)
+{
+	// 位置と移動量を取得
+	D3DXVECTOR3 pos = GetPos();
+	D3DXVECTOR3 move = GetMove();
+
+	// ドアとの当たり判定
+	if (collision::DoorCollision(&pos, GetPosOld(), COLLISION_SIZE) == true)
+	{ // 上に乗った場合
+
+		// ジャンプ状況を false にする
+		SetEnableJump(false);
+
+		// 重力を0にする
+		move.y = 0.0f;
+	}
+
+	// 位置と移動量を適用
+	SetPos(pos);
+	SetMove(move);
 }

@@ -12,7 +12,8 @@
 #include "door.h"
 #include "useful.h"
 
-#include "input.h"
+#include "tutorial.h"
+#include "push_timing.h"
 
 //-------------------------------------------
 // 定数定義
@@ -22,6 +23,9 @@ namespace
 	const char* DOOR_MODEL = "data\\MODEL\\Door.x";						// ドアモデルの名前
 	const char* FRAME_MODEL = "data\\MODEL\\DoorFrame.x";				// ドアフレームモデルの名前
 	const D3DXVECTOR3 DOOR_OFFSET = D3DXVECTOR3(60.7f, 0.0f, 0.0f);		// ドアのオフセット
+	const float BUTTON_SHIFT = 300.0f;			// ボタンのずらす高さ
+	const float BUTTON_SIZE = 30.0f;			// ボタンのサイズ
+	const int BUTTON_INTERVAL = 10;				// ボタンの間隔
 }
 
 //==============================
@@ -31,6 +35,9 @@ CDoor::CDoor() : CModel(CObject::TYPE_DOOR, CObject::PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
 	m_pDoor = nullptr;			// ドアのモデル
+	m_pButton = nullptr;		// ボタンの情報
+	m_state = STATE_NONE;		// 状態
+	m_bDisp = false;			// ボタンの表示状況
 }
 
 //==============================
@@ -70,8 +77,19 @@ void CDoor::Uninit(void)
 		m_pDoor = nullptr;
 	}
 
+	if (m_pButton != nullptr)
+	{ // ボタンが NULL じゃない場合
+
+		// ボタンの終了処理
+		m_pButton->Uninit();
+		m_pButton = nullptr;
+	}
+
 	// 終了処理
 	CModel::Uninit();
+
+	// ドアのNULL化処理
+	CTutorial::DeleteDoor();
 }
 
 //=====================================
@@ -79,7 +97,40 @@ void CDoor::Uninit(void)
 //=====================================
 void CDoor::Update(void)
 {
+	// 前回の位置を設定する
+	SetPosOld(GetPos());
 
+	switch (m_state)
+	{
+	case CDoor::STATE_NONE:
+
+
+		break;
+
+	case CDoor::STATE_OPEN:
+
+
+		break;
+
+	case CDoor::STATE_CLOSE:
+
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
+	}
+
+	if (m_pButton != nullptr)
+	{ // ボタンが NULL じゃない場合
+
+		// ボタンの更新処理
+		m_pButton->Update();
+	}
 }
 
 //=====================================
@@ -96,6 +147,14 @@ void CDoor::Draw(void)
 		// ドアの描画処理
 		m_pDoor->DrawMatrix(GetMatrix());
 	}
+
+	if (m_bDisp == true &&
+		m_pButton != nullptr)
+	{ // ボタンが表示可能な場合
+
+		// ボタンの描画処理
+		m_pButton->Draw();
+	}
 }
 
 //=====================================
@@ -110,6 +169,7 @@ void CDoor::SetData(const D3DXVECTOR3& pos)
 	SetScale(NONE_SCALE);			// 拡大率
 	SetFileData(CManager::Get()->GetXFile()->Regist(FRAME_MODEL));	// モデル情報
 
+	// 全ての値を設定する
 	if (m_pDoor == nullptr)
 	{ // ドアが NULL じゃない場合
 
@@ -123,6 +183,16 @@ void CDoor::SetData(const D3DXVECTOR3& pos)
 		m_pDoor->SetScale(NONE_SCALE);		// 拡大率
 		m_pDoor->SetFileData(CManager::Get()->GetXFile()->Regist(DOOR_MODEL));	// モデル情報
 	}
+
+	if (m_pButton == nullptr)
+	{ // ボタンが NULL じゃない場合
+
+		// ボタンの生成
+		m_pButton = CPushTiming::Create(D3DXVECTOR3(pos.x, pos.y + BUTTON_SHIFT, pos.z), BUTTON_SIZE, CPushTiming::TYPE_PAD_A, BUTTON_INTERVAL);
+		m_pButton->CObject::SetType(TYPE_NONE);
+	}
+	m_state = STATE_NONE;		// 状態
+	m_bDisp = false;			// 描画状況
 }
 
 //=======================================
@@ -178,4 +248,40 @@ CDoor* CDoor::Create(const D3DXVECTOR3& pos)
 
 	// ドアのポインタを返す
 	return pDoor;
+}
+
+//=======================================
+// 状態の設定処理
+//=======================================
+void CDoor::SetState(const STATE state)
+{
+	// 状態を設定する
+	m_state = state;
+}
+
+//=======================================
+// 状態の取得処理
+//=======================================
+CDoor::STATE CDoor::GetState(void) const
+{
+	// 状態を返す
+	return m_state;
+}
+
+//=======================================
+// 描画状況の設定処理
+//=======================================
+void CDoor::SetEnableDisp(const bool bDisp)
+{
+	// 描画状況を設定する
+	m_bDisp = bDisp;
+}
+
+//=======================================
+// 描画状況の取得処理
+//=======================================
+bool CDoor::IsDisp(void) const
+{
+	// 描画状況を返す
+	return m_bDisp;
 }

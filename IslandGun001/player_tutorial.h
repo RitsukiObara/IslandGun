@@ -35,6 +35,8 @@ public:			// 誰でもアクセスできる
 
 private:		// 自分だけアクセスできる
 
+	// メンバ関数
+	void DoorCollision(void);		// ドアとの当たり判定
 };
 
 #endif

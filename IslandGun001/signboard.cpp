@@ -153,8 +153,8 @@ void CSignboard::Explain(void)
 		m_pExplain = CSignboardExpl::Create(m_type);
 	}
 
-	// à–¾ó‹µ‚ğ true ‚É‚·‚é
-	CTutorial::SetEnableExplain(true);
+	// à–¾ó‘Ô‚É‚·‚é
+	CTutorial::SetState(CTutorial::STATE_EXPL);
 
 	// ŠÅ”Â‚Ìî•ñ‚ğİ’è‚·‚é
 	CTutorial::SetLookSign(this);

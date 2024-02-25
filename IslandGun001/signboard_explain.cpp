@@ -126,8 +126,8 @@ void CSignboardExpl::Update(void)
 		if (Leave() == true)
 		{ // ‘Þê‚µ‚«‚Á‚½ê‡
 
-			// à–¾ó‹µ‚ð false ‚É‚·‚é
-			CTutorial::SetEnableExplain(false);
+			// ’Êíó‘Ô‚É‚·‚é
+			CTutorial::SetState(CTutorial::STATE_NONE);
 
 			// ŠÅ”Â‚Ìà–¾‚ð NULL ‚É‚·‚é
 			CTutorial::GetLookSign()->SetExplain(nullptr);

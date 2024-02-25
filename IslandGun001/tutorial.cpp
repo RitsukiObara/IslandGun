@@ -36,7 +36,8 @@ namespace
 //--------------------------------------------
 CTutorialPlayer* CTutorial::m_pPlayer = nullptr;		// プレイヤーの情報
 CSignboard* CTutorial::m_pLook = nullptr;				// 現在見てる看板
-bool CTutorial::m_bExpl = false;						// 説明状況
+CDoor* CTutorial::m_pDoor = nullptr;					// ドアの情報
+CTutorial::STATE CTutorial::m_state = STATE_NONE;		// 状態
 
 //=========================================
 // コンストラクタ
@@ -47,7 +48,7 @@ CTutorial::CTutorial()
 	m_nEndCount = 0;			// 終了までのカウント
 	m_pPlayer = nullptr;		// プレイヤーの情報
 	m_pLook = nullptr;			// 現在見てる看板
-	m_bExpl = false;			// 説明状況
+	m_state = STATE_NONE;		// 説明状況
 }
 
 //=========================================
@@ -98,7 +99,8 @@ HRESULT CTutorial::Init(void)
 
 	CSignboard::Create(D3DXVECTOR3(3000.0f, 50.0f, 3000.0f), NONE_D3DXVECTOR3, CSignboard::TYPE::TYPE_JUMP);
 
-	CDoor::Create(D3DXVECTOR3(0.0f, 0.0f, 400.0f));
+	// ドアを生成
+	m_pDoor = CDoor::Create(D3DXVECTOR3(0.0f, 0.0f, 400.0f));
 
 	// 全ての値をクリアする
 	m_nEndCount = 0;			// 終了までのカウント
@@ -115,7 +117,8 @@ void CTutorial::Uninit(void)
 	// 全ての値をクリアする
 	m_pPlayer = nullptr;		// プレイヤーのポインタ
 	m_pLook = nullptr;			// 現在見てる看板
-	m_bExpl = false;			// 説明状況
+	m_pDoor = nullptr;			// ドアの情報
+	m_state = STATE_NONE;		// 状態
 
 	// 終了処理
 	CScene::Uninit();
@@ -126,18 +129,9 @@ void CTutorial::Uninit(void)
 //======================================
 void CTutorial::Update(void)
 {
-	//// 終了カウントを加算する
-	//m_nEndCount++;
-
-	//if (m_nEndCount >= TRANS_COUNT)
-	//{ // スキップ時または、終了時の場合
-
-	//	// ゲームモードにする
-	//	CManager::Get()->GetFade()->SetFade(MODE_GAME);
-	//}
-
-	if (m_bExpl == false)
-	{ // 説明状況じゃない場合
+	switch (m_state)
+	{
+	case CTutorial::STATE_NONE:
 
 		if (CManager::Get()->GetRenderer() != nullptr)
 		{ // レンダラーが NULL じゃない場合
@@ -145,12 +139,27 @@ void CTutorial::Update(void)
 			// 更新処理
 			CManager::Get()->GetRenderer()->Update();
 		}
-	}
-	else
-	{ // 上記以外
+
+		break;
+
+	case CTutorial::STATE_EXPL:
 
 		// 看板の説明のみ更新
 		CObject::AnyUpdate(CObject::TYPE_SIGNEXPLAIN);
+
+		break;
+
+	case CTutorial::STATE_TRANS:
+
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
 	}
 }
 
@@ -172,21 +181,30 @@ CTutorialPlayer* CTutorial::GetPlayer(void)
 }
 
 //======================================
-// 説明状況の設定処理
+// ドアの取得処理
 //======================================
-void CTutorial::SetEnableExplain(const bool bExpl)
+CDoor* CTutorial::GetDoor(void)
 {
-	// 説明状況を設定する
-	m_bExpl = bExpl;
+	// ドアの情報を返す
+	return m_pDoor;
 }
 
 //======================================
-// 説明状況の取得処理
+// 状態の設定処理
 //======================================
-bool CTutorial::IsExplain(void)
+void CTutorial::SetState(const STATE state)
 {
-	// 説明状況を返す
-	return m_bExpl;
+	// 状態を設定する
+	m_state = state;
+}
+
+//======================================
+// 状態の取得処理
+//======================================
+CTutorial::STATE CTutorial::GetState(void)
+{
+	// 状態を返す
+	return m_state;
 }
 
 //======================================
@@ -214,4 +232,13 @@ void CTutorial::DeletePlayer(void)
 {
 	// プレイヤーを NULL にする
 	m_pPlayer = nullptr;
+}
+
+//======================================
+// ドアのNULL化処理
+//======================================
+void CTutorial::DeleteDoor(void)
+{
+	// ドアを NULL にする
+	m_pDoor = nullptr;
 }

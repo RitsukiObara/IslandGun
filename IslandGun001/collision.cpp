@@ -44,6 +44,7 @@
 #include "tutorial.h"
 #include "balloon.h"
 #include "balloon_spawner.h"
+#include "door.h"
 
 //===============================
 // マクロ定義
@@ -67,6 +68,9 @@ namespace
 	const int COIN_SCORE = 100;						// コインのスコア
 
 	const float SIGNBOARD_ADD_RADIUS = 50.0f;		// 看板の追加の半径
+	
+	const float DOOR_ADD_RADIUS = 100.0f;			// ドアの追加の半径
+	const float DOOR_HIT_ANGLE = 0.4f;				// ドアのヒット判定が出る方向
 
 	const float BOMB_BULLET_SMASH = 10.0f;			// 銃弾で爆弾の吹き飛ぶ速度
 	const float BOMB_DAGGER_SMASH = 23.0f;			// ダガーで爆弾の吹き飛ぶ速度
@@ -2165,6 +2169,95 @@ bool collision::TargetHit(const D3DXVECTOR3& pos, const float fRadius)
 
 			// インデックスを加算する
 			nIdx++;
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
+// ドアとのヒット判定
+//===============================
+bool collision::DoorHit(const D3DXVECTOR3& pos, const float fRadius)
+{
+	// ローカル変数宣言
+	CDoor* pDoor = CTutorial::GetDoor();		// ドアの情報
+
+	if (pDoor != nullptr)
+	{ // ドアが存在する場合
+
+		// ドアの情報を取得する
+		D3DXVECTOR3 posDoor = pDoor->GetPos();									// ドアの位置
+		float fRadiusDoor = pDoor->GetFileData().vtxMax.x + DOOR_ADD_RADIUS;	// ドアの半径
+		float fAngle = atan2f(pos.x - posDoor.x, pos.z - posDoor.z);			// 方向
+
+		if (((fAngle <= -D3DX_PI + DOOR_HIT_ANGLE && fAngle >= -D3DX_PI) ||
+			(fAngle >= D3DX_PI - DOOR_HIT_ANGLE && fAngle <= D3DX_PI)) &&
+			useful::CircleCollisionXZ(pos, posDoor, fRadius, fRadiusDoor) == true)
+		{ // ドアの近くにいた場合
+
+			// ボタン表示を描画する
+			pDoor->SetEnableDisp(true);
+
+			if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true ||
+				CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_SPACE) == true)
+			{ // ボタンを押した場合
+
+				// 開き状態にする
+				pDoor->SetState(CDoor::STATE_OPEN);
+
+				// true を返す
+				return true;
+			}
+		}
+		else
+		{ // 上記以外
+
+			// ボタン表示を描画しない
+			pDoor->SetEnableDisp(false);
+		}
+	}
+
+	// false を返す
+	return false;
+}
+
+//===============================
+// ドアとの当たり判定
+//===============================
+bool collision::DoorCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& size)
+{
+	// ローカル変数宣言
+	CDoor* pDoor = CTutorial::GetDoor();		// ドアの情報
+
+	if (pDoor != nullptr)
+	{ // ドアが存在する場合
+
+		// ドアの情報を取得する
+		D3DXVECTOR3 posDoor = pDoor->GetPos();					// ドアの位置
+		D3DXVECTOR3 posOldDoor = pDoor->GetPosOld();			// ドアの前回の位置
+		D3DXVECTOR3 vtxMaxDoor = pDoor->GetFileData().vtxMax;	// ドアの頂点の最大値
+		D3DXVECTOR3 vtxMinDoor = pDoor->GetFileData().vtxMin;	// ドアの頂点の最小値
+		D3DXVECTOR3 vtxMax = size;								// 頂点の最大値
+		D3DXVECTOR3 vtxMin = useful::VtxMinConv(size);			// 頂点の最小値
+
+		// 六面体の当たり判定
+		if (HexahedronClush
+		(
+			pos,
+			posDoor,
+			posOld,
+			posOldDoor,
+			vtxMin,
+			vtxMinDoor,
+			vtxMax,
+			vtxMaxDoor
+		).bTop == true)
+		{ // 上に乗った場合
+
+			// true を返す
+			return true;
 		}
 	}
 

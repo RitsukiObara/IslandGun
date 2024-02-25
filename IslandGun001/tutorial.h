@@ -17,6 +17,7 @@
 //--------------------------------------------
 class CTutorialPlayer;			// チュートリアルプレイヤー
 class CSignboard;				// 看板
+class CDoor;					// ドア
 
 //--------------------------------------------
 // クラス(チュートリアルクラス)
@@ -24,6 +25,15 @@ class CSignboard;				// 看板
 class CTutorial : public CScene
 {
 public:				// 誰でもアクセスできる
+
+	// 列挙型定義(状態)
+	enum STATE
+	{
+		STATE_NONE = 0,		// 通常状態
+		STATE_EXPL,			// 説明状態
+		STATE_TRANS,		// 遷移状態
+		STATE_MAX			// この列挙型の総数
+	};
 
 	CTutorial();		// コンストラクタ
 	~CTutorial();		// デストラクタ
@@ -36,12 +46,14 @@ public:				// 誰でもアクセスできる
 
 	// 静的メンバ関数
 	static CTutorialPlayer* GetPlayer(void);			// プレイヤーの取得処理
-	static void SetEnableExplain(const bool bExpl);		// 説明状況の設定処理
-	static bool IsExplain(void);						// 説明状況の取得処理
+	static CDoor* GetDoor(void);						// ドアの取得処理
+	static void SetState(const STATE state);			// 状態の設定処理
+	static STATE GetState(void);						// 状態の取得処理
 	static void SetLookSign(CSignboard* pSign);			// 看板の設定処理
 	static CSignboard* GetLookSign(void);				// 看板の取得処理
 
 	static void DeletePlayer(void);				// プレイヤーのNULL化処理
+	static void DeleteDoor(void);				// ドアのNULL化処理
 
 private:			// 自分だけアクセスできる
 
@@ -51,7 +63,8 @@ private:			// 自分だけアクセスできる
 	// 静的メンバ変数
 	static CTutorialPlayer* m_pPlayer;	// プレイヤーの情報
 	static CSignboard* m_pLook;			// 現在見てる看板
-	static bool m_bExpl;				// 説明状況
+	static CDoor* m_pDoor;				// ドアの情報
+	static STATE m_state;				// 状態
 };
 
 #endif
