@@ -21,6 +21,7 @@
 #include "player_tutorial.h"
 #include "balloon_spawner.h"
 #include "signboard.h"
+#include "door.h"
 
 //--------------------------------------------
 // 定数定義
@@ -96,6 +97,8 @@ HRESULT CTutorial::Init(void)
 	CBalloonSpawner::Create(D3DXVECTOR3(300.0f, 600.0f, 0.0f));
 
 	CSignboard::Create(D3DXVECTOR3(3000.0f, 50.0f, 3000.0f), NONE_D3DXVECTOR3, CSignboard::TYPE::TYPE_JUMP);
+
+	CDoor::Create(D3DXVECTOR3(0.0f, 0.0f, 400.0f));
 
 	// 全ての値をクリアする
 	m_nEndCount = 0;			// 終了までのカウント

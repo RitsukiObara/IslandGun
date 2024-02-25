@@ -44,7 +44,7 @@ namespace
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
 	const D3DXVECTOR3 AIRPLANE_ARRIVAL_MOVE = D3DXVECTOR3(0.0f, 30.0f, 0.0f);			// 飛行機到着時の移動量
 	const D3DXVECTOR3 AIRPLANE_ARRIVAL_POSV = D3DXVECTOR3(-1000.0f, 1500.0f, 0.0f);		// 飛行機到着時のカメラの視点の位置
-	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 190.0f, 40.0f);		// 当たり判定時のサイズ
+	const D3DXVECTOR3 COLLISION_SIZE = D3DXVECTOR3(40.0f, 200.0f, 40.0f);				// 当たり判定時のサイズ
 	const D3DXVECTOR3 GUN_POS[NUM_HANDGUN] =		// 拳銃の位置
 	{
 		D3DXVECTOR3(-10.0f, 0.0f, 0.0f),

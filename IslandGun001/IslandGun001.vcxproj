@@ -200,6 +200,7 @@
     <ClCompile Include="danger_mark.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="destruction.cpp" />
+    <ClCompile Include="door.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="effect2D.cpp" />
     <ClCompile Include="effect_model.cpp" />
@@ -348,6 +349,7 @@
     <ClInclude Include="danger_mark.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="destruction.h" />
+    <ClInclude Include="door.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="effect2D.h" />
     <ClInclude Include="effect_model.h" />

@@ -516,6 +516,9 @@
     <ClCompile Include="addscoreUI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="door.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -952,6 +955,9 @@
     </ClInclude>
     <ClInclude Include="addscoreUI.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="door.h">
+      <Filter>scene\tutorial</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
