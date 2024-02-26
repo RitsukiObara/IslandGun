@@ -16,6 +16,7 @@
 #include "game.h"
 #include "alter_pole.h"
 #include "alter_light.h"
+#include "alter_flash.h"
 #include "boss.h"
 
 //-------------------------------------------
@@ -33,6 +34,8 @@ namespace
 		D3DXVECTOR3(450.0f,0.0f,0.0f),
 		D3DXVECTOR3(-450.0f,0.0f,0.0f),
 	};
+	const float ALTER_LIGHT_HEIGHT = 900.0f;			// 祭壇光が出る高さ
+	const int CHARGE_COUNT = 120;						// チャージ状態のカウント数
 }
 
 //==============================
@@ -45,6 +48,8 @@ CAlter::CAlter() : CModel(TYPE_ALTER, PRIORITY_ENTITY)
 	{
 		m_apPole[nCnt] = nullptr;		// 石柱の情報
 	}
+	m_state = STATE_NONE;				// 状態
+	m_nStateCount = 0;					// 状態カウント
 }
 
 //==============================
@@ -111,17 +116,29 @@ void CAlter::Update(void)
 			// チャージ状態にする
 			m_state = STATE_CHARGE;
 
-			// ボスを生成する
-			CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
-
-			CAlterLight::Create(D3DXVECTOR3(GetPos().x, GetPos().y + 900.0f, GetPos().z));
+			// 祭壇の光を生成
+			CAlterLight::Create(D3DXVECTOR3(GetPos().x, GetPos().y + ALTER_LIGHT_HEIGHT, GetPos().z));
 		}
 
 		break;
 
 	case CAlter::STATE_CHARGE:
 
+		// 状態カウントを加算する
+		m_nStateCount++;
 
+		if (m_nStateCount >= CHARGE_COUNT)
+		{ // 状態カウントが一定数に達した場合
+
+			// ボス出現状態にする
+			m_state = STATE_BOSSAPPEAR;
+
+			// 祭壇の閃光を生成
+			CAlterFlash::Create();
+
+			// ボスを生成する
+			CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
+		}
 
 		break;
 
@@ -193,6 +210,8 @@ void CAlter::SetData(void)
 			m_apPole[nCnt] = CAlterPole::Create(POLE_POS[nCnt]);
 		}
 	}
+	m_state = STATE_NONE;				// 状態
+	m_nStateCount = 0;					// 状態カウント
 }
 
 //=======================================

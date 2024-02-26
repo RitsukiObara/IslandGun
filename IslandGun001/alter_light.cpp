@@ -19,6 +19,8 @@ namespace
 {
 	const D3DXVECTOR3 INIT_SIZE = D3DXVECTOR3(60.0f, 60.0f, 0.0f);		// 初期サイズ
 	const char* TEXTURE = "data\\TEXTURE\\AlterLight.png";				// テクスチャ
+	const float ADD_SIZE = 1.5f;			// サイズの追加量
+	const float DEATH_SIZE = 10000.0f;		// 消去するサイズ
 }
 
 //===========================================
@@ -27,6 +29,7 @@ namespace
 CAlterLight::CAlterLight() : CBillboard(CObject::TYPE_ALTERLIGHT, CObject::PRIORITY_EFFECT)
 {
 	// 全ての値をクリアする
+	m_fAddSize = 0.0f;		// サイズの追加量
 }
 
 //===========================================
@@ -67,12 +70,26 @@ void CAlterLight::Uninit(void)
 //===========================================
 void CAlterLight::Update(void)
 {
+	// サイズの追加量を大きくしていく
+	m_fAddSize += ADD_SIZE;
+
 	// サイズを取得
 	D3DXVECTOR3 size = GetSize();
 
 	// サイズを拡大する
-	size.x += 5.0f;
-	size.y += 5.0f;
+	size.x += m_fAddSize;
+	size.y += m_fAddSize;
+
+	if (size.x >= DEATH_SIZE ||
+		size.y >= DEATH_SIZE)
+	{ // サイズが一定数以上になった場合
+
+		// 終了処理
+		Uninit();
+
+		// この先の処理を行わない
+		return;
+	}
 
 	// サイズを適用
 	SetSize(size);
@@ -112,6 +129,9 @@ void CAlterLight::SetData(const D3DXVECTOR3& pos)
 
 	// テクスチャの読み込み処理
 	BindTexture(CManager::Get()->GetTexture()->Regist(TEXTURE));
+
+	// 全ての値を設定する
+	m_fAddSize = 0.0f;		// サイズの追加量
 }
 
 //===========================================

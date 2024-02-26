@@ -64,6 +64,7 @@ private:		// 自分だけアクセスできる
 	// メンバ変数
 	STATE m_state;					// 状態
 	CAlterPole* m_apPole[NUM_POLE];	// 石柱の情報
+	int m_nStateCount;				// 状態カウント
 };
 
 #endif

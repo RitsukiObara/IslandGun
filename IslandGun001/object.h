@@ -86,6 +86,7 @@ public:			// 誰でもアクセスできる
 		TYPE_ADDSCOREUI,		// 追加スコアUI
 		TYPE_DOOR,				// ドア
 		TYPE_TUTORIALMAP,		// チュートリアルマップ
+		TYPE_ALTERFLASH,		// 祭壇閃光
 		TYPE_MAX				// この列挙型の総数
 	};
 

@@ -36,6 +36,7 @@ public:			// 誰でもアクセスできる
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
+	float m_fAddSize;		// サイズの追加量
 };
 
 #endif

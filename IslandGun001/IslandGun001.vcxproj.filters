@@ -522,6 +522,9 @@
     <ClCompile Include="tutorial_map.cpp">
       <Filter>scene\tutorial</Filter>
     </ClCompile>
+    <ClCompile Include="alter_flash.cpp">
+      <Filter>gimmick\Map\Alter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -964,6 +967,9 @@
     </ClInclude>
     <ClInclude Include="tutorial_map.h">
       <Filter>scene\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="alter_flash.h">
+      <Filter>gimmick\Map\Alter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
