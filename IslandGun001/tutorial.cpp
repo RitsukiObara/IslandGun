@@ -10,6 +10,7 @@
 #include "manager.h"
 #include "tutorial.h"
 #include "fade.h"
+#include "camera.h"
 #include "renderer.h"
 
 #include "objectElevation.h"
@@ -28,7 +29,7 @@
 //--------------------------------------------
 namespace
 {
-	const int TRANS_COUNT = 380;			// 遷移までのカウント数
+	const int TRANS_COUNT = 280;			// 遷移までのカウント数
 	const char* ELEVATION_TXT = "data\\TXT\\ElevationTutorial.txt";		// 起伏地面のテキスト
 }
 
@@ -67,6 +68,9 @@ HRESULT CTutorial::Init(void)
 {
 	// シーンの初期化
 	CScene::Init();
+
+	// カメラをリセットする
+	CManager::Get()->GetCamera()->Reset();
 
 	// テキスト読み込み処理
 	CElevation::TxtSet(ELEVATION_TXT);

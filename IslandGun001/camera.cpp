@@ -47,6 +47,10 @@ namespace
 	const float CORRECT_POSV = 0.20f;			// 視点の補正倍率
 
 	// 特殊カメラ関係
+	const float TITLE_HEIGHT = 4000.0f;			// タイトルカメラの高さ
+	const float TITLE_DISTANCE = 8000.0f;		// タイトルカメラの距離
+	const float TITLE_ADD_ROT = 0.005f;			// タイトルカメラの向きの加算数
+
 	const float POSR_SHIFT_Y = 320.0f;			// 注視点のずらす幅(Y軸)
 	const float POSR_SHIFT = 100.0f;			// 注視点のずらす幅
 
@@ -147,14 +151,21 @@ void CCamera::Update(void)
 
 	switch (CManager::Get()->GetMode())
 	{
-	case CScene::MODE_TUTORIAL:	// チュートリアル
+	case CScene::MODE_TITLE:		// タイトル
+
+		// タイトル処理
+		Title();
+
+		break;
+
+	case CScene::MODE_TUTORIAL:		// チュートリアル
 
 		// チュートリアルシーン処理
 		Tutorial();
 
 		break;
 
-	case CScene::MODE_GAME:		// ゲームモード
+	case CScene::MODE_GAME:			// ゲームモード
 
 		if (CGame::IsPause() == false)
 		{ // ポーズ中以外の場合
@@ -183,7 +194,7 @@ void CCamera::Update(void)
 
 		break;
 
-	case CScene::MODE_RANKING:	// ランキング
+	case CScene::MODE_RANKING:		// ランキング
 
 		break;
 
@@ -938,6 +949,26 @@ void CCamera::TypeProcess(void)
 
 		break;
 	}
+}
+
+//=======================
+// タイトルカメラ
+//=======================
+void CCamera::Title(void)
+{
+	// 注視点を設定する
+	m_posR = NONE_D3DXVECTOR3;
+
+	// 視点を設定する
+	m_posV.x = m_posR.x + sinf(m_rot.y) * TITLE_DISTANCE;
+	m_posV.y = m_posR.y + TITLE_HEIGHT;
+	m_posV.z = m_posR.z + cosf(m_rot.y) * TITLE_DISTANCE;
+
+	// 向きを加算する
+	m_rot.y += TITLE_ADD_ROT;
+
+	// 向きの正規化
+	useful::RotNormalize(&m_rot.y);
 }
 
 //=======================

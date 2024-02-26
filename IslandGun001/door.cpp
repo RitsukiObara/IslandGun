@@ -28,6 +28,7 @@ namespace
 	const int BUTTON_INTERVAL = 10;				// ボタンの間隔
 
 	const float OPEN_ROT = -D3DX_PI * 0.5f;		// 開き状態の時の向き
+	const float ROT_MOVE = 0.1f;				// 向きの移動量
 }
 
 //==============================
@@ -307,7 +308,7 @@ void CDoor::Open(void)
 	D3DXVECTOR3 rot = m_pDoor->GetRot();
 
 	// 向きの補正処理
-	useful::RotCorrect(OPEN_ROT, &rot.y, 0.05f);
+	useful::RotCorrect(OPEN_ROT, &rot.y, ROT_MOVE);
 
 	// 向きを適用
 	m_pDoor->SetRot(rot);
@@ -322,7 +323,7 @@ void CDoor::Close(void)
 	D3DXVECTOR3 rot = m_pDoor->GetRot();
 
 	// 向きの補正処理
-	useful::RotCorrect(0.0f, &rot.y, 0.05f);
+	useful::RotCorrect(0.0f, &rot.y, ROT_MOVE);
 
 	// 向きを適用
 	m_pDoor->SetRot(rot);

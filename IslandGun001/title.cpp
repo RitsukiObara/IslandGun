@@ -16,6 +16,7 @@
 
 #include "skybox.h"
 #include "title_logo.h"
+#include "ocean.h"
 #include "objectElevation.h"
 #include "Objectmesh.h"
 
@@ -77,6 +78,9 @@ HRESULT CTitle::Init(void)
 
 	// スカイボックスの生成処理
 	CSkyBox::Create();
+
+	// 海の生成
+	COcean::Create();
 
 	// タイトルロゴの生成
 	CTitleLogo::Create();

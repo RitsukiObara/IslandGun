@@ -32,7 +32,7 @@ namespace
 	const float TRANS_DEST_CAMERAROT_X = 1.3f;		// 遷移の時の目的の向き
 	const float TRANS_DEST_CAMERAROT_Y = 0.0f;		// 遷移の時の目的の向き
 	const float TRANS_CORRECT = 0.05f;				// 遷移の時の補正係数
-	const int MOVE_COUNT = 100;						// 移動するカウント
+	const int MOVE_COUNT = 65;						// 移動するカウント
 	const float MOVE_DEPTH = 180.0f;				// 移動する目的のZ座標
 }
 
