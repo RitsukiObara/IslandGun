@@ -91,6 +91,7 @@ private:				// 自分だけアクセスできる
 	void WallCollision(void);		// 壁との当たり判定
 	void AlterCollision(void);		// 祭壇との当たり判定
 	void SlashRippleHit(void);		// 斬撃の波紋との当たり判定
+	void StageCollision(void);		// ステージの当たり判定
 
 	// メンバ変数
 	CMotion* m_pMotion;		// モーションの情報

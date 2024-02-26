@@ -11,6 +11,7 @@
 #include "boss.h"
 #include "boss_flystate.h"
 #include "motion.h"
+#include "collision.h"
 
 #include "ripple.h"
 #include "game.h"
@@ -33,6 +34,7 @@ namespace
 	const int RIPPLE_COUNT = 4;			// 波紋のカウント
 	const float RIPPLE_HEIGHT = 600.0f;	// 波紋の高度
 	const D3DXVECTOR3 RIPPLE_SCALE = D3DXVECTOR3(100.0f, 100.0f, 100.0f);	// 波紋の拡大率
+	const float STAGE_COLLISION_WIDTH = 300.0f;		// ステージの当たり判定の幅
 }
 
 //==========================
@@ -98,6 +100,9 @@ void CBossFlyState::Process(CBoss* pBoss)
 		// 向きの移動処理
 		RotMove(pBoss);
 	}
+
+	// ステージの当たり判定
+	StageCollision(pBoss);
 }
 
 //==========================
@@ -209,4 +214,19 @@ void CBossFlyState::Ripple(CBoss* pBoss)
 			RIPPLE_SCALE
 		);
 	}
+}
+
+//==========================
+// ステージの当たり判定
+//==========================
+void CBossFlyState::StageCollision(CBoss* pBoss)
+{
+	// 位置を取得
+	D3DXVECTOR3 pos = pBoss->GetPos();
+
+	// ステージの当たり判定
+	collision::StageCollision(&pos, STAGE_COLLISION_WIDTH);
+
+	// 位置を適用
+	pBoss->SetPos(pos);
 }

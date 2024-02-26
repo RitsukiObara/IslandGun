@@ -466,6 +466,9 @@ void CPlayer::Update(void)
 		// 祭壇との当たり判定
 		AlterCollision();
 
+		// ステージの当たり判定
+		StageCollision();
+
 		CManager::Get()->GetDebugProc()->Print("位置：%f %f %f", GetPos().x, GetPos().y, GetPos().z);
 
 		break;
@@ -1323,5 +1326,20 @@ void CPlayer::AlterCollision(void)
 	);
 
 	// 位置の設定処理
+	SetPos(pos);
+}
+
+//=======================================
+// ステージとの当たり判定
+//=======================================
+void CPlayer::StageCollision(void)
+{
+	// 位置を取得
+	D3DXVECTOR3 pos = GetPos();
+
+	// ステージの当たり判定
+	collision::StageCollision(&pos, COLLISION_SIZE.x);
+
+	// 位置を適用
 	SetPos(pos);
 }

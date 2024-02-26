@@ -172,6 +172,9 @@ void CEnemy::Update(void)
 			m_state = STATE_NONE;
 		}
 	}
+
+	// ステージの当たり判定
+	StageCollision();
 }
 
 //================================
@@ -641,4 +644,19 @@ void CEnemy::SlashRippleHit(void)
 		// ヒット処理
 		Hit(SLASHRIPPLE_DAMAGE, SLASHRIPPLE_KNOCKBACK);
 	}
+}
+
+//===========================================
+// ステージの当たり判定
+//===========================================
+void CEnemy::StageCollision(void)
+{
+	// 位置を取得
+	D3DXVECTOR3 pos = GetPos();
+
+	// ステージの当たり判定
+	collision::StageCollision(&pos, m_collSize.x);
+
+	// 位置を適用
+	SetPos(pos);
 }

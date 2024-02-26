@@ -76,6 +76,8 @@ namespace
 	const float BOMB_DAGGER_SMASH = 23.0f;			// ダガーで爆弾の吹き飛ぶ速度
 	const float BOMB_SLASH_RIPPLE_SMASH = 10.0f;	// 斬撃波紋で爆弾の吹き飛ぶ速度
 	const int BOSS_DAMAGE = 5;						// ボスへのダメージ
+
+	const float STAGE_RANGE = 8000.0f;				// ステージの範囲
 }
 
 //===============================
@@ -2266,6 +2268,40 @@ bool collision::DoorCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const
 
 	// false を返す
 	return false;
+}
+
+//===============================
+// ステージの当たり判定
+//===============================
+void collision::StageCollision(D3DXVECTOR3* pos, const float fWidth)
+{
+	if (pos->x + fWidth >= STAGE_RANGE)
+	{ // 右から出た場合
+
+		// 位置を補正する
+		pos->x = STAGE_RANGE - fWidth;
+	}
+
+	if (pos->x - fWidth <= -STAGE_RANGE)
+	{ // 左から出た場合
+
+		// 位置を補正する
+		pos->x = -STAGE_RANGE + fWidth;
+	}
+
+	if (pos->z + fWidth >= STAGE_RANGE)
+	{ // 奥から出た場合
+
+		// 位置を補正する
+		pos->z = STAGE_RANGE - fWidth;
+	}
+
+	if (pos->z - fWidth <= -STAGE_RANGE)
+	{ // 手前から出た場合
+
+		// 位置を補正する
+		pos->z = -STAGE_RANGE + fWidth;
+	}
 }
 
 /*

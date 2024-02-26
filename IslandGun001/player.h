@@ -117,6 +117,7 @@ protected:		// 自分と派生クラスだけアクセスできる
 	void RockCollision(void);		// 岩との当たり判定
 	void WallCollision(void);		// 壁との当たり判定
 	void AlterCollision(void);		// 際算との当たり判定
+	void StageCollision(void);		// ステージとの当たり判定
 
 private:		// 自分だけアクセスできる
 

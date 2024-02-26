@@ -479,6 +479,7 @@ void CBomb::Collision(void)
 	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
 	collision::BlockHit(&pos, posOld, vtxMax, vtxMin);
 	collision::AlterCollision(&pos, posOld, vtxMax, vtxMin);
+	collision::StageCollision(&pos, GetFileData().fRadius);
 
 	// ˆÊ’u‚ð“K—p‚·‚é
 	SetPos(pos);
