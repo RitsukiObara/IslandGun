@@ -10,6 +10,7 @@
 #include "main.h"
 #include "tordle.h"
 #include "motion.h"
+#include "file.h"
 #include "manager.h"
 
 #include "game.h"
@@ -23,12 +24,6 @@ namespace
 {
 	const float SPEED = 5.0f;				// 移動量
 	const float KNOCKBACK_HEIGHT = 5.0f;	// ノックバック値の高さ
-	const int NUM_POS_DEST = 2;				// 目的の位置の総数
-	const D3DXVECTOR3 POS_DEST[NUM_POS_DEST] =
-	{
-		D3DXVECTOR3(2500.0f,0.0f,250.0f),
-		D3DXVECTOR3(300.0f,0.0f,-1000.0f)
-	};
 	const float CHASE_DISTANCE = 2000.0f;	// 追跡状態に入る距離
 }
 
@@ -39,11 +34,12 @@ CTordle::CTordle() : CEnemy()
 {
 	// 全ての値をクリアする
 	m_action = ACTION_WALK;				// 行動
-	m_pPosDest = nullptr;				// 目的の位置
 	m_rotDest = NONE_D3DXVECTOR3;		// 目標の向き
 	m_fMoveX = 0.0f;					// 移動量(X軸)
 	m_fMoveZ = 0.0f;					// 移動量(Z軸)
-	m_nNowPosIdx = 0;					// 現在の位置の番号
+	m_walking.pPosDest = nullptr;		// 徘徊経路関係の情報
+	m_walking.nNowPosIdx = 0;			// 現在の位置の番号
+	m_walking.nNumPos = 0;				// 位置の総数
 }
 
 //================================
@@ -110,12 +106,12 @@ HRESULT CTordle::Init(void)
 //================================
 void CTordle::Uninit(void)
 {
-	if (m_pPosDest != nullptr)
+	if (m_walking.pPosDest != nullptr)
 	{ // 目的の位置が NULL じゃない場合
 
 		// 目的の位置を NULL にする
-		delete[] m_pPosDest;
-		m_pPosDest = nullptr;
+		delete[] m_walking.pPosDest;
+		m_walking.pPosDest = nullptr;
 	}
 
 	// 終了処理
@@ -203,14 +199,7 @@ void CTordle::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE
 	m_rotDest = NONE_D3DXVECTOR3;		// 目標の向き
 	m_fMoveX = 0.0f;					// 移動量(X軸)
 	m_fMoveZ = 0.0f;					// 移動量(Z軸)
-	m_pPosDest = new D3DXVECTOR3[NUM_POS_DEST];		// 目的の位置
-
-	for (int nCnt = 0; nCnt < NUM_POS_DEST; nCnt++)
-	{
-		m_pPosDest[nCnt] = POS_DEST[nCnt];
-	}
-
-	m_nNowPosIdx = 0;					// 現在の位置の番号
+	SetRoute();							// 徘徊経路
 }
 
 //===========================================
@@ -240,6 +229,27 @@ void CTordle::Hit(const int nDamage, const float fKnockback)
 }
 
 //===========================================
+// 経路の設定処理
+//===========================================
+void CTordle::SetRoute(void)
+{
+	// 徘徊経路を選択
+	int nRoute = rand() % CManager::Get()->GetFile()->GetEnemyRouteNum();
+
+	// 位置の総数を取得
+	m_walking.nNumPos = CManager::Get()->GetFile()->GetEnemyRouteNumPos(nRoute);
+
+	// 経路のメモリを確保する
+	m_walking.pPosDest = new D3DXVECTOR3[m_walking.nNumPos];
+
+	for (int nCnt = 0; nCnt < m_walking.nNumPos; nCnt++)
+	{
+		// 徘徊経路を取得
+		m_walking.pPosDest[nCnt] = CManager::Get()->GetFile()->GetEnemyRoute(nRoute, nCnt);
+	}
+}
+
+//===========================================
 // 徘徊処理
 //===========================================
 void CTordle::Walking(void)
@@ -247,7 +257,7 @@ void CTordle::Walking(void)
 	D3DXVECTOR3 pos = GetPos();
 
 	// 向きを設定する
-	m_rotDest.y = atan2f(m_pPosDest[m_nNowPosIdx].x - pos.x, m_pPosDest[m_nNowPosIdx].z - pos.z);
+	m_rotDest.y = atan2f(m_walking.pPosDest[m_walking.nNowPosIdx].x - pos.x, m_walking.pPosDest[m_walking.nNowPosIdx].z - pos.z);
 
 	// 移動量を設定する
 	m_fMoveX = fabsf(sinf(m_rotDest.y) * SPEED);
@@ -262,16 +272,16 @@ void CTordle::Arrival(void)
 	// 位置を取得
 	D3DXVECTOR3 pos = GetPos();
 
-	if (useful::FrameCorrect(m_pPosDest[m_nNowPosIdx].x, &pos.x, m_fMoveX) == true ||
-		useful::FrameCorrect(m_pPosDest[m_nNowPosIdx].z, &pos.z, m_fMoveZ) == true)
+	if (useful::FrameCorrect(m_walking.pPosDest[m_walking.nNowPosIdx].x, &pos.x, m_fMoveX) == true ||
+		useful::FrameCorrect(m_walking.pPosDest[m_walking.nNowPosIdx].z, &pos.z, m_fMoveZ) == true)
 	{ // 目的の位置に着いた場合
 
 		// 位置を補正する
-		pos.x = m_pPosDest[m_nNowPosIdx].x;
-		pos.z = m_pPosDest[m_nNowPosIdx].z;
+		pos.x = m_walking.pPosDest[m_walking.nNowPosIdx].x;
+		pos.z = m_walking.pPosDest[m_walking.nNowPosIdx].z;
 
 		// 番号を進める
-		m_nNowPosIdx = (m_nNowPosIdx + 1) % NUM_POS_DEST;
+		m_walking.nNowPosIdx = (m_walking.nNowPosIdx + 1) % m_walking.nNumPos;
 	}
 
 	// 位置を適用

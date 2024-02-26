@@ -38,6 +38,7 @@ namespace
 	const char* WALL_TXT = "data\\TXT\\Wall.txt";				// 壁のテキスト
 	const char* BOSSCOLL_TXT = "data\\TXT\\BossColl.txt";		// ボスの当たり判定のテキスト
 	const char* SIGNBOARD_TXT = "data\\TXT\\Signboard.txt";		// 看板のテキスト
+	const char* ENEMYROUTE_TXT = "data\\TXT\\EnemyRoute.txt";	// 敵の徘徊経路のテキスト
 
 	const int GOLDBONE_NUM = 3;		// 金の骨の数
 }
@@ -105,6 +106,12 @@ CFile::CFile()
 		m_SignboardFile.aFile[nCntFile].pos = NONE_D3DXVECTOR3;
 		m_SignboardFile.aFile[nCntFile].rot = NONE_D3DXVECTOR3;
 		m_SignboardFile.aFile[nCntFile].type = CSignboard::TYPE::TYPE_JUMP;
+
+		for (int nCntRoute = 0; nCntRoute < MAX_ENEMY_ROUTE; nCntRoute++)
+		{
+			m_EnemyRouteFile.aFile[nCntFile].pos[nCntRoute] = NONE_D3DXVECTOR3;		// 敵の経路の情報
+			m_EnemyRouteFile.aFile[nCntFile].nNum = 0;		// 総数
+		}
 	}
 
 	for (int nCntBone = 0; nCntBone < GOLDBONE_NUM; nCntBone++)
@@ -123,6 +130,7 @@ CFile::CFile()
 	m_WallFile.nNumData = 0;			// 壁の情報
 	m_BossCollFile.nNumData = 0;		// ボスの当たり判定の情報
 	m_SignboardFile.nNumData = 0;		// 看板の情報
+	m_EnemyRouteFile.nNumData = 0;		// 敵の徘徊経路の情報
 
 	// 成功状況をクリアする
 	m_RankingInfo.bSuccess = false;		// ランキング
@@ -136,6 +144,7 @@ CFile::CFile()
 	m_WallFile.bSuccess = false;		// 壁の情報
 	m_BossCollFile.bSuccess = false;	// ボスの当たり判定の情報
 	m_SignboardFile.bSuccess = false;	// 看板の情報
+	m_EnemyRouteFile.bSuccess = false;	// 敵の徘徊経路の情報
 }
 
 //===========================================
@@ -306,6 +315,18 @@ HRESULT CFile::Load(const TYPE type)
 	case CFile::TYPE_SIGNBOARD:
 
 		if (FAILED(LoadSignboard()))
+		{ // 失敗した場合
+
+			// 失敗を返す
+			return E_FAIL;
+		}
+
+		break;
+
+
+	case CFile::TYPE_ENEMYROUTE:
+
+		if (FAILED(LoadEnemyRoute()))
 		{ // 失敗した場合
 
 			// 失敗を返す
@@ -594,7 +615,7 @@ void CFile::SetBossColl(CBossCollision** pColl)
 void CFile::SetSignboard(void)
 {
 	if (m_SignboardFile.bSuccess == true)
-	{ // 壁が読み込めた場合
+	{ // 看板が読み込めた場合
 
 		for (int nCnt = 0; nCnt < m_SignboardFile.nNumData; nCnt++)
 		{
@@ -613,6 +634,48 @@ void CFile::SetSignboard(void)
 		// 停止
 		assert(false);
 	}
+}
+
+//===========================================
+// 敵の徘徊経路の設定処理
+//===========================================
+D3DXVECTOR3 CFile::GetEnemyRoute(const int nRoute, const int nNum)
+{
+	if (m_EnemyRouteFile.bSuccess == true && 
+		m_EnemyRouteFile.nNumData > nRoute &&
+		m_EnemyRouteFile.aFile[nRoute].nNum > nNum)
+	{ // 情報を読み込んでいた場合
+
+		// 徘徊経路を返す
+		return m_EnemyRouteFile.aFile[nRoute].pos[nNum];
+	}
+	else
+	{ // 上記以外
+
+		// 停止
+		assert(false);
+
+		// 緊急座標を返す
+		return NONE_D3DXVECTOR3;
+	}
+}
+
+//===========================================
+// 敵の徘徊経路の総数の取得処理
+//===========================================
+int CFile::GetEnemyRouteNumPos(const int nRoute)
+{
+	// 総数を返す
+	return m_EnemyRouteFile.aFile[nRoute].nNum;
+}
+
+//===========================================
+// 敵の徘徊経路の総数の取得処理
+//===========================================
+int CFile::GetEnemyRouteNum(void)
+{
+	// 総数を返す
+	return m_EnemyRouteFile.nNumData;
 }
 
 //===========================================
@@ -1765,6 +1828,85 @@ HRESULT CFile::LoadSignboard(void)
 
 		// 成功状況を true にする
 		m_SignboardFile.bSuccess = true;
+	}
+	else
+	{ // ファイルが開けなかった場合
+
+		// 停止
+		assert(false);
+
+		// 失敗を返す
+		return E_FAIL;
+	}
+
+	// 成功を返す
+	return S_OK;
+}
+
+//===========================================
+// 敵の経路のロード処理
+//===========================================
+HRESULT CFile::LoadEnemyRoute(void)
+{
+	// 変数を宣言
+	int nEnd;							// テキスト読み込み終了の確認用
+	char aString[MAX_STRING];			// テキストの文字列の代入用
+	m_EnemyRouteFile.nNumData = 0;		// 総数
+	m_EnemyRouteFile.bSuccess = false;	// 成功状況
+
+	// ポインタを宣言
+	FILE* pFile;						// ファイルポインタ
+
+	// ファイルを読み込み形式で開く
+	pFile = fopen(ENEMYROUTE_TXT, "r");
+
+	if (pFile != nullptr)
+	{ // ファイルが開けた場合
+
+		do
+		{ // 読み込んだ文字列が EOF ではない場合ループ
+
+			// ファイルから文字列を読み込む
+			nEnd = fscanf(pFile, "%s", &aString[0]);	// テキストを読み込みきったら EOF を返す
+
+			if (strcmp(&aString[0], "SET_ENEMYROUTE") == 0)
+			{ // 読み込んだ文字列が SET_ENEMYROUTE の場合
+
+				do
+				{ // 読み込んだ文字列が END_SET_ENEMYROUTE ではない場合ループ
+
+					// ファイルから文字列を読み込む
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(&aString[0], "NUM") == 0)
+					{ // 読み込んだ文字列が NUM の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%d", &m_EnemyRouteFile.aFile[m_EnemyRouteFile.nNumData].nNum);	// 位置の総数を読み込む
+
+						for (int nCntRoute = 0; nCntRoute < m_EnemyRouteFile.aFile[m_EnemyRouteFile.nNumData].nNum; nCntRoute++)
+						{
+							fscanf(pFile, "%s", &aString[0]);				// POS を読み込む (不要)
+							fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+							fscanf(pFile, "%f%f%f",
+								&m_EnemyRouteFile.aFile[m_EnemyRouteFile.nNumData].pos[nCntRoute].x,
+								&m_EnemyRouteFile.aFile[m_EnemyRouteFile.nNumData].pos[nCntRoute].y,
+								&m_EnemyRouteFile.aFile[m_EnemyRouteFile.nNumData].pos[nCntRoute].z);	// 位置を読み込む
+						}
+					}
+
+				} while (strcmp(&aString[0], "END_SET_ENEMYROUTE") != 0);		// 読み込んだ文字列が END_SET_ENEMYROUTE ではない場合ループ
+
+				// データの総数を増やす
+				m_EnemyRouteFile.nNumData++;
+			}
+		} while (nEnd != EOF);				// 読み込んだ文字列が EOF ではない場合ループ
+
+		// ファイルを閉じる
+		fclose(pFile);
+
+		// 成功状況を true にする
+		m_EnemyRouteFile.bSuccess = true;
 	}
 	else
 	{ // ファイルが開けなかった場合

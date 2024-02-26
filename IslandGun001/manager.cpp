@@ -97,6 +97,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 			CManager::Get()->GetFile()->Load(CFile::TYPE_WALL);
 			CManager::Get()->GetFile()->Load(CFile::TYPE_BOSSCOLL);
 			CManager::Get()->GetFile()->Load(CFile::TYPE_SIGNBOARD);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_ENEMYROUTE);
 		}
 	}
 	else

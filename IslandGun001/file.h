@@ -20,6 +20,7 @@
 // マクロ定義
 //--------------------------------------------
 #define MAX_FILE_DATA		(2048)		// ファイルのデータの最大数
+#define MAX_ENEMY_ROUTE		(10)		// 敵の目的地の数
 
 //--------------------------------------------
 // クラス(ファイル読み込みクラス)
@@ -42,6 +43,7 @@ public:			// 誰でもアクセスできる
 		TYPE_WALL,			// 壁
 		TYPE_BOSSCOLL,		// ボスの当たり判定
 		TYPE_SIGNBOARD,		// 看板
+		TYPE_ENEMYROUTE,	// 敵の徘徊経路
 		TYPE_MAX			// この列挙型の総数
 	};
 
@@ -135,6 +137,13 @@ public:			// 誰でもアクセスできる
 		CSignboard::TYPE type;	// 種類
 	};
 
+	// 敵の徘徊経路の情報
+	struct SEnemyRouteinfo
+	{
+		D3DXVECTOR3 pos[MAX_ENEMY_ROUTE];		// 位置
+		int nNum;				// 位置の総数
+	};
+
 	//************************************************************************************************************************************************
 	// 情報構造体
 	//************************************************************************************************************************************************
@@ -218,6 +227,14 @@ public:			// 誰でもアクセスできる
 		bool bSuccess;							// 成功状況
 	};
 
+	// 敵の徘徊経路のファイル
+	struct SEnemyRouteFile
+	{
+		SEnemyRouteinfo aFile[MAX_FILE_DATA];	// 情報
+		int nNumData;							// 総数
+		bool bSuccess;							// 成功状況
+	};
+
 	CFile();					// コンストラクタ
 	~CFile();					// デストラクタ
 
@@ -241,6 +258,9 @@ public:			// 誰でもアクセスできる
 	void SetWall(void);			// 壁の設定処理
 	void SetBossColl(CBossCollision** pColl);		// ボスの当たり判定の設定処理
 	void SetSignboard(void);	// 看板の設定処理
+	D3DXVECTOR3 GetEnemyRoute(const int nRoute, const int nNum);		// 敵の徘徊経路の取得処理
+	int GetEnemyRouteNumPos(const int nRoute);			// 敵の徘徊経路の位置の総数の取得処理
+	int GetEnemyRouteNum(void);	// 敵の徘徊経路の総数の取得処理
 
 	// 静的メンバ関数
 	static CFile* Create(void);		// 生成処理
@@ -262,6 +282,7 @@ private:		// 自分のみアクセスできる
 	HRESULT LoadWall(void);			// 壁のロード処理
 	HRESULT LoadBossColl(void);		// ボスの当たり判定のロード処理
 	HRESULT LoadSignboard(void);	// 看板のロード処理
+	HRESULT LoadEnemyRoute(void);	// 敵の経路のロード処理
 
 	// メンバ変数
 	SRankingInfo m_RankingInfo;			// ランキングの情報
@@ -275,6 +296,7 @@ private:		// 自分のみアクセスできる
 	SWallFile m_WallFile;				// 壁の情報
 	SBossCollFile m_BossCollFile;		// ボスの当たり判定の情報
 	SSignboardFile m_SignboardFile;		// 看板の情報
+	SEnemyRouteFile m_EnemyRouteFile;	// 敵の経路の情報
 
 	// 静的メンバ変数
 	static const char* c_apBooleanDisp[2];			// bool型の表示

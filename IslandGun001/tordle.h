@@ -27,6 +27,14 @@ public:					// 誰でもアクセスできる
 		ACTION_MAX			// この列挙型の総数
 	};
 
+	// 構造体定義(徘徊経路関係)
+	struct SWalking
+	{
+		D3DXVECTOR3* pPosDest;	// 目的の位置
+		int nNumPos;			// 位置の総数
+		int nNowPosIdx;			// 現在の位置の番号
+	};
+
 	CTordle();			// コンストラクタ
 	~CTordle();			// デストラクタ
 
@@ -42,6 +50,7 @@ public:					// 誰でもアクセスできる
 private:				// 自分だけアクセスできる
 
 	// メンバ関数
+	void SetRoute(void);		// 経路の設定処理
 	void Walking(void);			// 徘徊処理
 	void Arrival(void);			// 到着処理
 	void Chase(void);			// 追跡処理
@@ -54,8 +63,7 @@ private:				// 自分だけアクセスできる
 	float m_fMoveX;				// 移動量(X軸)
 	float m_fMoveZ;				// 移動量(Z軸)
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
-	D3DXVECTOR3* m_pPosDest;	// 目的の位置
-	int m_nNowPosIdx;			// 現在の位置の番号
+	SWalking m_walking;			// 徘徊経路関係の情報
 };
 
 #endif
