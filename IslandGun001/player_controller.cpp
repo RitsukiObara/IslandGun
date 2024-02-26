@@ -50,6 +50,7 @@ namespace
 	const int DODGE_INTERVAL = 90;					// 回避インターバル
 	const int SHOT_INTERVAL = 10;					// 撃つインターバル
 	const float SPEED = 14.0f;						// 速度
+	const float STOP_CORRECT = 0.5f;				// 停止の補正倍率
 }
 
 //=========================
@@ -329,8 +330,8 @@ void CPlayerController::RotMove(CPlayer* pPlayer)
 	{ // 上記以外
 
 		// 移動量を減衰させる
-		useful::Correct(0.0f, &move.x, 0.1f);
-		useful::Correct(0.0f, &move.z, 0.1f);
+		useful::Correct(0.0f, &move.x, STOP_CORRECT);
+		useful::Correct(0.0f, &move.z, STOP_CORRECT);
 
 		if (pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
 			pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)
@@ -424,8 +425,8 @@ void CPlayerController::KeyboardMove(CPlayer* pPlayer)
 	{ // 上記以外
 
 		// 移動量を減衰させる
-		useful::Correct(0.0f, &move.x, 0.5f);
-		useful::Correct(0.0f, &move.z, 0.5f);
+		useful::Correct(0.0f, &move.x, STOP_CORRECT);
+		useful::Correct(0.0f, &move.z, STOP_CORRECT);
 
 		if (pPlayer->GetAction()->GetAction() != CPlayerAction::ACTION_DAGGER &&
 			pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_NEUTRAL)

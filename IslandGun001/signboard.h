@@ -30,6 +30,13 @@ public:			// 誰でもアクセスできる
 	enum TYPE
 	{
 		TYPE_JUMP = 0,		// ジャンプの説明
+		TYPE_MOVE,			// 移動の説明
+		TYPE_SHOT,			// 射撃の説明
+		TYPE_CAMERAMOVE,	// カメラ移動の説明
+		TYPE_DAGGER,		// ダガーの説明
+		TYPE_DODGE,			// 回避の説明
+		TYPE_SHOTGUN,		// 散弾の説明
+		TYPE_SWOOP,			// 急降下の説明
 		TYPE_MAX			// この列挙型の総数
 	};
 
