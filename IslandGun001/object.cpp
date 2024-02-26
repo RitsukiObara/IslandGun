@@ -562,7 +562,7 @@ void CObject::DeathDecision(const int dim, const int nCnt)
 			if (pObj->m_pNext != nullptr)
 			{ // 次のオブジェクトが NULL じゃない場合
 
-				// リスト構造か.ら自分を抜き出す
+				// リスト構造から自分を抜き出す
 				pObj->m_pNext->m_pPrev = pObj->m_pPrev;
 			}
 

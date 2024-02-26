@@ -519,6 +519,9 @@
     <ClCompile Include="door.cpp">
       <Filter>scene\tutorial</Filter>
     </ClCompile>
+    <ClCompile Include="tutorial_map.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -957,6 +960,9 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="door.h">
+      <Filter>scene\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial_map.h">
       <Filter>scene\tutorial</Filter>
     </ClInclude>
   </ItemGroup>

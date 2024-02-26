@@ -19,6 +19,7 @@
 #include "skybox.h"
 
 #include "player_tutorial.h"
+#include "tutorial_map.h"
 #include "balloon_spawner.h"
 #include "door.h"
 
@@ -84,6 +85,9 @@ HRESULT CTutorial::Init(void)
 
 	// スカイボックスの生成処理
 	CSkyBox::Create();
+
+	// チュートリアルマップの生成
+	CTutorialMap::Create();
 
 	// プレイヤーを生成
 	m_pPlayer = CTutorialPlayer::Create(NONE_D3DXVECTOR3);

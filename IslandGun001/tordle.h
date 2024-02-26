@@ -19,6 +19,14 @@ class CTordle : public CEnemy
 {
 public:					// 誰でもアクセスできる
 
+	// 列挙型定義(状態)
+	enum ACTION
+	{
+		ACTION_WALK = 0,	// 徘徊状態
+		ACTION_CHASE,		// 追跡状態
+		ACTION_MAX			// この列挙型の総数
+	};
+
 	CTordle();			// コンストラクタ
 	~CTordle();			// デストラクタ
 
@@ -34,14 +42,20 @@ public:					// 誰でもアクセスできる
 private:				// 自分だけアクセスできる
 
 	// メンバ関数
+	void Walking(void);			// 徘徊処理
+	void Arrival(void);			// 到着処理
 	void Chase(void);			// 追跡処理
 	void Move(void);			// 移動処理
 	void RotMove(void);			// 向きの移動処理
+	void StateJudge(void);		// 状態判断処理
 
 	// メンバ変数
+	ACTION m_action;			// 行動
 	float m_fMoveX;				// 移動量(X軸)
 	float m_fMoveZ;				// 移動量(Z軸)
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
+	D3DXVECTOR3* m_pPosDest;	// 目的の位置
+	int m_nNowPosIdx;			// 現在の位置の番号
 };
 
 #endif
