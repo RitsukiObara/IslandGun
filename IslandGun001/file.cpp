@@ -23,20 +23,24 @@
 #include "boss.h"
 
 //--------------------------------------------
-// マクロ定義
+// 定数定義
 //--------------------------------------------
-#define RANKING_BIN			"data\\BIN\\Ranking.bin"		// ランキングのテキスト
-#define ENEMY_TXT			"data\\TXT\\Enemy.txt"			// 敵のテキスト
-#define COIN_TXT			"data\\TXT\\Coin.txt"			// コインのテキスト
-#define GOLDBONE_TXT		"data\\TXT\\GoldBone.txt"		// 金の骨のテキスト
-#define TREE_TXT			"data\\TXT\\Tree.txt"			// 木のテキスト
-#define ROCK_TXT			"data\\TXT\\Rock.txt"			// 岩のテキスト
-#define BLOCK_TXT			"data\\TXT\\Block.txt"			// ブロックのテキスト
-#define BANGFLOWER_TXT		"data\\TXT\\BangFlower.txt"		// 爆弾花のテキスト
-#define WALL_TXT			"data\\TXT\\Wall.txt"			// 壁のテキスト
-#define BOSSCOLL_TXT		"data\\TXT\\BossColl.txt"		// ボスの当たり判定のテキスト
+namespace
+{
+	const char* RANKING_BIN = "data\\BIN\\Ranking.bin";			// ランキングのテキスト
+	const char* ENEMY_TXT = "data\\TXT\\Enemy.txt";				// 敵のテキスト
+	const char* COIN_TXT = "data\\TXT\\Coin.txt";				// コインのテキスト
+	const char* GOLDBONE_TXT = "data\\TXT\\GoldBone.txt";		// 金の骨のテキスト
+	const char* TREE_TXT = "data\\TXT\\Tree.txt";				// 木のテキスト
+	const char* ROCK_TXT = "data\\TXT\\Rock.txt";				// 岩のテキスト
+	const char* BLOCK_TXT = "data\\TXT\\Block.txt";				// ブロックのテキスト
+	const char* BANGFLOWER_TXT = "data\\TXT\\BangFlower.txt";	// 爆弾花のテキスト
+	const char* WALL_TXT = "data\\TXT\\Wall.txt";				// 壁のテキスト
+	const char* BOSSCOLL_TXT = "data\\TXT\\BossColl.txt";		// ボスの当たり判定のテキスト
+	const char* SIGNBOARD_TXT = "data\\TXT\\Signboard.txt";		// 看板のテキスト
 
-#define GOLDBONE_NUM		(3)		// 金の骨の数
+	const int GOLDBONE_NUM = 3;		// 金の骨の数
+}
 
 //--------------------------------------------
 // 静的メンバ変数宣言
@@ -97,6 +101,10 @@ CFile::CFile()
 		m_WallFile.aFile[nCntFile].scale = NONE_D3DXVECTOR3;
 		m_WallFile.aFile[nCntFile].nType = 0;
 		m_WallFile.aFile[nCntFile].nRotType = 0;
+
+		m_SignboardFile.aFile[nCntFile].pos = NONE_D3DXVECTOR3;
+		m_SignboardFile.aFile[nCntFile].rot = NONE_D3DXVECTOR3;
+		m_SignboardFile.aFile[nCntFile].type = CSignboard::TYPE::TYPE_JUMP;
 	}
 
 	for (int nCntBone = 0; nCntBone < GOLDBONE_NUM; nCntBone++)
@@ -114,6 +122,7 @@ CFile::CFile()
 	m_BangFlowerFile.nNumData = 0;		// 爆弾花の情報
 	m_WallFile.nNumData = 0;			// 壁の情報
 	m_BossCollFile.nNumData = 0;		// ボスの当たり判定の情報
+	m_SignboardFile.nNumData = 0;		// 看板の情報
 
 	// 成功状況をクリアする
 	m_RankingInfo.bSuccess = false;		// ランキング
@@ -126,6 +135,7 @@ CFile::CFile()
 	m_BangFlowerFile.bSuccess = false;	// 爆弾花の情報
 	m_WallFile.bSuccess = false;		// 壁の情報
 	m_BossCollFile.bSuccess = false;	// ボスの当たり判定の情報
+	m_SignboardFile.bSuccess = false;	// 看板の情報
 }
 
 //===========================================
@@ -285,6 +295,17 @@ HRESULT CFile::Load(const TYPE type)
 	case CFile::TYPE_BOSSCOLL:
 
 		if (FAILED(LoadBossColl()))
+		{ // 失敗した場合
+
+			// 失敗を返す
+			return E_FAIL;
+		}
+
+		break;
+
+	case CFile::TYPE_SIGNBOARD:
+
+		if (FAILED(LoadSignboard()))
 		{ // 失敗した場合
 
 			// 失敗を返す
@@ -557,6 +578,33 @@ void CFile::SetBossColl(CBossCollision** pColl)
 				pColl[nCntPart]->SetRadius(m_BossCollFile.aFile[nCntPart].aBase[nCntColl].fRadius, nCntColl);
 				pColl[nCntPart]->SetEnableWeakness(m_BossCollFile.aFile[nCntPart].aBase[nCntColl].bWeakness, nCntColl);
 			}
+		}
+	}
+	else
+	{ // 上記以外
+
+		// 停止
+		assert(false);
+	}
+}
+
+//===========================================
+// 看板の設定処理
+//===========================================
+void CFile::SetSignboard(void)
+{
+	if (m_SignboardFile.bSuccess == true)
+	{ // 壁が読み込めた場合
+
+		for (int nCnt = 0; nCnt < m_SignboardFile.nNumData; nCnt++)
+		{
+			// 看板を生成する
+			CSignboard::Create
+			(
+				m_SignboardFile.aFile[nCnt].pos,
+				m_SignboardFile.aFile[nCnt].rot,
+				m_SignboardFile.aFile[nCnt].type
+			);
 		}
 	}
 	else
@@ -1628,6 +1676,95 @@ HRESULT CFile::LoadBossColl(void)
 
 		// 成功状況を true にする
 		m_BossCollFile.bSuccess = true;
+	}
+	else
+	{ // ファイルが開けなかった場合
+
+		// 停止
+		assert(false);
+
+		// 失敗を返す
+		return E_FAIL;
+	}
+
+	// 成功を返す
+	return S_OK;
+}
+
+//===========================================
+// 看板のロード処理
+//===========================================
+HRESULT CFile::LoadSignboard(void)
+{
+	// 変数を宣言
+	int nEnd;							// テキスト読み込み終了の確認用
+	char aString[MAX_STRING];			// テキストの文字列の代入用
+	m_SignboardFile.nNumData = 0;		// 総数
+	m_SignboardFile.bSuccess = false;	// 成功状況
+
+	// ポインタを宣言
+	FILE* pFile;						// ファイルポインタ
+
+	// ファイルを読み込み形式で開く
+	pFile = fopen(SIGNBOARD_TXT, "r");
+
+	if (pFile != nullptr)
+	{ // ファイルが開けた場合
+
+		do
+		{ // 読み込んだ文字列が EOF ではない場合ループ
+
+			// ファイルから文字列を読み込む
+			nEnd = fscanf(pFile, "%s", &aString[0]);	// テキストを読み込みきったら EOF を返す
+
+			if (strcmp(&aString[0], "SET_SIGNBOARD") == 0)
+			{ // 読み込んだ文字列が SET_SIGNBOARD の場合
+
+				do
+				{ // 読み込んだ文字列が END_SET_SIGNBOARD ではない場合ループ
+
+				  // ファイルから文字列を読み込む
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(&aString[0], "POS") == 0)
+					{ // 読み込んだ文字列が POS の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%f%f%f",
+							&m_SignboardFile.aFile[m_SignboardFile.nNumData].pos.x,
+							&m_SignboardFile.aFile[m_SignboardFile.nNumData].pos.y,
+							&m_SignboardFile.aFile[m_SignboardFile.nNumData].pos.z);		// 位置を読み込む
+					}
+
+					if (strcmp(&aString[0], "ROT") == 0)
+					{ // 読み込んだ文字列が ROT の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%f%f%f",
+							&m_SignboardFile.aFile[m_SignboardFile.nNumData].rot.x,
+							&m_SignboardFile.aFile[m_SignboardFile.nNumData].rot.y,
+							&m_SignboardFile.aFile[m_SignboardFile.nNumData].rot.z);	// 拡大率を読み込む
+					}
+
+					if (strcmp(&aString[0], "TYPE") == 0)
+					{ // 読み込んだ文字列が TYPE の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%d", &m_SignboardFile.aFile[m_SignboardFile.nNumData].type);		// 種類を読み込む
+					}
+
+				} while (strcmp(&aString[0], "END_SET_SIGNBOARD") != 0);		// 読み込んだ文字列が END_SET_SIGNBOARD ではない場合ループ
+
+				// データの総数を増やす
+				m_SignboardFile.nNumData++;
+			}
+		} while (nEnd != EOF);				// 読み込んだ文字列が EOF ではない場合ループ
+
+		// ファイルを閉じる
+		fclose(pFile);
+
+		// 成功状況を true にする
+		m_SignboardFile.bSuccess = true;
 	}
 	else
 	{ // ファイルが開けなかった場合

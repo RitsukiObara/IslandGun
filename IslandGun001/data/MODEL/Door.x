@@ -466,7 +466,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "GoldGloss.png";
+    "data\\TEXTURE\\GoldGloss.png";
    }
   }
   Material {

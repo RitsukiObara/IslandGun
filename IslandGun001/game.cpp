@@ -32,7 +32,11 @@
 //--------------------------------------------
 // マクロ定義
 //--------------------------------------------
-#define TRANS_COUNT		(80)		// 遷移カウント
+namespace
+{
+	const int TRANS_COUNT = 80;			// 遷移カウント
+	const char* ELEVATION_TXT = "data/TXT/Elevation.txt";		// 起伏地面のテキスト
+}
 
 //--------------------------------------------
 // 静的メンバ変数宣言
@@ -79,7 +83,7 @@ HRESULT CGame::Init(void)
 	CManager::Get()->GetCamera()->SetType(CCamera::TYPE_START);
 
 	// テキスト読み込み処理
-	CElevation::TxtSet();
+	CElevation::TxtSet(ELEVATION_TXT);
 
 	// モーションの読み込み処理
 	CMotion::Load(CMotion::STYLE_PLAYER);		// プレイヤー

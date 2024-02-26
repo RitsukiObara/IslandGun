@@ -116,6 +116,13 @@ void CTutorialPlayer::Update(void)
 		// 移動処理
 		Move();
 
+		if (GetMotion() != nullptr)
+		{ // モーションが NULL じゃない場合
+
+			// モーションの更新処理
+			GetMotion()->Update();
+		}
+
 		if (GetAction() != nullptr)
 		{ // 行動が NULL じゃない場合
 
@@ -161,6 +168,13 @@ void CTutorialPlayer::Update(void)
 		// 遷移状態処理
 		Trans();
 
+		if (GetMotion() != nullptr)
+		{ // モーションが NULL じゃない場合
+
+			// モーションの更新処理
+			GetMotion()->Update();
+		}
+
 		break;
 
 	default:
@@ -169,13 +183,6 @@ void CTutorialPlayer::Update(void)
 		assert(false);
 
 		break;
-	}
-
-	if (GetMotion() != nullptr)
-	{ // モーションが NULL じゃない場合
-
-		// モーションの更新処理
-		GetMotion()->Update();
 	}
 
 	// ヤシの実との当たり判定

@@ -14,6 +14,7 @@
 #include "ranking.h"
 #include "boss_collision.h"
 #include "motion.h"
+#include "signboard.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -40,6 +41,7 @@ public:			// 誰でもアクセスできる
 		TYPE_BANGFLOWER,	// 爆弾花
 		TYPE_WALL,			// 壁
 		TYPE_BOSSCOLL,		// ボスの当たり判定
+		TYPE_SIGNBOARD,		// 看板
 		TYPE_MAX			// この列挙型の総数
 	};
 
@@ -125,6 +127,14 @@ public:			// 誰でもアクセスできる
 		int nNum;				// 総数
 	};
 
+	// 看板の情報
+	struct SSignboardinfo
+	{
+		D3DXVECTOR3 pos;		// 位置
+		D3DXVECTOR3 rot;		// 向き
+		CSignboard::TYPE type;	// 種類
+	};
+
 	//************************************************************************************************************************************************
 	// 情報構造体
 	//************************************************************************************************************************************************
@@ -200,6 +210,14 @@ public:			// 誰でもアクセスできる
 		bool bSuccess;							// 成功状況
 	};
 
+	// 看板のファイル
+	struct SSignboardFile
+	{
+		SSignboardinfo aFile[MAX_FILE_DATA];	// 情報
+		int nNumData;							// 総数
+		bool bSuccess;							// 成功状況
+	};
+
 	CFile();					// コンストラクタ
 	~CFile();					// デストラクタ
 
@@ -222,6 +240,7 @@ public:			// 誰でもアクセスできる
 	void SetBangFlower(void);	// 爆弾花の設定処理
 	void SetWall(void);			// 壁の設定処理
 	void SetBossColl(CBossCollision** pColl);		// ボスの当たり判定の設定処理
+	void SetSignboard(void);	// 看板の設定処理
 
 	// 静的メンバ関数
 	static CFile* Create(void);		// 生成処理
@@ -242,6 +261,7 @@ private:		// 自分のみアクセスできる
 	HRESULT LoadBangFlower(void);	// 爆弾花のロード処理
 	HRESULT LoadWall(void);			// 壁のロード処理
 	HRESULT LoadBossColl(void);		// ボスの当たり判定のロード処理
+	HRESULT LoadSignboard(void);	// 看板のロード処理
 
 	// メンバ変数
 	SRankingInfo m_RankingInfo;			// ランキングの情報
@@ -254,6 +274,7 @@ private:		// 自分のみアクセスできる
 	SBangFlowerFile m_BangFlowerFile;	// 爆弾花の情報
 	SWallFile m_WallFile;				// 壁の情報
 	SBossCollFile m_BossCollFile;		// ボスの当たり判定の情報
+	SSignboardFile m_SignboardFile;		// 看板の情報
 
 	// 静的メンバ変数
 	static const char* c_apBooleanDisp[2];			// bool型の表示

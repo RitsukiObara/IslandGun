@@ -28,14 +28,14 @@ namespace
 	const D3DXVECTOR3 EXPLAIN_SIZE = D3DXVECTOR3(500.0f, 250.0f, 0.0f);									// 説明のサイズ
 	const char* EXPLAIN_TEXTURE[CSignboard::TYPE_MAX] = 	// 説明のテクスチャ
 	{
-		"Signboard001.png",
-		"Signboard002.png",
-		"Signboard003.png",
-		"Signboard004.png",
-		"Signboard005.png",
-		"Signboard006.png",
-		"Signboard007.png",
-		"Signboard008.png",
+		"data\\TEXTURE\\Signboard001.png",
+		"data\\TEXTURE\\Signboard002.png",
+		"data\\TEXTURE\\Signboard003.png",
+		"data\\TEXTURE\\Signboard004.png",
+		"data\\TEXTURE\\Signboard005.png",
+		"data\\TEXTURE\\Signboard006.png",
+		"data\\TEXTURE\\Signboard007.png",
+		"data\\TEXTURE\\Signboard008.png",
 	};
 	const D3DXCOLOR SCREEN_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);		// 背景の色
 	const float SCREEN_ADD_ALPHA = 0.01f;			// 背景の透明度の加算数

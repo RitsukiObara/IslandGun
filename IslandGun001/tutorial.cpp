@@ -20,7 +20,6 @@
 
 #include "player_tutorial.h"
 #include "balloon_spawner.h"
-#include "signboard.h"
 #include "door.h"
 
 //--------------------------------------------
@@ -29,6 +28,7 @@
 namespace
 {
 	const int TRANS_COUNT = 380;			// 遷移までのカウント数
+	const char* ELEVATION_TXT = "data\\TXT\\ElevationTutorial.txt";		// 起伏地面のテキスト
 }
 
 //--------------------------------------------
@@ -68,7 +68,7 @@ HRESULT CTutorial::Init(void)
 	CScene::Init();
 
 	// テキスト読み込み処理
-	CElevation::TxtSet();
+	CElevation::TxtSet(ELEVATION_TXT);
 
 	// モーションの読み込み処理
 	CMotion::Load(CMotion::STYLE_PLAYER);		// プレイヤー
@@ -77,14 +77,7 @@ HRESULT CTutorial::Init(void)
 	CMotion::Load(CMotion::STYLE_BOSS);			// ボス
 
 	// マップの生成
-	CManager::Get()->GetFile()->SetEnemy();
-	CManager::Get()->GetFile()->SetCoin();
-	CManager::Get()->GetFile()->SetGoldBone();
-	CManager::Get()->GetFile()->SetTree();
-	CManager::Get()->GetFile()->SetRock();
-	CManager::Get()->GetFile()->SetBlock();
-	CManager::Get()->GetFile()->SetBangFlower();
-	CManager::Get()->GetFile()->SetWall();
+	CManager::Get()->GetFile()->SetSignboard();		// 看板
 
 	// テキスト読み込み処理
 	CMesh::TxtSet();
@@ -96,8 +89,6 @@ HRESULT CTutorial::Init(void)
 	m_pPlayer = CTutorialPlayer::Create(NONE_D3DXVECTOR3);
 
 	CBalloonSpawner::Create(D3DXVECTOR3(300.0f, 600.0f, 0.0f));
-
-	CSignboard::Create(D3DXVECTOR3(3000.0f, 50.0f, 3000.0f), NONE_D3DXVECTOR3, CSignboard::TYPE::TYPE_JUMP);
 
 	// ドアを生成
 	m_pDoor = CDoor::Create(D3DXVECTOR3(0.0f, 0.0f, 400.0f));
