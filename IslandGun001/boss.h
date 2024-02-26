@@ -53,6 +53,13 @@ public:					// 誰でもアクセスできる
 		WEAK_MAX					// この列挙型の総数
 	};
 
+	// ダメージ状況関係
+	struct SDamage
+	{
+		int nCount;		// カウント
+		bool bDamage;	// ダメージ状況
+	};
+
 	CBoss();		// コンストラクタ
 	~CBoss();		// デストラクタ
 
@@ -87,7 +94,7 @@ public:					// 誰でもアクセスできる
 private:				// 自分だけアクセスできる
 
 	// メンバ関数
-	void DownBarrier(const D3DXVECTOR3& pos, const int nPart);	// ダウン中のバリア処理
+	void Damage(void);		// ダメージ処理
 
 	// メンバ変数
 	CMotion* m_pMotion;		// モーションの情報
@@ -96,6 +103,7 @@ private:				// 自分だけアクセスできる
 	CBossCollision* m_apColl[MAX_PARTS];	// 当たり判定の球
 	D3DXMATERIAL* m_apMatCopy[MAX_PARTS];	// マテリアルのコピー
 
+	SDamage m_damage;		// ダメージ情報
 	int m_aWeakPointLife[WEAK_MAX];			// 弱点のライフ
 	int m_nLife;			// 体力
 	bool m_bDown;			// ダウン状況

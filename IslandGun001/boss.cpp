@@ -53,6 +53,9 @@ namespace
 		14
 	};
 	const int WEAK_MATERIAL_NUM = 0;			// 弱点のマテリアル番号
+	const int BODY_IDX = 2;						// 胸のパーツ
+	const D3DXCOLOR WEAK_DAMAGE_COL = D3DXCOLOR(0.5f, 0.0f, 0.0f, 1.0f);	// 弱点を攻撃された時の色
+	const int DAMAGE_COUNT = 20;				// ダメージカウント数
 }
 
 // 静的メンバ変数
@@ -69,6 +72,8 @@ CBoss::CBoss() : CCharacter(CObject::TYPE_BOSS, CObject::PRIORITY_ENTITY)
 	m_pLifeUI = nullptr;			// 体力UIの情報
 	memset(m_apColl, 0, sizeof(m_apColl));			// 当たり判定の球
 	memset(m_apMatCopy, 0, sizeof(m_apMatCopy));	// マテリアルのコピー
+	m_damage.nCount = 0;			// ダメージカウント
+	m_damage.bDamage = false;		// ダメージ状況
 	for (int nCnt = 0; nCnt < WEAK_MAX; nCnt++)
 	{
 		m_aWeakPointLife[nCnt] = WEAK_LIFE[nCnt];	// 弱点のライフ
@@ -219,6 +224,9 @@ void CBoss::Update(void)
 		// モーションの更新処理
 		m_pMotion->Update();
 	}
+
+	// ダメージ処理
+	Damage();
 }
 
 //================================
@@ -270,6 +278,10 @@ void CBoss::BarrierBreak(const D3DXVECTOR3& pos, const int nPart, const int nDam
 
 			// ヒット処理
 			Hit(nDamage);
+
+			// ダメージ状況を true にする
+			m_damage.bDamage = true;
+			m_damage.nCount = 0;
 		}
 		else
 		{ // 上記以外
@@ -412,9 +424,11 @@ void CBoss::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 
 	// 全ての値を設定する
 	m_pLifeUI = CBossLifeUI::Create(MAX_LIFE);		// 体力UI
-	m_nLife = MAX_LIFE;		// 体力
-	m_bDown = false;		// ダウン状況
-	m_bHit = false;			// ヒット状況
+	m_nLife = MAX_LIFE;			// 体力
+	m_damage.nCount = 0;		// カウント
+	m_damage.bDamage = false;	// ダメージ状況
+	m_bDown = false;			// ダウン状況
+	m_bHit = false;				// ヒット状況
 
 	// 当たり判定を設定する
 	CManager::Get()->GetFile()->SetBossColl(&m_apColl[0]);
@@ -607,4 +621,32 @@ bool CBoss::IsHit(void) const
 {
 	// ヒット状況を返す
 	return m_bHit;
+}
+
+//===========================================
+// ダメージ処理
+//===========================================
+void CBoss::Damage(void)
+{
+	if (m_damage.bDamage == true)
+	{ // ダメージ状況が true の場合
+
+		// カウントを加算する
+		m_damage.nCount++;
+
+		// 色を変える
+		m_apMatCopy[BODY_IDX][WEAK_MATERIAL_NUM].MatD3D.Diffuse = WEAK_DAMAGE_COL;
+		m_apMatCopy[BODY_IDX][WEAK_MATERIAL_NUM].MatD3D.Emissive = WEAK_DAMAGE_COL;
+
+		if (m_damage.nCount >= DAMAGE_COUNT)
+		{ // 一定カウント経過した場合
+
+			// リセットする
+			m_damage.nCount = 0;
+			m_damage.bDamage = false;
+
+			// 色を変える
+			m_apMatCopy[BODY_IDX][WEAK_MATERIAL_NUM].MatD3D = GetHierarchy(BODY_IDX)->GetMaterial(WEAK_MATERIAL_NUM).MatD3D;
+		}
+	}
 }
