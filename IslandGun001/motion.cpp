@@ -292,15 +292,6 @@ void CMotion::Update(void)
 				}
 			}
 		}
-
-		// デバッグ
-		CManager::Get()->GetDebugProc()->Print("モーション中\n");
-	}
-	else
-	{ // 上記以外
-
-		// デバッグ
-		CManager::Get()->GetDebugProc()->Print("モーション終了\n");
 	}
 }
 

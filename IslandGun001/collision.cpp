@@ -325,9 +325,9 @@ bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, co
 			posEnemy = pEnemy->GetPos();				// ìGÇÃà íu
 			sizeEnemy = pEnemy->GetCollSize();		// ìGÇÃçÇÇ≥
 
-			if (pos.y <= posEnemy.y + sizeEnemy.y &&
-				pos.y + fHeight >= posEnemy.y &&
-				useful::CircleCollisionXZ(pos, posEnemy, fRadius, (sizeEnemy.x + sizeEnemy.z) * 0.5f) == true)
+			if (useful::CircleCollisionXZ(pos, posEnemy, fRadius, (sizeEnemy.x + sizeEnemy.z) * 0.5f) == true &&
+				pos.y <= posEnemy.y + sizeEnemy.y &&
+				pos.y + fHeight >= posEnemy.y)
 			{ // ìGÇ∆èdÇ»Ç¡ÇΩèÍçá
 
 				// ÉqÉbÉgèàóù
@@ -388,9 +388,9 @@ bool collision::EnemyHitToPlayer(CPlayer* pPlayer, const float fRadius, const fl
 			posEnemy = pEnemy->GetPos();			// ìGÇÃà íu
 			sizeEnemy = pEnemy->GetCollSize();		// ìGÇÃçÇÇ≥
 
-			if (posPlayer.y <= posEnemy.y + sizeEnemy.y &&
-				posPlayer.y + fHeight >= posEnemy.y &&
-				useful::CircleCollisionXZ(posPlayer, posEnemy, fRadius, (sizeEnemy.x + sizeEnemy.z) * 0.5f) == true)
+			if (useful::CircleCollisionXZ(posPlayer, posEnemy, fRadius, (sizeEnemy.x + sizeEnemy.z) * 0.5f) == true &&
+				posPlayer.y <= posEnemy.y + sizeEnemy.y &&
+				posPlayer.y + fHeight >= posEnemy.y)
 			{ // ìGÇ∆èdÇ»Ç¡ÇΩèÍçá
 
 				// ÉvÉåÉCÉÑÅ[ÇÃÉqÉbÉgèàóù
@@ -827,55 +827,57 @@ bool collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const
 			// ä‚ÇÃîºåaÇéÊìæÇ∑ÇÈ
 			fRadiusRock = pRock->GetRadius();
 
-			// ä‚ÇÃè„ÇÃçÇÇ≥ÇéÊìæÇ∑ÇÈ
-			fTopRock = pRock->GetTopHeight();
+			if (useful::CircleCollisionXZ(*pos, posRock, fRadius, fRadiusRock) == true)
+			{ // â~é¸Ç…ì¸Ç¡ÇΩèÍçá
 
-			// ä‚ÇÃâ∫ÇÃçÇÇ≥ÇéÊìæÇ∑ÇÈ
-			fBottomRock = pRock->GetBottomHeight();
+				// ä‚ÇÃè„ÇÃçÇÇ≥ÇéÊìæÇ∑ÇÈ
+				fTopRock = pRock->GetTopHeight();
 
-			if (posRock.y + fTopRock <= posOld.y &&
-				posRock.y + fTopRock >= pos->y &&
-				useful::CircleCollisionXZ(*pos, posRock, fRadius, fRadiusRock) == true)
-			{ // è„Ç…Ç‘Ç¬Ç©Ç¡ÇΩèÍçá
+				// ä‚ÇÃâ∫ÇÃçÇÇ≥ÇéÊìæÇ∑ÇÈ
+				fBottomRock = pRock->GetBottomHeight();
 
-				// à íuÇê›íËÇ∑ÇÈ
-				pos->y = posRock.y + fTopRock + COLLISION_ADD_DIFF_LENGTH;
+				if (posRock.y + fTopRock <= posOld.y &&
+					posRock.y + fTopRock >= pos->y)
+				{ // è„Ç…Ç‘Ç¬Ç©Ç¡ÇΩèÍçá
 
-				if (bJump != nullptr)
-				{ // ÉWÉÉÉìÉvèÛãµÇ™ NULL Ç∂Ç·Ç»Ç¢èÍçá
+					// à íuÇê›íËÇ∑ÇÈ
+					pos->y = posRock.y + fTopRock + COLLISION_ADD_DIFF_LENGTH;
 
-					// ÉWÉÉÉìÉvèÛãµÇ false Ç…Ç∑ÇÈ
-					*bJump = false;
+					if (bJump != nullptr)
+					{ // ÉWÉÉÉìÉvèÛãµÇ™ NULL Ç∂Ç·Ç»Ç¢èÍçá
+
+						// ÉWÉÉÉìÉvèÛãµÇ false Ç…Ç∑ÇÈ
+						*bJump = false;
+					}
+
+					if (fGravity != nullptr)
+					{ // èdóÕÇ™ NULL Ç∂Ç·Ç»Ç¢èÍçá
+
+						// èdóÕÇ0Ç…Ç∑ÇÈ
+						*fGravity = 0.0f;
+					}
+
+					// ìñÇΩÇËîªíËèÛãµÇ true Ç…Ç∑ÇÈ
+					bCollision = true;
 				}
+				else if (posRock.y + fBottomRock >= posOld.y + fHeight &&
+					posRock.y + fBottomRock <= pos->y + fHeight)
+				{ // â∫Ç…Ç‘Ç¬Ç©Ç¡ÇΩèÍçá
 
-				if (fGravity != nullptr)
-				{ // èdóÕÇ™ NULL Ç∂Ç·Ç»Ç¢èÍçá
+					// à íuÇê›íËÇ∑ÇÈ
+					pos->y = posRock.y + fBottomRock - (fHeight + COLLISION_ADD_DIFF_LENGTH);
 
-					// èdóÕÇ0Ç…Ç∑ÇÈ
-					*fGravity = 0.0f;
+					// ìñÇΩÇËîªíËèÛãµÇ true Ç…Ç∑ÇÈ
+					bCollision = true;
 				}
+				else if (pos->y <= posRock.y + fTopRock &&
+					pos->y + fHeight >= posRock.y + fBottomRock &&
+					useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius) == true)
+				{ // ìñÇΩÇ¡ÇΩèÍçá
 
-				// ìñÇΩÇËîªíËèÛãµÇ true Ç…Ç∑ÇÈ
-				bCollision = true;
-			}
-			else if (posRock.y + fBottomRock >= posOld.y + fHeight &&
-				posRock.y + fBottomRock <= pos->y + fHeight &&
-				useful::CircleCollisionXZ(*pos, posRock, fRadius, fRadiusRock) == true)
-			{ // â∫Ç…Ç‘Ç¬Ç©Ç¡ÇΩèÍçá
-
-				// à íuÇê›íËÇ∑ÇÈ
-				pos->y = posRock.y + fBottomRock - (fHeight + COLLISION_ADD_DIFF_LENGTH);
-
-				// ìñÇΩÇËîªíËèÛãµÇ true Ç…Ç∑ÇÈ
-				bCollision = true;
-			}
-			else if (pos->y <= posRock.y + fTopRock &&
-				pos->y + fHeight >= posRock.y + fBottomRock &&
-				useful::CylinderCollision(pos, posRock, fRadiusRock + fRadius) == true)
-			{ // ìñÇΩÇ¡ÇΩèÍçá
-
-				// ìñÇΩÇËîªíËèÛãµÇ true Ç…Ç∑ÇÈ
-				bCollision = true;
+					// ìñÇΩÇËîªíËèÛãµÇ true Ç…Ç∑ÇÈ
+					bCollision = true;
+				}
 			}
 
 			if (pRock == pRockEnd)
@@ -937,9 +939,9 @@ bool collision::BangFlowerHit(const D3DXVECTOR3& pos, const float fRadius, const
 				// îöíeÇÃçÇÇ≥ÇéÊìæÇ∑ÇÈ
 				fHeightBomb = pBomb->GetFileData().vtxMax.y;
 
-				if (pos.y + fHeight >= posBomb.y &&
-					pos.y <= posBomb.y + fHeightBomb &&
-					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
+				if (useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true &&
+					pos.y + fHeight >= posBomb.y &&
+					pos.y <= posBomb.y + fHeightBomb)
 				{ // îÕàÕì‡Ç…Ç¢ÇΩèÍçá
 
 					// ÉqÉbÉgèàóù
@@ -1076,9 +1078,9 @@ bool collision::BombHitToDagger(const D3DXVECTOR3& pos, const float fRadius, con
 				fRadiusBomb = pBomb->GetFileData().fRadius;
 				fHeightBomb = pBomb->GetFileData().vtxMax.y;
 
-				if (pos.y + fHeight >= posBomb.y &&
-					pos.y <= posBomb.y + fHeightBomb &&
-					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
+				if (useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true &&
+					pos.y + fHeight >= posBomb.y &&
+					pos.y <= posBomb.y + fHeightBomb)
 				{ // îÕàÕì‡Ç…Ç¢ÇΩèÍçá
 
 					// å¸Ç´ÇéZèoÇ∑ÇÈ
@@ -1148,9 +1150,9 @@ bool collision::BombHitToSlashRipple(const D3DXVECTOR3& pos, const float fRadius
 				fRadiusBomb = pBomb->GetFileData().fRadius;
 				fHeightBomb = pBomb->GetFileData().vtxMax.y;
 
-				if (pos.y + fHeight >= posBomb.y &&
-					pos.y <= posBomb.y + fHeightBomb &&
-					useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true)
+				if (useful::CircleCollisionXZ(pos, posBomb, fRadius, fRadiusBomb) == true &&
+					pos.y + fHeight >= posBomb.y &&
+					pos.y <= posBomb.y + fHeightBomb)
 				{ // îÕàÕì‡Ç…Ç¢ÇΩèÍçá
 
 					// å¸Ç´ÇéZèoÇ∑ÇÈ
@@ -1226,9 +1228,9 @@ void collision::ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, 
 				// ä‚ÇÃâ∫ÇÃçÇÇ≥ÇéÊìæÇ∑ÇÈ
 				fBottomRock = pRock->GetBottomHeight();
 
-				if (pos.y <= posRock.y + fTopRock &&
-					pos.y + fHeight >= posRock.y + fBottomRock &&
-					useful::CircleCollisionXZ(pos, posRock, fRadius, fRadiusRock) == true)
+				if (useful::CircleCollisionXZ(pos, posRock, fRadius, fRadiusRock) == true &&
+					pos.y <= posRock.y + fTopRock &&
+					pos.y + fHeight >= posRock.y + fBottomRock)
 				{ // îÕàÕì‡Ç…Ç¢ÇΩèÍçá
 
 					// îjâÛèàóù
@@ -1287,9 +1289,9 @@ void collision::ExplosionHitToEnemy(const D3DXVECTOR3& pos, const float fRadius,
 				fRadiusEnemy = pEnemy->GetCollSize().x;
 				fHeightEnemy = pEnemy->GetCollSize().y;
 
-				if (pos.y <= posEnemy.y + fHeightEnemy &&
-					pos.y + fHeight >= posEnemy.y &&
-					useful::CircleCollisionXZ(pos, posEnemy, fRadius, fRadiusEnemy) == true)
+				if (useful::CircleCollisionXZ(pos, posEnemy, fRadius, fRadiusEnemy) == true &&
+					pos.y <= posEnemy.y + fHeightEnemy &&
+					pos.y + fHeight >= posEnemy.y)
 				{ // îÕàÕì‡Ç…Ç¢ÇΩèÍçá
 
 					// îjâÛèàóù
@@ -1347,9 +1349,9 @@ bool collision::ExplosionHitToPlayer(CPlayer* pPlayer, const float fRadius, cons
 			fRadiusExpl = pBombExplosion->GetCircum();
 			fHeightExpl = pBombExplosion->GetHeight();
 
-			if (pos.y <= posExpl.y + fHeightExpl &&
-				pos.y + fHeight >= posExpl.y - fHeightExpl &&
-				useful::CircleCollisionXZ(pos, posExpl, fRadius, fRadiusExpl) == true)
+			if (useful::CircleCollisionXZ(pos, posExpl, fRadius, fRadiusExpl) == true &&
+				pos.y <= posExpl.y + fHeightExpl &&
+				pos.y + fHeight >= posExpl.y - fHeightExpl)
 			{ // îÕàÕì‡Ç…Ç¢ÇΩèÍçá
 
 				// êÅÇ´îÚÇ‘å¸Ç´ÇéZèoÇ∑ÇÈ
@@ -1864,9 +1866,9 @@ bool collision::RippleHit(const D3DXVECTOR3& pos, const float fRadius, const flo
 			fRadiusRipple = pRipple->GetFileData().fRadius * pRipple->GetScale().x;
 			fHeightRipple = pRipple->GetFileData().vtxMax.y;
 
-			if (pos.y <= posRipple.y + fHeightRipple &&
-				pos.y + fHeight >= posRipple.y &&
-				useful::CircleCollisionXZ(pos, posRipple, fRadius, fRadiusRipple) == true)
+			if (useful::CircleCollisionXZ(pos, posRipple, fRadius, fRadiusRipple) == true &&
+				pos.y <= posRipple.y + fHeightRipple &&
+				pos.y + fHeight >= posRipple.y)
 			{ // éaåÇÇ…ìñÇΩÇ¡ÇΩèÍçá
 
 				if (fRotSmash != nullptr)
@@ -1934,9 +1936,9 @@ bool collision::WindShotHit(const D3DXVECTOR3& pos, const float fRadius, const f
 				fRadiusWind = pWind->GetCircum() + pWind->GetWidth();
 				fHeightWind = pWind->GetHeight() * pWind->GetVortex();
 
-				if (pos.y <= posWind.y + fHeightWind &&
-					pos.y + fHeight >= posWind.y &&
-					useful::CircleCollisionXZ(pos, posWind, fRadius, fRadiusWind) == true)
+				if (useful::CircleCollisionXZ(pos, posWind, fRadius, fRadiusWind) == true &&
+					pos.y <= posWind.y + fHeightWind &&
+					pos.y + fHeight >= posWind.y)
 				{ // ïóçUåÇÇ…ìñÇΩÇ¡ÇΩèÍçá
 
 					if (fSmashRot != nullptr)
@@ -2002,9 +2004,9 @@ bool collision::FireShotHit(const D3DXVECTOR3& pos, const float fRadius, const f
 			fRadiusFire = pFire->GetCircum();
 			fHeightFire = pFire->GetHeight();
 
-			if (pos.y <= posFire.y + fHeightFire &&
-				pos.y + fHeight >= posFire.y &&
-				useful::CircleCollisionXZ(pos, posFire, fRadius, fRadiusFire) == true)
+			if (useful::CircleCollisionXZ(pos, posFire, fRadius, fRadiusFire) == true &&
+				pos.y <= posFire.y + fHeightFire &&
+				pos.y + fHeight >= posFire.y)
 			{ // âäçUåÇÇ…ìñÇΩÇ¡ÇΩèÍçá
 
 				if (fSmashRot != nullptr)

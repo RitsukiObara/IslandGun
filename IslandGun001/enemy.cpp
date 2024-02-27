@@ -147,17 +147,21 @@ void CEnemy::Update(void)
 	// 敵同士の当たり判定
 	collision::EnemyHitToEnemy(this);
 
-	if (m_state == STATE_NONE &&
-		(collision::WindShotHit(GetPos(), m_collSize.x, m_collSize.y) == true ||
-		collision::FireShotHit(GetPos(), m_collSize.x, m_collSize.y) == true))
-	{ // 当たった場合
+	switch (m_state)
+	{
+	case CEnemy::STATE_NONE:
 
-		// ヒット処理
-		Hit(WIND_SHOT_DAMAGE, WIND_SHOT_KNOCKBACK);
-	}
+		if (collision::WindShotHit(GetPos(), m_collSize.x, m_collSize.y) == true ||
+			collision::FireShotHit(GetPos(), m_collSize.x, m_collSize.y) == true)
+		{ // 当たった場合
 
-	if (m_state == STATE_DAMAGE)
-	{ // ダメージ状態の場合
+			// ヒット処理
+			Hit(WIND_SHOT_DAMAGE, WIND_SHOT_KNOCKBACK);
+		}
+
+		break;
+
+	case CEnemy::STATE_DAMAGE:
 
 		// 状態カウントを加算する
 		m_nStateCount++;
@@ -171,6 +175,15 @@ void CEnemy::Update(void)
 			// 通常カウントにする
 			m_state = STATE_NONE;
 		}
+
+		break;
+
+	default:
+
+		// 停止
+		assert(false);
+
+		break;
 	}
 
 	// ステージの当たり判定
