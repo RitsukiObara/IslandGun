@@ -65,6 +65,7 @@ private:		// 自分だけアクセスできる
 	D3DXVECTOR3 m_posDest;			// 目的の位置
 	D3DXVECTOR3 m_move;				// 移動量
 	STATE m_state;					// 状態
+	int m_nFallCount;				// 墜落カウント
 };
 
 #endif

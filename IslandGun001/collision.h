@@ -39,7 +39,7 @@ namespace collision
 	bool ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posOld, const float fWidth);			// ‹N•š’n–Ê‚Ì”ÍˆÍŠO‚Ì“–‚½‚è”»’è
 
 	// ¬”»‚Æ‚Ì“–‚½‚è”»’è
-	void CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size);				// ¬”»‚Æ‚Ì“–‚½‚è”»’è
+	void CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size, const int nAreaIdx);				// ¬”»‚Æ‚Ì“–‚½‚è”»’è
 
 	// “G‚Æ‚Ì“–‚½‚è”»’è
 	bool EnemyHitToGun(const CBullet& bullet);			// “G‚Æe‚Ì“–‚½‚è”»’è

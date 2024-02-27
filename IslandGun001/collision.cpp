@@ -153,7 +153,7 @@ bool collision::ElevOutRangeCollision(D3DXVECTOR3* pPos, const D3DXVECTOR3& posO
 //===============================
 // 小判との当たり判定
 //===============================
-void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size)
+void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posCoin = NONE_D3DXVECTOR3;
@@ -162,7 +162,7 @@ void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size)
 	D3DXVECTOR3 posPlayer = pPlayer->GetPos();
 	D3DXVECTOR3 vtxMax = size;		// 最大値
 	D3DXVECTOR3 vtxMin = useful::VtxMinConv(size);	// 最小値
-	CListManager<CCoin*> list = CCoin::GetList();
+	CListManager<CCoin*> list = CCoin::GetList(nAreaIdx);
 	CCoin* pCoin = nullptr;			// 先頭の小判
 	CCoin* pCoinEnd = nullptr;		// 末尾の値
 	int nIdx = 0;

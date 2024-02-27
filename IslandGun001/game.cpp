@@ -12,6 +12,7 @@
 #include "game.h"
 #include "fade.h"
 #include "file.h"
+#include "light.h"
 #include "renderer.h"
 #include "texture.h"
 
@@ -150,6 +151,13 @@ void CGame::Uninit(void)
 
 	// 終了カウントを初期化する
 	m_nFinishCount = 0;
+
+	if (CManager::Get()->GetLight() != nullptr)
+	{ // ライトが NULL じゃない場合
+
+		// ライトの色をリセットする
+		CManager::Get()->GetLight()->ResetCol();
+	}
 
 	// 終了処理
 	CScene::Uninit();

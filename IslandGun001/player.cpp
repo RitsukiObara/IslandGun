@@ -447,9 +447,6 @@ void CPlayer::Update(void)
 		// ƒ„ƒV‚ÌÀ‚Æ‚Ì“–‚½‚è”»’è
 		collision::PalmFruitHit(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
 
-		// ¬”»‚Æ‚Ì“–‚½‚è”»’è
-		collision::CoinCollision(this, COLLISION_SIZE);
-
 		// ‹à‚Ìœ‚Æ‚Ì“–‚½‚è”»’è
 		collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
@@ -1051,6 +1048,9 @@ void CPlayer::Collision(void)
 
 		if (area::IndexCheck(nIdx) == true)
 		{ // ‹æ•ª“à‚Ìê‡
+
+			// ¬”»‚Æ‚Ì“–‚½‚è”»’è
+			collision::CoinCollision(this, COLLISION_SIZE, nIdx);
 
 			// –Ø‚Æ‚Ì“–‚½‚è”»’è
 			collision::TreeCollision(&pos, COLLISION_SIZE.x, nIdx);

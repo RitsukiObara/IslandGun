@@ -34,6 +34,7 @@ namespace
 	const float TRANS_CORRECT = 0.05f;				// 遷移の時の補正係数
 	const int MOVE_COUNT = 65;						// 移動するカウント
 	const float MOVE_DEPTH = 180.0f;				// 移動する目的のZ座標
+	const float TRANS_GRAVITY = 1.0f;				// 遷移状態中の重力
 }
 
 //=========================================
@@ -188,9 +189,6 @@ void CTutorialPlayer::Update(void)
 	// ヤシの実との当たり判定
 	collision::PalmFruitHit(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
 
-	// 小判との当たり判定
-	collision::CoinCollision(this, COLLISION_SIZE);
-
 	// 金の骨との当たり判定
 	collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
@@ -321,6 +319,7 @@ void CTutorialPlayer::Trans(void)
 	CDoor* pDoor = CTutorial::GetDoor();	// ドアの情報
 	D3DXVECTOR3 pos = GetPos();				// 位置
 	D3DXVECTOR3 rot = GetRot();				// 向き
+	D3DXVECTOR3 move = GetMove();			// 移動量
 	D3DXVECTOR3 rotCamera = CManager::Get()->GetCamera()->GetRot();
 
 	if (pDoor != nullptr)
@@ -361,8 +360,12 @@ void CTutorialPlayer::Trans(void)
 		}
 	}
 
-	// 位置と向きを適用
+	// 重力処理
+	useful::Gravity(&move.y, &pos.y, TRANS_GRAVITY);
+
+	// 情報を適用
 	SetPos(pos);
 	SetRot(rot);
+	SetMove(move);
 	CManager::Get()->GetCamera()->SetRot(rotCamera);
 }

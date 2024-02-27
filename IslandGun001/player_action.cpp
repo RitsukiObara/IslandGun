@@ -38,7 +38,7 @@ namespace
 
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ダガー攻撃時の高さ
 	const float ATTACK_DAGGER_RADIUS = 240.0f;	// ダガー攻撃時の半径
-	const int DAGGER_ATTACK = 60;				// ダガー攻撃時の攻撃力
+	const int DAGGER_BOSS_ATTACK = 100;			// ボスへのダガーの攻撃力
 	const float DAGGER_MOVE = 10.0f;			// ダガー状態の移動量
 	const int DAGGER_MOVE_COUNT = 25;			// ダガー状態で動くカウント数
 	const int DAGGER_ATTACK_START = 8;			// ダガーの攻撃判定が始まるカウント数
@@ -425,7 +425,7 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 		{ // ボスに攻撃がまだ通っていなかった場合
 
 			// ボスとの当たり判定
-			collision::BossHit(D3DXVECTOR3(pos.x, pos.y + (ATTACK_DAGGER_HEIGHT * 0.5f), pos.z), ATTACK_DAGGER_RADIUS * 0.5f, DAGGER_ATTACK);
+			collision::BossHit(D3DXVECTOR3(pos.x, pos.y + (ATTACK_DAGGER_HEIGHT * 0.5f), pos.z), ATTACK_DAGGER_RADIUS * 0.5f, DAGGER_BOSS_ATTACK);
 
 			// ボスに攻撃が通った
 			m_bBossAttack = true;
@@ -602,7 +602,7 @@ void CPlayerAction::SwoopProcess(CPlayer* pPlayer)
 		{ // ボスに攻撃がまだ通っていなかった場合
 
 			// ボスとの当たり判定
-			collision::BossHit(D3DXVECTOR3(pos.x, pos.y + (ATTACK_DAGGER_HEIGHT * 0.5f), pos.z), ATTACK_DAGGER_RADIUS * 0.5f, DAGGER_ATTACK);
+			collision::BossHit(D3DXVECTOR3(pos.x, pos.y + (ATTACK_DAGGER_HEIGHT * 0.5f), pos.z), ATTACK_DAGGER_RADIUS * 0.5f, DAGGER_BOSS_ATTACK);
 
 			// ボスに攻撃が通った
 			m_bBossAttack = true;
