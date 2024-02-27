@@ -194,11 +194,11 @@ void CTutorialPlayer::Update(void)
 	// 金の骨との当たり判定
 	collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
-	// 木との当たり判定
-	TreeCollision();
-
 	// 起伏地面との当たり判定処理
 	ElevationCollision();
+
+	// 当たり判定処理
+	Collision();
 
 	if (CTutorial::GetState() == CTutorial::STATE_NONE)
 	{ // 通常状態以外の場合
@@ -206,15 +206,6 @@ void CTutorialPlayer::Update(void)
 		// ドアとの当たり判定
 		DoorCollision();
 	}
-
-	// ブロックとの当たり判定処理
-	BlockCollision();
-
-	// 岩との当たり判定
-	RockCollision();
-
-	// 壁との当たり判定
-	WallCollision();
 }
 
 //===========================================

@@ -38,7 +38,7 @@ namespace
 
 	const float ATTACK_DAGGER_HEIGHT = 150.0f;	// ダガー攻撃時の高さ
 	const float ATTACK_DAGGER_RADIUS = 240.0f;	// ダガー攻撃時の半径
-	const int DAGGER_ATTACK = 100;				// ダガー攻撃時の攻撃力
+	const int DAGGER_ATTACK = 60;				// ダガー攻撃時の攻撃力
 	const float DAGGER_MOVE = 10.0f;			// ダガー状態の移動量
 	const int DAGGER_MOVE_COUNT = 25;			// ダガー状態で動くカウント数
 	const int DAGGER_ATTACK_START = 8;			// ダガーの攻撃判定が始まるカウント数

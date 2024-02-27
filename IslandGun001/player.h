@@ -101,6 +101,7 @@ public:			// 誰でもアクセスできる
 	SState GetState(void) const;				// 状態の取得処理
 	void SetEnableJump(const bool bJump);		// ジャンプ状況の設定処理
 	bool IsJump(void) const;					// ジャンプ状況の取得処理
+	int GetAreaIdx(void) const;					// 区分の番号の取得処理
 
 	// 静的メンバ関数
 	static CPlayer* Create(const D3DXVECTOR3& pos);	// 生成処理
@@ -111,13 +112,12 @@ protected:		// 自分と派生クラスだけアクセスできる
 	void StateManager(void);		// 状態管理処理
 	void Move(void);				// 移動処理
 	void EmergentReload(void);		// 緊急のリロード処理
-	void ElevationCollision(void);	// 起伏地面の当たり判定処理
-	void TreeCollision(void);		// 木との当たり判定
-	void BlockCollision(void);		// ブロックとの当たり判定
-	void RockCollision(void);		// 岩との当たり判定
-	void WallCollision(void);		// 壁との当たり判定
-	void AlterCollision(void);		// 際算との当たり判定
-	void StageCollision(void);		// ステージとの当たり判定
+
+	void ElevationCollision(void);					// 起伏地面の当たり判定処理
+	void Collision(void);							// 当たり判定処理
+	void BlockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin, const int nAreaIdx);		// ブロックとの当たり判定
+	void AlterCollision(void);						// 際算との当たり判定
+	void StageCollision(void);						// ステージとの当たり判定
 
 private:		// 自分だけアクセスできる
 
@@ -141,6 +141,7 @@ private:		// 自分だけアクセスできる
 	D3DXVECTOR3 m_move;			// 移動量
 	SState m_stateInfo;			// 状態関連の構造体
 	int m_nLife;				// 体力
+	int m_nAreaIdx;				// 区分の番号
 	bool m_bMove;				// 移動状況
 	bool m_bJump;				// ジャンプ状況
 

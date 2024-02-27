@@ -12,6 +12,7 @@
 #include "renderer.h"
 #include "debugproc.h"
 #include "model.h"
+#include "area.h"
 #include "useful.h"
 
 #include "player.h"
@@ -94,6 +95,7 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_rotDest = NONE_D3DXVECTOR3;			// 目標の向き
 	m_move = NONE_D3DXVECTOR3;				// 移動量
 	m_nLife = MAX_LIFE;						// 体力
+	m_nAreaIdx = 0;							// 区分の番号
 	m_bMove = false;						// 移動状況
 	m_bJump = false;						// ジャンプ状況
 }
@@ -439,6 +441,9 @@ void CPlayer::Update(void)
 			m_pLifeUI->SetLife(m_nLife);
 		}
 
+		// 区分の設定処理
+		m_nAreaIdx = area::SetFieldIdx(GetPos());
+
 		// ヤシの実との当たり判定
 		collision::PalmFruitHit(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
 
@@ -448,20 +453,11 @@ void CPlayer::Update(void)
 		// 金の骨との当たり判定
 		collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
-		// 木との当たり判定
-		TreeCollision();
-
 		// 起伏地面との当たり判定処理
 		ElevationCollision();
 
-		// ブロックとの当たり判定処理
-		BlockCollision();
-
-		// 岩との当たり判定
-		RockCollision();
-
-		// 壁との当たり判定
-		WallCollision();
+		// 当たり判定処理
+		Collision();
 
 		// 祭壇との当たり判定
 		AlterCollision();
@@ -838,6 +834,9 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 	m_nLife = MAX_LIFE;					// 体力
 	m_bMove = false;					// 移動状況
 	m_bJump = false;					// ジャンプ状況
+
+	// 区分の設定処理
+	m_nAreaIdx = area::SetFieldIdx(GetPos());
 }
 
 //===========================================
@@ -962,6 +961,15 @@ bool CPlayer::IsJump(void) const
 }
 
 //=======================================
+// 区分の番号の取得処理
+//=======================================
+int CPlayer::GetAreaIdx(void) const
+{
+	// 区分の番号を返す
+	return m_nAreaIdx;
+}
+
+//=======================================
 // 起伏地面の当たり判定処理
 //=======================================
 void CPlayer::ElevationCollision(void)
@@ -1024,6 +1032,41 @@ void CPlayer::ElevationCollision(void)
 	m_bJump = bJump;
 
 	// 位置を更新する
+	SetPos(pos);
+}
+
+//=======================================
+// 当たり判定処理
+//=======================================
+void CPlayer::Collision(void)
+{
+	D3DXVECTOR3 pos = GetPos();									// 位置
+	D3DXVECTOR3 posOld = GetPosOld();							// 前回の位置
+	D3DXVECTOR3 vtxMin = useful::VtxMinConv(COLLISION_SIZE);	// 頂点の最小値
+	int nIdx = 0;
+
+	for (int nCnt = 0; nCnt < area::NUM_COLL; nCnt++)
+	{
+		nIdx = m_nAreaIdx + area::COLL_ADD_IDX[nCnt];
+
+		if (area::IndexCheck(nIdx) == true)
+		{ // 区分内の場合
+
+			// 木との当たり判定
+			collision::TreeCollision(&pos, COLLISION_SIZE.x, nIdx);
+
+			// ブロックとの当たり判定
+			BlockCollision(&pos, posOld, COLLISION_SIZE, vtxMin, nIdx);
+
+			// 岩との当たり判定
+			collision::RockCollision(&pos, posOld, COLLISION_SIZE.x, COLLISION_SIZE.y, nIdx, &m_move.y, &m_bJump);
+
+			// 岩との当たり判定
+			collision::WallCollision(&pos, posOld, COLLISION_SIZE, vtxMin, nIdx);
+		}
+	}
+
+	// 位置を適用する
 	SetPos(pos);
 }
 
@@ -1188,31 +1231,13 @@ void CPlayer::EmergentReload(void)
 }
 
 //=======================================
-// 木との当たり判定
-//=======================================
-void CPlayer::TreeCollision(void)
-{
-	// 位置を取得する
-	D3DXVECTOR3 pos = GetPos();
-
-	// 木との当たり判定
-	collision::TreeCollision(&pos, COLLISION_SIZE.x);
-
-	// 位置を適用する
-	SetPos(pos);
-}
-
-//=======================================
 // ブロックとの当たり判定
 //=======================================
-void CPlayer::BlockCollision(void)
+void CPlayer::BlockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	collision::SCollision coll = { false,false,false,false,false,false };				// 当たり判定の変数
-	D3DXVECTOR3 pos = GetPos();							// 位置を取得する
-	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-COLLISION_SIZE.x, 0.0f, -COLLISION_SIZE.z);		// 最小値を取得する
-	D3DXVECTOR3 vtxMax = COLLISION_SIZE;				// 最大値を取得する
-	CListManager<CBlock*> list = CBlock::GetList();
+	CListManager<CBlock*> list = CBlock::GetList(nAreaIdx);
 	CBlock* pBlock = nullptr;		// 先頭の値
 	CBlock* pBlockEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
@@ -1233,9 +1258,9 @@ void CPlayer::BlockCollision(void)
 			// 六面体の当たり判定
 			coll = collision::HexahedronClush
 			(
-				&pos,
+				pos,
 				pBlock->GetPos(),
-				GetPosOld(),
+				posOld,
 				pBlock->GetPosOld(),
 				vtxMin,
 				pBlock->GetVtxMin(),
@@ -1267,45 +1292,6 @@ void CPlayer::BlockCollision(void)
 			nIdx++;
 		}
 	}
-
-	// 位置を適用する
-	SetPos(pos);
-}
-
-//=======================================
-// 岩との当たり判定
-//=======================================
-void CPlayer::RockCollision(void)
-{
-	// 位置を取得する
-	D3DXVECTOR3 pos = GetPos();
-
-	// 岩との当たり判定
-	collision::RockCollision(&pos, GetPosOld(), COLLISION_SIZE.x, COLLISION_SIZE.y, &m_move.y, &m_bJump);
-
-	// 位置の設定処理
-	SetPos(pos);
-}
-
-//=======================================
-// 壁との当たり判定
-//=======================================
-void CPlayer::WallCollision(void)
-{
-	// 位置を取得する
-	D3DXVECTOR3 pos = GetPos();
-
-	// 岩との当たり判定
-	collision::WallCollision
-	(
-		&pos,
-		GetPosOld(),
-		COLLISION_SIZE,
-		D3DXVECTOR3(-COLLISION_SIZE.x, 0.0f, -COLLISION_SIZE.z)
-	);
-
-	// 位置の設定処理
-	SetPos(pos);
 }
 
 //=======================================
@@ -1316,7 +1302,7 @@ void CPlayer::AlterCollision(void)
 	// 位置を取得する
 	D3DXVECTOR3 pos = GetPos();
 
-	// 岩との当たり判定
+	// 祭壇との当たり判定
 	collision::AlterCollision
 	(
 		&pos,

@@ -12,6 +12,7 @@
 #include "bomb.h"
 #include "texture.h"
 #include "collision.h"
+#include "area.h"
 #include "useful.h"
 
 #include "game.h"
@@ -63,6 +64,7 @@ CBomb::CBomb() : CModel(TYPE_NONE, PRIORITY_ENTITY)
 	m_col = NONE_D3DXCOLOR;		// 色
 	m_move = NONE_D3DXVECTOR3;	// 移動量
 	m_state = STATE_GROWTH;		// 状態
+	m_nAreaIdx = 0;				// 区分の番号
 	m_nBoundCount = 0;			// バウンドカウント
 	m_nExplosionCount = 0;		// 爆発カウント
 	m_bAdd = false;				// 加算状況
@@ -156,6 +158,9 @@ void CBomb::Update(void)
 
 			// 重力処理
 			Gravity();
+
+			// 区分の番号設定処理
+			m_nAreaIdx = area::SetFieldIdx(GetPos());
 
 			// 当たり判定
 			Collision();
@@ -262,6 +267,9 @@ void CBomb::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot)
 	m_nBoundCount = 0;				// バウンドカウント
 	m_nExplosionCount = 0;			// 爆発カウント
 	m_bAdd = false;					// 加算状況
+
+	// 区分の番号設定処理
+	m_nAreaIdx = area::SetFieldIdx(GetPos());
 }
 
 //=======================================
@@ -472,12 +480,23 @@ void CBomb::Collision(void)
 	D3DXVECTOR3 posOld = GetPosOld();			// 前回の位置
 	D3DXVECTOR3 vtxMax = GetFileData().vtxMax;	// 最大値
 	D3DXVECTOR3 vtxMin = GetFileData().vtxMin;	// 最小値
+	int nIdx = 0;			// 区分の番号
 
-	// 当たり判定
-	collision::RockCollision(&pos, posOld, vtxMax.x, vtxMax.y, &m_move.y);
-	collision::TreeCollision(&pos, vtxMax.x);
-	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
-	collision::BlockHit(&pos, posOld, vtxMax, vtxMin);
+	for (int nCnt = 0; nCnt < area::NUM_COLL; nCnt++)
+	{
+		nIdx = m_nAreaIdx + area::COLL_ADD_IDX[nCnt];
+
+		if (area::IndexCheck(nIdx) == true)
+		{ // 区分内の場合
+
+			// 当たり判定
+			collision::RockCollision(&pos, posOld, vtxMax.x, vtxMax.y, nIdx, &m_move.y);
+			collision::TreeCollision(&pos, vtxMax.x, nIdx);
+			collision::WallCollision(&pos, posOld, vtxMax, vtxMin, nIdx);
+			collision::BlockHit(&pos, posOld, vtxMax, vtxMin, nIdx);
+		}
+	}
+
 	collision::AlterCollision(&pos, posOld, vtxMax, vtxMin);
 	collision::StageCollision(&pos, GetFileData().fRadius);
 

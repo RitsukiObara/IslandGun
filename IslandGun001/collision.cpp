@@ -326,6 +326,7 @@ bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, co
 			sizeEnemy = pEnemy->GetCollSize();		// 敵の高さ
 
 			if (useful::CircleCollisionXZ(pos, posEnemy, fRadius, (sizeEnemy.x + sizeEnemy.z) * 0.5f) == true &&
+				pEnemy->GetState() == CEnemy::STATE_NONE &&
 				pos.y <= posEnemy.y + sizeEnemy.y &&
 				pos.y + fHeight >= posEnemy.y)
 			{ // 敵と重なった場合
@@ -556,13 +557,13 @@ void collision::GoldBoneCollision(const CPlayer& pPlayer, const D3DXVECTOR3& siz
 //===============================
 // 木の当たり判定
 //===============================
-bool collision::TreeCollision(D3DXVECTOR3* pos, const float fRadius)
+bool collision::TreeCollision(D3DXVECTOR3* pos, const float fRadius, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posTree = NONE_D3DXVECTOR3;			// 木の位置
 	float fObjectRadius;							// 半径
 	bool bCollision = false;						// 当たり判定状況
-	CListManager<CTree*> list = CTree::GetList();
+	CListManager<CTree*> list = CTree::GetList(nAreaIdx);
 	CTree* pTree = nullptr;		// 先頭の値
 	CTree* pTreeEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
@@ -616,7 +617,7 @@ void collision::TreeAttack(const CPlayer& pPlayer, const float fRadius, const fl
 	// ローカル変数宣言
 	D3DXVECTOR3 posTree = NONE_D3DXVECTOR3;			// 木の位置
 	D3DXVECTOR3 posPlayer = pPlayer.GetPos();		// プレイヤーの位置
-	CListManager<CTree*> list = CTree::GetList();
+	CListManager<CTree*> list = CTree::GetList(pPlayer.GetAreaIdx());
 	CTree* pTree = nullptr;		// 先頭の値
 	CTree* pTreeEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
@@ -724,14 +725,14 @@ void collision::PalmFruitHit(CPlayer* pPlayer, const float fRadius, const float 
 //===============================
 // ヤシの実への攻撃判定
 //===============================
-bool collision::PalmFruitAttack(const D3DXVECTOR3& pos, const float fRadius)
+bool collision::PalmFruitAttack(const D3DXVECTOR3& pos, const float fRadius, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	CPalmFruit* pFruit = nullptr;	// ヤシの実の情報
 	D3DXVECTOR3 posFruit = NONE_D3DXVECTOR3;	// 実の位置
 	float fRadiusFruit = 0.0f;		// 実の半径
 
-	CListManager<CTree*> list = CTree::GetList();
+	CListManager<CTree*> list = CTree::GetList(nAreaIdx);
 	CTree* pTree = nullptr;			// 先頭の値
 	CTree* pTreeEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
@@ -795,7 +796,7 @@ bool collision::PalmFruitAttack(const D3DXVECTOR3& pos, const float fRadius)
 //===============================
 // 岩との当たり判定
 //===============================
-bool collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius, const float fHeight, float* fGravity, bool* bJump)
+bool collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const float fRadius, const float fHeight, const int nAreaIdx, float* fGravity, bool* bJump)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
@@ -804,7 +805,7 @@ bool collision::RockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const
 	float fBottomRock = 0.0f;					// 岩の下の高さ
 	bool bCollision = false;					// 当たり判定状況
 
-	CListManager<CRock*> list = CRock::GetList();
+	CListManager<CRock*> list = CRock::GetList(nAreaIdx);
 	CRock* pRock = nullptr;			// 先頭の値
 	CRock* pRockEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
@@ -1186,9 +1187,9 @@ bool collision::BombHitToSlashRipple(const D3DXVECTOR3& pos, const float fRadius
 }
 
 //===============================
-// 爆風と敵との当たり判定
+// 爆風と岩との当たり判定
 //===============================
-void collision::ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, const float fHeight)
+void collision::ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posRock = NONE_D3DXVECTOR3;		// 岩の位置
@@ -1196,7 +1197,7 @@ void collision::ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, 
 	float fTopRock = 0.0f;						// 岩の上の高さ
 	float fBottomRock = 0.0f;					// 岩の下の高さ
 
-	CListManager<CRock*> list = CRock::GetList();
+	CListManager<CRock*> list = CRock::GetList(nAreaIdx);
 	CRock* pRock = nullptr;			// 先頭の値
 	CRock* pRockEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
@@ -1386,7 +1387,7 @@ bool collision::ExplosionHitToPlayer(CPlayer* pPlayer, const float fRadius, cons
 //===============================
 // 壁との当たり判定
 //===============================
-bool collision::WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin)
+bool collision::WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posWall = NONE_D3DXVECTOR3;			// 壁の位置
@@ -1394,7 +1395,7 @@ bool collision::WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const
 	D3DXVECTOR3 vtxMaxWall = NONE_D3DXVECTOR3;		// 壁の最大値
 	D3DXVECTOR3 vtxMinWall = NONE_D3DXVECTOR3;		// 壁の最小値
 
-	CListManager<CWall*> list = CWall::GetList();
+	CListManager<CWall*> list = CWall::GetList(nAreaIdx);
 	CWall* pWall = nullptr;			// 先頭の値
 	CWall* pWallEnd = nullptr;		// 末尾の値
 	int nIdx = 0;
@@ -1459,7 +1460,7 @@ bool collision::WallCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const
 //===============================
 // ブロックとのヒット判定
 //===============================
-bool collision::BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin)
+bool collision::BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	D3DXVECTOR3 posBlock = NONE_D3DXVECTOR3;		// 壁の位置
@@ -1467,7 +1468,7 @@ bool collision::BlockHit(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DX
 	D3DXVECTOR3 vtxMaxBlock = NONE_D3DXVECTOR3;		// 壁の最大値
 	D3DXVECTOR3 vtxMinBlock = NONE_D3DXVECTOR3;		// 壁の最小値
 
-	CListManager<CBlock*> list = CBlock::GetList();
+	CListManager<CBlock*> list = CBlock::GetList(nAreaIdx);
 	CBlock* pBlock = nullptr;			// 先頭の値
 	CBlock* pBlockEnd = nullptr;		// 末尾の値
 	int nIdx = 0;

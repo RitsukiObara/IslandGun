@@ -162,6 +162,7 @@
     <ClCompile Include="alter_light.cpp" />
     <ClCompile Include="alter_pole.cpp" />
     <ClCompile Include="anim_reaction.cpp" />
+    <ClCompile Include="area.cpp" />
     <ClCompile Include="balloon.cpp" />
     <ClCompile Include="balloon_rope.cpp" />
     <ClCompile Include="balloon_spawner.cpp" />
@@ -314,6 +315,7 @@
     <ClInclude Include="alter_light.h" />
     <ClInclude Include="alter_pole.h" />
     <ClInclude Include="anim_reaction.h" />
+    <ClInclude Include="area.h" />
     <ClInclude Include="balloon.h" />
     <ClInclude Include="balloon_rope.h" />
     <ClInclude Include="balloon_spawner.h" />

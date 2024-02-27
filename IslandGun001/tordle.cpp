@@ -129,8 +129,9 @@ void CTordle::Update(void)
 		// 前回の位置を設定する
 		SetPosOld(GetPos());
 
-		if (GetState() == STATE_NONE)
-		{ // 通常状態の場合
+		switch (GetState())
+		{
+		case STATE_NONE:
 
 			switch (m_action)
 			{
@@ -167,6 +168,22 @@ void CTordle::Update(void)
 
 			// 向きの移動処理
 			RotMove();
+
+			break;
+
+		case STATE_DAMAGE:
+
+			// 移動処理
+			Move();
+
+			break;
+
+		default:
+
+			// 停止
+			assert(false);
+
+			break;
 		}
 
 		// 更新処理

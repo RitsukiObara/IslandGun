@@ -525,6 +525,9 @@
     <ClCompile Include="alter_flash.cpp">
       <Filter>gimmick\Map\Alter</Filter>
     </ClCompile>
+    <ClCompile Include="area.cpp">
+      <Filter>gimmick\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -970,6 +973,9 @@
     </ClInclude>
     <ClInclude Include="alter_flash.h">
       <Filter>gimmick\Map\Alter</Filter>
+    </ClInclude>
+    <ClInclude Include="area.h">
+      <Filter>gimmick\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

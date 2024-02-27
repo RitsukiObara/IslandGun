@@ -10,6 +10,7 @@
 #include "main.h"
 #include "enemy.h"
 #include "manager.h"
+#include "area.h"
 #include "useful.h"
 
 #include "motion.h"
@@ -77,6 +78,7 @@ CEnemy::CEnemy() : CCharacter(CObject::TYPE_ENEMY, CObject::PRIORITY_ENTITY)
 	m_nLife = 0;					// 体力
 	m_nStateCount = 0;				// 状態カウント
 	m_fGravity = 0.0f;				// 重力
+	m_nFieldIdx = 0;				// 区分の番号
 
 	// リストに追加する
 	m_list.Regist(this);
@@ -120,6 +122,9 @@ void CEnemy::Update(void)
 	// 位置を適用する
 	SetPos(pos);
 
+	// 区分の番号設定処理
+	m_nFieldIdx = area::SetFieldIdx(GetPos());
+
 	// モーションの更新処理
 	m_pMotion->Update();
 
@@ -129,17 +134,8 @@ void CEnemy::Update(void)
 	// 起伏地面との当たり判定
 	ElevationCollision();
 
-	// 木との当たり判定
-	TreeCollision();
-
-	// 岩との当たり判定
-	RockCollision();
-
-	// ブロックとの当たり判定
-	BlockCollision();
-
-	// 壁との当たり判定
-	WallCollision();
+	// 当たり判定処理
+	Collision();
 
 	// 祭壇との当たり判定
 	AlterCollision();
@@ -250,6 +246,9 @@ void CEnemy::SetData(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE 
 	m_nLife = LIFE[m_type];			// 体力
 	m_nStateCount = 0;				// 状態カウント
 	m_fGravity = 0.0f;				// 重力
+
+	// 区分の番号設定処理
+	m_nFieldIdx = area::SetFieldIdx(GetPos());
 }
 
 //===========================================
@@ -516,47 +515,48 @@ void CEnemy::ElevationCollision(void)
 }
 
 //===========================================
-// 木との当たり判定
+// 当たり判定処理
 //===========================================
-void CEnemy::TreeCollision(void)
+void CEnemy::Collision(void)
 {
-	// 位置と半径を取得する
-	D3DXVECTOR3 pos = GetPos();
-	float fRadius = m_collSize.x;
+	D3DXVECTOR3 pos = GetPos();								// 位置
+	D3DXVECTOR3 posOld = GetPosOld();						// 前回の位置
+	D3DXVECTOR3 vtxMin = useful::VtxMinConv(m_collSize);	// 頂点の最小値
+	int nIdx = 0;
 
-	// 木との当たり判定
-	collision::TreeCollision(&pos, fRadius);
+	for (int nCnt = 0; nCnt < area::NUM_COLL; nCnt++)
+	{
+		nIdx = m_nFieldIdx + area::COLL_ADD_IDX[nCnt];
+
+		if (area::IndexCheck(nIdx) == true)
+		{ // 区分内の場合
+
+			// 木との当たり判定
+			collision::TreeCollision(&pos, m_collSize.x, nIdx);
+
+			// ブロックとの当たり判定
+			BlockCollision(&pos, posOld, m_collSize, vtxMin, nIdx);
+
+			// 岩との当たり判定
+			collision::RockCollision(&pos, posOld, m_collSize.x, m_collSize.y, nIdx, &m_fGravity);
+
+			// 壁との当たり判定
+			collision::WallCollision(&pos, posOld, m_collSize, vtxMin, nIdx);
+		}
+	}
 
 	// 位置を適用する
 	SetPos(pos);
 }
 
 //===========================================
-// 岩との当たり判定
-//===========================================
-void CEnemy::RockCollision(void)
-{
-	// 位置を取得する
-	D3DXVECTOR3 pos = GetPos();
-
-	// 岩との当たり判定
-	collision::RockCollision(&pos, GetPosOld(), m_collSize.x, m_collSize.y, &m_fGravity);
-
-	// 位置の設定処理
-	SetPos(pos);
-}
-
-//===========================================
 // ブロックとの当たり判定
 //===========================================
-void CEnemy::BlockCollision(void)
+void CEnemy::BlockCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin, const int nAreaIdx)
 {
 	// ローカル変数宣言
 	collision::SCollision coll = { false,false,false,false,false,false };		// 当たり判定の変数
-	D3DXVECTOR3 pos = GetPos();							// 位置を取得する
-	D3DXVECTOR3 vtxMin = D3DXVECTOR3(-m_collSize.x, 0.0f, -m_collSize.z);		// 最小値を取得する
-	D3DXVECTOR3 vtxMax = m_collSize;					// 最大値を取得する
-	CListManager<CBlock*> list = CBlock::GetList();
+	CListManager<CBlock*> list = CBlock::GetList(nAreaIdx);
 	CBlock* pBlock = nullptr;		// 先頭の値
 	CBlock* pBlockEnd = nullptr;	// 末尾の値
 	int nIdx = 0;
@@ -577,9 +577,9 @@ void CEnemy::BlockCollision(void)
 			// 六面体の当たり判定
 			coll = collision::HexahedronClush
 			(
-				&pos,
+				pos,
 				pBlock->GetPos(),
-				GetPosOld(),
+				posOld,
 				pBlock->GetPosOld(),
 				vtxMin,
 				pBlock->GetVtxMin(),
@@ -601,26 +601,6 @@ void CEnemy::BlockCollision(void)
 			nIdx++;
 		}
 	}
-
-	// 位置を適用する
-	SetPos(pos);
-}
-
-//===========================================
-// 壁との当たり判定
-//===========================================
-void CEnemy::WallCollision(void)
-{
-	D3DXVECTOR3 pos = GetPos();			// 位置
-	D3DXVECTOR3 posOld = GetPosOld();	// 前回の位置
-	D3DXVECTOR3 vtxMax = m_collSize;	// 最大値
-	D3DXVECTOR3 vtxMin = useful::VtxMinConv(m_collSize);	// 最小値
-
-	// 壁との当たり判定
-	collision::WallCollision(&pos, posOld, vtxMax, vtxMin);
-
-	// 位置を適用する
-	SetPos(pos);
 }
 
 //===========================================
