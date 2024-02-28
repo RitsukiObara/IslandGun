@@ -21,6 +21,7 @@
 #include "bang_flower.h"
 #include "wall.h"
 #include "boss.h"
+#include "balloon_spawner.h"
 
 //--------------------------------------------
 // 定数定義
@@ -38,6 +39,7 @@ namespace
 	const char* WALL_TXT = "data\\TXT\\Wall.txt";				// 壁のテキスト
 	const char* BOSSCOLL_TXT = "data\\TXT\\BossColl.txt";		// ボスの当たり判定のテキスト
 	const char* SIGNBOARD_TXT = "data\\TXT\\Signboard.txt";		// 看板のテキスト
+	const char* BALLOON_TXT = "data\\TXT\\Balloon.txt";			// 風船のテキスト
 	const char* ENEMYROUTE_TXT = "data\\TXT\\EnemyRoute.txt";	// 敵の徘徊経路のテキスト
 
 	const int GOLDBONE_NUM = 3;		// 金の骨の数
@@ -107,6 +109,8 @@ CFile::CFile()
 		m_SignboardFile.aFile[nCntFile].rot = NONE_D3DXVECTOR3;
 		m_SignboardFile.aFile[nCntFile].type = CSignboard::TYPE::TYPE_JUMP;
 
+		m_BalloonFile.pos[nCntFile] = NONE_D3DXVECTOR3;
+
 		for (int nCntRoute = 0; nCntRoute < MAX_ENEMY_ROUTE; nCntRoute++)
 		{
 			m_EnemyRouteFile.aFile[nCntFile].pos[nCntRoute] = NONE_D3DXVECTOR3;		// 敵の経路の情報
@@ -130,6 +134,7 @@ CFile::CFile()
 	m_WallFile.nNumData = 0;			// 壁の情報
 	m_BossCollFile.nNumData = 0;		// ボスの当たり判定の情報
 	m_SignboardFile.nNumData = 0;		// 看板の情報
+	m_BalloonFile.nNumData = 0;			// 風船の情報
 	m_EnemyRouteFile.nNumData = 0;		// 敵の徘徊経路の情報
 
 	// 成功状況をクリアする
@@ -144,6 +149,7 @@ CFile::CFile()
 	m_WallFile.bSuccess = false;		// 壁の情報
 	m_BossCollFile.bSuccess = false;	// ボスの当たり判定の情報
 	m_SignboardFile.bSuccess = false;	// 看板の情報
+	m_BalloonFile.bSuccess = false;		// 風船の情報
 	m_EnemyRouteFile.bSuccess = false;	// 敵の徘徊経路の情報
 }
 
@@ -323,6 +329,16 @@ HRESULT CFile::Load(const TYPE type)
 
 		break;
 
+	case CFile::TYPE_BALLOON:
+
+		if (FAILED(LoadBalloon()))
+		{ // 失敗した場合
+
+			// 失敗を返す
+			return E_FAIL;
+		}
+
+		break;
 
 	case CFile::TYPE_ENEMYROUTE:
 
@@ -637,6 +653,28 @@ void CFile::SetSignboard(void)
 }
 
 //===========================================
+// 風船の設定処理
+//===========================================
+void CFile::SetBalloon(void)
+{
+	if (m_BalloonFile.bSuccess == true)
+	{ // 看板が読み込めた場合
+
+		for (int nCnt = 0; nCnt < m_BalloonFile.nNumData; nCnt++)
+		{
+			// 看板を生成する
+			CBalloonSpawner::Create(m_BalloonFile.pos[nCnt]);
+		}
+	}
+	else
+	{ // 上記以外
+
+		// 停止
+		assert(false);
+	}
+}
+
+//===========================================
 // 敵の徘徊経路の設定処理
 //===========================================
 D3DXVECTOR3 CFile::GetEnemyRoute(const int nRoute, const int nNum)
@@ -780,6 +818,18 @@ HRESULT CFile::Init(void)
 		m_WallFile.aFile[nCntFile].scale = NONE_D3DXVECTOR3;
 		m_WallFile.aFile[nCntFile].nType = 0;
 		m_WallFile.aFile[nCntFile].nRotType = 0;
+
+		m_SignboardFile.aFile[nCntFile].pos = NONE_D3DXVECTOR3;
+		m_SignboardFile.aFile[nCntFile].rot = NONE_D3DXVECTOR3;
+		m_SignboardFile.aFile[nCntFile].type = CSignboard::TYPE::TYPE_JUMP;
+
+		m_BalloonFile.pos[nCntFile] = NONE_D3DXVECTOR3;
+
+		for (int nCntRoute = 0; nCntRoute < MAX_ENEMY_ROUTE; nCntRoute++)
+		{
+			m_EnemyRouteFile.aFile[nCntFile].pos[nCntRoute] = NONE_D3DXVECTOR3;		// 敵の経路の情報
+			m_EnemyRouteFile.aFile[nCntFile].nNum = 0;		// 総数
+		}
 	}
 
 	for (int nCntBone = 0; nCntBone < GOLDBONE_NUM; nCntBone++)
@@ -797,6 +847,9 @@ HRESULT CFile::Init(void)
 	m_BangFlowerFile.nNumData = 0;		// 爆弾花の情報
 	m_WallFile.nNumData = 0;			// 壁の情報
 	m_BossCollFile.nNumData = 0;		// ボスの当たり判定の情報
+	m_SignboardFile.nNumData = 0;		// 看板の情報
+	m_BalloonFile.nNumData = 0;			// 風船の情報
+	m_EnemyRouteFile.nNumData = 0;		// 敵の徘徊経路の情報
 
 	// 成功状況をクリアする
 	m_RankingInfo.bSuccess = false;		// ランキング
@@ -809,6 +862,9 @@ HRESULT CFile::Init(void)
 	m_BangFlowerFile.bSuccess = false;	// 爆弾花の情報
 	m_WallFile.bSuccess = false;		// 壁の情報
 	m_BossCollFile.bSuccess = false;	// ボスの当たり判定の情報
+	m_SignboardFile.bSuccess = false;	// 看板の情報
+	m_BalloonFile.bSuccess = false;		// 風船の情報
+	m_EnemyRouteFile.bSuccess = false;	// 敵の徘徊経路の情報
 
 	// 成功を返す
 	return S_OK;
@@ -1828,6 +1884,78 @@ HRESULT CFile::LoadSignboard(void)
 
 		// 成功状況を true にする
 		m_SignboardFile.bSuccess = true;
+	}
+	else
+	{ // ファイルが開けなかった場合
+
+		// 停止
+		assert(false);
+
+		// 失敗を返す
+		return E_FAIL;
+	}
+
+	// 成功を返す
+	return S_OK;
+}
+
+//===========================================
+// 風船のロード処理
+//===========================================
+HRESULT CFile::LoadBalloon(void)
+{
+	// 変数を宣言
+	int nEnd;							// テキスト読み込み終了の確認用
+	char aString[MAX_STRING];			// テキストの文字列の代入用
+	m_BalloonFile.nNumData = 0;			// 総数
+	m_BalloonFile.bSuccess = false;		// 成功状況
+
+	// ポインタを宣言
+	FILE* pFile;						// ファイルポインタ
+
+	// ファイルを読み込み形式で開く
+	pFile = fopen(BALLOON_TXT, "r");
+
+	if (pFile != nullptr)
+	{ // ファイルが開けた場合
+
+		do
+		{ // 読み込んだ文字列が EOF ではない場合ループ
+
+			// ファイルから文字列を読み込む
+			nEnd = fscanf(pFile, "%s", &aString[0]);	// テキストを読み込みきったら EOF を返す
+
+			if (strcmp(&aString[0], "SET_BALLOON") == 0)
+			{ // 読み込んだ文字列が SET_BALLOON の場合
+
+				do
+				{ // 読み込んだ文字列が END_SET_BALLOON ではない場合ループ
+
+				  // ファイルから文字列を読み込む
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(&aString[0], "POS") == 0)
+					{ // 読み込んだ文字列が POS の場合
+
+						fscanf(pFile, "%s", &aString[0]);				// = を読み込む (不要)
+						fscanf(pFile, "%f%f%f",
+							&m_BalloonFile.pos[m_BalloonFile.nNumData].x,
+							&m_BalloonFile.pos[m_BalloonFile.nNumData].y,
+							&m_BalloonFile.pos[m_BalloonFile.nNumData].z);		// 位置を読み込む
+					}
+
+				} while (strcmp(&aString[0], "END_SET_BALLOON") != 0);		// 読み込んだ文字列が END_SET_BALLOON ではない場合ループ
+
+				// データの総数を増やす
+				m_BalloonFile.nNumData++;
+			}
+		} while (nEnd != EOF);				// 読み込んだ文字列が EOF ではない場合ループ
+
+		// ファイルを閉じる
+		fclose(pFile);
+
+		// 成功状況を true にする
+		m_BalloonFile.bSuccess = true;
 	}
 	else
 	{ // ファイルが開けなかった場合
