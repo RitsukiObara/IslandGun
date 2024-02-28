@@ -87,6 +87,7 @@ public:			// 誰でもアクセスできる
 		TYPE_DOOR,				// ドア
 		TYPE_TUTORIALMAP,		// チュートリアルマップ
 		TYPE_ALTERFLASH,		// 祭壇閃光
+		TYPE_BOSSNAME,			// ボスの名前
 		TYPE_MAX				// この列挙型の総数
 	};
 

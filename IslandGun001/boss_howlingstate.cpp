@@ -16,6 +16,7 @@
 #include "game.h"
 #include "manager.h"
 #include "camera.h"
+#include "boss_name.h"
 
 #include "boss_nonestate.h"
 
@@ -116,6 +117,9 @@ void CBossHowlingState::Process(CBoss* pBoss)
 
 		// ボスの雄たけび音を鳴らす
 		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_BOSSHOWLING);
+
+		// ボスの名前を生成
+		CBossName::Create();
 
 		break;
 

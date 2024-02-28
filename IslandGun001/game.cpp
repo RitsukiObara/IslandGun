@@ -27,6 +27,7 @@
 #include "player.h"
 #include "ocean.h"
 #include "game_score.h"
+#include "boss.h"
 #include "alter.h"
 
 //--------------------------------------------
@@ -119,6 +120,8 @@ HRESULT CGame::Init(void)
 	// 祭壇の生成
 	m_pAlter = CAlter::Create();
 
+	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
+
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント
 	m_state = STATE_START;		// 状態
@@ -157,6 +160,13 @@ void CGame::Uninit(void)
 
 		// ライトの色をリセットする
 		CManager::Get()->GetLight()->ResetCol();
+	}
+
+	if (CManager::Get()->GetRenderer() != nullptr)
+	{ // レンダラーが NULL じゃない場合
+
+		// 霧の色をリセットする
+		CManager::Get()->GetRenderer()->SetFogCol(NONE_D3DXCOLOR);
 	}
 
 	// 終了処理

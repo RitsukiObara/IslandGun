@@ -76,6 +76,8 @@ public:					// 誰でもアクセスできる
 	void SetGravity(const float fGravity);	// 重力の設定処理
 	float GetGravity(void) const;			// 重力の取得処理
 
+	TYPE GetType(void) const;				// 種類の取得処理
+
 	// 静的メンバ関数
 	static CEnemy* Create(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const TYPE type);		// 生成処理
 

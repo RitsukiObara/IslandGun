@@ -56,8 +56,10 @@ namespace
 	{
 		50.5f,		// 木の半径
 	};
+	
+	const float COIN_COLLISION_MAGNI = 3.0f;		// コインの当たり判定の倍率
 
-	const int DAGGER_DAMAGE = 40;					// ダガーのダメージ
+	const int DAGGER_DAMAGE = 30;					// ダガーのダメージ
 	const float DAGGER_KNOCKBACK = 100.0f;			// ダガーのノックバック
 
 	const int EXPLOSION_DAMAGE = 30;				// 爆風のダメージ
@@ -181,8 +183,8 @@ void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size, const in
 
 			// コインの変数を取得する
 			posCoin = pCoin->GetPos();
-			vtxMaxCoin = pCoin->GetFileData().vtxMax;
-			vtxMinCoin = pCoin->GetFileData().vtxMin;
+			vtxMaxCoin = pCoin->GetFileData().vtxMax * COIN_COLLISION_MAGNI;
+			vtxMinCoin = pCoin->GetFileData().vtxMin * COIN_COLLISION_MAGNI;
 
 			if (useful::RectangleCollisionXY(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
 				useful::RectangleCollisionXZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
@@ -331,8 +333,29 @@ bool collision::EnemyHitToDagger(const D3DXVECTOR3& pos, const float fHeight, co
 				pos.y + fHeight >= posEnemy.y)
 			{ // 敵と重なった場合
 
-				// ヒット処理
-				pEnemy->Hit(DAGGER_DAMAGE, DAGGER_KNOCKBACK);
+				switch (pEnemy->GetType())
+				{
+				case CEnemy::TYPE::TYPE_TORDLE:
+
+					// ヒット処理
+					pEnemy->Hit(DAGGER_DAMAGE, DAGGER_KNOCKBACK);
+
+					break;
+
+				case CEnemy::TYPE::TYPE_IWAKARI:
+
+					// ヒット処理
+					pEnemy->Hit(DAGGER_DAMAGE * DAGGER_DAMAGE, DAGGER_KNOCKBACK);
+
+					break;
+
+				default:
+
+					// 停止
+					assert(false);
+
+					break;
+				}
 
 				// true を返す
 				return true;
