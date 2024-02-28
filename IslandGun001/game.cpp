@@ -66,6 +66,9 @@ CGame::CGame()
 	m_state = STATE_START;		// 状態
 	m_nScore = 0;				// スコア
 	m_bPause = false;			// ポーズ状況
+
+	// 得点の減算量のリセット処理
+	CContinueUI::SubScoreReset();
 }
 
 //=========================================
@@ -215,23 +218,33 @@ void CGame::Update(void)
 
 	case CGame::STATE_GAMEOVER:
 
-		// ポーズ処理
-		Pause();
+		if (m_pGameScore->GetScore() >= CContinueUI::GetSubScore())
+		{ // 復活出来るほどスコアがある場合
 
-		// 終了カウントを加算する
-		m_nStateCount++;
+			// ポーズ処理
+			Pause();
 
-		if (m_nStateCount % GAMEOVER_COUNT == 0)
-		{ // 状態カウントが一定数以上になった場合
+			// 終了カウントを加算する
+			m_nStateCount++;
 
-			// 状態カウントをリセットする
-			m_nStateCount = 0;
+			if (m_nStateCount % GAMEOVER_COUNT == 0)
+			{ // 状態カウントが一定数以上になった場合
 
-			// コンティニュー状態にする
-			m_state = STATE::STATE_CONTINUE;
+				// 状態カウントをリセットする
+				m_nStateCount = 0;
 
-			// コンティニューUIを生成
-			CContinueUI::Create();
+				// コンティニュー状態にする
+				m_state = STATE_CONTINUE;
+
+				// コンティニューUIを生成
+				CContinueUI::Create();
+			}
+		}
+		else
+		{ // 上記以外
+
+			// 終了処理にする
+			m_state = STATE_FINISH;
 		}
 
 		break;
