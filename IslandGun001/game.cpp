@@ -238,7 +238,8 @@ void CGame::Update(void)
 
 	case CGame::STATE_CONTINUE:
 
-
+		// コンティニューUIのみを動かす
+		CObject::AnyUpdate(CObject::TYPE_CONTINUEUI);
 
 		break;
 
@@ -263,7 +264,7 @@ void CGame::Update(void)
 		// 更新処理
 		m_pPause->Update();
 	}
-	else
+	else if(m_state != STATE_CONTINUE)
 	{ // 上記以外
 
 		if (CManager::Get()->GetRenderer() != nullptr)

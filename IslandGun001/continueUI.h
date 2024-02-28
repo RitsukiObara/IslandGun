@@ -35,6 +35,14 @@ public:				// 誰でもアクセスできる
 		TYPE_MAX			// この列挙型の総数
 	};
 
+	// 列挙型定義(選択肢)
+	enum SELECT
+	{
+		SELECT_YES = 0,		// YESの選択肢
+		SELECT_NO,			// NOの選択肢
+		SELECT_MAX			// この列挙型の総数
+	};
+
 	CContinueUI();				// コンストラクタ
 	~CContinueUI();				// デストラクタ
 
@@ -51,8 +59,14 @@ public:				// 誰でもアクセスできる
 
 private:			// 自分だけアクセスできる
 
+	// メンバ関数
+	bool Decide(void);		// 決定処理
+	void Continue(void);	// コンティニュー処理
+
 	// メンバ変数
 	CObject2D* m_apObject[TYPE_MAX];	// ポリゴンの情報
+	SELECT m_select;		// 選択肢
+
 };
 
 #endif

@@ -98,7 +98,9 @@ public:			// 誰でもアクセスできる
 	D3DXVECTOR3 GetRotDest(void) const;			// 目的の向きの取得処理
 	void SetMove(const D3DXVECTOR3& move);		// 移動量の設定処理
 	D3DXVECTOR3 GetMove(void) const;			// 移動量の取得処理
+	void SetLife(const int nLife);				// 体力の設定処理
 	int GetLife(void) const;					// 体力の取得処理
+	void SetState(const SState state);			// 状態の設定処理
 	SState GetState(void) const;				// 状態の取得処理
 	void SetEnableJump(const bool bJump);		// ジャンプ状況の設定処理
 	bool IsJump(void) const;					// ジャンプ状況の取得処理

@@ -11,24 +11,29 @@
 #include "continueUI.h"
 #include "renderer.h"
 #include "texture.h"
+#include "input.h"
 #include "useful.h"
 
 #include "object2D.h"
+#include "game.h"
+#include "player.h"
+#include "camera.h"
+#include "game_score.h"
 
 //--------------------------------------------
 // 無名名前空間
 //--------------------------------------------
 namespace
 {
-	const char* TEXTURE[CContinueUI::TYPE_MAX] =
+	const char* TEXTURE[CContinueUI::TYPE_MAX] =			// テクスチャ
 	{
-		"data\\TEXTURE\\",
-		"data\\TEXTURE\\",
-		"data\\TEXTURE\\",
-		"data\\TEXTURE\\",
-		"data\\TEXTURE\\",
+		nullptr,
+		"data\\TEXTURE\\ContGround.png",
+		"data\\TEXTURE\\ContQuery.png",
+		"data\\TEXTURE\\ContYes.png",
+		"data\\TEXTURE\\ContNo.png",
 	};
-	const D3DXVECTOR3 POS[CContinueUI::TYPE_MAX] =
+	const D3DXVECTOR3 POS[CContinueUI::TYPE_MAX] =			// 位置
 	{
 		D3DXVECTOR3(SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f),
 		D3DXVECTOR3(SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f),
@@ -36,14 +41,16 @@ namespace
 		D3DXVECTOR3(390.0f,450.0f,0.0f),
 		D3DXVECTOR3(890.0f,450.0f,0.0f),
 	};
-	const D3DXVECTOR3 POLY_SIZE[CContinueUI::TYPE_MAX] =
+	const D3DXVECTOR3 POLY_SIZE[CContinueUI::TYPE_MAX] =	// サイズ
 	{
 		D3DXVECTOR3(SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f),
-		D3DXVECTOR3(500.0f,300.0f,0.0f),
-		D3DXVECTOR3(450.0f,100.0f,0.0f),
-		D3DXVECTOR3(100.0f,50.0f,0.0f),
-		D3DXVECTOR3(100.0f,50.0f,0.0f),
+		D3DXVECTOR3(550.0f,330.0f,0.0f),
+		D3DXVECTOR3(500.0f,80.0f,0.0f),
+		D3DXVECTOR3(160.0f,80.0f,0.0f),
+		D3DXVECTOR3(160.0f,80.0f,0.0f),
 	};
+	const D3DXCOLOR SCREEN_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.5f);		// 背景の色
+	const int CONTINUE_LIFE = 100;			// コンティニューしたときの体力
 }
 
 //========================
@@ -56,6 +63,7 @@ CContinueUI::CContinueUI() : CObject(TYPE_CONTINUEUI, DIM_2D, PRIORITY_UI)
 	{
 		m_apObject[nCnt] = nullptr;		// ポリゴンの情報
 	}
+	m_select = SELECT_YES;		// 選択肢
 }
 
 //========================
@@ -100,7 +108,15 @@ void CContinueUI::Uninit(void)
 //========================
 void CContinueUI::Update(void)
 {
+	if (Decide() == true)
+	{ // 決定した場合
 
+		// 終了処理
+		Uninit();
+
+		// この先の処理を行わない
+		return;
+	}
 }
 
 //========================
@@ -146,40 +162,15 @@ void CContinueUI::SetData(void)
 			// 頂点座標の設定処理
 			m_apObject[nCnt]->SetVertex();
 
-			switch (nCnt)
-			{
-			case TYPE::TYPE_SCREEN:
+			if (nCnt == TYPE::TYPE_SCREEN)
+			{ // 背景の場合
 
-				m_apObject[nCnt]->SetVtxColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.5f));
-
-				break;
-
-			case TYPE::TYPE_GROUND:
-
-				m_apObject[nCnt]->SetVtxColor(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-
-				break;
-
-			case TYPE::TYPE_QUERY:
-
-				m_apObject[nCnt]->SetVtxColor(D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
-
-				break;
-
-			case TYPE::TYPE_YES:
-
-				m_apObject[nCnt]->SetVtxColor(D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f));
-
-				break;
-
-			case TYPE::TYPE_NO:
-
-				m_apObject[nCnt]->SetVtxColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-
-				break;
+				// 色を設定する
+				m_apObject[nCnt]->SetVtxColor(SCREEN_COL);
 			}
 		}
 	}
+	m_select = SELECT_YES;		// 選択肢
 }
 
 //========================
@@ -235,4 +226,75 @@ CContinueUI* CContinueUI::Create(void)
 
 	// UIのポインタを返す
 	return pUI;
+}
+
+//========================
+// 決定処理
+//========================
+bool CContinueUI::Decide(void)
+{
+	if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_START, 0) == true ||
+		CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_SPACE) == true)
+	{ // 決定キーを押した場合
+
+		switch (m_select)
+		{
+		case CContinueUI::SELECT_YES:
+
+			// コンティニュー処理
+			Continue();
+
+			break;
+
+
+		case CContinueUI::SELECT_NO:
+
+
+			break;
+
+		default:
+
+			// 停止処理
+			assert(false);
+
+			break;
+		}
+
+		// true を返す
+		return true;
+	}
+
+	// false を返す
+	return false;
+}
+
+//========================
+// コンティニュー処理
+//========================
+void CContinueUI::Continue(void)
+{
+	CPlayer* pPlayer = CGame::GetPlayer();		// プレイヤーの情報
+	CGameScore* pScore = CGame::GetGameScore();	// ゲームスコアの情報
+
+	if (pPlayer != nullptr)
+	{ // プレイヤーが NULL じゃない場合
+
+		// 体力を設定する
+		pPlayer->SetLife(CONTINUE_LIFE);
+
+		// プレイヤーを無敵状態に設定
+		CPlayer::SState state = pPlayer->GetState();
+		state.state = CPlayer::STATE_INVINSIBLE;
+		pPlayer->SetState(state);
+
+		// プレイモードにする
+		CGame::SetState(CGame::STATE_PLAY);
+
+		// 通常カメラにする
+		CManager::Get()->GetCamera()->SetType(CCamera::TYPE_NONE);
+
+		// スコアを減らす
+		pScore->SetScore(pScore->GetScore() - 200);
+	}
 }
