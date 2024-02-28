@@ -33,7 +33,7 @@ namespace
 	const int RIPPLE_FREQ = 6;			// 波紋の出る頻度
 	const float RIPPLE_HEIGHT = 600.0f;	// 波紋の高度
 	const D3DXVECTOR3 RIPPLE_SCALE = D3DXVECTOR3(100.0f, 100.0f, 100.0f);	// 波紋の拡大率
-	const D3DXCOLOR LIGHT_DEST_COL = D3DXCOLOR(1.0f, 0.4f, 0.4f, 1.0f);		// 目的のライトの色
+	const D3DXCOLOR LIGHT_DEST_COL = D3DXCOLOR(1.0f, 0.6f, 0.6f, 1.0f);		// 目的のライトの色
 }
 
 //==========================
