@@ -199,6 +199,7 @@
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="collpolygon.cpp" />
     <ClCompile Include="confetti.cpp" />
+    <ClCompile Include="continueUI.cpp" />
     <ClCompile Include="dagger.cpp" />
     <ClCompile Include="danger_mark.cpp" />
     <ClCompile Include="debugproc.cpp" />
@@ -353,6 +354,7 @@
     <ClInclude Include="collision.h" />
     <ClInclude Include="collpolygon.h" />
     <ClInclude Include="confetti.h" />
+    <ClInclude Include="continueUI.h" />
     <ClInclude Include="dagger.h" />
     <ClInclude Include="danger_mark.h" />
     <ClInclude Include="debugproc.h" />

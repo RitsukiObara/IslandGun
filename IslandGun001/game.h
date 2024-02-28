@@ -33,6 +33,8 @@ public:						// 誰でもアクセスできる
 		STATE_START = 0,	// 開始状態
 		STATE_PLAY,			// プレイ状態
 		STATE_BOSSMOVIE,	// ボス出現状態
+		STATE_GAMEOVER,		// ゲームオーバー状態
+		STATE_CONTINUE,		// コンテニュー状態
 		STATE_FINISH,		// 終了状態
 		STATE_MAX			// この列挙型の総数
 	};
@@ -76,7 +78,7 @@ private:					// 自分だけアクセスできる
 	void Transition(void);		// 遷移処理
 
 	// メンバ変数
-	int m_nFinishCount;			// 終了カウント
+	int m_nStateCount;			// 終了カウント
 
 	// 静的メンバ変数
 	static CPause* m_pPause;			// ポーズの情報

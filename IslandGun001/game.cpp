@@ -28,6 +28,7 @@
 #include "ocean.h"
 #include "game_score.h"
 #include "alter.h"
+#include "continueUI.h"
 
 //--------------------------------------------
 // マクロ定義
@@ -35,6 +36,7 @@
 namespace
 {
 	const int TRANS_COUNT = 80;			// 遷移カウント
+	const int GAMEOVER_COUNT = 150;		// ゲームオーバーカウント
 	const char* ELEVATION_TXT = "data/TXT/Elevation.txt";		// 起伏地面のテキスト
 }
 
@@ -55,7 +57,7 @@ bool CGame::m_bPause = false;								// ポーズ状況
 CGame::CGame()
 {
 	// 全ての値をクリアする
-	m_nFinishCount = 0;			// 終了カウント
+	m_nStateCount = 0;			// 終了カウント
 
 	m_pPause = nullptr;			// ポーズ
 	m_pPlayer = nullptr;		// プレイヤー
@@ -120,7 +122,7 @@ HRESULT CGame::Init(void)
 	m_pAlter = CAlter::Create();
 
 	// 情報の初期化
-	m_nFinishCount = 0;			// 終了カウント
+	m_nStateCount = 0;			// 終了カウント
 	m_state = STATE_START;		// 状態
 	m_bPause = false;			// ポーズ状況
 
@@ -150,7 +152,7 @@ void CGame::Uninit(void)
 	m_bPause = false;			// ポーズ状況
 
 	// 終了カウントを初期化する
-	m_nFinishCount = 0;
+	m_nStateCount = 0;
 
 	if (CManager::Get()->GetLight() != nullptr)
 	{ // ライトが NULL じゃない場合
@@ -208,6 +210,35 @@ void CGame::Update(void)
 
 		// ポーズ処理
 		Pause();
+
+		break;
+
+	case CGame::STATE_GAMEOVER:
+
+		// ポーズ処理
+		Pause();
+
+		// 終了カウントを加算する
+		m_nStateCount++;
+
+		if (m_nStateCount % GAMEOVER_COUNT == 0)
+		{ // 状態カウントが一定数以上になった場合
+
+			// 状態カウントをリセットする
+			m_nStateCount = 0;
+
+			// コンティニュー状態にする
+			m_state = STATE::STATE_CONTINUE;
+
+			// コンティニューUIを生成
+			CContinueUI::Create();
+		}
+
+		break;
+
+	case CGame::STATE_CONTINUE:
+
+
 
 		break;
 
@@ -273,7 +304,7 @@ void CGame::SetData(const MODE mode)
 	m_bPause = false;			// ポーズ状況
 
 	// 情報の初期化
-	m_nFinishCount = 0;				// 終了カウント
+	m_nStateCount = 0;				// 終了カウント
 }
 
 //======================================
@@ -334,9 +365,9 @@ void CGame::Pause(void)
 void CGame::Transition(void)
 {
 	// 終了カウントを加算する
-	m_nFinishCount++;
+	m_nStateCount++;
 
-	if (m_nFinishCount % TRANS_COUNT == 0)
+	if (m_nStateCount % TRANS_COUNT == 0)
 	{ // 終了カウントが一定数を超えた場合
 
 		if (m_pGameScore != nullptr)

@@ -64,6 +64,13 @@ namespace
 	const float BOSS_HOWLING_RANGE_POSV = 3000.0f;	// ボス雄たけびカメラの視点の距離
 	const float BOSS_HOWLING_ROT_SHIFT = 0.45f;		// ボス雄たけびカメラの向きのずらす量
 	const float BOSS_HOWLING_CORRECT = 0.1f;		// ボス雄たけびカメラの補正係数
+
+	const float GAMEOVER_ROT = D3DX_PI * 0.6f;		// ゲームオーバーカメラの向き
+	const float GAMEOVER_INIT_DISTANCE = 800.0f;	// ゲームオーバーカメラの初期距離
+	const float GAMEOVER_DISTANCE = 650.0f;			// ゲームオーバーカメラの距離
+	const float GAMEOVER_SUB_DISTANCE = 2.0f;		// ゲームオーバーカメラの距離の減算量
+	const float GAMEOVER_DEST_ROT = D3DX_PI * 0.7f;	// ゲームオーバーカメラの向きの目的地
+	const float GAMEOVER_ROT_MAGNI = 0.05f;			// ゲームオーバーカメラの向きの倍率
 }
 
 //=======================
@@ -416,6 +423,16 @@ void CCamera::SetType(const TYPE type)
 {
 	// 種類を設定する
 	m_type = type;
+
+	if (m_type == TYPE_GAMEOVER)
+	{ // ゲームオーバーになったとき
+
+		// 向きを設定する
+		m_rot.x = GAMEOVER_ROT;
+
+		// 長さを設定する
+		m_Dis = GAMEOVER_INIT_DISTANCE;
+	}
 }
 
 //=======================
@@ -942,6 +959,13 @@ void CCamera::TypeProcess(void)
 
 		break;
 
+	case CCamera::TYPE_GAMEOVER:		// ゲームオーバー状態
+
+		// ゲームオーバー処理
+		GameOver();
+
+		break;
+
 	default:
 
 		// 停止
@@ -1232,5 +1256,38 @@ void CCamera::BossHowling(void)
 		m_posV.x += (m_posVDest.x - m_posV.x) * BOSS_HOWLING_CORRECT;
 		m_posV.y += (m_posVDest.y - m_posV.y) * BOSS_HOWLING_CORRECT;
 		m_posV.z += (m_posVDest.z - m_posV.z) * BOSS_HOWLING_CORRECT;
+	}
+}
+
+//=======================
+// ゲームオーバー処理
+//=======================
+void CCamera::GameOver(void)
+{
+	// ローカル変数宣言
+	CPlayer* pPlayer = CGame::GetPlayer();	// プレイヤーのポインタ
+
+	if (pPlayer != nullptr)
+	{ // プレイヤーが NULL じゃない場合
+
+		// プレイヤーの情報を取得する
+		D3DXVECTOR3 pos = pPlayer->GetPos();			// 位置
+		D3DXVECTOR3 rot = pPlayer->GetRot();			// 向き
+
+		// 注視点を補正
+		m_posR.x = pos.x;
+		m_posR.y = pos.y;
+		m_posR.z = pos.z;
+
+		// 視点を補正
+		m_posV.x = m_posR.x + sinf(rot.y) * sinf(m_rot.x) * m_Dis;
+		m_posV.y = m_posR.y + cosf(m_rot.x) * -m_Dis;
+		m_posV.z = m_posR.z + cosf(rot.y) * sinf(m_rot.x) * m_Dis;
+
+		// 均等な補正処理
+		useful::FrameCorrect(GAMEOVER_DISTANCE, &m_Dis, GAMEOVER_SUB_DISTANCE);
+
+		// 向きの補正処理
+		useful::Correct(GAMEOVER_DEST_ROT, &m_rot.x, GAMEOVER_ROT_MAGNI);
 	}
 }

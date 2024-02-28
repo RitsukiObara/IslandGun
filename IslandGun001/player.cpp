@@ -60,7 +60,7 @@ namespace
 	};
 	const int INIT_GUN_IDX = 9;						// 銃の初期値のインデックス
 	const int INIT_DAGGER_IDX = 9;					// ダガーのインデックス
-	const int MAX_LIFE = 100;						// 体力の最大値
+	const int MAX_LIFE = 10;						// 体力の最大値
 	const int DAMAGE_COUNT = 30;					// ダメージ状態のカウント数
 	const D3DXCOLOR DAMAGE_COLOR = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);		// ダメージ状態の色
 	const int INVINCIBLE_COUNT = 90;				// 無敵状態のカウント数
@@ -480,10 +480,30 @@ void CPlayer::Update(void)
 
 		break;
 
+	case CGame::STATE_GAMEOVER:		// ゲームオーバー状態
+
+		if (m_pMotion != nullptr)
+		{ // モーションが NULL じゃない場合
+
+			// モーションの更新処理
+			m_pMotion->Update();
+		}
+
+		// 起伏地面との当たり判定処理
+		ElevationCollision();
+
+		break;
+
 	case CGame::STATE_FINISH:		// 終了状態
 
 		// 起伏地面との当たり判定処理
 		ElevationCollision();
+
+		break;
+
+	case CGame::STATE_CONTINUE:		// コンティニュー状態
+
+		// 特に無し
 
 		break;
 
@@ -587,6 +607,16 @@ void CPlayer::Hit(const int nDamage, const float fRotSmash)
 
 		// 移動量を0にする
 		m_move = NONE_D3DXVECTOR3;
+
+		if (CManager::Get()->GetMode() == CScene::MODE_GAME)
+		{ // ゲームモードの場合
+
+			// ゲームオーバーにする
+			CGame::SetState(CGame::STATE_GAMEOVER);
+
+			// ゲームオーバーカメラにする
+			CManager::Get()->GetCamera()->SetType(CCamera::TYPE_GAMEOVER);
+		}
 	}
 	else
 	{ // 上記以外

@@ -534,6 +534,9 @@
     <ClCompile Include="gold_bone_light.cpp">
       <Filter>gimmick\Map\Alter</Filter>
     </ClCompile>
+    <ClCompile Include="continueUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -988,6 +991,9 @@
     </ClInclude>
     <ClInclude Include="gold_bone_light.h">
       <Filter>gimmick\Map\Alter</Filter>
+    </ClInclude>
+    <ClInclude Include="continueUI.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
