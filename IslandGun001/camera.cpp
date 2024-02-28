@@ -60,17 +60,17 @@ namespace
 	const float BOSS_CLOSER_HEIGHT = 2200.0f;	// ボス寄りカメラの高さ
 	const float BOSS_CLOSER_CORRECT = 0.08f;	// ボス寄りカメラの補正係数
 
-	const float BOSS_HOWLING_HEIGHT_POSR = 1700.0f;	// ボス雄たけびカメラの注視点の高さ
-	const float BOSS_HOWLING_RANGE_POSV = 3000.0f;	// ボス雄たけびカメラの視点の距離
-	const float BOSS_HOWLING_ROT_SHIFT = 0.45f;		// ボス雄たけびカメラの向きのずらす量
-	const float BOSS_HOWLING_CORRECT = 0.1f;		// ボス雄たけびカメラの補正係数
+	const float BOSS_HOWLING_HEIGHT_POSR = 1700.0f;		// ボス雄たけびカメラの注視点の高さ
+	const float BOSS_HOWLING_RANGE_POSV = 3000.0f;		// ボス雄たけびカメラの視点の距離
+	const float BOSS_HOWLING_ROT_SHIFT = 0.45f;			// ボス雄たけびカメラの向きのずらす量
+	const float BOSS_HOWLING_CORRECT = 0.1f;			// ボス雄たけびカメラの補正係数
 
-	const float GAMEOVER_ROT = D3DX_PI * 0.6f;		// ゲームオーバーカメラの向き
-	const float GAMEOVER_INIT_DISTANCE = 800.0f;	// ゲームオーバーカメラの初期距離
-	const float GAMEOVER_DISTANCE = 650.0f;			// ゲームオーバーカメラの距離
-	const float GAMEOVER_SUB_DISTANCE = 2.0f;		// ゲームオーバーカメラの距離の減算量
-	const float GAMEOVER_DEST_ROT = D3DX_PI * 0.7f;	// ゲームオーバーカメラの向きの目的地
-	const float GAMEOVER_ROT_MAGNI = 0.05f;			// ゲームオーバーカメラの向きの倍率
+	const float GAMEOVER_ROT = D3DX_PI * 0.6f;			// ゲームオーバーカメラの向き
+	const float GAMEOVER_INIT_DISTANCE = 800.0f;		// ゲームオーバーカメラの初期距離
+	const float GAMEOVER_DISTANCE = 650.0f;				// ゲームオーバーカメラの距離
+	const float GAMEOVER_SUB_DISTANCE = 2.0f;			// ゲームオーバーカメラの距離の減算量
+	const float GAMEOVER_DEST_ROT = D3DX_PI * 0.85f;	// ゲームオーバーカメラの向きの目的地
+	const float GAMEOVER_ROT_MAGNI = 0.05f;				// ゲームオーバーカメラの向きの倍率
 }
 
 //=======================

@@ -46,6 +46,10 @@ public:			// 誰でもアクセスできる
 		MOTIONTYPE_MOVE,			// 移動
 		MOTIONTYPE_DODGE,			// 回避
 		MOTIONTYPE_DAGGER,			// ダガー
+		MOTIONTYPE_SWOOP,			// 急降下
+		MOTIONTYPE_DAMAGE,			// ダメージ
+		MOTIONTYPE_AIRDIVE,			// 飛行機降り
+		MOTIONTYPE_DEATH,			// 死亡
 		MOTIONTYPE_MAX				// この列挙型の総数
 	};
 

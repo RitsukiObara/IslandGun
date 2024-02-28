@@ -826,19 +826,26 @@ void CPlayerController::Dagger(CPlayer* pPlayer)
 
 			// 急降下状態にする
 			pPlayer->GetAction()->SetAction(CPlayerAction::ACTION_SWOOP);
+
+			if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_DAGGER)
+			{ // ダガーモーション以外の場合
+
+				// ダガーモーションを設定する
+				pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_SWOOP);
+			}
 		}
 		else
 		{ // 上記以外
 
 			// ダガー状態にする
 			pPlayer->GetAction()->SetAction(CPlayerAction::ACTION_DAGGER);
-		}
 
-		if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_DAGGER)
-		{ // ダガーモーション以外の場合
+			if (pPlayer->GetMotion()->GetType() != CPlayer::MOTIONTYPE_DAGGER)
+			{ // ダガーモーション以外の場合
 
-			// ダガーモーションを設定する
-			pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_DAGGER);
+				// ダガーモーションを設定する
+				pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_DAGGER);
+			}
 		}
 
 		// ダガーを表示する

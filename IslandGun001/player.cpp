@@ -608,6 +608,13 @@ void CPlayer::Hit(const int nDamage, const float fRotSmash)
 		// 移動量を0にする
 		m_move = NONE_D3DXVECTOR3;
 
+		if (m_pMotion->GetType() != MOTIONTYPE_DEATH)
+		{ // 死亡モーションじゃない場合
+
+			// 死亡モーションを行う
+			m_pMotion->Set(MOTIONTYPE_DEATH);
+		}
+
 		if (CManager::Get()->GetMode() == CScene::MODE_GAME)
 		{ // ゲームモードの場合
 
@@ -646,6 +653,13 @@ void CPlayer::Hit(const int nDamage, const float fRotSmash)
 		m_move.x = sinf(fRotSmash) * KNOCKBACK_MOVE;
 		m_move.y = KNOCKBACK_JUMP;
 		m_move.z = cosf(fRotSmash) * KNOCKBACK_MOVE;
+
+		if (m_pMotion->GetType() != MOTIONTYPE_DAMAGE)
+		{ // ダメージモーションじゃなかった場合
+
+			// ダメージモーションを設定
+			m_pMotion->Set(MOTIONTYPE_DAMAGE);
+		}
 	}
 }
 
@@ -802,6 +816,13 @@ void CPlayer::ArrivalAirplane(void)
 
 		// 飛行機を NULL にする
 		m_pAirplane = nullptr;
+
+		if (m_pMotion->GetType() != MOTIONTYPE_AIRDIVE)
+		{ // 飛行機降り状態以外の場合
+
+			// 飛行機降りモーションを行う
+			m_pMotion->Set(MOTIONTYPE_AIRDIVE);
+		}
 	}
 }
 
