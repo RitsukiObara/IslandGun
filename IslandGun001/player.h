@@ -30,6 +30,7 @@ class CGoldBoneUI;			// 金の骨UI
 class CLifeUI;				// 寿命UI
 class CPlayerController;	// プレイヤーコントローラー
 class CAirplane;			// 飛行機
+class CShadowCircle;		// 丸影
 
 //--------------------------------------------
 // クラス(プレイヤークラス)
@@ -112,6 +113,7 @@ protected:		// 自分と派生クラスだけアクセスできる
 	void StateManager(void);		// 状態管理処理
 	void Move(void);				// 移動処理
 	void EmergentReload(void);		// 緊急のリロード処理
+	void ShadowPosSet(void);		// 影の位置設定処理
 
 	void ElevationCollision(void);	// 起伏地面の当たり判定処理
 	void Collision(void);			// 当たり判定処理
@@ -136,6 +138,7 @@ private:		// 自分だけアクセスできる
 	CLifeUI* m_pLifeUI;					// 寿命UIの情報
 	CPlayerController* m_pController;	// プレイヤーのコントローラーの情報
 	CAirplane* m_pAirplane;				// 飛行機の情報
+	CShadowCircle* m_pShadow;			// 丸影の情報
 
 	D3DXVECTOR3 m_rotDest;		// 目標の向き
 	D3DXVECTOR3 m_move;			// 移動量

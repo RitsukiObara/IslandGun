@@ -185,8 +185,12 @@ void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size, const in
 
 			// ƒRƒCƒ“‚Ì•Ï”‚ðŽæ“¾‚·‚é
 			posCoin = pCoin->GetPos();
-			vtxMaxCoin = pCoin->GetFileData().vtxMax * COIN_COLLISION_MAGNI;
-			vtxMinCoin = pCoin->GetFileData().vtxMin * COIN_COLLISION_MAGNI;
+			vtxMaxCoin.x = pCoin->GetFileData().vtxMax.x * COIN_COLLISION_MAGNI;
+			vtxMaxCoin.y = pCoin->GetFileData().vtxMax.y;
+			vtxMaxCoin.z = pCoin->GetFileData().vtxMax.z * COIN_COLLISION_MAGNI;
+			vtxMinCoin.x = pCoin->GetFileData().vtxMin.x * COIN_COLLISION_MAGNI;
+			vtxMinCoin.y = pCoin->GetFileData().vtxMin.y;
+			vtxMinCoin.z = pCoin->GetFileData().vtxMin.z * COIN_COLLISION_MAGNI;
 
 			if (useful::RectangleCollisionXY(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
 				useful::RectangleCollisionXZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&

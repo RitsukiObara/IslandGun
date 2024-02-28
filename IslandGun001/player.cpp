@@ -25,6 +25,7 @@
 #include "lifeUI.h"
 #include "player_controller.h"
 #include "airplane.h"
+#include "shadowCircle.h"
 
 #include "collision.h"
 #include "camera.h"
@@ -40,6 +41,7 @@ namespace
 {
 	const float GRAVITY = 1.0f;						// 重力
 	const float LAND_GRAVITY = -50.0f;				// 着地時の重力
+	const float SHADOW_RADIUS = 70.0f;				// 影の半径
 	const D3DXVECTOR3 INIT_CAMERA_ROT = D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f);		// カメラの初期向き
 	const float INIT_POSV_CAMERA_Y = 250.0f;		// カメラの視点のY座標
 	const float ROT_CORRECT = 0.2f;					// 向きの補正倍率
@@ -88,6 +90,7 @@ CPlayer::CPlayer() : CCharacter(CObject::TYPE_PLAYER, CObject::PRIORITY_PLAYER)
 	m_pLifeUI = nullptr;					// 寿命UIの情報
 	m_pController = nullptr;				// プレイヤーのコントローラーの情報
 	m_pAirplane = nullptr;					// 飛行機の情報
+	m_pShadow = nullptr;					// 丸影の情報
 
 	m_stateInfo.state = STATE_NONE;			// 状態
 	m_stateInfo.nCount = 0;					// 状態カウント
@@ -233,6 +236,7 @@ HRESULT CPlayer::Init(void)
 	}
 	m_pAim = nullptr;					// エイムの情報
 	m_pDagger = nullptr;				// ダガーの情報
+	m_pShadow = nullptr;				// 丸影の情報
 
 	m_stateInfo.state = STATE_NONE;		// 状態
 	m_stateInfo.nCount = 0;				// 状態カウント
@@ -490,6 +494,9 @@ void CPlayer::Update(void)
 
 		break;
 	}
+
+	// 影の位置設定処理
+	ShadowPosSet();
 }
 
 //===========================================
@@ -837,6 +844,13 @@ void CPlayer::SetData(const D3DXVECTOR3& pos)
 
 	// 区分の設定処理
 	m_nAreaIdx = area::SetFieldIdx(GetPos());
+
+	if (m_pShadow == nullptr)
+	{ // 丸影が NULL の場合
+
+		// 丸影を生成
+		m_pShadow = CShadowCircle::Create(GetPos(), SHADOW_RADIUS, m_nAreaIdx);
+	}
 }
 
 //===========================================
@@ -1230,6 +1244,29 @@ void CPlayer::EmergentReload(void)
 
 		// 緊急で弾丸をリロードする
 		m_pBulletUI->SetNumBullet(MAX_REMAINING_BULLET);
+	}
+}
+
+//=======================================
+// 影の位置設定処理
+//=======================================
+void CPlayer::ShadowPosSet(void)
+{
+	// 位置を取得
+	D3DXVECTOR3 pos = GetPos();
+
+	// 影の位置と区分の番号を設定する
+	m_pShadow->SetPos(pos);
+	m_pShadow->SetAreaIdx(m_nAreaIdx);
+
+	if (m_bJump == true)
+	{ // ジャンプしている場合
+
+		// 高さを最下層にする
+		pos.y = FLT_MIN;
+
+		// 影の当たり判定
+		m_pShadow->Collision();
 	}
 }
 
