@@ -84,7 +84,8 @@ namespace collision
 
 	// Õ’d‚Æ‚Ì“–‚½‚è”»’è
 	bool AlterCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, const D3DXVECTOR3& vtxMax, const D3DXVECTOR3& vtxMin);		// Õ’d‚Æ‚Ì“–‚½‚è”»’è
-	
+	void AlterSurrounding(const D3DXVECTOR3& pos, const float fRadius);			// Õ’düˆÍ‚Ì“–‚½‚è”»’è
+
 	// aŒ‚”g–ä‚Æ‚Ì“–‚½‚è”»’è
 	bool RippleHit(const D3DXVECTOR3& pos, const float fRadius, const float fHeight, float* fRotSmash = nullptr);		// aŒ‚‚Ì”g–ä‚Ì“–‚½‚è”»’è
 	

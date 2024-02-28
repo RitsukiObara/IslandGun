@@ -216,6 +216,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game_score.cpp" />
     <ClCompile Include="gold_bone.cpp" />
+    <ClCompile Include="gold_bone_light.cpp" />
     <ClCompile Include="gold_bone_UI.cpp" />
     <ClCompile Include="grass.cpp" />
     <ClCompile Include="handgun.cpp" />
@@ -369,6 +370,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="game_score.h" />
     <ClInclude Include="gold_bone.h" />
+    <ClInclude Include="gold_bone_light.h" />
     <ClInclude Include="gold_bone_UI.h" />
     <ClInclude Include="grass.h" />
     <ClInclude Include="handgun.h" />

@@ -14,6 +14,11 @@
 #include "list_manager.h"
 
 //-----------------------------------
+// 前方宣言
+//-----------------------------------
+class CGoldBoneLight;		// 金の骨の光
+
+//-----------------------------------
 // クラス定義(金の骨)
 //-----------------------------------
 class CGoldBone : public CModel
@@ -45,6 +50,8 @@ public:			// 誰でもアクセスできる
 	// セット・ゲット関係
 	void SetState(const STATE state);		// 状態の設定処理
 	STATE GetState(void) const;				// 状態の取得処理
+	void SetLight(void);					// 光の設定処理
+	CGoldBoneLight* GetLight(void);			// 光の取得処理
 
 	// 静的メンバ関数
 	static CGoldBone* Create(const D3DXVECTOR3& pos);	// 生成処理
@@ -60,6 +67,8 @@ private:		// 自分だけアクセスできる
 	void AlterSet(void);	// 祭壇設定処理
 
 	// メンバ関数
+	CGoldBoneLight* m_pLight;	// 光の情報
+
 	STATE m_state;			// 状態
 	int m_nPoleIdx;			// 石柱のインデックス
 	float m_fDestHeight;	// 目的の高さ

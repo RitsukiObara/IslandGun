@@ -17,6 +17,7 @@
 #include "alter.h"
 #include "alter_pole.h"
 #include "blur_org.h"
+#include "gold_bone_light.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -51,6 +52,7 @@ CListManager<CGoldBone*> CGoldBone::m_list = {};		// リスト
 CGoldBone::CGoldBone() : CModel(CObject::TYPE_GOLDBONE, CObject::PRIORITY_ENTITY)
 {
 	// 全ての値をクリアする
+	m_pLight = nullptr;			// ライトの情報
 	m_state = STATE_NONE;		// 状態
 	m_fDestHeight = 0.0f;		// 目的の高さ
 	m_fRotMove = ROT_MOVE;		// 向きの移動量
@@ -88,6 +90,14 @@ HRESULT CGoldBone::Init(void)
 //========================================
 void CGoldBone::Uninit(void)
 {
+	if (m_pLight != nullptr)
+	{ // ライトが NULL じゃない場合
+
+		// 終了処理
+		m_pLight->Uninit();
+		m_pLight = nullptr;
+	}
+
 	// 終了処理
 	CModel::Uninit();
 
@@ -137,6 +147,21 @@ void CGoldBone::Update(void)
 
 	// 回転処理
 	Cycle();
+
+	if (m_pLight != nullptr)
+	{ // ライトが NULL じゃない場合
+
+		// 描画処理
+		m_pLight->Update();
+
+		if (m_pLight->GetCircum() <= 0.0f)
+		{ // 円周が0以下の場合
+
+			// 終了処理
+			m_pLight->Uninit();
+			m_pLight = nullptr;
+		}
+	}
 }
 
 //=====================================
@@ -146,6 +171,13 @@ void CGoldBone::Draw(void)
 {
 	// 描画処理
 	CModel::Draw();
+
+	if (m_pLight != nullptr)
+	{ // ライトが NULL じゃない場合
+
+		// 描画処理
+		m_pLight->Draw();
+	}
 }
 
 //=====================================
@@ -258,6 +290,28 @@ CGoldBone::STATE CGoldBone::GetState(void) const
 {
 	// 状態を返す
 	return m_state;
+}
+
+//=======================================
+// 光の設定処理
+//=======================================
+void CGoldBone::SetLight(void)
+{
+	if (m_pLight == nullptr)
+	{ // 光が NULL の場合
+
+		// 光を生成
+		m_pLight = CGoldBoneLight::Create(GetPos());
+	}
+}
+
+//=======================================
+// 光の取得処理
+//=======================================
+CGoldBoneLight* CGoldBone::GetLight(void)
+{
+	// 光の情報を返す
+	return m_pLight;
 }
 
 //=======================================

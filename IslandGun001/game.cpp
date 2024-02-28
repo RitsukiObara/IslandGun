@@ -27,7 +27,6 @@
 #include "player.h"
 #include "ocean.h"
 #include "game_score.h"
-#include "boss.h"
 #include "alter.h"
 
 //--------------------------------------------
@@ -119,8 +118,6 @@ HRESULT CGame::Init(void)
 
 	// 祭壇の生成
 	m_pAlter = CAlter::Create();
-
-	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nFinishCount = 0;			// 終了カウント

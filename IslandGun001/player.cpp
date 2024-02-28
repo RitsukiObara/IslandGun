@@ -450,6 +450,9 @@ void CPlayer::Update(void)
 		// ‹à‚Ìœ‚Æ‚Ì“–‚½‚è”»’è
 		collision::GoldBoneCollision(*this, COLLISION_SIZE);
 
+		// Õ’d‚ÌüˆÍ‚Ì“–‚½‚è”»’è
+		collision::AlterSurrounding(GetPos(), COLLISION_SIZE.x);
+
 		// ‹N•š’n–Ê‚Æ‚Ì“–‚½‚è”»’èˆ—
 		ElevationCollision();
 

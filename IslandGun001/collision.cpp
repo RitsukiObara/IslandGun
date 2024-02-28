@@ -70,6 +70,8 @@ namespace
 	const int COIN_SCORE = 100;						// コインのスコア
 
 	const float SIGNBOARD_ADD_RADIUS = 50.0f;		// 看板の追加の半径
+
+	const float ALTER_SURROUND_RADIUS = 800.0f;		// 祭壇の周囲の半径
 	
 	const float DOOR_ADD_RADIUS = 100.0f;			// ドアの追加の半径
 	const float DOOR_HIT_ANGLE = 0.4f;				// ドアのヒット判定が出る方向
@@ -1856,6 +1858,37 @@ bool collision::AlterCollision(D3DXVECTOR3* pos, const D3DXVECTOR3& posOld, cons
 
 	// false を返す
 	return false;
+}
+
+//===============================
+// 祭壇周囲の当たり判定
+//===============================
+void collision::AlterSurrounding(const D3DXVECTOR3& pos, const float fRadius)
+{
+	// 当たり判定の変数を宣言
+	CAlter* pAlter = CGame::GetAlter();
+	D3DXVECTOR3 posAlter = NONE_D3DXVECTOR3;
+
+	if (pAlter != nullptr &&
+		pAlter->GetState() == CAlter::STATE_NONE)
+	{ // 祭壇に骨が揃っていない場合
+
+		// 位置とサイズを取得する
+		posAlter = pAlter->GetPos();
+
+		if (useful::CircleCollisionXZ(pos,posAlter,fRadius, ALTER_SURROUND_RADIUS))
+		{ // 祭壇の周囲にいた場合
+
+			// ライト点灯状況を true にする
+			pAlter->SetEnableLightUp(true);
+		}
+		else
+		{ // 上記以外
+
+			// ライト点灯状況を false にする
+			pAlter->SetEnableLightUp(false);
+		}
+	}
 }
 
 //===============================

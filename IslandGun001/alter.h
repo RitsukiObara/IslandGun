@@ -52,6 +52,8 @@ public:			// 誰でもアクセスできる
 	CAlterPole* GetPole(const int nIdx) const;	// 石柱の取得処理
 	void SetState(const STATE state);			// 状態の設定処理
 	STATE GetState(void) const;					// 状態の取得処理
+	void SetEnableLightUp(const bool bLight);	// ライト点灯状況の設定処理
+	bool IsLightUp(void) const;					// ライト点灯状況の取得処理
 
 	// 静的メンバ関数
 	static CAlter* Create(void);	// 生成処理
@@ -61,10 +63,14 @@ public:			// 誰でもアクセスできる
 
 private:		// 自分だけアクセスできる
 
+	// メンバ関数
+	void GoldBoneLight(void);		// 金の骨の光処理
+
 	// メンバ変数
 	STATE m_state;					// 状態
 	CAlterPole* m_apPole[NUM_POLE];	// 石柱の情報
 	int m_nStateCount;				// 状態カウント
+	bool m_bLightUp;				// ライト点灯状況
 };
 
 #endif

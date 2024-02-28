@@ -14,6 +14,8 @@
 #include "useful.h"
 
 #include "game.h"
+#include "gold_bone.h"
+#include "gold_bone_light.h"
 #include "alter_pole.h"
 #include "alter_light.h"
 #include "alter_flash.h"
@@ -50,6 +52,7 @@ CAlter::CAlter() : CModel(TYPE_ALTER, PRIORITY_ENTITY)
 	}
 	m_state = STATE_NONE;				// 状態
 	m_nStateCount = 0;					// 状態カウント
+	m_bLightUp = false;					// ライト点灯状況
 }
 
 //==============================
@@ -107,6 +110,9 @@ void CAlter::Update(void)
 	switch (m_state)
 	{
 	case CAlter::STATE_NONE:
+
+		// 金の骨の光処理
+		GoldBoneLight();
 
 		if (m_apPole[0]->IsArrival() == true &&
 			m_apPole[1]->IsArrival() == true &&
@@ -212,6 +218,7 @@ void CAlter::SetData(void)
 	}
 	m_state = STATE_NONE;				// 状態
 	m_nStateCount = 0;					// 状態カウント
+	m_bLightUp = false;					// ライト点灯状況
 }
 
 //=======================================
@@ -304,6 +311,24 @@ CAlter::STATE CAlter::GetState(void) const
 }
 
 //=======================================
+// ライト点灯状況の設定処理
+//=======================================
+void CAlter::SetEnableLightUp(const bool bLight)
+{
+	// ライト点灯状況を設定する
+	m_bLightUp = bLight;
+}
+
+//=======================================
+// ライト点灯状況の取得処理
+//=======================================
+bool CAlter::IsLightUp(void) const
+{
+	// ライト点灯状況を返す
+	return m_bLightUp;
+}
+
+//=======================================
 // 破壊処理
 //=======================================
 void CAlter::Break(void)
@@ -323,4 +348,42 @@ void CAlter::Break(void)
 
 	// 破壊状態にする
 	m_state = STATE_BREAK;
+}
+
+//=======================================
+// 金の骨の光処理
+//=======================================
+void CAlter::GoldBoneLight(void)
+{
+	CListManager<CGoldBone*> list = CGoldBone::GetList();
+	CGoldBone* pBone = nullptr;			// 骨のポインタ
+
+	for (int nCnt = 0; nCnt < list.GetNumData(); nCnt++)
+	{
+		// 金の骨を取得
+		pBone = list.GetData(nCnt);
+
+		if (m_bLightUp == true)
+		{ // ライト点灯状況が true の場合
+
+			if (pBone->GetLight() == nullptr &&
+				pBone->GetState() == CGoldBone::STATE_NONE)
+			{ // 通常状態の場合
+
+				// ライトの設定処理
+				pBone->SetLight();
+			}
+		}
+		else
+		{ // 上記以外
+
+			if (pBone->GetLight() != nullptr &&
+				pBone->GetLight()->GetState() == CGoldBoneLight::STATE_EXTEND)
+			{ // 光が拡大状態の場合
+
+				// ライトを縮小状態にする
+				pBone->GetLight()->SetState(CGoldBoneLight::STATE_SHRINK);
+			}
+		}
+	}
 }
