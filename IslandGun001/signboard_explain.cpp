@@ -36,6 +36,7 @@ namespace
 		"data\\TEXTURE\\Signboard006.png",
 		"data\\TEXTURE\\Signboard007.png",
 		"data\\TEXTURE\\Signboard008.png",
+		"data\\TEXTURE\\Signboard009.png",
 	};
 	const D3DXCOLOR SCREEN_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);		// ”wŒi‚ÌF
 	const float SCREEN_ADD_ALPHA = 0.01f;			// ”wŒi‚Ì“§–¾“x‚Ì‰ÁZ”

@@ -37,6 +37,7 @@ public:			// 誰でもアクセスできる
 		TYPE_DODGE,			// 回避の説明
 		TYPE_SHOTGUN,		// 散弾の説明
 		TYPE_SWOOP,			// 急降下の説明
+		TYPE_GAME,			// ゲームの説明
 		TYPE_MAX			// この列挙型の総数
 	};
 

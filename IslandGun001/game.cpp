@@ -196,12 +196,6 @@ void CGame::Update(void)
 				// 飛行機到着処理
 				m_pPlayer->ArrivalAirplane();
 			}
-
-			// 通常カメラにする
-			CManager::Get()->GetCamera()->SetType(CCamera::TYPE_NONE);
-
-			// プレイ状態にする
-			m_state = STATE_PLAY;
 		}
 
 		// ポーズ処理
