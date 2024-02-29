@@ -17,7 +17,6 @@
 #include "gold_bone.h"
 #include "gold_bone_light.h"
 #include "alter_pole.h"
-#include "alter_light.h"
 #include "alter_flash.h"
 #include "boss.h"
 
@@ -51,7 +50,6 @@ CAlter::CAlter() : CModel(TYPE_ALTER, PRIORITY_ENTITY)
 		m_apPole[nCnt] = nullptr;		// 石柱の情報
 	}
 	m_state = STATE_NONE;				// 状態
-	m_nStateCount = 0;					// 状態カウント
 	m_bLightUp = false;					// ライト点灯状況
 }
 
@@ -119,21 +117,30 @@ void CAlter::Update(void)
 			m_apPole[2]->IsArrival() == true)
 		{ // 石柱に全て金の骨が到着していた場合
 
-			// チャージ状態にする
-			m_state = STATE_CHARGE;
-
-			// 祭壇の光を生成
-			CAlterLight::Create(D3DXVECTOR3(GetPos().x, GetPos().y + ALTER_LIGHT_HEIGHT, GetPos().z));
+			// チャージ状態への遷移処理
+			ChargeTrans();
 		}
 
 		break;
 
 	case CAlter::STATE_CHARGE:
 
-		// 状態カウントを加算する
-		m_nStateCount++;
+		for (int nCnt = 0; nCnt < NUM_POLE; nCnt++)
+		{
+			if (m_apPole[nCnt] != nullptr)
+			{ // ポールが NULL じゃない場合
 
-		if (m_nStateCount >= CHARGE_COUNT)
+				// チャージ処理
+				m_apPole[nCnt]->Charge();
+
+				// 金の骨の位置設定処理wwwwwwwwwwwwwwwwwwwwwwwwww
+				m_apPole[nCnt]->GoldBonePosSet(GetPos());
+			}
+		}
+
+		if (m_apPole[0]->GetBoneDist() <= 0.0f &&
+			m_apPole[1]->GetBoneDist() <= 0.0f &&
+			m_apPole[2]->GetBoneDist() <= 0.0f)
 		{ // 状態カウントが一定数に達した場合
 
 			// ボス出現状態にする
@@ -217,7 +224,6 @@ void CAlter::SetData(void)
 		}
 	}
 	m_state = STATE_NONE;				// 状態
-	m_nStateCount = 0;					// 状態カウント
 	m_bLightUp = false;					// ライト点灯状況
 }
 
@@ -348,6 +354,36 @@ void CAlter::Break(void)
 
 	// 破壊状態にする
 	m_state = STATE_BREAK;
+}
+
+//=======================================
+// チャージ状態への遷移処理
+//=======================================
+void CAlter::ChargeTrans(void)
+{
+	// チャージ状態にする
+	m_state = STATE_CHARGE;
+
+	D3DXVECTOR3 pos;
+	D3DXVECTOR3 posBone;
+
+	for (int nCnt = 0; nCnt < NUM_POLE; nCnt++)
+	{
+		if (m_apPole[nCnt] != nullptr &&
+			m_apPole[nCnt]->GetGoldBone() != nullptr)
+		{ // 金の骨が台座にあった場合
+
+			// 位置を取得
+			pos = GetPos();
+			posBone = m_apPole[nCnt]->GetGoldBone()->GetPos();
+
+			// 金の骨への向きを算出
+			m_apPole[nCnt]->SetBoneRot(atan2f(posBone.x - pos.x, posBone.z - pos.z));
+
+			// 金の骨への距離を算出
+			m_apPole[nCnt]->SetBoneDist(sqrtf((posBone.x - pos.x) * (posBone.x - pos.x) + (posBone.z - pos.z) * (posBone.z - pos.z)));
+		}
+	}
 }
 
 //=======================================

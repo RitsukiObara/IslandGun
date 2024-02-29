@@ -64,13 +64,13 @@ public:			// 誰でもアクセスできる
 private:		// 自分だけアクセスできる
 
 	// メンバ関数
+	void ChargeTrans(void);			// チャージ状態への遷移処理
 	void GoldBoneLight(void);		// 金の骨の光処理
 
 	// メンバ変数
-	STATE m_state;					// 状態
-	CAlterPole* m_apPole[NUM_POLE];	// 石柱の情報
-	int m_nStateCount;				// 状態カウント
-	bool m_bLightUp;				// ライト点灯状況
+	CAlterPole* m_apPole[NUM_POLE];		// 石柱の情報
+	STATE m_state;						// 状態
+	bool m_bLightUp;					// ライト点灯状況
 };
 
 #endif

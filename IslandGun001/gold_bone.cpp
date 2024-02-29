@@ -400,6 +400,7 @@ void CGoldBone::Up(void)
 
 					// ‹à‚Ìœ‚ğ‹Ÿ‚¦‚é
 					pPole->SetEnableEmpty(false);
+					pPole->SetGoldBone(this);
 
 					//Õ’dİ’èó‘Ô‚É‚·‚é
 					m_state = STATE_ALTERSET;

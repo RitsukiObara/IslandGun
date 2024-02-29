@@ -510,9 +510,6 @@
     <ClCompile Include="alter_pole.cpp">
       <Filter>gimmick\Map\Alter</Filter>
     </ClCompile>
-    <ClCompile Include="alter_light.cpp">
-      <Filter>gimmick\Map\Alter</Filter>
-    </ClCompile>
     <ClCompile Include="addscoreUI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
@@ -969,9 +966,6 @@
       <Filter>gimmick\Map\Alter</Filter>
     </ClInclude>
     <ClInclude Include="alter_pole.h">
-      <Filter>gimmick\Map\Alter</Filter>
-    </ClInclude>
-    <ClInclude Include="alter_light.h">
       <Filter>gimmick\Map\Alter</Filter>
     </ClInclude>
     <ClInclude Include="addscoreUI.h">
