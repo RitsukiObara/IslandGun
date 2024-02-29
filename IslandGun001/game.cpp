@@ -85,6 +85,7 @@ CGame::~CGame()
 HRESULT CGame::Init(void)
 {
 	// スタートカメラで描画
+	CManager::Get()->GetCamera()->Reset();
 	CManager::Get()->GetCamera()->SetType(CCamera::TYPE_START);
 
 	// テキスト読み込み処理

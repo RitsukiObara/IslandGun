@@ -97,6 +97,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 			CManager::Get()->GetFile()->Load(CFile::TYPE_WALL);
 			CManager::Get()->GetFile()->Load(CFile::TYPE_BOSSCOLL);
 			CManager::Get()->GetFile()->Load(CFile::TYPE_SIGNBOARD);
+			CManager::Get()->GetFile()->Load(CFile::TYPE_BALLOON);
 			CManager::Get()->GetFile()->Load(CFile::TYPE_ENEMYROUTE);
 		}
 	}
@@ -241,7 +242,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 #ifdef _DEBUG
 
 		// フェードのメモリを確保する
-		m_pFade = m_pFade->Create(CScene::MODE_GAME);
+		m_pFade = m_pFade->Create(CScene::MODE_TUTORIAL);
 #else
 
 		// シーンのメモリを確保する

@@ -108,6 +108,7 @@ public:			// 誰でもアクセスできる
 	SState GetState(void) const;				// 状態の取得処理
 	void SetEnableJump(const bool bJump);		// ジャンプ状況の設定処理
 	bool IsJump(void) const;					// ジャンプ状況の取得処理
+	void SetAreaIdx(const int nIdx);			// 区分の番号の設定処理
 	int GetAreaIdx(void) const;					// 区分の番号の取得処理
 
 	// 静的メンバ関数

@@ -39,7 +39,7 @@ public:						// 誰でもアクセスできる
 
 	// セット・ゲット関係
 	void SetFogCol(const D3DXCOLOR& col);		// 色のレベルの設定処理
-	D3DXVECTOR3 GetFogCol(void) const;			// 色のレベルの取得処理
+	D3DXCOLOR GetFogCol(void) const;			// 色のレベルの取得処理
 
 	// 静的メンバ関数
 	static CRenderer* Create(HWND hWnd, BOOL bWindow);		// 生成処理

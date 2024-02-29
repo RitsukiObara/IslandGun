@@ -26,14 +26,12 @@ namespace
 	{
 		D3DXVECTOR3(2500.0f,0.0f,0.0f),
 		D3DXVECTOR3(-2500.0f,0.0f,0.0f),
-		D3DXVECTOR3(0.0f,0.0f,2500.0f),
 		D3DXVECTOR3(0.0f,0.0f,-2500.0f),
 	};
 	const D3DXVECTOR3 WALL_ROT[CTutorialMap::NUM_WALL] =		// 壁の向き
 	{
 		D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f),
 		D3DXVECTOR3(0.0f,D3DX_PI * -0.5f,0.0f),
-		D3DXVECTOR3(0.0f,0.0f,0.0f),
 		D3DXVECTOR3(0.0f,D3DX_PI,0.0f),
 	};
 	const float WALL_WIDTH = 5000.0f;			// 壁の幅
@@ -54,7 +52,6 @@ CTutorialMap::CTutorialMap() : CObject(CObject::TYPE_TUTORIALMAP, DIM_3D, CObjec
 	{
 		m_apWall[nCnt] = nullptr;	// 壁の情報
 	}
-	m_pCeil = nullptr;				// 天井の情報
 }
 
 //==============================
@@ -150,23 +147,6 @@ void CTutorialMap::SetData(void)
 			assert(false);
 		}
 	}
-
-	//if (m_pCeil == nullptr)
-	//{ // 天井が NULL の場合
-
-	//	// 天井を生成
-	//	m_pCeil = CMeshField::Create
-	//	(
-	//		CEIL_POS
-	//	);
-	//	m_pCeil->CObject::SetType(TYPE_NONE);		// 無状態にする
-	//}
-	//else
-	//{ // 上記以外
-
-	//	// 停止
-	//	assert(false);
-	//}
 }
 
 //=======================================

@@ -15,8 +15,8 @@
 //-----------------------------------
 // 前方宣言
 //-----------------------------------
-class CMeshWall;		// メッシュウォール
-class CMeshField;		// メッシュフィールド
+class CMeshWall;			// メッシュウォール
+class CMeshField;			// メッシュフィールド
 
 //-----------------------------------
 // クラス定義(チュートリアルマップ)
@@ -40,13 +40,12 @@ public:			// 誰でもアクセスできる
 	static CTutorialMap* Create(void);		// 生成処理
 
 	// 定数定義
-	static const int NUM_WALL = 4;		// 壁の総数
+	static const int NUM_WALL = 3;		// 壁の総数
 
 private:		// 自分だけアクセスできる
 
 	// メンバ変数
 	CMeshWall* m_apWall[NUM_WALL];	// 壁の情報
-	CMeshField* m_pCeil;			// 天井の情報
 };
 
 #endif

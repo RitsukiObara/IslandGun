@@ -60,7 +60,7 @@ namespace
 	};
 	const int INIT_GUN_IDX = 9;						// 銃の初期値のインデックス
 	const int INIT_DAGGER_IDX = 9;					// ダガーのインデックス
-	const int MAX_LIFE = 10;						// 体力の最大値
+	const int MAX_LIFE = 100;						// 体力の最大値
 	const int DAMAGE_COUNT = 30;					// ダメージ状態のカウント数
 	const D3DXCOLOR DAMAGE_COLOR = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);		// ダメージ状態の色
 	const int INVINCIBLE_COUNT = 90;				// 無敵状態のカウント数
@@ -1041,6 +1041,15 @@ bool CPlayer::IsJump(void) const
 {
 	//ジャンプ状況を返す
 	return m_bJump;
+}
+
+//=======================================
+// 区分の番号の設定処理
+//=======================================
+void CPlayer::SetAreaIdx(const int nIdx)
+{
+	// 区分の番号を設定する
+	m_nAreaIdx = nIdx;
 }
 
 //=======================================

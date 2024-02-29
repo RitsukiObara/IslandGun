@@ -38,6 +38,7 @@ private:		// 自分だけアクセスできる
 	// メンバ関数
 	void DoorCollision(void);		// ドアとの当たり判定
 	void Trans(void);				// 遷移状態処理
+	void StageCollision(void);		// ステージとの当たり判定
 
 	// メンバ変数
 	int m_nTransCount;		// 遷移カウント

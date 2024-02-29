@@ -12,6 +12,7 @@
 #include "tutorial.h"
 #include "collision.h"
 #include "renderer.h"
+#include "area.h"
 #include "useful.h"
 
 #include "player_controller.h"
@@ -31,10 +32,13 @@ namespace
 	const float TRANS_DEST_ROT = 0.0f;				// 遷移の時の目的の向き
 	const float TRANS_DEST_CAMERAROT_X = 1.3f;		// 遷移の時の目的の向き
 	const float TRANS_DEST_CAMERAROT_Y = 0.0f;		// 遷移の時の目的の向き
+	const float TRANS_DEST_CAMERA_DIST = 800.0f;	// 遷移の時の目的の向き
 	const float TRANS_CORRECT = 0.05f;				// 遷移の時の補正係数
 	const int MOVE_COUNT = 65;						// 移動するカウント
 	const float MOVE_DEPTH = 180.0f;				// 移動する目的のZ座標
 	const float TRANS_GRAVITY = 1.0f;				// 遷移状態中の重力
+	const D3DXVECTOR3 STAGE_VTXMAX = D3DXVECTOR3(2500.0f, 0.0f, 1500.0f);		// ステージの最大値
+	const D3DXVECTOR3 STAGE_VTXMIN = D3DXVECTOR3(-2500.0f, 0.0f, -2500.0f);		// ステージの最小値
 }
 
 //=========================================
@@ -186,6 +190,9 @@ void CTutorialPlayer::Update(void)
 		break;
 	}
 
+	// 区分の設定処理
+	SetAreaIdx(area::SetFieldIdx(GetPos()));
+
 	// ヤシの実との当たり判定
 	collision::PalmFruitHit(this, COLLISION_SIZE.x, COLLISION_SIZE.y);
 
@@ -199,10 +206,13 @@ void CTutorialPlayer::Update(void)
 	Collision();
 
 	if (CTutorial::GetState() == CTutorial::STATE_NONE)
-	{ // 通常状態以外の場合
+	{ // 通常状態の場合
 
 		// ドアとの当たり判定
 		DoorCollision();
+
+		// ステージとの当たり判定
+		StageCollision();
 	}
 }
 
@@ -321,6 +331,7 @@ void CTutorialPlayer::Trans(void)
 	D3DXVECTOR3 rot = GetRot();				// 向き
 	D3DXVECTOR3 move = GetMove();			// 移動量
 	D3DXVECTOR3 rotCamera = CManager::Get()->GetCamera()->GetRot();
+	float fDistCamera = CManager::Get()->GetCamera()->GetDistance();
 
 	if (pDoor != nullptr)
 	{ // ドアが NULL じゃない場合
@@ -357,6 +368,7 @@ void CTutorialPlayer::Trans(void)
 			useful::RotCorrect(TRANS_DEST_ROT, &rot.y, TRANS_CORRECT);
 			useful::RotCorrect(TRANS_DEST_CAMERAROT_X, &rotCamera.x, TRANS_CORRECT);
 			useful::RotCorrect(TRANS_DEST_CAMERAROT_Y, &rotCamera.y, TRANS_CORRECT);
+			useful::Correct(TRANS_DEST_CAMERA_DIST, &fDistCamera, TRANS_CORRECT);
 		}
 	}
 
@@ -368,4 +380,45 @@ void CTutorialPlayer::Trans(void)
 	SetRot(rot);
 	SetMove(move);
 	CManager::Get()->GetCamera()->SetRot(rotCamera);
+	CManager::Get()->GetCamera()->SetDistance(fDistCamera);
+}
+
+//===========================================
+// ステージとの当たり判定
+//===========================================
+void CTutorialPlayer::StageCollision(void)
+{
+	// 位置を取得
+	D3DXVECTOR3 pos = GetPos();
+
+	if (pos.x + COLLISION_SIZE.x >= STAGE_VTXMAX.x)
+	{ // 左からはみ出た場合
+
+		// 位置を補正する
+		pos.x = STAGE_VTXMAX.x - COLLISION_SIZE.x;
+	}
+
+	if (pos.x - COLLISION_SIZE.x <= STAGE_VTXMIN.x)
+	{ // 右からはみ出た場合
+
+		// 位置を補正する
+		pos.x = STAGE_VTXMIN.x + COLLISION_SIZE.x;
+	}
+
+	if (pos.z + COLLISION_SIZE.z >= STAGE_VTXMAX.z)
+	{ // 奥からはみ出た場合
+
+		// 位置を補正する
+		pos.z = STAGE_VTXMAX.z - COLLISION_SIZE.z;
+	}
+
+	if (pos.z - COLLISION_SIZE.z <= STAGE_VTXMIN.z)
+	{ // 手前からはみ出た場合
+
+		// 位置を補正する
+		pos.z = STAGE_VTXMIN.z + COLLISION_SIZE.z;
+	}
+
+	// 位置を適用
+	SetPos(pos);
 }

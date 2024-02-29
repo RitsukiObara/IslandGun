@@ -21,8 +21,9 @@
 
 #include "player_tutorial.h"
 #include "tutorial_map.h"
-#include "balloon_spawner.h"
 #include "door.h"
+#include "tutorial_airplane.h"
+#include "block.h"
 
 //--------------------------------------------
 // 定数定義
@@ -39,6 +40,7 @@ namespace
 CTutorialPlayer* CTutorial::m_pPlayer = nullptr;		// プレイヤーの情報
 CSignboard* CTutorial::m_pLook = nullptr;				// 現在見てる看板
 CDoor* CTutorial::m_pDoor = nullptr;					// ドアの情報
+CTutorialAirplane* CTutorial::m_pAirplane = nullptr;	// 飛行機の情報
 CTutorial::STATE CTutorial::m_state = STATE_NONE;		// 状態
 
 //=========================================
@@ -50,6 +52,8 @@ CTutorial::CTutorial()
 	m_nTransCount = 0;			// 遷移カウント
 	m_pPlayer = nullptr;		// プレイヤーの情報
 	m_pLook = nullptr;			// 現在見てる看板
+	m_pDoor = nullptr;			// ドアの情報
+	m_pAirplane = nullptr;		// 飛行機の情報
 	m_state = STATE_NONE;		// 説明状況
 }
 
@@ -82,7 +86,11 @@ HRESULT CTutorial::Init(void)
 	CMotion::Load(CMotion::STYLE_BOSS);			// ボス
 
 	// マップの生成
+	CManager::Get()->GetFile()->SetBalloon();		// 風船
 	CManager::Get()->GetFile()->SetSignboard();		// 看板
+
+	CBlock::Create(D3DXVECTOR3(-800.0f, 0.0f, -1300.0f), NONE_SCALE);
+	CBlock::Create(D3DXVECTOR3(-1000.0f, 250.0f, -1600.0f), NONE_SCALE);
 
 	// テキスト読み込み処理
 	CMesh::TxtSet();
@@ -96,10 +104,11 @@ HRESULT CTutorial::Init(void)
 	// プレイヤーを生成
 	m_pPlayer = CTutorialPlayer::Create(NONE_D3DXVECTOR3);
 
-	CBalloonSpawner::Create(D3DXVECTOR3(300.0f, 600.0f, 0.0f));
-
 	// ドアを生成
-	m_pDoor = CDoor::Create(D3DXVECTOR3(0.0f, 0.0f, 400.0f));
+	m_pDoor = CDoor::Create(D3DXVECTOR3(0.0f, 0.0f, 1500.0f));
+
+	// 飛行機を生成
+	m_pAirplane = CTutorialAirplane::Create();
 
 	// 全ての値をクリアする
 	m_nTransCount = 0;			// 遷移カウント
@@ -117,6 +126,7 @@ void CTutorial::Uninit(void)
 	m_pPlayer = nullptr;		// プレイヤーのポインタ
 	m_pLook = nullptr;			// 現在見てる看板
 	m_pDoor = nullptr;			// ドアの情報
+	m_pAirplane = nullptr;		// 飛行機の情報
 	m_state = STATE_NONE;		// 状態
 
 	// 終了処理
@@ -241,6 +251,15 @@ CSignboard* CTutorial::GetLookSign(void)
 }
 
 //======================================
+// 飛行機の取得処理
+//======================================
+CTutorialAirplane* CTutorial::GetAirplane(void)
+{
+	// 飛行機の情報を返す
+	return m_pAirplane;
+}
+
+//======================================
 // プレイヤーのプレイヤーのNULL化処理
 //======================================
 void CTutorial::DeletePlayer(void)
@@ -256,4 +275,13 @@ void CTutorial::DeleteDoor(void)
 {
 	// ドアを NULL にする
 	m_pDoor = nullptr;
+}
+
+//======================================
+// 飛行機のNULL化処理
+//======================================
+void CTutorial::DeleteAirplane(void)
+{
+	// 飛行機を NULL にする
+	m_pAirplane = nullptr;
 }

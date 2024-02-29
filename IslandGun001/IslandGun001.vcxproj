@@ -304,6 +304,7 @@
     <ClCompile Include="tordle.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="tutorial.cpp" />
+    <ClCompile Include="tutorial_airplane.cpp" />
     <ClCompile Include="tutorial_map.cpp" />
     <ClCompile Include="useful.cpp" />
     <ClCompile Include="wall.cpp" />
@@ -457,6 +458,7 @@
     <ClInclude Include="tordle.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="tutorial.h" />
+    <ClInclude Include="tutorial_airplane.h" />
     <ClInclude Include="tutorial_map.h" />
     <ClInclude Include="useful.h" />
     <ClInclude Include="wall.h" />

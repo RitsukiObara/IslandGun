@@ -421,6 +421,9 @@ void CPlayerAction::DaggerPrecess(CPlayer* pPlayer)
 		// 爆弾とダガーの当たり判定
 		collision::BombHitToDagger(pos, ATTACK_DAGGER_RADIUS, ATTACK_DAGGER_HEIGHT);
 
+		// 的(風船)の当たり判定
+		collision::TargetHit(pos, ATTACK_DAGGER_RADIUS);
+
 		if (m_bBossAttack == false)
 		{ // ボスに攻撃がまだ通っていなかった場合
 

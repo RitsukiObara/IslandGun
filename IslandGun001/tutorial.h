@@ -18,6 +18,7 @@
 class CTutorialPlayer;			// チュートリアルプレイヤー
 class CSignboard;				// 看板
 class CDoor;					// ドア
+class CTutorialAirplane;		// チュートリアルの飛行機
 
 //--------------------------------------------
 // クラス(チュートリアルクラス)
@@ -51,9 +52,11 @@ public:				// 誰でもアクセスできる
 	static STATE GetState(void);						// 状態の取得処理
 	static void SetLookSign(CSignboard* pSign);			// 看板の設定処理
 	static CSignboard* GetLookSign(void);				// 看板の取得処理
+	static CTutorialAirplane* GetAirplane(void);		// 飛行機の取得処理
 
 	static void DeletePlayer(void);				// プレイヤーのNULL化処理
 	static void DeleteDoor(void);				// ドアのNULL化処理
+	static void DeleteAirplane(void);			// 飛行機のNULL化処理
 
 private:			// 自分だけアクセスできる
 
@@ -64,6 +67,7 @@ private:			// 自分だけアクセスできる
 	static CTutorialPlayer* m_pPlayer;	// プレイヤーの情報
 	static CSignboard* m_pLook;			// 現在見てる看板
 	static CDoor* m_pDoor;				// ドアの情報
+	static CTutorialAirplane* m_pAirplane;	// 飛行機の情報
 	static STATE m_state;				// 状態
 };
 

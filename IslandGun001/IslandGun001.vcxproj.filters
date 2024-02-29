@@ -537,6 +537,9 @@
     <ClCompile Include="continueUI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="tutorial_airplane.cpp">
+      <Filter>scene\tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -994,6 +997,9 @@
     </ClInclude>
     <ClInclude Include="continueUI.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial_airplane.h">
+      <Filter>scene\tutorial</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

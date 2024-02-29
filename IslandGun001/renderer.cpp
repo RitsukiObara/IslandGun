@@ -323,7 +323,7 @@ void CRenderer::SetFogCol(const D3DXCOLOR& col)
 //===========================================
 // 色のレベルの取得処理
 //===========================================
-D3DXVECTOR3 CRenderer::GetFogCol(void) const
+D3DXCOLOR CRenderer::GetFogCol(void) const
 {
 	// 色レベルを返す
 	return m_fogCol;

@@ -14,6 +14,7 @@
 
 #include "tutorial.h"
 #include "push_timing.h"
+#include "tutorial_airplane.h"
 
 //-------------------------------------------
 // 定数定義
@@ -34,7 +35,7 @@ namespace
 //==============================
 // コンストラクタ
 //==============================
-CDoor::CDoor() : CModel(CObject::TYPE_DOOR, CObject::PRIORITY_ENTITY)
+CDoor::CDoor() : CModel(CObject::TYPE_DOOR, CObject::PRIORITY_BLOCK)
 {
 	// 全ての値をクリアする
 	m_pDoor = nullptr;			// ドアのモデル
@@ -124,6 +125,14 @@ void CDoor::Update(void)
 
 		// 閉じ処理
 		Close();
+
+		if (CTutorial::GetPlayer() != nullptr &&
+			m_pDoor->GetRot().y >= -0.0001f)
+		{ // もうほぼ閉まったとき
+			
+			// 飛行機を飛行状態にする
+			CTutorial::GetAirplane()->SetState(CTutorialAirplane::STATE_FLY);
+		}
 
 		// 描画状況を false にする
 		m_bDisp = false;
