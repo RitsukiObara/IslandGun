@@ -143,6 +143,13 @@ void CAlter::Update(void)
 			m_apPole[2]->GetBoneDist() <= 0.0f)
 		{ // 状態カウントが一定数に達した場合
 
+			for (int nCnt = 0; nCnt < NUM_POLE; nCnt++)
+			{
+				// 金の骨を消す
+				m_apPole[nCnt]->GetGoldBone()->Uninit();
+				m_apPole[nCnt]->SetGoldBone(nullptr);
+			}
+
 			// ボス出現状態にする
 			m_state = STATE_BOSSAPPEAR;
 
