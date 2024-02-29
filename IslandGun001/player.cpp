@@ -1231,6 +1231,22 @@ void CPlayer::StateManager(void)
 
 	case CPlayer::STATE_DEATH:
 
+		if (m_pMotion->GetType() != MOTIONTYPE_DEATH)
+		{ // 死亡モーションじゃない場合
+
+			// 死亡モーションを行う
+			m_pMotion->Set(MOTIONTYPE_DEATH);
+		}
+
+		if (CManager::Get()->GetMode() == CScene::MODE_GAME)
+		{ // ゲームモードの場合
+
+			// ゲームオーバーにする
+			CGame::SetState(CGame::STATE_GAMEOVER);
+
+			// ゲームオーバーカメラにする
+			CManager::Get()->GetCamera()->SetType(CCamera::TYPE_GAMEOVER);
+		}
 
 		break;
 
