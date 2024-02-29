@@ -540,9 +540,6 @@
     <ClCompile Include="tutorial_airplane.cpp">
       <Filter>scene\tutorial</Filter>
     </ClCompile>
-    <ClCompile Include="boss_movestate.cpp">
-      <Filter>enemy\boss</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -1003,9 +1000,6 @@
     </ClInclude>
     <ClInclude Include="tutorial_airplane.h">
       <Filter>scene\tutorial</Filter>
-    </ClInclude>
-    <ClInclude Include="boss_movestate.h">
-      <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
