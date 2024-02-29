@@ -498,6 +498,13 @@ void CPlayer::Update(void)
 
 	case CGame::STATE_FINISH:		// 終了状態
 
+		if (m_pMotion != nullptr)
+		{ // モーションが NULL じゃない場合
+
+			// モーションの更新処理
+			m_pMotion->Update();
+		}
+
 		// 起伏地面との当たり判定処理
 		ElevationCollision();
 

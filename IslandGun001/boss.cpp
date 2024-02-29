@@ -23,12 +23,15 @@
 #include "objectElevation.h"
 #include "boss_collision.h"
 #include "fraction.h"
+#include "enemy.h"
+#include "anim_reaction.h"
 
 //------------------------------------------------------------
 // 無名名前空間
 //------------------------------------------------------------
 namespace
 {
+	const D3DXVECTOR3 DEATH_EXPLOSION_SIZE = D3DXVECTOR3(200.0f, 200.0f, 0.0f);		// 敵の死亡時の爆発のサイズ
 	const float LAND_GRAVITY = -50.0f;			// 着地時の重力
 	const int MAX_LIFE = 3000;					// 体力の最大数
 	const int BARRIER_FRAC_MOVE_WIDTH = 40;		// バリア攻撃時の破片の横の移動量
@@ -143,6 +146,26 @@ HRESULT CBoss::Init(void)
 
 		// 停止
 		assert(false);
+	}
+
+	CListManager<CEnemy*> list = CEnemy::GetList();
+	CEnemy* pEnemy = nullptr;
+
+	for (int nCnt = 0; nCnt < list.GetNumData(); nCnt++)
+	{
+		// 敵の情報を取得する
+		pEnemy = list.GetData(nCnt);
+
+		// 位置を取得する
+		D3DXVECTOR3 pos = pEnemy->GetPos();
+
+		// 位置を真ん中にする
+		pos.y += (pEnemy->GetCollSize().y * 0.5f);
+
+		// アニメーションリアクションを生成
+		CAnimReaction::Create(pos, DEATH_EXPLOSION_SIZE, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
+
+		pEnemy->Uninit();
 	}
 
 	// 値を返す

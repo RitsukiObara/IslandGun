@@ -71,6 +71,9 @@ namespace
 	const float GAMEOVER_SUB_DISTANCE = 2.0f;			// ゲームオーバーカメラの距離の減算量
 	const float GAMEOVER_DEST_ROT = D3DX_PI * 0.85f;	// ゲームオーバーカメラの向きの目的地
 	const float GAMEOVER_ROT_MAGNI = 0.05f;				// ゲームオーバーカメラの向きの倍率
+
+	const float RESULT_HEIGHT = 4000.0f;				// リザルトカメラの高さ
+	const float RESULT_DEPTH = -5000.0f;				// リザルトカメラの奥行
 }
 
 //=======================
@@ -201,7 +204,17 @@ void CCamera::Update(void)
 
 		break;
 
+	case CScene::MODE_RESULT:		// リザルト
+
+		// リザルト処理
+		Result();
+
+		break;
+
 	case CScene::MODE_RANKING:		// ランキング
+
+		// ランキング処理
+		Ranking();
 
 		break;
 
@@ -1290,4 +1303,32 @@ void CCamera::GameOver(void)
 		// 向きの補正処理
 		useful::Correct(GAMEOVER_DEST_ROT, &m_rot.x, GAMEOVER_ROT_MAGNI);
 	}
+}
+
+//=======================
+// リザルトカメラ
+//=======================
+void CCamera::Result(void)
+{
+	// 注視点を設定する
+	m_posR = NONE_D3DXVECTOR3;
+
+	// 視点を設定する
+	m_posV.x = m_posR.x;
+	m_posV.y = m_posR.y + RESULT_HEIGHT;
+	m_posV.z = m_posR.z + RESULT_DEPTH;
+}
+
+//=======================
+// ランキングカメラ
+//=======================
+void CCamera::Ranking(void)
+{
+	// 注視点を設定する
+	m_posR = NONE_D3DXVECTOR3;
+
+	// 視点を設定する
+	m_posV.x = m_posR.x;
+	m_posV.y = m_posR.y + RESULT_HEIGHT;
+	m_posV.z = m_posR.z + RESULT_DEPTH;
 }

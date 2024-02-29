@@ -111,6 +111,10 @@ private:		// 自分だけアクセス出来る
 	void BossHowling(void);			// ボス雄たけび処理
 	void GameOver(void);			// ゲームオーバー処理
 
+	void Result(void);				// リザルトカメラ
+
+	void Ranking(void);				// ランキングカメラ
+
 	void PosSet(void);				// 位置の設定処理
 
 	// メンバ変数
