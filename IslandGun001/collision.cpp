@@ -74,7 +74,7 @@ namespace
 	const float ALTER_SURROUND_RADIUS = 800.0f;		// 祭壇の周囲の半径
 	
 	const float DOOR_ADD_RADIUS = 100.0f;			// ドアの追加の半径
-	const float DOOR_HIT_ANGLE = 0.4f;				// ドアのヒット判定が出る方向
+	const float DOOR_HIT_ANGLE = 0.6f;				// ドアのヒット判定が出る方向
 
 	const float BOMB_BULLET_SMASH = 10.0f;			// 銃弾で爆弾の吹き飛ぶ速度
 	const float BOMB_DAGGER_SMASH = 23.0f;			// ダガーで爆弾の吹き飛ぶ速度

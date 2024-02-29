@@ -69,6 +69,8 @@ namespace
 	const float KNOCKBACK_MOVE = 23.0f;				// 吹き飛ぶ移動量
 	const float KNOCKBACK_JUMP = 15.0f;				// 吹き飛ぶ高さ
 	const int WIND_SHOT_DAMAGE = 10;				// 風攻撃のダメージ
+	const int FIRE_SHOT_DAMAGE = 20;				// 炎攻撃のダメージ
+	const int BOSS_RUSH_DAMAGE = 50;				// ボス突進のダメージ
 }
 
 //=========================================
@@ -1190,13 +1192,23 @@ void CPlayer::StateManager(void)
 			float fRotSmash = 0.0f;
 			D3DXVECTOR3 pos = GetPos();
 
-			if (collision::WindShotHit(pos, COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true ||
-				collision::FireShotHit(pos, COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true ||
-				collision::BossAttack(D3DXVECTOR3(pos.x, pos.y + (COLLISION_SIZE.y * 0.5f), pos.z), COLLISION_SIZE.x, &fRotSmash) == true)
-			{ // 当たった場合
+			if (collision::WindShotHit(pos, COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true)
+			{ // 風攻撃に当たった場合
 
 				// ヒット処理
 				Hit(WIND_SHOT_DAMAGE, fRotSmash);
+			}
+			else if (collision::FireShotHit(pos, COLLISION_SIZE.x, COLLISION_SIZE.y, &fRotSmash) == true)
+			{ // 炎攻撃に当たった場合
+
+				// ヒット処理
+				Hit(FIRE_SHOT_DAMAGE, fRotSmash);
+			}
+			else if (collision::BossAttack(D3DXVECTOR3(pos.x, pos.y + (COLLISION_SIZE.y * 0.5f), pos.z), COLLISION_SIZE.x, &fRotSmash) == true)
+			{ // ボスの突進に当たった場合
+
+				// ヒット処理
+				Hit(BOSS_RUSH_DAMAGE, fRotSmash);
 			}
 		}
 

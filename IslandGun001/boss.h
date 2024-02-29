@@ -39,6 +39,7 @@ public:					// 誰でもアクセスできる
 		MOTIONTYPE_FLYING,			// 飛行モーション
 		MOTIONTYPE_CHARGE,			// チャージモーション
 		MOTIONTYPE_DOWN,			// ダウンモーション
+		MOTIONTYPE_STOMP,			// 足踏みモーション
 		MOTIONTYPE_MAX				// この列挙型の総数
 	};
 

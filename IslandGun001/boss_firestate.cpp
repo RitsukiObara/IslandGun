@@ -50,9 +50,6 @@ CBossFireState::~CBossFireState()
 //==========================
 void CBossFireState::Process(CBoss* pBoss)
 {
-	// 追跡処理
-	Chase(pBoss);
-
 	// カウントを加算する
 	m_nCount++;
 
@@ -79,31 +76,6 @@ void CBossFireState::Process(CBoss* pBoss)
 //==========================
 void CBossFireState::SetData(CBoss* pBoss)
 {
-	// 待機モーションにする
-	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_NEUTRAL);
-}
-
-//==========================
-// 追跡処理
-//==========================
-void CBossFireState::Chase(CBoss* pBoss)
-{
-	// プレイヤーの情報を取得する
-	CPlayer* pPlayer = CGame::GetPlayer();
-
-	if (pPlayer != nullptr)
-	{ // プレイヤーが NULL じゃない場合
-
-		// 位置と向きを宣言
-		D3DXVECTOR3 posPlayer = pPlayer->GetPos();
-		D3DXVECTOR3 posBoss = pBoss->GetPos();
-		D3DXVECTOR3 rotBoss = pBoss->GetRot();
-		float fRotDest = atan2f(posPlayer.x - posBoss.x, posPlayer.z - posBoss.z);
-
-		// 向きの補正処理
-		useful::RotCorrect(fRotDest, &rotBoss.y, CHASE_CORRECT);
-
-		// 向きを適用する
-		pBoss->SetRot(rotBoss);
-	}
+	// 足踏みモーションにする
+	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_STOMP);
 }
