@@ -8,9 +8,11 @@
 //	インクルードファイル
 //****************************************************************************************************************
 #include "useful.h"
+#include "manager.h"
 #include "boss.h"
 #include "boss_windstate.h"
 #include "motion.h"
+#include "sound.h"
 
 #include "game.h"
 #include "player.h"
@@ -65,6 +67,10 @@ void CBossWindState::Process(CBoss* pBoss)
 
 		// 風攻撃を生成
 		m_pWindShot = CWindShot::Create(pBoss->GetPos());
+
+		// 風攻撃音を鳴らす
+		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_WINDSHOT);
+		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_BOSSHOWLING);
 	}
 
 	if (m_nCount >= FINISH_COUNT)

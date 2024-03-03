@@ -11,6 +11,7 @@
 #include "enemy.h"
 #include "manager.h"
 #include "area.h"
+#include "sound.h"
 #include "useful.h"
 
 #include "motion.h"
@@ -267,6 +268,9 @@ void CEnemy::Death(void)
 
 		// アニメーションリアクションを生成
 		CAnimReaction::Create(pos, DEATH_EXPLOSION, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
+
+		// ダメージ音を鳴らす
+		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_DAMAGE);
 
 		if (CGame::GetGameScore() != nullptr)
 		{ // ゲームスコアが NULL じゃない場合

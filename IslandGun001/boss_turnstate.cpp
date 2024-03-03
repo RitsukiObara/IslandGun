@@ -11,6 +11,7 @@
 #include "boss.h"
 #include "boss_turnstate.h"
 #include "motion.h"
+#include "sound.h"
 
 #include "game.h"
 #include "alter.h"
@@ -100,6 +101,9 @@ void CBossTurnState::Process(CBoss* pBoss)
 
 				// Õ’d‚Ì”j‰óˆ—
 				CGame::GetAlter()->Break();
+
+				// ”š”­‰¹‚ð–Â‚ç‚·
+				CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_EXPLOSION);
 
 				// Œü‚«‚ð•â³‚·‚é
 				rot.y = fRotDest;

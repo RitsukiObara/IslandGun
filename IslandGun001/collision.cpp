@@ -12,6 +12,7 @@
 #include "manager.h"
 #include "renderer.h"
 #include "input.h"
+#include "sound.h"
 
 #include "shadowCircle.h"
 #include "objectElevation.h"
@@ -202,6 +203,9 @@ void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size, const in
 
 					// 取得処理
 					pCoin->Hit();
+
+					// コインゲット音を鳴らす
+					CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_COINGET);
 
 					if (CGame::GetGameScore() != nullptr)
 					{ // ゲームスコアが NULL じゃない場合
@@ -1265,6 +1269,9 @@ void collision::ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, 
 
 					// 破壊処理
 					pRock->Break();
+
+					// 岩の破壊音を鳴らす
+					CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_ROCKBREAK);
 				}
 			}
 
@@ -2142,6 +2149,9 @@ bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
 
 					// 説明移行処理
 					pSign->Explain();
+
+					// 看板音を鳴らす
+					CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_SIGNBOARD);
 
 					// true を返す
 					return true;

@@ -51,6 +51,7 @@ namespace
 	const int SHOT_INTERVAL = 10;					// 撃つインターバル
 	const float SPEED = 14.0f;						// 速度
 	const float STOP_CORRECT = 0.5f;				// 停止の補正倍率
+	const int WALK_COUNT = 32;						// 歩行音が鳴るカウント数
 }
 
 //=========================
@@ -60,6 +61,7 @@ CPlayerController::CPlayerController()
 {
 	// 全ての値をクリアする
 	m_nShotCount = 0;			// 射撃カウント
+	m_nWalkCount = 0;			// 歩行カウント
 	m_fStickRot = 0.0f;			// スティックの向き
 	m_fSpeed = SPEED;			// 速度
 	m_bRightShot = true;		// 右で撃つかどうか
@@ -144,6 +146,12 @@ void CPlayerController::Control(CPlayer* pPlayer)
 			// 回避処理
 			Avoid(pPlayer);
 		}
+	}
+	else
+	{ // 上記以外
+
+		// 歩行カウントを0にする
+		m_nWalkCount = 0;
 	}
 }
 
@@ -325,6 +333,16 @@ void CPlayerController::RotMove(CPlayer* pPlayer)
 			// 移動モーションを設定する
 			pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_MOVE);
 		}
+
+		// 歩行カウントを加算する
+		m_nWalkCount++;
+
+		if (m_nWalkCount % WALK_COUNT == 0)
+		{ // 一定カウントごとに場合
+
+			// 歩いた音を返す
+			CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_WALK);
+		}
 	}
 	else
 	{ // 上記以外
@@ -340,6 +358,9 @@ void CPlayerController::RotMove(CPlayer* pPlayer)
 			// 移動モーションを設定する
 			pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_NEUTRAL);
 		}
+
+		// 歩行カウントを初期化する
+		m_nWalkCount = 0;
 	}
 
 	// 移動量を設定する
@@ -420,6 +441,16 @@ void CPlayerController::KeyboardMove(CPlayer* pPlayer)
 			// 移動モーションを設定する
 			pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_MOVE);
 		}
+
+		// 歩行カウントを加算する
+		m_nWalkCount++;
+
+		if (m_nWalkCount % WALK_COUNT == 0)
+		{ // 一定カウントごとに場合
+
+			// 歩いた音を返す
+			CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_WALK);
+		}
 	}
 	else
 	{ // 上記以外
@@ -435,6 +466,9 @@ void CPlayerController::KeyboardMove(CPlayer* pPlayer)
 			// 移動モーションを設定する
 			pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_NEUTRAL);
 		}
+
+		// 歩行カウントを初期化する
+		m_nWalkCount = 0;
 	}
 
 	// 移動量と目標の向きを設定する
@@ -806,6 +840,9 @@ void CPlayerController::Avoid(CPlayer* pPlayer)
 
 		// 使用可能状況をfalseにする
 		pPlayer->GetAction()->SetEnableDodgeUse(false);
+
+		// 回避音を鳴らす
+		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_AVOID);
 	}
 
 	// 目的の向きを適用する
@@ -833,6 +870,9 @@ void CPlayerController::Dagger(CPlayer* pPlayer)
 				// ダガーモーションを設定する
 				pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_SWOOP);
 			}
+
+			// ダガー音を鳴らす
+			CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_DAGGER);
 		}
 		else
 		{ // 上記以外
@@ -846,6 +886,9 @@ void CPlayerController::Dagger(CPlayer* pPlayer)
 				// ダガーモーションを設定する
 				pPlayer->GetMotion()->Set(CPlayer::MOTIONTYPE_DAGGER);
 			}
+
+			// ダガー音を鳴らす
+			CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_DAGGER);
 		}
 
 		// ダガーを表示する

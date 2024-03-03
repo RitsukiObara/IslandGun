@@ -13,6 +13,7 @@
 #include "debugproc.h"
 #include "model.h"
 #include "area.h"
+#include "sound.h"
 #include "useful.h"
 
 #include "player.h"
@@ -669,6 +670,9 @@ void CPlayer::Hit(const int nDamage, const float fRotSmash)
 			// ダメージモーションを設定
 			m_pMotion->Set(MOTIONTYPE_DAMAGE);
 		}
+
+		// ダメージ音を鳴らす
+		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_DAMAGE);
 	}
 }
 

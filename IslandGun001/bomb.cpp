@@ -13,6 +13,7 @@
 #include "texture.h"
 #include "collision.h"
 #include "area.h"
+#include "sound.h"
 #include "useful.h"
 
 #include "game.h"
@@ -175,6 +176,9 @@ void CBomb::Update(void)
 			// ”š”­ó‘Ôˆ—
 			if (Explosion() == true)
 			{
+				// ”š”­‰¹‚ğ–Â‚ç‚·
+				CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_EXPLOSION);
+
 				// ”š”­‚Ì¶¬
 				CBombExplosion::Create(GetPos());
 

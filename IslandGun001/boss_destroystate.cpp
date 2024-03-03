@@ -13,6 +13,7 @@
 #include "motion.h"
 
 #include "game.h"
+#include "anim_reaction.h"
 
 //----------------------------------------------------------------------------------------------------------------
 // 無名名前空間
@@ -74,15 +75,33 @@ void CBossDestroyState::SetData(CBoss* pBoss)
 //==========================
 void CBossDestroyState::Move(CBoss* pBoss)
 {
-	// 位置を取得する
-	D3DXVECTOR3 pos = pBoss->GetPos();
+	//// 位置を取得する
+	//D3DXVECTOR3 pos = pBoss->GetPos();
 
-	// 高さを設定する
-	pos.y += m_fAddHeight;
+	//// 高さを設定する
+	//pos.y += m_fAddHeight;
 
-	// 高さの加算数を減速する
-	m_fAddHeight -= DEC_HEIGHT;
+	//// 高さの加算数を減速する
+	//m_fAddHeight -= DEC_HEIGHT;
 
-	// 位置を適用する
-	pBoss->SetPos(pos);
+	//// 位置を適用する
+	//pBoss->SetPos(pos);
+
+	if (m_nCount % 10 == 0)
+	{
+		D3DXMATRIX mtx;
+
+		int nRand = rand() % pBoss->GetNumModel();
+		pBoss->GetHierarchy(nRand)->MatrixCalc(&mtx, pBoss->GetMatrix());
+
+		CAnimReaction::Create
+		(
+			D3DXVECTOR3(mtx._41, mtx._42, mtx._43),
+			D3DXVECTOR3(800.0f, 800.0f, 0.0f),
+			D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
+			CAnimReaction::TYPE::TYPE_EXPLOSION,
+			6,
+			1
+		);
+	}
 }

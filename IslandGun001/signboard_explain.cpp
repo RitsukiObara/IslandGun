@@ -12,6 +12,7 @@
 #include "object2D.h"
 #include "input.h"
 #include "texture.h"
+#include "sound.h"
 #include "useful.h"
 
 #include "tutorial.h"
@@ -125,6 +126,9 @@ void CSignboardExpl::Update(void)
 
 			// ‘Þêó‘Ô‚É‚·‚é
 			m_state = STATE_LEAVE;
+
+			// ŠÅ”Â‰¹‚ð–Â‚ç‚·
+			CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_SIGNBOARD);
 		}
 
 		break;

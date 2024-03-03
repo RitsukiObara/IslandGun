@@ -56,6 +56,7 @@ private:		// 誰でもアクセスできる
 
 	// メンバ変数
 	int m_nShotCount;			// 射撃カウント
+	int m_nWalkCount;			// 歩行カウント
 	float m_fStickRot;			// スティックの向き
 	float m_fSpeed;				// 速度
 	bool m_bRightShot;			// 右で撃つかどうか
