@@ -94,8 +94,12 @@ void CBossNoneState::SetData(CBoss* pBoss)
 	m_fGravity = 0.0f;		// 重力
 	m_nCount = 0;			// 経過カウント
 
-	// 待機モーションを設定する
-	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_NEUTRAL);
+	if (pBoss->GetMotion()->GetType() != CBoss::MOTIONTYPE_NEUTRAL)
+	{ // 通常モーション以外の場合
+
+		// 待機モーションを設定する
+		pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_NEUTRAL);
+	}
 }
 
 //==========================

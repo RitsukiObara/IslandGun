@@ -25,7 +25,8 @@ namespace
 {
 	const float CHASE_CORRECT = 0.01f;		// 追跡の補正数
 	const int FIRE_CREATE_COUNT = 30;		// 炎を出すカウント数
-	const int FINISH_COUNT = 180;			// 終了カウント
+	const int FIRE_CREATE_RANGE = 180;		// 炎を出している間のカウント数
+	const int FINISH_COUNT = 240;			// 終了カウント
 }
 
 //==========================
@@ -56,11 +57,23 @@ void CBossFireState::Process(CBoss* pBoss)
 	CPlayer* pPlayer = CGame::GetPlayer();
 
 	if (m_nCount % FIRE_CREATE_COUNT == 0 &&
+		m_nCount <= FIRE_CREATE_RANGE &&
 		pPlayer != nullptr)
 	{ // 経過カウントが一定数経過した場合
 
 		// 炎注意の生成
 		CFireWarning::Create(pPlayer->GetPos());
+	}
+
+	if (m_nCount == FIRE_CREATE_RANGE)
+	{ // カウントが一定数の場合
+
+		if (pBoss->GetMotion()->GetType() != CBoss::MOTIONTYPE_NEUTRAL)
+		{ // 通常モーション以外の場合
+
+			// 通常モーションにする
+			pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_NEUTRAL);
+		}
 	}
 
 	if (m_nCount >= FINISH_COUNT)
@@ -76,6 +89,10 @@ void CBossFireState::Process(CBoss* pBoss)
 //==========================
 void CBossFireState::SetData(CBoss* pBoss)
 {
-	// 足踏みモーションにする
-	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_STOMP);
+	if (pBoss->GetMotion()->GetType() != CBoss::MOTIONTYPE_STOMP)
+	{ // 足踏みモーション以外の場合
+
+		// 足踏みモーションにする
+		pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_STOMP);
+	}
 }

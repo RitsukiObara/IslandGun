@@ -65,6 +65,10 @@ namespace
 	const float BOSS_HOWLING_ROT_SHIFT = 0.45f;			// ボス雄たけびカメラの向きのずらす量
 	const float BOSS_HOWLING_CORRECT = 0.1f;			// ボス雄たけびカメラの補正係数
 
+	const float BOSS_DESTROY_RANGE = 3500.0f;	// ボス寄りカメラの距離
+	const float BOSS_DESTROY_HEIGHT = 1000.0f;	// ボス寄りカメラの高さ
+	const float BOSS_DESTROY_CORRECT = 0.05f;	// ボス寄りカメラの補正係数
+
 	const float GAMEOVER_ROT = D3DX_PI * 0.6f;			// ゲームオーバーカメラの向き
 	const float GAMEOVER_INIT_DISTANCE = 800.0f;		// ゲームオーバーカメラの初期距離
 	const float GAMEOVER_DISTANCE = 650.0f;				// ゲームオーバーカメラの距離
@@ -972,6 +976,13 @@ void CCamera::TypeProcess(void)
 
 		break;
 
+	case CCamera::TYPE_BOSSDESTROY:		// ボス死亡状態
+
+		// ボスの死亡状態
+		BossDestroy();
+
+		break;
+
 	case CCamera::TYPE_GAMEOVER:		// ゲームオーバー状態
 
 		// ゲームオーバー処理
@@ -1269,6 +1280,52 @@ void CCamera::BossHowling(void)
 		m_posV.x += (m_posVDest.x - m_posV.x) * BOSS_HOWLING_CORRECT;
 		m_posV.y += (m_posVDest.y - m_posV.y) * BOSS_HOWLING_CORRECT;
 		m_posV.z += (m_posVDest.z - m_posV.z) * BOSS_HOWLING_CORRECT;
+	}
+}
+
+//=======================
+// ボスの死亡状態
+//=======================
+void CCamera::BossDestroy(void)
+{
+	// ローカル変数宣言
+	CBoss* pBoss = nullptr;		// ボスの情報
+	D3DXVECTOR3 pos;			// 位置
+	D3DXVECTOR3 rot;			// 向き
+
+	if (CBoss::GetList().IsEmpty() == false)
+	{ // リストが 空欄じゃない場合
+
+		// ボスの情報を取得する
+		pBoss = CBoss::GetList().GetTop();
+	}
+
+	if (pBoss != nullptr)
+	{ // ボスが NULL じゃない場合
+
+		// 位置と向きを取得する
+		pos = pBoss->GetPos();
+		rot = pBoss->GetRot();
+
+		// 目的の注視点を設定する
+		m_posRDest.x = pos.x;
+		m_posRDest.y = pos.y + BOSS_DESTROY_HEIGHT;
+		m_posRDest.z = pos.z;
+
+		// 目的の視点を設定する
+		m_posVDest.x = m_posRDest.x + sinf(rot.y) * BOSS_DESTROY_RANGE;
+		m_posVDest.y = m_posRDest.y;
+		m_posVDest.z = m_posRDest.z + cosf(rot.y) * BOSS_DESTROY_RANGE;
+
+		// 注視点を補正
+		m_posR.x += (m_posRDest.x - m_posR.x) * BOSS_DESTROY_CORRECT;
+		m_posR.y += (m_posRDest.y - m_posR.y) * BOSS_DESTROY_CORRECT;
+		m_posR.z += (m_posRDest.z - m_posR.z) * BOSS_DESTROY_CORRECT;
+
+		// 視点を補正
+		m_posV.x += (m_posVDest.x - m_posV.x) * BOSS_DESTROY_CORRECT;
+		m_posV.y += (m_posVDest.y - m_posV.y) * BOSS_DESTROY_CORRECT;
+		m_posV.z += (m_posVDest.z - m_posV.z) * BOSS_DESTROY_CORRECT;
 	}
 }
 

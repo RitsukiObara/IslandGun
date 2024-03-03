@@ -108,11 +108,8 @@ void CBossHowlingState::Process(CBoss* pBoss)
 			// 雄たけびカメラにする
 			CManager::Get()->GetCamera()->SetType(CCamera::TYPE_VIBRATE);
 
-			{// 振動の情報を設定する
-
-				// 振動情報を適用する
-				CManager::Get()->GetCamera()->SetVibrate(HOWLING_VIB_INFO);
-			}
+			// 振動情報を適用する
+			CManager::Get()->GetCamera()->SetVibrate(HOWLING_VIB_INFO);
 		}
 
 		// ボスの雄たけび音を鳴らす
@@ -146,8 +143,12 @@ void CBossHowlingState::SetData(CBoss* pBoss)
 	// 全ての値を設定する
 	m_nCount = 0;		// 経過カウント
 
-	// ホバリングモーションを設定する
-	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_LANDING);
+	if (pBoss->GetMotion()->GetType() != CBoss::MOTIONTYPE_LANDING)
+	{ // 着地モーション以外の場合
+
+		// 着地モーションを設定する
+		pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_LANDING);
+	}
 
 	// 振動カメラにする
 	CManager::Get()->GetCamera()->SetType(CCamera::TYPE_VIBRATE);

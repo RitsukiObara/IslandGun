@@ -28,6 +28,7 @@ public:			// 誰でもアクセス出来る
 		TYPE_PLAYERAPPEAR,	// プレイヤー登場状態
 		TYPE_BOSSCLOSER,	// ボス寄り状態
 		TYPE_BOSSHOWLING,	// ボス雄たけび状態
+		TYPE_BOSSDESTROY,	// ボス死亡状態
 		TYPE_GAMEOVER,		// ゲームオーバー状態
 		TYPE_MAX			// この列挙型の総数
 	};
@@ -109,6 +110,7 @@ private:		// 自分だけアクセス出来る
 	void PlayerAppear(void);		// プレイヤー登場処理
 	void BossCloser(void);			// ボス寄り処理
 	void BossHowling(void);			// ボス雄たけび処理
+	void BossDestroy(void);			// ボスの死亡状態
 	void GameOver(void);			// ゲームオーバー処理
 
 	void Result(void);				// リザルトカメラ

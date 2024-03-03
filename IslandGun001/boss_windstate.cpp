@@ -89,6 +89,10 @@ void CBossWindState::Process(CBoss* pBoss)
 //==========================
 void CBossWindState::SetData(CBoss* pBoss)
 {
-	// 遠吠えモーションにする
-	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_HOWLING);
+	if (pBoss->GetMotion()->GetType() != CBoss::MOTIONTYPE_HOWLING)
+	{ // 遠吠えモーション以外の場合
+
+		// 遠吠えモーションにする
+		pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_HOWLING);
+	}
 }

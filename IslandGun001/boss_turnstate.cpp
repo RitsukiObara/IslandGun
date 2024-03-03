@@ -129,6 +129,10 @@ void CBossTurnState::SetData(CBoss* pBoss)
 	// 全ての値を設定する
 	m_nCount = 0;		// 経過カウント
 
-	// ホバリングモーションを設定する
-	pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_HOVERING);
+	if (pBoss->GetMotion()->GetType() != CBoss::MOTIONTYPE_HOVERING)
+	{ // ホバリングモーション以外の場合
+
+		// ホバリングモーションを設定する
+		pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_HOVERING);
+	}
 }

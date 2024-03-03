@@ -10,8 +10,10 @@
 #include "useful.h"
 #include "boss.h"
 #include "boss_destroystate.h"
+#include "manager.h"
 #include "motion.h"
 
+#include "camera.h"
 #include "game.h"
 #include "anim_reaction.h"
 
@@ -67,7 +69,12 @@ void CBossDestroyState::Process(CBoss* pBoss)
 //==========================
 void CBossDestroyState::SetData(CBoss* pBoss)
 {
+	if (CManager::Get()->GetCamera()->GetType() != CCamera::TYPE_BOSSDESTROY)
+	{ // ボスの死亡状態以外の場合
 
+		// ボスの死亡カメラ状態にする
+		CManager::Get()->GetCamera()->SetType(CCamera::TYPE_BOSSDESTROY);
+	}
 }
 
 //==========================
@@ -75,33 +82,15 @@ void CBossDestroyState::SetData(CBoss* pBoss)
 //==========================
 void CBossDestroyState::Move(CBoss* pBoss)
 {
-	//// 位置を取得する
-	//D3DXVECTOR3 pos = pBoss->GetPos();
+	// 位置を取得する
+	D3DXVECTOR3 pos = pBoss->GetPos();
 
-	//// 高さを設定する
-	//pos.y += m_fAddHeight;
+	// 高さを設定する
+	pos.y += m_fAddHeight;
 
-	//// 高さの加算数を減速する
-	//m_fAddHeight -= DEC_HEIGHT;
+	// 高さの加算数を減速する
+	m_fAddHeight -= DEC_HEIGHT;
 
-	//// 位置を適用する
-	//pBoss->SetPos(pos);
-
-	if (m_nCount % 10 == 0)
-	{
-		D3DXMATRIX mtx;
-
-		int nRand = rand() % pBoss->GetNumModel();
-		pBoss->GetHierarchy(nRand)->MatrixCalc(&mtx, pBoss->GetMatrix());
-
-		CAnimReaction::Create
-		(
-			D3DXVECTOR3(mtx._41, mtx._42, mtx._43),
-			D3DXVECTOR3(800.0f, 800.0f, 0.0f),
-			D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
-			CAnimReaction::TYPE::TYPE_EXPLOSION,
-			6,
-			1
-		);
-	}
+	// 位置を適用する
+	pBoss->SetPos(pos);
 }
