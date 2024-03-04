@@ -18,6 +18,7 @@
 #include "player.h"
 #include "manager.h"
 #include "camera.h"
+#include "fraction.h"
 
 #include "boss_howlingstate.h"
 
@@ -29,6 +30,9 @@ namespace
 	const float ROT_CORRECT = 0.08f;		// 向きの補正倍率
 	const int COUNT = 100;					// 向き直り状態のカウント数
 	const float SUB_HEIGHT = 30.0f;			// 高度の減算量
+	const int FRACTION_PART = 4;			// 破片の出るパーツ数
+	const int NUM_FRACTION = 15;			// 破片の数
+	const D3DXVECTOR3 FRACTION_SCALE = D3DXVECTOR3(2.0f, 2.0f, 2.0f);		// 破片の拡大率
 }
 //==========================
 // コンストラクタ
@@ -99,6 +103,9 @@ void CBossTurnState::Process(CBoss* pBoss)
 			if (pBoss->ElevationCollision() == true)
 			{ // 地面に着地した場合
 
+				// 破片発生処理
+				Fraction(pBoss);
+
 				// 祭壇の破壊処理
 				CGame::GetAlter()->Break();
 
@@ -134,5 +141,47 @@ void CBossTurnState::SetData(CBoss* pBoss)
 
 		// ホバリングモーションを設定する
 		pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_HOVERING);
+	}
+}
+
+//==========================
+// 破片発生処理
+//==========================
+void CBossTurnState::Fraction(CBoss* pBoss)
+{
+	D3DXMATRIX mtx;
+	D3DXVECTOR3 aPos[FRACTION_PART];
+
+	// 行列を取得
+	pBoss->GetHierarchy(7)->MatrixCalc(&mtx, pBoss->GetMatrix());
+
+	// 位置を取得する
+	aPos[0] = D3DXVECTOR3(mtx._41, mtx._42, mtx._43);
+
+	// 行列を取得
+	pBoss->GetHierarchy(8)->MatrixCalc(&mtx, pBoss->GetMatrix());
+
+	// 位置を取得する
+	aPos[1] = D3DXVECTOR3(mtx._41, mtx._42, mtx._43);
+
+	// 行列を取得
+	pBoss->GetHierarchy(15)->MatrixCalc(&mtx, pBoss->GetMatrix());
+
+	// 位置を取得する
+	aPos[2] = D3DXVECTOR3(mtx._41, mtx._42, mtx._43);
+
+	// 行列を取得
+	pBoss->GetHierarchy(16)->MatrixCalc(&mtx, pBoss->GetMatrix());
+
+	// 位置を取得する
+	aPos[3] = D3DXVECTOR3(mtx._41, mtx._42, mtx._43);
+
+	for (int nCntPart = 0; nCntPart < FRACTION_PART; nCntPart++)
+	{
+		for (int nCnt = 0; nCnt < NUM_FRACTION; nCnt++)
+		{
+			// 破片の生成
+			CFraction::Create(aPos[nCntPart], CFraction::TYPE::TYPE_DIRT, 50, 40, 10, FRACTION_SCALE);
+		}
 	}
 }
