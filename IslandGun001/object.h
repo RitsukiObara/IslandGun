@@ -89,6 +89,7 @@ public:			// 誰でもアクセスできる
 		TYPE_ALTERFLASH,		// 祭壇閃光
 		TYPE_BOSSNAME,			// ボスの名前
 		TYPE_CONTINUEUI,		// コンティニューUI
+		TYPE_BOSSRIPPLE,		// ボスの波紋
 		TYPE_MAX				// この列挙型の総数
 	};
 
