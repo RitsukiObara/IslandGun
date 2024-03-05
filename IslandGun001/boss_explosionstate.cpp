@@ -12,6 +12,7 @@
 #include "boss_explosionstate.h"
 #include "manager.h"
 #include "motion.h"
+#include "sound.h"
 
 #include "game.h"
 #include "alter_flash.h"
@@ -63,6 +64,9 @@ void CBossExplosionState::Process(CBoss* pBoss)
 
 		// ボスの爆発を生成
 		CBossExplosion::Create(D3DXVECTOR3(pBoss->GetPos().x, pBoss->GetPos().y + RIPPLE_HEIGHT, pBoss->GetPos().z), pBoss->GetRot());
+
+		// ボスの爆発音を鳴らす
+		CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_BOSS_EXPLOSION);
 
 		// 終了状態にする
 		CGame::SetState(CGame::STATE_FINISH);
