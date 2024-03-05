@@ -40,6 +40,8 @@ private:		// 自分だけアクセスできる
 
 	// メンバ変数
 	float m_fAddCircum;		// 円周の追加量
+	float m_fAddWidth;		// 幅の追加量
+	float m_fAlpha;			// 透明度
 };
 
 

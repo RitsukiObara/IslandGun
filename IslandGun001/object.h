@@ -90,6 +90,7 @@ public:			// 誰でもアクセスできる
 		TYPE_BOSSNAME,			// ボスの名前
 		TYPE_CONTINUEUI,		// コンティニューUI
 		TYPE_BOSSRIPPLE,		// ボスの波紋
+		TYPE_EXPLOSION,			// 爆発
 		TYPE_MAX				// この列挙型の総数
 	};
 

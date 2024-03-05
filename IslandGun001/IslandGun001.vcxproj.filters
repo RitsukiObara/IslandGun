@@ -543,6 +543,9 @@
     <ClCompile Include="boss_ripple.cpp">
       <Filter>enemy\boss</Filter>
     </ClCompile>
+    <ClCompile Include="boss_explosion.cpp">
+      <Filter>enemy\boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -1005,6 +1008,9 @@
       <Filter>enemy\boss</Filter>
     </ClInclude>
     <ClInclude Include="boss_ripple.h">
+      <Filter>enemy\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_explosion.h">
       <Filter>enemy\boss</Filter>
     </ClInclude>
   </ItemGroup>

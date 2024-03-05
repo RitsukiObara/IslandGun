@@ -18,13 +18,16 @@
 namespace
 {
 	const D3DXVECTOR3 ROT = D3DXVECTOR3(D3DX_PI * 0.5f, 0.0f, 0.0f);		// 向き
-	const float WIDTH = 300.0f;					// 横の幅
-	const float CIRCUM = 50.0f;					// 円周の幅
-	const CMesh::SGrid GRID = { 1,8 };			// 分割数
+	const float WIDTH = 100.0f;					// 横の幅
+	const float CIRCUM = 100.0f;				// 円周の幅
+	const CMesh::SGrid GRID = { 1,16 };			// 分割数
 	const char* TEXTURE = "data\\TEXTURE\\BossRipple.png";		// テクスチャ
-	const float INIT_ADD_CIRCUM = 60.0f;		// 円周の追加量
-	const float INIT_ADD_WIDTH = 60.0f;			// 幅の追加量
-	const float CIRCUM_CORRECT = 0.3f;			// 円周の追加量
+	const float INIT_ADD_CIRCUM = 70.0f;		// 円周の初期追加量
+	const float INIT_ADD_WIDTH = 80.0f;			// 幅の初期追加量
+	const float CIRCUM_CORRECT = 0.8f;			// 円周の補正量
+	const float WIDTH_CORRECT = 0.8f;			// 幅の補正量
+	const float INIT_ALPHA = 1.0f;				// 透明度の初期値
+	const float SUB_ALPHA = 0.01f;				// 透明度の減算量
 }
 
 //================================
@@ -34,6 +37,8 @@ CBossRipple::CBossRipple() : CMeshDonut(PRIORITY_EFFECT)
 {
 	// 全ての値をクリアする
 	m_fAddCircum = INIT_ADD_CIRCUM;		// 円周の追加量
+	m_fAddWidth = INIT_ADD_WIDTH;		// 幅の追加量
+	m_fAlpha = INIT_ALPHA;				// 透明度
 	CObject::SetType(TYPE_BOSSRIPPLE);
 }
 
@@ -84,8 +89,27 @@ void CBossRipple::Update(void)
 	// 広げ処理
 	Spread();
 
+	if (m_fAlpha > 0.0f)
+	{ // 透明度が0超過の場合
+
+		// 透明度を減算する
+		m_fAlpha -= SUB_ALPHA;
+	}
+	else
+	{ // 上記以外
+
+		// 終了処理
+		Uninit();
+
+		// この先の処理を行わない
+		return;
+	}
+
 	// 頂点座標の設定処理
 	SetVertex();
+
+	// 頂点カラーの設定処理
+	SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, m_fAlpha));
 }
 
 //================================
@@ -118,6 +142,8 @@ void CBossRipple::SetData(const D3DXVECTOR3& pos)
 
 	// 全ての値を設定する
 	m_fAddCircum = INIT_ADD_CIRCUM;		// 円周の追加量
+	m_fAddWidth = INIT_ADD_WIDTH;		// 幅の追加量
+	m_fAlpha = INIT_ALPHA;				// 透明度
 }
 
 //================================
@@ -186,7 +212,7 @@ void CBossRipple::Spread(void)
 
 	// 円を広げる
 	fCircum += m_fAddCircum;
-	fWidth += m_fAddCircum;
+	fWidth += m_fAddWidth;
 
 	// 円周と幅を適用
 	SetCircum(fCircum);
@@ -194,4 +220,5 @@ void CBossRipple::Spread(void)
 
 	// 追加量を0に近づける
 	useful::FrameCorrect(0.0f, &m_fAddCircum, CIRCUM_CORRECT);
+	useful::FrameCorrect(0.0f, &m_fAddWidth, WIDTH_CORRECT);
 }

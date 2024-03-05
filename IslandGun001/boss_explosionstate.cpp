@@ -14,7 +14,9 @@
 #include "motion.h"
 
 #include "game.h"
+#include "alter_flash.h"
 #include "boss_ripple.h"
+#include "boss_explosion.h"
 
 //------------------------------------------------------------------
 // 定数定義
@@ -22,6 +24,7 @@
 namespace
 {
 	const int FINISH_COUNT = 100;		// 終了カウント
+	const float RIPPLE_HEIGHT = 600.0f;	// 波紋を出す高さ
 }
 
 //==========================
@@ -49,14 +52,24 @@ void CBossExplosionState::Process(CBoss* pBoss)
 	// カウントを加算する
 	m_nCount++;
 
-	if (m_nCount >= FINISH_COUNT)
+	if (m_nCount == FINISH_COUNT)
 	{ // 一定時間経過の場合
 
+		// 閃光を生成
+		CAlterFlash::Create();
+
 		// ボスの爆破波紋を生成
-		CBossRipple::Create(pBoss->GetPos());
+		CBossRipple::Create(D3DXVECTOR3(pBoss->GetPos().x, pBoss->GetPos().y + RIPPLE_HEIGHT, pBoss->GetPos().z));
+
+		// ボスの爆発を生成
+		CBossExplosion::Create(D3DXVECTOR3(pBoss->GetPos().x, pBoss->GetPos().y + RIPPLE_HEIGHT, pBoss->GetPos().z), pBoss->GetRot());
 
 		// 終了状態にする
 		CGame::SetState(CGame::STATE_FINISH);
+
+		pBoss->Uninit();
+
+		return;
 	}
 }
 
