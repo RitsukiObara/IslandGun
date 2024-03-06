@@ -46,6 +46,7 @@
 #include "balloon.h"
 #include "balloon_spawner.h"
 #include "door.h"
+#include "push_timing.h"
 
 //===============================
 // マクロ定義
@@ -2141,7 +2142,7 @@ bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
 			{ // 看板に近づいた場合
 
 				// ボタンを描画する
-				pSign->SetEnableDisp(true);
+				pSign->GetButton()->SetEnableDisp(true);
 
 				if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true ||
 					CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_SPACE) == true)
@@ -2161,7 +2162,7 @@ bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
 			{ // 上記以外
 
 				// ボタンを描画しない
-				pSign->SetEnableDisp(false);
+				pSign->GetButton()->SetEnableDisp(false);
 			}
 
 			if (pSign == pSignEnd)
@@ -2273,7 +2274,7 @@ bool collision::DoorHit(const D3DXVECTOR3& pos, const float fRadius)
 		{ // ドアの近くにいた場合
 
 			// ボタン表示を描画する
-			pDoor->SetEnableDisp(true);
+			pDoor->GetButton()->SetEnableDisp(true);
 
 			if (CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_A, 0) == true ||
 				CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_SPACE) == true)
@@ -2293,7 +2294,7 @@ bool collision::DoorHit(const D3DXVECTOR3& pos, const float fRadius)
 		{ // 上記以外
 
 			// ボタン表示を描画しない
-			pDoor->SetEnableDisp(false);
+			pDoor->GetButton()->SetEnableDisp(false);
 		}
 	}
 

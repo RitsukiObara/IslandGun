@@ -322,7 +322,8 @@ void CGame::SetData(const MODE mode)
 void CGame::Pause(void)
 {
 	if (CManager::Get()->GetInputKeyboard()->GetTrigger(DIK_P) == true ||
-		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_BACK, 0) == true)
+		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_BACK, 0) == true ||
+		CManager::Get()->GetInputGamePad()->GetTrigger(CInputGamePad::JOYKEY_START, 0) == true)
 	{ // Pキーを押した場合
 
 		if (CManager::Get()->GetFade()->GetFade() == CFade::FADE_NONE)
@@ -339,7 +340,7 @@ void CGame::Pause(void)
 				}
 				else
 				{ // 上記以外
-					
+
 					// 停止
 					assert(false);
 				}
