@@ -19,6 +19,7 @@
 #include "alter_pole.h"
 #include "alter_flash.h"
 #include "boss.h"
+#include "alter_message.h"
 
 //-------------------------------------------
 // 無名名前空間
@@ -49,6 +50,7 @@ CAlter::CAlter() : CModel(TYPE_ALTER, PRIORITY_ENTITY)
 	{
 		m_apPole[nCnt] = nullptr;		// 石柱の情報
 	}
+	m_pMessage = nullptr;				// メッセージの情報
 	m_state = STATE_NONE;				// 状態
 	m_bLightUp = false;					// ライト点灯状況
 }
@@ -91,6 +93,13 @@ void CAlter::Uninit(void)
 			m_apPole[nCnt]->Uninit();
 			m_apPole[nCnt] = nullptr;
 		}
+	}
+
+	if (m_pMessage != nullptr)
+	{ // メッセージが NULL じゃない場合
+
+		// メッセージを NULL にする
+		m_pMessage = nullptr;
 	}
 
 	// 終了処理
@@ -230,6 +239,7 @@ void CAlter::SetData(void)
 			m_apPole[nCnt] = CAlterPole::Create(POLE_POS[nCnt]);
 		}
 	}
+	m_pMessage = nullptr;				// メッセージの情報
 	m_state = STATE_NONE;				// 状態
 	m_bLightUp = false;					// ライト点灯状況
 }
@@ -303,6 +313,22 @@ CAlterPole* CAlter::GetPole(const int nIdx) const
 
 	// 石柱の情報を返す
 	return m_apPole[nIdx];
+}
+
+//=======================================
+// 祭壇のメッセージの設定処理
+//=======================================
+void CAlter::SetAlterMessage(CAlterMessage* pMessage)
+{
+	if (m_pMessage != nullptr)
+	{ // メッセージが NULL じゃない場合
+
+		// メッセージの終了処理
+		m_pMessage->Uninit();
+	}
+
+	// メッセージを設定する
+	m_pMessage = pMessage;
 }
 
 //=======================================

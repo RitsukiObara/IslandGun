@@ -37,6 +37,7 @@
 #include "boss_collision.h"
 #include "alter.h"
 #include "alter_pole.h"
+#include "alter_message.h"
 #include "slash_ripple.h"
 #include "wind_shot.h"
 #include "fire_shot.h"
@@ -1893,12 +1894,18 @@ void collision::AlterSurrounding(const D3DXVECTOR3& pos, const float fRadius)
 
 			// ライト点灯状況を true にする
 			pAlter->SetEnableLightUp(true);
+
+			// メッセージを表示する
+			pAlter->SetAlterMessage(CAlterMessage::Create(posAlter));
 		}
 		else
 		{ // 上記以外
 
 			// ライト点灯状況を false にする
 			pAlter->SetEnableLightUp(false);
+
+			// メッセージを消去する
+			pAlter->SetAlterMessage(nullptr);
 		}
 	}
 }

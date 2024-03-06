@@ -40,6 +40,7 @@ public:					// 誰でもアクセスできる
 		MOTIONTYPE_CHARGE,			// チャージモーション
 		MOTIONTYPE_DOWN,			// ダウンモーション
 		MOTIONTYPE_STOMP,			// 足踏みモーション
+		MOTIONTYPE_DEATH,			// 死亡モーション
 		MOTIONTYPE_MAX				// この列挙型の総数
 	};
 
