@@ -153,25 +153,8 @@ HRESULT CBoss::Init(void)
 		assert(false);
 	}
 
-	CListManager<CEnemy*> list = CEnemy::GetList();
-	CEnemy* pEnemy = nullptr;
-
-	for (int nCnt = 0; nCnt < list.GetNumData(); nCnt++)
-	{
-		// 敵の情報を取得する
-		pEnemy = list.GetData(nCnt);
-
-		// 位置を取得する
-		D3DXVECTOR3 pos = pEnemy->GetPos();
-
-		// 位置を真ん中にする
-		pos.y += (pEnemy->GetCollSize().y * 0.5f);
-
-		// アニメーションリアクションを生成
-		CAnimReaction::Create(pos, DEATH_EXPLOSION_SIZE, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
-
-		pEnemy->Uninit();
-	}
+	// 敵の全消去処理
+	EnemyAllClear();
 
 	// 値を返す
 	return S_OK;
@@ -672,6 +655,32 @@ bool CBoss::IsHit(void) const
 {
 	// ヒット状況を返す
 	return m_bHit;
+}
+
+//===========================================
+// 敵の全消去処理
+//===========================================
+void CBoss::EnemyAllClear(void)
+{
+	CListManager<CEnemy*> list = CEnemy::GetList();
+	CEnemy* pEnemy = nullptr;
+
+	for (int nCnt = 0; nCnt < list.GetNumData(); nCnt++)
+	{
+		// 敵の情報を取得する
+		pEnemy = list.GetData(nCnt);
+
+		// 位置を取得する
+		D3DXVECTOR3 pos = pEnemy->GetPos();
+
+		// 位置を真ん中にする
+		pos.y += (pEnemy->GetCollSize().y * 0.5f);
+
+		// アニメーションリアクションを生成
+		CAnimReaction::Create(pos, DEATH_EXPLOSION_SIZE, NONE_D3DXCOLOR, CAnimReaction::TYPE::TYPE_GUNEXPLOSION, 4, 1);
+
+		pEnemy->Uninit();
+	}
 }
 
 //===========================================

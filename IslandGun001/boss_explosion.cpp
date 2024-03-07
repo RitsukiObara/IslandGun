@@ -25,15 +25,17 @@ namespace
 	const float EXPLOSION_HEIGHT = 300.0f;			// 爆発の高さ
 	const CMesh::SGrid EXPLOSION_DIVI = { 16,16 };	// 爆発の分割数
 	const char* EXPLOSION_TEXTURE = "data\\TEXTURE\\BombExplosion.png";		// 爆発のテクスチャ
+
 	const D3DXVECTOR3 SHOCK_ROT[CBossExplosion::NUM_SHOCK] =	// 衝撃の向き
 	{
 		D3DXVECTOR3(D3DX_PI * 0.25f, D3DX_PI * 0.5f, 0.0f),
 		D3DXVECTOR3(D3DX_PI * -0.25f, D3DX_PI * 0.5f, 0.0f),
 	};
-	const float SHOCK_CIRCUM = 350.0f;				// 衝撃の円周
+	const float SHOCK_CIRCUM = 400.0f;				// 衝撃の円周
 	const float SHOCK_WIDTH = 100.0f;				// 衝撃の幅
 	const CMesh::SGrid SHOCK_DIVI = { 1,16 };		// 衝撃の分割数
 	const char* SHOCK_TEXTURE = "data\\TEXTURE\\BossRipple.png";			// 衝撃のテクスチャ
+
 	const float INIT_ADD_EXPLOSION = 30.0f;			// 爆発の拡大率
 	const float EXPLOSION_CORRECT = 0.2f;			// 爆発の補正率
 	const float INIT_ALPHA = 1.0f;					// 透明度の初期値

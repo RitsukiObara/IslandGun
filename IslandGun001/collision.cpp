@@ -12,7 +12,6 @@
 #include "manager.h"
 #include "renderer.h"
 #include "input.h"
-#include "sound.h"
 
 #include "shadowCircle.h"
 #include "objectElevation.h"
@@ -171,68 +170,36 @@ void collision::CoinCollision(CPlayer* pPlayer, const D3DXVECTOR3 size, const in
 	D3DXVECTOR3 vtxMin = useful::VtxMinConv(size);	// 最小値
 	CListManager<CCoin*> list = CCoin::GetList(nAreaIdx);
 	CCoin* pCoin = nullptr;			// 先頭の小判
-	CCoin* pCoinEnd = nullptr;		// 末尾の値
-	int nIdx = 0;
+	int nNumData = list.GetNumData();		// 要素の総数
 
-	if (list.IsEmpty() == false)
-	{ // 空白じゃない場合
+	for (int nCntCoin = 0; nCntCoin < nNumData; nCntCoin++)
+	{
+		// 次のオブジェクトを代入する
+		pCoin = list.GetData(nCntCoin);
 
-		// 先頭の値を取得する
-		pCoin = list.GetTop();
+		// コインの変数を取得する
+		posCoin = pCoin->GetPos();
+		vtxMaxCoin = pCoin->GetFileData().vtxMax;
+		vtxMinCoin = pCoin->GetFileData().vtxMin;
 
-		// 末尾の値を取得する
-		pCoinEnd = list.GetEnd();
+		if (pCoin->GetState() == CCoin::STATE_NONE &&
+			useful::RectangleCollisionXY(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+			useful::RectangleCollisionXZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
+			useful::RectangleCollisionYZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
+		{ // コインと体が重なった場合
 
-		while (true)
-		{ // 無限ループ
+			// 取得処理
+			pCoin->Hit();
 
-			// コインの変数を取得する
-			posCoin = pCoin->GetPos();
-			vtxMaxCoin.x = pCoin->GetFileData().vtxMax.x * COIN_COLLISION_MAGNI;
-			vtxMaxCoin.y = pCoin->GetFileData().vtxMax.y;
-			vtxMaxCoin.z = pCoin->GetFileData().vtxMax.z * COIN_COLLISION_MAGNI;
-			vtxMinCoin.x = pCoin->GetFileData().vtxMin.x * COIN_COLLISION_MAGNI;
-			vtxMinCoin.y = pCoin->GetFileData().vtxMin.y;
-			vtxMinCoin.z = pCoin->GetFileData().vtxMin.z * COIN_COLLISION_MAGNI;
+			if (CGame::GetGameScore() != nullptr)
+			{ // ゲームスコアが NULL じゃない場合
 
-			if (useful::RectangleCollisionXY(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
-				useful::RectangleCollisionXZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true &&
-				useful::RectangleCollisionYZ(posPlayer, posCoin, vtxMax, vtxMaxCoin, vtxMin, vtxMinCoin) == true)
-			{ // 小判と重なった場合
+				// コイン分のスコアを加算する
+				CGame::GetGameScore()->SetScore(CGame::GetGameScore()->GetScore() + COIN_SCORE);
 
-				if (pCoin->GetState() == CCoin::STATE_NONE)
-				{ // 無状態の場合
-
-					// 取得処理
-					pCoin->Hit();
-
-					// コインゲット音を鳴らす
-					CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_COINGET);
-
-					if (CGame::GetGameScore() != nullptr)
-					{ // ゲームスコアが NULL じゃない場合
-
-						// コイン分のスコアを加算する
-						CGame::GetGameScore()->SetScore(CGame::GetGameScore()->GetScore() + COIN_SCORE);
-
-						// 追加スコアUIを生成
-						CAddScoreUI::Create(posCoin, CAddScoreUI::TYPE_COIN);
-					}
-				}
+				// 追加スコアUIを生成
+				CAddScoreUI::Create(posCoin, CAddScoreUI::TYPE_COIN);
 			}
-
-			if (pCoin == pCoinEnd)
-			{ // 末尾に達した場合
-
-				// while文を抜け出す
-				break;
-			}
-
-			// 次のオブジェクトを代入する
-			pCoin = list.GetData(nIdx + 1);
-
-			// インデックスを加算する
-			nIdx++;
 		}
 	}
 }
@@ -1271,9 +1238,6 @@ void collision::ExplosionHitToRock(const D3DXVECTOR3& pos, const float fRadius, 
 
 					// 破壊処理
 					pRock->Break();
-
-					// 岩の破壊音を鳴らす
-					CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_ROCKBREAK);
 				}
 			}
 
@@ -2157,9 +2121,6 @@ bool collision::SignboardCollision(const D3DXVECTOR3& pos, const float fRadius)
 
 					// 説明移行処理
 					pSign->Explain();
-
-					// 看板音を鳴らす
-					CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_SIGNBOARD);
 
 					// true を返す
 					return true;

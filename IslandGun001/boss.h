@@ -96,7 +96,8 @@ public:					// 誰でもアクセスできる
 private:				// 自分だけアクセスできる
 
 	// メンバ関数
-	void Damage(void);		// ダメージ処理
+	void EnemyAllClear(void);	// 敵の全消去処理
+	void Damage(void);			// ダメージ処理
 
 	// メンバ変数
 	CMotion* m_pMotion;		// モーションの情報

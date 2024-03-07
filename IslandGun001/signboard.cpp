@@ -10,6 +10,7 @@
 #include "main.h"
 #include "manager.h"
 #include "signboard.h"
+#include "sound.h"
 #include "texture.h"
 #include "useful.h"
 
@@ -142,6 +143,9 @@ void CSignboard::Explain(void)
 
 	// ŠÅ”Â‚Ìî•ñ‚ðÝ’è‚·‚é
 	CTutorial::SetLookSign(this);
+
+	// ŠÅ”Â‰¹‚ð–Â‚ç‚·
+	CManager::Get()->GetSound()->Play(CSound::SOUND_LABEL_SE_SIGNBOARD);
 }
 
 //=======================================
