@@ -32,7 +32,7 @@ namespace
 	const D3DXVECTOR3 POS = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// à íu
 	const D3DXVECTOR3 POLE_POS[CAlter::NUM_POLE] =		// êŒíåÇÃà íu
 	{
-		D3DXVECTOR3(0.0f,0.0f,-450.0f),
+		D3DXVECTOR3(0.0f,0.0f,450.0f),
 		D3DXVECTOR3(450.0f,0.0f,0.0f),
 		D3DXVECTOR3(-450.0f,0.0f,0.0f),
 	};
