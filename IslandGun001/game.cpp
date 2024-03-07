@@ -29,12 +29,14 @@
 #include "game_score.h"
 #include "alter.h"
 #include "continueUI.h"
+#include "boss.h"
 
 //--------------------------------------------
 // マクロ定義
 //--------------------------------------------
 namespace
 {
+	const D3DXVECTOR3 PLAYER_POS = D3DXVECTOR3(0.0f, 0.0f, -500.0f);		// プレイヤーの位置
 	const int TRANS_COUNT = 80;			// 遷移カウント
 	const int GAMEOVER_COUNT = 150;		// ゲームオーバーカウント
 	const char* ELEVATION_TXT = "data/TXT/Elevation.txt";		// 起伏地面のテキスト
@@ -117,13 +119,16 @@ HRESULT CGame::Init(void)
 	COcean::Create();
 
 	// プレイヤーの生成処理
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 300.0f));
+	m_pPlayer = CPlayer::Create(PLAYER_POS);
 
 	// ゲームスコアの生成
 	m_pGameScore = CGameScore::Create();
 
 	// 祭壇の生成
 	m_pAlter = CAlter::Create();
+
+	// ボスの生成
+	CBoss::Create(NONE_D3DXVECTOR3, NONE_D3DXVECTOR3);
 
 	// 情報の初期化
 	m_nStateCount = 0;			// 終了カウント

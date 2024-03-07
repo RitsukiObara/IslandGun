@@ -159,8 +159,8 @@ void CAlter::Update(void)
 				m_apPole[nCnt]->SetGoldBone(nullptr);
 			}
 
-			// ボス出現状態にする
-			m_state = STATE_BOSSAPPEAR;
+			// 待機状態にする
+			m_state = STATE_WAIT;
 
 			// 祭壇の閃光を生成
 			CAlterFlash::Create();
@@ -171,13 +171,28 @@ void CAlter::Update(void)
 
 		break;
 
-	case CAlter::STATE_BOSSAPPEAR:
-		break;
-
 	case CAlter::STATE_WAIT:
+
+		if (m_pMessage != nullptr)
+		{ // メッセージが NULL じゃない場合
+
+			// 終了処理
+			m_pMessage->Uninit();
+			m_pMessage = nullptr;
+		}
+
 		break;
 
 	case CAlter::STATE_BREAK:
+
+		if (m_pMessage != nullptr)
+		{ // メッセージが NULL じゃない場合
+
+			// 終了処理
+			m_pMessage->Uninit();
+			m_pMessage = nullptr;
+		}
+
 		break;
 
 	default:

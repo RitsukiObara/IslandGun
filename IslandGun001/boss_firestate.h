@@ -27,6 +27,8 @@ public:
 
 private:
 
+	void Fraction(CBoss* pBoss);		// 破片出す処理
+
 	// メンバ変数
 	int m_nCount;				// 経過カウント
 };

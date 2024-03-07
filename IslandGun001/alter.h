@@ -31,7 +31,6 @@ public:			// 誰でもアクセスできる
 	{
 		STATE_NONE = 0,		// 通常状態
 		STATE_CHARGE,		// チャージ状態
-		STATE_BOSSAPPEAR,	// ボスの出現状態
 		STATE_WAIT,			// 待機状態
 		STATE_BREAK,		// 破壊状態
 		STATE_MAX			// この列挙型の総数
