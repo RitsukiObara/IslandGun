@@ -27,6 +27,7 @@ public:
 
 private:
 
+	void FireCreate(CBoss* pBoss);		// ‰Š‚ğo‚·ˆ—
 	void Fraction(CBoss* pBoss);		// ”j•Ğo‚·ˆ—
 
 	// ƒƒ“ƒo•Ï”

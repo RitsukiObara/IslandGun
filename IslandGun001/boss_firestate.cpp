@@ -68,16 +68,8 @@ void CBossFireState::Process(CBoss* pBoss)
 	// カウントを加算する
 	m_nCount++;
 
-	CPlayer* pPlayer = CGame::GetPlayer();
-
-	if (m_nCount % FIRE_CREATE_COUNT == 0 &&
-		m_nCount <= FIRE_CREATE_RANGE &&
-		pPlayer != nullptr)
-	{ // 経過カウントが一定数経過した場合
-
-		// 炎注意の生成
-		CFireWarning::Create(pPlayer->GetPos());
-	}
+	// 炎生成処理
+	FireCreate(pBoss);
 	
 	if (m_nCount == FRACTION_TIMING[0] ||
 		m_nCount == FRACTION_TIMING[1] ||
@@ -117,6 +109,23 @@ void CBossFireState::SetData(CBoss* pBoss)
 
 		// 足踏みモーションにする
 		pBoss->GetMotion()->Set(CBoss::MOTIONTYPE_STOMP);
+	}
+}
+
+//==========================
+// 炎を出す処理
+//==========================
+void CBossFireState::FireCreate(CBoss* pBoss)
+{
+	CPlayer* pPlayer = CGame::GetPlayer();
+
+	if (m_nCount % FIRE_CREATE_COUNT == 0 &&
+		m_nCount <= FIRE_CREATE_RANGE &&
+		pPlayer != nullptr)
+	{ // 経過カウントが一定数経過した場合
+
+		// 炎注意の生成
+		CFireWarning::Create(pPlayer->GetPos());
 	}
 }
 
